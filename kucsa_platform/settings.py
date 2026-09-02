@@ -46,6 +46,8 @@ ALLOWED_HOSTS = [
     ".vercel.app",
     "localhost",
     "127.0.0.1",
+    "freddy-porkiest-rumblingly.ngrok-free.dev", 
+    ".ngrok-free.dev",
 ]
 
 
@@ -357,7 +359,7 @@ if not DEBUG:
 
     CSRF_COOKIE_SECURE = True
 
-    
+
 # =========================================================
 # SESSION SETTINGS
 # =========================================================
@@ -431,7 +433,7 @@ LOGGING = {
     },
 }
 
-KUCSA_MEMBERSHIP_FEE = 100
+KUCSA_MEMBERSHIP_FEE = 1
 
 # =========================================================
 # M-PESA DARAJA CONFIGURATION

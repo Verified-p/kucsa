@@ -492,7 +492,9 @@ MPESA_STK_PUSH_URL = (
 )
 
 
-
+CSRF_TRUSTED_ORIGINS = [
+    "https://kucsa.vercel.app",
+]
 
 # ── Auto logout after 5 minutes of inactivity ──
 SESSION_COOKIE_AGE = 300              # 5 minutes in seconds

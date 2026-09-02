@@ -3,7 +3,7 @@
 
   "builds": [
     {
-      "src": "fleet_management/wsgi.py",
+      "src": "kucsa/wsgi.py",
       "use": "@vercel/python"
     }
   ],
@@ -21,7 +21,7 @@
 
     {
       "src": "/(.*)",
-      "dest": "fleet_management/wsgi.py"
+      "dest": "kucsa/wsgi.py"
     }
   ]
 }

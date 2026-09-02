@@ -785,18 +785,12 @@ def widgets_view(request):
 
 
 
-
-# ============================================================================
-# ADMIN DASHBOARD
-# ============================================================================
-
 @login_required
 def admin_dashboard_view(request):
     """
-    Display the KUCSA Administrative Control Center.
+    Display the KUCSA Admin Control Center.
 
-    Only users with KUCSA administrator privileges may access
-    this dashboard.
+    Only authorized KUCSA administrators may access this page.
     """
 
     require_admin(request.user)

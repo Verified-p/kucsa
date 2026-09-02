@@ -2413,299 +2413,376 @@ class DashboardService:
 
 
 
+@classmethod
+def get_admin_dashboard(cls):
+    """
+    Build the complete KUCSA Admin Dashboard context.
+
+    This method is read-only.
+
+    Responsibilities:
+        - Aggregate organization-wide dashboard statistics.
+        - Reuse existing DashboardService methods.
+        - Provide one context dictionary for the admin dashboard.
+
+    It does NOT:
+        - Modify users.
+        - Modify members.
+        - Process payments.
+        - Modify finance records.
+        - Change attendance.
+        - Perform administrative actions.
+
+    Administrative actions remain inside their respective apps.
+    """
+
+    # =========================================================
+    # USERS
+    # =========================================================
+
+    common = cls.get_common_widgets()
 
 
-    # =========================================================================
-    # ADMIN DASHBOARD
-    # =========================================================================
+    # =========================================================
+    # MEMBERS / EXECUTIVES
+    #
+    # Reuse the existing executive dashboard because it already
+    # contains the membership and executive statistics required
+    # by the administration dashboard.
+    # =========================================================
 
-    @staticmethod
-    def get_admin_dashboard():
-        """
-        Build the complete KUCSA administrator dashboard context.
+    executive = cls.get_executive_dashboard(
+        user=None,
+    )
 
-        This method is READ-ONLY.
 
-        Authorization is handled by the dashboard view.
+    # =========================================================
+    # EVENTS
+    # =========================================================
 
-        The administrator dashboard combines organization-wide
-        statistics from the existing dashboard service methods.
-        """
+    events = cls.get_event_statistics()
 
-        # ---------------------------------------------------------------------
-        # MEMBERS
-        # ---------------------------------------------------------------------
 
-        membership_status = Member.MembershipStatus
+    # =========================================================
+    # ATTENDANCE
+    # =========================================================
 
-        total_members = Member.objects.count()
+    attendance = cls.get_attendance_statistics()
 
-        active_members = Member.objects.filter(
-            membership_status=membership_status.ACTIVE
-        ).count()
+    attendance_dashboard = cls.get_attendance_dashboard_data()
 
-        pending_members = Member.objects.filter(
-            membership_status=membership_status.PENDING
-        ).count()
 
-        suspended_members = Member.objects.filter(
-            membership_status=membership_status.SUSPENDED
-        ).count()
+    # =========================================================
+    # ANNOUNCEMENTS
+    # =========================================================
 
-        expired_members = Member.objects.filter(
-            membership_status=membership_status.EXPIRED
-        ).count()
+    announcements = cls.get_announcement_statistics()
 
-        # ---------------------------------------------------------------------
-        # EXECUTIVES
-        # ---------------------------------------------------------------------
 
-        active_executives = Executive.objects.filter(
-            is_active=True
-        ).count()
+    # =========================================================
+    # PAYMENTS
+    # =========================================================
 
-        inactive_executives = Executive.objects.filter(
-            is_active=False
-        ).count()
+    payments = cls.get_payment_statistics()
 
-        # ---------------------------------------------------------------------
+
+    # =========================================================
+    # BUILD ADMIN DASHBOARD CONTEXT
+    # =========================================================
+
+    return {
+
+        # -----------------------------------------------------
         # USERS
-        # ---------------------------------------------------------------------
+        # -----------------------------------------------------
 
-        total_users = User.objects.count()
+        "total_users": common.get(
+            "total_users",
+            0,
+        ),
 
-        active_users = User.objects.filter(
-            is_active=True
-        ).count()
+        "verified_users": common.get(
+            "verified_users",
+            0,
+        ),
 
-        verified_users = User.objects.filter(
-            is_verified=True
-        ).count()
+        "pending_users": common.get(
+            "pending_users",
+            0,
+        ),
 
-        pending_users = User.objects.filter(
-            is_verified=False
-        ).count()
+        # -----------------------------------------------------
+        # MEMBERS
+        # -----------------------------------------------------
 
-        staff_users = User.objects.filter(
-            is_staff=True
-        ).count()
+        "total_members": executive.get(
+            "total_members",
+            0,
+        ),
 
-        # ---------------------------------------------------------------------
-        # EXISTING DASHBOARD STATISTICS
-        # ---------------------------------------------------------------------
+        "active_members": executive.get(
+            "active_members",
+            0,
+        ),
 
-        event_statistics = (
-            DashboardService.get_event_statistics()
-        )
+        "pending_members": executive.get(
+            "pending_members",
+            0,
+        ),
 
-        attendance_statistics = (
-            DashboardService.get_attendance_statistics()
-        )
+        "suspended_members": executive.get(
+            "suspended_members",
+            0,
+        ),
 
-        announcement_statistics = (
-            DashboardService.get_announcement_statistics()
-        )
+        "expired_members": executive.get(
+            "expired_members",
+            0,
+        ),
 
-        payment_statistics = (
-            DashboardService.get_payment_statistics()
-        )
+        # -----------------------------------------------------
+        # EXECUTIVES
+        # -----------------------------------------------------
 
-        # ---------------------------------------------------------------------
-        # RETURN ADMIN CONTEXT
-        # ---------------------------------------------------------------------
+        "total_executives": executive.get(
+            "executives",
+            0,
+        ),
 
-        return {
+        "active_executives": executive.get(
+            "active_executives",
+            0,
+        ),
 
-            # =================================================================
-            # USERS
-            # =================================================================
+        "inactive_executives": executive.get(
+            "inactive_executives",
+            0,
+        ),
 
-            "total_users": total_users,
-            "active_users": active_users,
-            "verified_users": verified_users,
-            "pending_users": pending_users,
-            "staff_users": staff_users,
+        # -----------------------------------------------------
+        # EVENTS
+        # -----------------------------------------------------
 
-            # =================================================================
-            # MEMBERS
-            # =================================================================
+        "total_events": events.get(
+            "total_events",
+            0,
+        ),
 
-            "total_members": total_members,
-            "active_members": active_members,
-            "pending_members": pending_members,
-            "suspended_members": suspended_members,
-            "expired_members": expired_members,
+        "published_events": events.get(
+            "published_events",
+            0,
+        ),
 
-            # =================================================================
-            # EXECUTIVES
-            # =================================================================
+        "ongoing_events": events.get(
+            "ongoing_events",
+            0,
+        ),
 
-            "active_executives": active_executives,
-            "inactive_executives": inactive_executives,
+        "completed_events": events.get(
+            "completed_events",
+            0,
+        ),
 
-            # =================================================================
-            # EVENTS
-            # =================================================================
+        "cancelled_events": events.get(
+            "cancelled_events",
+            0,
+        ),
 
-            "total_events": event_statistics[
-                "total_events"
-            ],
+        "draft_events": events.get(
+            "draft_events",
+            0,
+        ),
 
-            "published_events": event_statistics[
-                "published_events"
-            ],
+        "upcoming_events": events.get(
+            "upcoming_events",
+            [],
+        ),
 
-            "ongoing_events": event_statistics[
-                "ongoing_events"
-            ],
+        # -----------------------------------------------------
+        # EVENT REGISTRATIONS
+        # -----------------------------------------------------
 
-            "upcoming_events": event_statistics[
-                "upcoming_event_count"
-            ],
+        "total_event_registrations": events.get(
+            "total_registrations",
+            0,
+        ),
 
-            "completed_events": event_statistics[
-                "completed_events"
-            ],
+        "registered_event_registrations": events.get(
+            "registered_registrations",
+            0,
+        ),
 
-            "cancelled_events": event_statistics[
-                "cancelled_events"
-            ],
+        "attended_event_registrations": events.get(
+            "attended_registrations",
+            0,
+        ),
 
-            "draft_events": event_statistics[
-                "draft_events"
-            ],
+        "absent_event_registrations": events.get(
+            "absent_registrations",
+            0,
+        ),
 
-            "total_registrations": event_statistics[
-                "total_registrations"
-            ],
+        # -----------------------------------------------------
+        # ATTENDANCE
+        # -----------------------------------------------------
 
-            # =================================================================
-            # ATTENDANCE
-            # =================================================================
+        "total_attendance_sessions": attendance.get(
+            "total_attendance_sessions",
+            0,
+        ),
 
-            "total_attendance_sessions": (
-                attendance_statistics[
-                    "total_attendance_sessions"
-                ]
+        "draft_attendance_sessions": attendance.get(
+            "draft_attendance_sessions",
+            0,
+        ),
+
+        "open_attendance_sessions": attendance.get(
+            "open_attendance_sessions",
+            0,
+        ),
+
+        "active_attendance_sessions": attendance.get(
+            "active_attendance_sessions",
+            0,
+        ),
+
+        "closed_attendance_sessions": attendance.get(
+            "closed_attendance_sessions",
+            0,
+        ),
+
+        "expired_attendance_sessions": attendance.get(
+            "expired_attendance_sessions",
+            0,
+        ),
+
+        "total_attendance_records": attendance.get(
+            "total_attendance_records",
+            0,
+        ),
+
+        "pending_attendance": attendance.get(
+            "pending_attendance",
+            0,
+        ),
+
+        "present_attendance": attendance.get(
+            "present_attendance",
+            0,
+        ),
+
+        "absent_attendance": attendance.get(
+            "absent_attendance",
+            0,
+        ),
+
+        "excused_attendance": attendance.get(
+            "excused_attendance",
+            0,
+        ),
+
+        "attendance_percentage": attendance.get(
+            "attendance_percentage",
+            0,
+        ),
+
+        # -----------------------------------------------------
+        # ATTENDANCE DASHBOARD DATA
+        # -----------------------------------------------------
+
+        "active_attendance_session_list":
+            attendance_dashboard.get(
+                "active_sessions",
+                [],
             ),
 
-            "active_attendance_sessions": (
-                attendance_statistics[
-                    "active_attendance_sessions"
-                ]
+        "recent_attendance_sessions":
+            attendance_dashboard.get(
+                "recent_sessions",
+                [],
             ),
 
-            "open_attendance_sessions": (
-                attendance_statistics[
-                    "open_attendance_sessions"
-                ]
+        "recent_attendance_records":
+            attendance_dashboard.get(
+                "recent_attendance_records",
+                [],
             ),
 
-            "closed_attendance_sessions": (
-                attendance_statistics[
-                    "closed_attendance_sessions"
-                ]
-            ),
+        # -----------------------------------------------------
+        # ANNOUNCEMENTS
+        # -----------------------------------------------------
 
-            "expired_attendance_sessions": (
-                attendance_statistics[
-                    "expired_attendance_sessions"
-                ]
-            ),
+        "announcement_count": announcements.get(
+            "announcement_count",
+            0,
+        ),
 
-            "total_attendance_records": (
-                attendance_statistics[
-                    "total_attendance_records"
-                ]
-            ),
+        "active_announcements": announcements.get(
+            "announcement_count",
+            0,
+        ),
 
-            "present_attendance": (
-                attendance_statistics[
-                    "present_attendance_records"
-                ]
-            ),
+        "announcements": announcements.get(
+            "announcements",
+            [],
+        ),
 
-            "absent_attendance": (
-                attendance_statistics[
-                    "absent_attendance_records"
-                ]
-            ),
+        # -----------------------------------------------------
+        # PAYMENTS
+        # -----------------------------------------------------
 
-            "excused_attendance": (
-                attendance_statistics[
-                    "excused_attendance_records"
-                ]
-            ),
+        "total_payments": payments.get(
+            "total_payments",
+            0,
+        ),
 
-            "pending_attendance": (
-                attendance_statistics[
-                    "pending_attendance_records"
-                ]
-            ),
+        "pending_payments": payments.get(
+            "pending_payments",
+            0,
+        ),
 
-            "attendance_percentage": (
-                attendance_statistics[
-                    "attendance_percentage"
-                ]
-            ),
+        "completed_payments": payments.get(
+            "completed_payments",
+            0,
+        ),
 
-            # =================================================================
-            # ANNOUNCEMENTS
-            # =================================================================
+        "failed_payments": payments.get(
+            "failed_payments",
+            0,
+        ),
 
-            "announcement_count": (
-                announcement_statistics[
-                    "announcement_count"
-                ]
-            ),
+        "cancelled_payments": payments.get(
+            "cancelled_payments",
+            0,
+        ),
 
-            # =================================================================
-            # PAYMENTS
-            # =================================================================
+        "total_received_income": payments.get(
+            "total_received_income",
+            0,
+        ),
 
-            "total_payments": payment_statistics[
-                "total_payments"
-            ],
+        "pending_payment_amount": payments.get(
+            "pending_amount",
+            0,
+        ),
 
-            "pending_payments": payment_statistics[
-                "pending_payments"
-            ],
+        "membership_income": payments.get(
+            "membership_income",
+            0,
+        ),
 
-            "completed_payments": payment_statistics[
-                "completed_payments"
-            ],
+        "membership_payment_count": payments.get(
+            "membership_payment_count",
+            0,
+        ),
 
-            "failed_payments": payment_statistics[
-                "failed_payments"
-            ],
+        "support_income": payments.get(
+            "support_income",
+            0,
+        ),
 
-            "cancelled_payments": payment_statistics[
-                "cancelled_payments"
-            ],
-
-            "pending_payment_amount": (
-                payment_statistics[
-                    "pending_amount"
-                ]
-            ),
-
-            "total_received_income": (
-                payment_statistics[
-                    "total_received_income"
-                ]
-            ),
-
-            "membership_income": (
-                payment_statistics[
-                    "membership_income"
-                ]
-            ),
-
-            "support_income": (
-                payment_statistics[
-                    "support_income"
-                ]
-            ),
-        }
-
-        
+        "support_payment_count": payments.get(
+            "support_payment_count",
+            0,
+        ),
+    }

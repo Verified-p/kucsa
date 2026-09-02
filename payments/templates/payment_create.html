@@ -1,0 +1,534 @@
+{% extends "base.html" %}
+
+{% block title %}Membership Payment | KUCSA{% endblock %}
+
+{% block content %}
+
+<div class="container py-4 py-md-5">
+
+
+<div class="row justify-content-center">
+
+    <div class="col-12 col-md-8 col-lg-6">
+
+        <!-- =====================================================
+             PAYMENT CARD
+        ====================================================== -->
+
+        <div class="card border-0 shadow-sm">
+
+            <!-- =================================================
+                 HEADER
+            ================================================== -->
+
+            <div class="card-header bg-white border-0 text-center py-4">
+
+                <div
+                    class="rounded-circle bg-success bg-opacity-10
+                           d-inline-flex align-items-center
+                           justify-content-center mb-3"
+                    style="width: 72px; height: 72px;"
+                >
+                    <i
+                        class="bi bi-phone-fill text-success"
+                        style="font-size: 30px;"
+                    ></i>
+                </div>
+
+                <h4 class="fw-bold mb-1">
+                    KUCSA Membership Payment
+                </h4>
+
+                <p class="text-muted mb-0">
+                    Complete your KUCSA membership using M-Pesa
+                </p>
+
+            </div>
+
+            <!-- =================================================
+                 BODY
+            ================================================== -->
+
+            <div class="card-body p-4">
+
+                {% if already_paid %}
+
+                    <!-- =============================================
+                         ALREADY PAID
+                    ============================================== -->
+
+                    <div class="text-center py-3">
+
+                        <div
+                            class="rounded-circle bg-success bg-opacity-10
+                                   d-inline-flex align-items-center
+                                   justify-content-center mb-3"
+                            style="width: 72px; height: 72px;"
+                        >
+                            <i
+                                class="bi bi-check-circle-fill text-success"
+                                style="font-size: 34px;"
+                            ></i>
+                        </div>
+
+                        <h5 class="fw-bold text-success mb-2">
+                            Membership Already Verified
+                        </h5>
+
+                        <p class="text-muted mb-4">
+                            Your KUCSA membership payment has already
+                            been successfully verified.
+                        </p>
+
+                        {% if payment %}
+
+                            <div class="bg-light rounded-3 p-3 mb-4 text-start">
+
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">
+                                        Amount
+                                    </span>
+
+                                    <strong>
+                                        KES {{ payment.amount }}
+                                    </strong>
+                                </div>
+
+                                {% if payment.mpesa_receipt_number %}
+
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted">
+                                            M-Pesa Receipt
+                                        </span>
+
+                                        <strong>
+                                            {{ payment.mpesa_receipt_number }}
+                                        </strong>
+                                    </div>
+
+                                {% endif %}
+
+                                {% if payment.completed_at %}
+
+                                    <div class="d-flex justify-content-between">
+                                        <span class="text-muted">
+                                            Completed
+                                        </span>
+
+                                        <strong>
+                                            {{ payment.completed_at|date:"d M Y, H:i" }}
+                                        </strong>
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+                        {% endif %}
+
+                        <a
+                            href="{% url 'dashboard:dashboard' %}"
+                            class="btn btn-success w-100 py-2"
+                        >
+                            <i class="bi bi-speedometer2 me-2"></i>
+                            Go to Dashboard
+                        </a>
+
+                    </div>
+
+                {% else %}
+
+                    <!-- =============================================
+                         MEMBERSHIP FEE
+                    ============================================== -->
+
+                    <div class="text-center mb-4">
+
+                        <small class="text-muted d-block mb-1">
+                            Membership Fee
+                        </small>
+
+                        <h2 class="fw-bold text-success mb-1">
+                            KES {{ membership_fee }}
+                        </h2>
+
+                        <small class="text-muted">
+                            One-time KUCSA membership payment
+                        </small>
+
+                    </div>
+
+                    <!-- =============================================
+                         M-PESA INFORMATION
+                    ============================================== -->
+
+                    <div class="border rounded-3 p-3 mb-4">
+
+                        <div class="d-flex align-items-start">
+
+                            <div
+                                class="rounded-circle bg-success
+                                       bg-opacity-10
+                                       d-flex align-items-center
+                                       justify-content-center
+                                       flex-shrink-0 me-3"
+                                style="width: 46px; height: 46px;"
+                            >
+                                <i
+                                    class="bi bi-phone-fill text-success"
+                                    style="font-size: 21px;"
+                                ></i>
+                            </div>
+
+                            <div>
+
+                                <h6 class="fw-bold mb-1">
+                                    M-Pesa STK Push
+                                </h6>
+
+                                <p class="text-muted small mb-0">
+                                    Enter the M-Pesa phone number you
+                                    want to use. A payment request will
+                                    be sent directly to that phone.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- =============================================
+                         PAYMENT FORM
+                    ============================================== -->
+
+                    <form
+                        method="POST"
+                        action="{% url 'payments:payment_create_submit' %}"
+                        id="paymentForm"
+                        novalidate
+                    >
+
+                        {% csrf_token %}
+
+                        <!-- =========================================
+                             PHONE NUMBER
+                        ========================================== -->
+
+                        <div class="mb-4">
+
+                            <label
+                                for="phone_number"
+                                class="form-label fw-semibold"
+                            >
+                                M-Pesa Phone Number
+                            </label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+                                    <i class="bi bi-phone"></i>
+                                </span>
+
+                                <input
+                                    type="tel"
+                                    class="form-control"
+                                    id="phone_number"
+                                    name="phone_number"
+                                    placeholder="0712345678"
+                                    maxlength="13"
+                                    autocomplete="tel"
+                                    inputmode="numeric"
+                                    required
+                                    aria-describedby="phoneHelp phoneError"
+                                >
+
+                            </div>
+
+                            <div
+                                id="phoneHelp"
+                                class="form-text"
+                            >
+                                Accepted formats include
+                                0712345678, 0112345678,
+                                254712345678, or +254712345678.
+                            </div>
+
+                            <div
+                                id="phoneError"
+                                class="invalid-feedback"
+                            >
+                                Please enter a valid Kenyan M-Pesa
+                                phone number.
+                            </div>
+
+                        </div>
+
+                        <!-- =============================================
+                             PAYMENT SUMMARY
+                        ============================================== -->
+
+                        <div class="bg-light rounded-3 p-3 mb-4">
+
+                            <div class="d-flex justify-content-between">
+
+                                <span class="text-muted">
+                                    Membership
+                                </span>
+
+                                <span class="fw-semibold">
+                                    KUCSA Membership
+                                </span>
+
+                            </div>
+
+                            <hr class="my-2">
+
+                            <div class="d-flex justify-content-between">
+
+                                <span class="fw-semibold">
+                                    Total Amount
+                                </span>
+
+                                <span class="fw-bold text-success">
+                                    KES {{ membership_fee }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <!-- =============================================
+                             PAYMENT BUTTON
+                        ============================================== -->
+
+                        <button
+                            type="submit"
+                            class="btn btn-success w-100 py-2"
+                            id="payButton"
+                        >
+                            <i
+                                class="bi bi-phone-fill me-2"
+                            ></i>
+
+                            Pay KES {{ membership_fee }} with M-Pesa
+                        </button>
+
+                    </form>
+
+                    <!-- =============================================
+                         HOW PAYMENT WORKS
+                    ============================================== -->
+
+                    <div class="mt-4">
+
+                        <div class="alert alert-light border mb-0">
+
+                            <div class="d-flex align-items-start">
+
+                                <i
+                                    class="bi bi-info-circle text-success
+                                           me-2 mt-1"
+                                ></i>
+
+                                <div>
+
+                                    <div class="fw-semibold mb-1">
+                                        How the payment works
+                                    </div>
+
+                                    <small class="text-muted">
+
+                                        <span class="d-block mb-1">
+                                            <strong>1.</strong>
+                                            Enter your M-Pesa phone number.
+                                        </span>
+
+                                        <span class="d-block mb-1">
+                                            <strong>2.</strong>
+                                            Click
+                                            <strong>
+                                                Pay with M-Pesa
+                                            </strong>.
+                                        </span>
+
+                                        <span class="d-block mb-1">
+                                            <strong>3.</strong>
+                                            An STK Push will appear
+                                            on your phone.
+                                        </span>
+
+                                        <span class="d-block mb-1">
+                                            <strong>4.</strong>
+                                            Enter your M-Pesa PIN.
+                                        </span>
+
+                                        <span class="d-block mb-1">
+                                            <strong>5.</strong>
+                                            Safaricom processes the
+                                            transaction.
+                                        </span>
+
+                                        <span class="d-block">
+                                            <strong>6.</strong>
+                                            Your membership is activated
+                                            after successful verification.
+                                        </span>
+
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- =============================================
+                         SECURITY
+                    ============================================== -->
+
+                    <div class="text-center mt-4">
+
+                        <small class="text-muted">
+
+                            <i
+                                class="bi bi-shield-check text-success me-1"
+                            ></i>
+
+                            Your payment is processed securely
+                            through M-Pesa.
+
+                        </small>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <!-- =====================================================
+             FOOTER NOTE
+        ====================================================== -->
+
+        {% if not already_paid %}
+
+            <div class="text-center mt-3">
+
+                <small class="text-muted">
+                    KUCSA Membership &bull;
+                    Secure M-Pesa Payment
+                </small>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+```
+
+</div>
+
+<!-- =============================================================
+     PAYMENT FORM JAVASCRIPT
+============================================================== -->
+
+{% if not already_paid %}
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.getElementById("paymentForm");
+    const button = document.getElementById("payButton");
+    const phoneInput = document.getElementById("phone_number");
+    const phoneError = document.getElementById("phoneError");
+
+    if (!form || !button || !phoneInput) {
+        return;
+    }
+
+    /*
+     * Validate Kenyan phone numbers.
+     *
+     * Backend validation remains authoritative.
+     */
+
+    function isValidPhone(phone) {
+
+        const cleaned = phone.replace(/[\s()-]/g, "");
+
+        return (
+            /^07\d{8}$/.test(cleaned) ||
+            /^01\d{8}$/.test(cleaned) ||
+            /^\+2547\d{8}$/.test(cleaned) ||
+            /^\+2541\d{8}$/.test(cleaned) ||
+            /^2547\d{8}$/.test(cleaned) ||
+            /^2541\d{8}$/.test(cleaned)
+        );
+    }
+
+    /*
+     * Clear validation state when the member edits
+     * the phone number.
+     */
+
+    phoneInput.addEventListener("input", function () {
+
+        phoneInput.classList.remove("is-invalid");
+        phoneError.classList.remove("d-block");
+
+    });
+
+    /*
+     * Submit payment.
+     */
+
+    form.addEventListener("submit", function (event) {
+
+        const phone = phoneInput.value.trim();
+
+        if (!phone || !isValidPhone(phone)) {
+
+            event.preventDefault();
+
+            phoneInput.classList.add("is-invalid");
+            phoneError.classList.add("d-block");
+
+            phoneInput.focus();
+
+            return;
+        }
+
+        /*
+         * Prevent duplicate submissions.
+         *
+         * The backend also prevents another pending payment
+         * from being created.
+         */
+
+        button.disabled = true;
+
+        button.innerHTML = `
+            <span
+                class="spinner-border spinner-border-sm me-2"
+                role="status"
+                aria-hidden="true">
+            </span>
+            Sending STK Push...
+        `;
+
+    });
+
+});
+
+</script>
+
+{% endif %}
+
+{% endblock %}

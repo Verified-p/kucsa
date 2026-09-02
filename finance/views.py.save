@@ -1,0 +1,1420 @@
+
+# finance/views.py
+
+"""
+KUCSA Finance Views
+===================
+
+HTTP views for the KUCSA Finance application.
+
+Architecture
+------------
+
+    URL
+      ↓
+    VIEW
+      ↓
+    PERMISSION
+      ↓
+    SERVICE
+      ↓
+    MODEL
+
+The Finance application is responsible for:
+
+- Financial dashboard
+- Income
+- Expenses
+- Transactions
+- Categories
+- Reconciliation
+- Audit logs
+
+IMPORTANT
+---------
+
+Views should remain thin.
+
+All financial business logic must be handled by
+finance.services.
+
+The Payments application remains responsible for:
+c
+- M-Pesa STK Push
+- Safaricom authentication
+- Callback processing
+- Payment verification
+- Payment status
+
+Finance only records completed payments as income
+through the Finance service layer.
+"""
+
+from decimal import Decimal
+
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied, ValidationError
+from django.shortcuts import get_object_or_404, redirect, render
+
+from .forms import (
+    ExpenseForm,
+    FinancialCategoryForm,
+)
+from .models import (
+    Expense,
+    FinancialAuditLog,
+    FinancialCategory,
+    FinancialReconciliation,
+    FinancialTransaction,
+    
+)
+from django.db.models import Sum
+from .permissions import (
+    can_access_finance_dashboard,
+    can_manage_categories,
+    can_manage_expenses,
+    can_manage_finance,
+    can_view_audit_logs,
+    can_view_expenses,
+    can_view_financial_transactions,
+    can_view_reconciliation,
+)
+from .services import (
+    approve_expense,
+    create_category,
+    create_expense,
+    deactivate_category,
+    get_audit_logs,
+    get_financial_totals,
+    post_transaction,
+    reject_expense,
+    submit_expense,
+    update_category,
+    update_expense,
+    void_expense,
+    void_transaction,
+    pay_expense,
+)
+
+
+# =============================================================================
+# HELPERS
+# =============================================================================
+
+def _require_permission(user, permission):
+    """
+    Raise HTTP 403 when the user does not have the
+    required finance permission.
+    """
+    if not permission(user):
+        raise PermissionDenied(
+            "You do not have permission to access this finance area."
+        )
+
+
+def _redirect_to_expense_detail(expense):
+    """
+    Redirect to the expense detail page.
+    """
+    return redirect(
+        "finance:expense_detail",
+        pk=expense.pk,
+    )
+
+
+def _handle_validation_error(request, error):
+    """
+    Convert a service-layer ValidationError into a
+    user-friendly Django message.
+
+    Supports both standard ValidationError messages and
+    message dictionaries.
+    """
+    if hasattr(error, "message_dict"):
+        for field, errors in error.message_dict.items():
+            for message in errors:
+                messages.error(
+                    request,
+                    f"{field}: {message}",
+                )
+        return
+
+    messages.error(
+        request,
+        str(error),
+    )
+
+
+# =============================================================================
+# DASHBOARD
+# =============================================================================
+
+@login_required
+def dashboard(request):
+    """
+    Display the main finance dashboard.
+
+    Financial totals are calculated through the service layer.
+    """
+    _require_permission(
+        request.user,
+        can_access_finance_dashboard,
+    )
+
+    totals = get_financial_totals()
+
+    context = {
+        "posted_income": totals["income"],
+        "posted_expenses": totals["expenses"],
+        "balance": totals["balance"],
+
+        "transaction_count": (
+            FinancialTransaction.objects.count()
+        ),
+
+        "expense_count": (
+            Expense.objects.count()
+        ),
+
+        "pending_expenses": (
+            Expense.objects.filter(
+                status__in=[
+                    Expense.ExpenseStatus.SUBMITTED,
+                    Expense.ExpenseStatus.APPROVED,
+                ]
+            ).count()
+        ),
+
+        "category_count": (
+            FinancialCategory.objects.filter(
+                is_active=True,
+            ).count()
+        ),
+
+        "recent_transactions": (
+            FinancialTransaction.objects
+            .select_related(
+                "category",
+                "member",
+                "recorded_by",
+            )
+            .order_by(
+                "-transaction_date",
+                "-created_at",
+            )[:10]
+        ),
+
+        "recent_expenses": (
+            Expense.objects
+            .select_related(
+                "category",
+                "recorded_by",
+            )
+            .order_by(
+                "-expense_date",
+                "-created_at",
+            )[:10]
+        ),
+    }
+
+    return render(
+        request,
+        "finance/dashboard.html",
+        context,
+    )
+
+
+# =============================================================================
+# TRANSACTIONS
+# =============================================================================
+
+@login_required
+def transactions(request):
+    """
+    Display financial transactions with optional filters.
+    """
+    _require_permission(
+        request.user,
+        can_view_financial_transactions,
+    )
+
+    queryset = (
+        FinancialTransaction.objects
+        .select_related(
+            "category",
+            "member",
+            "recorded_by",
+            "payment",
+        )
+        .order_by(
+            "-transaction_date",
+            "-created_at",
+        )
+    )
+
+    transaction_type = request.GET.get("type")
+    status = request.GET.get("status")
+    source = request.GET.get("source")
+
+    if transaction_type:
+        queryset = queryset.filter(
+            transaction_type=transaction_type,
+        )
+
+    if status:
+        queryset = queryset.filter(
+            status=status,
+        )
+
+    if source:
+        queryset = queryset.filter(
+            payment_source=source,
+        )
+
+    context = {
+        "transactions": queryset,
+
+        "transaction_types": (
+            FinancialTransaction.TransactionType.choices
+        ),
+
+        "transaction_statuses": (
+            FinancialTransaction.TransactionStatus.choices
+        ),
+
+        "payment_sources": (
+            FinancialTransaction.PaymentSource.choices
+        ),
+
+        "selected_type": transaction_type,
+        "selected_status": status,
+        "selected_source": source,
+    }
+
+    return render(
+        request,
+        "finance/transactions.html",
+        context,
+    )
+
+
+@login_required
+def transaction_detail(request, pk):
+    """
+    Display a single financial transaction and
+    its audit history.
+    """
+    _require_permission(
+        request.user,
+        can_view_financial_transactions,
+    )
+
+    financial_transaction = get_object_or_404(
+        FinancialTransaction.objects.select_related(
+            "category",
+            "member",
+            "recorded_by",
+            "payment",
+        ),
+        pk=pk,
+    )
+
+    audit_logs = (
+        financial_transaction.audit_logs
+        .select_related("user")
+        .order_by("-created_at")
+    )
+
+    return render(
+        request,
+        "finance/transaction_detail.html",
+        {
+            "transaction": financial_transaction,
+            "audit_logs": audit_logs,
+        },
+    )
+
+
+# =============================================================================
+# TRANSACTION WORKFLOW
+# =============================================================================
+
+@login_required
+def transaction_post(request, pk):
+    """
+    Post a draft financial transaction.
+    """
+    _require_permission(
+        request.user,
+        can_manage_finance,
+    )
+
+    if request.method != "POST":
+        return redirect(
+            "finance:transaction_detail",
+            pk=pk,
+        )
+
+    financial_transaction = get_object_or_404(
+        FinancialTransaction,
+        pk=pk,
+    )
+
+    try:
+        post_transaction(
+            user=request.user,
+            financial_transaction=financial_transaction,
+        )
+
+        messages.success(
+            request,
+            "Financial transaction posted successfully.",
+        )
+
+    except ValidationError as error:
+        _handle_validation_error(
+            request,
+            error,
+        )
+
+    return redirect(
+        "finance:transaction_detail",
+        pk=pk,
+    )
+
+
+@login_required
+def transaction_void(request, pk):
+    """
+    Void a financial transaction.
+
+    Financial history is preserved.
+    """
+    _require_permission(
+        request.user,
+        can_manage_finance,
+    )
+
+    if request.method != "POST":
+        return redirect(
+            "finance:transaction_detail",
+            pk=pk,
+        )
+
+    financial_transaction = get_object_or_404(
+        FinancialTransaction,
+        pk=pk,
+    )
+
+    try:
+        void_transaction(
+            user=request.user,
+            financial_transaction=financial_transaction,
+        )
+
+        messages.success(
+            request,
+            "Financial transaction voided successfully.",
+        )
+
+    except ValidationError as error:
+        _handle_validation_error(
+            request,
+            error,
+        )
+
+    return redirect(
+        "finance:transaction_detail",
+        pk=pk,
+    )
+
+
+# =============================================================================
+# INCOME
+# =============================================================================
+
+@login_required
+def income(request):
+    """
+    Display income transactions.
+
+    Payment-originated income is created only through
+    the Finance service layer after the payment has
+    already been completed and verified.
+    """
+    _require_permission(
+        request.user,
+        can_view_financial_transactions,
+    )
+
+    income_transactions = (
+        FinancialTransaction.objects
+        .filter(
+            transaction_type=(
+                FinancialTransaction.TransactionType.INCOME
+            )
+        )
+        .select_related(
+            "category",
+            "member",
+            "recorded_by",
+            "payment",
+        )
+        .order_by(
+            "-transaction_date",
+            "-created_at",
+        )
+    )
+
+    total_income = (
+        income_transactions
+        .filter(
+            status=(
+                FinancialTransaction.TransactionStatus.POSTED
+            )
+        )
+        .aggregate(
+            total=Sum("amount")
+        )
+        .get("total")
+        or Decimal("0.00")
+    )
+
+    return render(
+        request,
+        "finance/income.html",
+        {
+            "income_transactions": income_transactions,
+            "total_income": total_income,
+        },
+    )
+
+
+# =============================================================================
+# EXPENSES
+# =============================================================================
+
+@login_required
+def expenses(request):
+    """
+    Display expenses with an optional status filter.
+    """
+    _require_permission(
+        request.user,
+        can_view_expenses,
+    )
+
+    queryset = (
+        Expense.objects
+        .select_related(
+            "category",
+            "recorded_by",
+            "submitted_by",
+            "approved_by",
+            "paid_by",
+        )
+        .order_by(
+            "-expense_date",
+            "-created_at",
+        )
+    )
+
+    status = request.GET.get("status")
+
+    if status:
+        queryset = queryset.filter(
+            status=status,
+        )
+
+    return render(
+        request,
+        "finance/expenses.html",
+        {
+            "expenses": queryset,
+
+            "expense_statuses": (
+                Expense.ExpenseStatus.choices
+            ),
+
+            "selected_status": status,
+        },
+    )
+
+
+@login_required
+def expense_detail(request, pk):
+    """
+    Display a single expense and its audit history.
+    """
+    _require_permission(
+        request.user,
+        can_view_expenses,
+    )
+
+    expense = get_object_or_404(
+        Expense.objects.select_related(
+            "category",
+            "transaction",
+            "recorded_by",
+            "submitted_by",
+            "approved_by",
+            "rejected_by",
+            "paid_by",
+            "voided_by",
+        ),
+        pk=pk,
+    )
+
+    audit_logs = (
+        expense.audit_logs
+        .select_related("user")
+        .order_by("-created_at")
+    )
+
+    return render(
+        request,
+        "finance/expense_detail.html",
+        {
+            "expense": expense,
+            "audit_logs": audit_logs,
+        },
+    )
+
+
+# =============================================================================
+# CREATE EXPENSE
+# =============================================================================
+
+@login_required
+def expense_create(request):
+    """
+    Create a new expense.
+
+    Business logic is handled by create_expense().
+    """
+    _require_permission(
+        request.user,
+        can_manage_expenses,
+    )
+
+    if request.method == "POST":
+        form = ExpenseForm(
+            request.POST,
+            request.FILES,
+        )
+
+        if form.is_valid():
+            cleaned = form.cleaned_data
+
+            try:
+                expense = create_expense(
+                    user=request.user,
+                    category=cleaned["category"],
+                    amount=cleaned["amount"],
+                    title=cleaned["title"],
+                    description=cleaned["description"],
+                    payee=cleaned.get("payee", ""),
+                    payment_source=cleaned.get(
+                        "payment_source"
+                    ),
+                    expense_date=cleaned.get(
+                        "expense_date"
+                    ),
+                    receipt=cleaned.get(
+                        "receipt"
+                    ),
+                    notes=cleaned.get(
+                        "notes",
+                        "",
+                    ),
+                )
+
+                messages.success(
+                    request,
+                    "Expense created successfully.",
+                )
+
+                return _redirect_to_expense_detail(
+                    expense
+                )
+
+            except ValidationError as error:
+                _handle_validation_error(
+                    request,
+                    error,
+                )
+
+    else:
+        form = ExpenseForm()
+
+    return render(
+        request,
+        "finance/expense_form.html",
+        {
+            "form": form,
+            "expense": None,
+            "page_title": "Create Expense",
+        },
+    )
+
+
+# =============================================================================
+# EDIT EXPENSE
+# =============================================================================
+
+@login_required
+def expense_edit(request, pk):
+    """
+    Edit an expense while it is still in DRAFT status.
+
+    Business logic is handled by update_expense().
+    """
+    _require_permission(
+        request.user,
+        can_manage_expenses,
+    )
+
+    expense = get_object_or_404(
+        Expense,
+        pk=pk,
+    )
+
+    if expense.status != Expense.ExpenseStatus.DRAFT:
+        messages.error(
+            request,
+            "Only draft expenses can be edited.",
+        )
+        return _redirect_to_expense_detail(
+            expense
+        )
+
+    if request.method == "POST":
+        form = ExpenseForm(
+            request.POST,
+            request.FILES,
+            instance=expense,
+        )
+
+        if form.is_valid():
+            cleaned = form.cleaned_data
+
+            try:
+                expense = update_expense(
+                    user=request.user,
+                    expense=expense,
+                    category=cleaned.get("category"),
+                    amount=cleaned.get("amount"),
+                    title=cleaned.get("title"),
+                    description=cleaned.get(
+                        "description"
+                    ),
+                    payee=cleaned.get("payee"),
+                    payment_source=cleaned.get(
+                        "payment_source"
+                    ),
+                    expense_date=cleaned.get(
+                        "expense_date"
+                    ),
+                    receipt=cleaned.get(
+                        "receipt"
+                    ),
+                    notes=cleaned.get(
+                        "notes"
+                    ),
+                )
+
+                messages.success(
+                    request,
+                    "Expense updated successfully.",
+                )
+
+                return _redirect_to_expense_detail(
+                    expense
+                )
+
+            except ValidationError as error:
+                _handle_validation_error(
+                    request,
+                    error,
+                )
+
+    else:
+        form = ExpenseForm(
+            instance=expense,
+        )
+
+    return render(
+        request,
+        "finance/expense_form.html",
+        {
+            "form": form,
+            "expense": expense,
+            "page_title": "Edit Expense",
+        },
+    )
+
+
+# =============================================================================
+# SUBMIT EXPENSE
+# =============================================================================
+
+@login_required
+def expense_submit(request, pk):
+    """
+    Submit a draft expense for approval.
+    """
+    _require_permission(
+        request.user,
+        can_manage_expenses,
+    )
+
+    if request.method != "POST":
+        return redirect(
+            "finance:expense_detail",
+            pk=pk,
+        )
+
+    expense = get_object_or_404(
+        Expense,
+        pk=pk,
+    )
+
+    try:
+        submit_expense(
+            user=request.user,
+            expense=expense,
+        )
+
+        messages.success(
+            request,
+            "Expense submitted for approval.",
+        )
+
+    except ValidationError as error:
+        _handle_validation_error(
+            request,
+            error,
+        )
+
+    return _redirect_to_expense_detail(
+        expense
+    )
+
+
+# =============================================================================
+# APPROVE EXPENSE
+# =============================================================================
+
+@login_required
+def expense_approve(request, pk):
+    """
+    Approve a submitted expense.
+    """
+    _require_permission(
+        request.user,
+        can_manage_finance,
+    )
+
+    if request.method != "POST":
+        return redirect(
+            "finance:expense_detail",
+            pk=pk,
+        )
+
+    expense = get_object_or_404(
+        Expense,
+        pk=pk,
+    )
+
+    try:
+        approve_expense(
+            user=request.user,
+            expense=expense,
+        )
+
+        messages.success(
+            request,
+            "Expense approved successfully.",
+        )
+
+    except ValidationError as error:
+        _handle_validation_error(
+            request,
+            error,
+        )
+
+    return _redirect_to_expense_detail(
+        expense
+    )
+
+
+# =============================================================================
+# REJECT EXPENSE
+# =============================================================================
+
+@login_required
+def expense_reject(request, pk):
+    """
+    Reject a submitted expense.
+    """
+    _require_permission(
+        request.user,
+        can_manage_finance,
+    )
+
+    if request.method != "POST":
+        return redirect(
+            "finance:expense_detail",
+            pk=pk,
+        )
+
+    expense = get_object_or_404(
+        Expense,
+        pk=pk,
+    )
+
+    reason = request.POST.get(
+        "reason",
+        "",
+    ).strip()
+
+    if not reason:
+        messages.error(
+            request,
+            "A rejection reason is required.",
+        )
+        return _redirect_to_expense_detail(
+            expense
+        )
+
+    try:
+        reject_expense(
+            user=request.user,
+            expense=expense,
+            reason=reason,
+        )
+
+        messages.warning(
+            request,
+            "Expense rejected.",
+        )
+
+    except ValidationError as error:
+        _handle_validation_error(
+            request,
+            error,
+        )
+
+    return _redirect_to_expense_detail(
+        expense
+    )
+
+
+# =============================================================================
+# PAY EXPENSE
+# =============================================================================
+
+@login_required
+def expense_pay(request, pk):
+    """
+    Pay an approved expense.
+
+    The Finance service layer:
+
+    1. Validates the expense.
+    2. Marks it as PAID.
+    3. Records who paid it.
+    4. Creates the corresponding ledger transaction.
+    5. Posts the ledger transaction.
+    6. Links the transaction to the expense.
+    7. Creates the audit record.
+    """
+    _require_permission(
+        request.user,
+        can_manage_finance,
+    )
+
+    if request.method != "POST":
+        return redirect(
+            "finance:expense_detail",
+            pk=pk,
+        )
+
+    expense = get_object_or_404(
+        Expense,
+        pk=pk,
+    )
+
+    payment_reference = request.POST.get(
+        "payment_reference",
+        "",
+    ).strip()
+
+    # The current service uses expense.payment_reference
+    # when creating the ledger transaction.
+    #
+    # Set it before calling the service so the reference
+    # is available to pay_expense().
+    if payment_reference:
+        expense.payment_reference = payment_reference
+
+    try:
+        expense = pay_expense(
+            user=request.user,
+            expense=expense,
+        )
+
+        messages.success(
+            request,
+            "Expense paid and posted to the financial ledger.",
+        )
+
+    except ValidationError as error:
+        _handle_validation_error(
+            request,
+            error,
+        )
+
+    return _redirect_to_expense_detail(
+        expense
+    )
+
+
+# =============================================================================
+# VOID EXPENSE
+# =============================================================================
+
+@login_required
+def expense_void(request, pk):
+    """
+    Void an expense.
+
+    The Finance service layer also voids the linked
+    ledger transaction when one exists.
+    """
+    _require_permission(
+        request.user,
+        can_manage_finance,
+    )
+
+    if request.method != "POST":
+        return redirect(
+            "finance:expense_detail",
+            pk=pk,
+        )
+
+    expense = get_object_or_404(
+        Expense,
+        pk=pk,
+    )
+
+    reason = request.POST.get(
+        "reason",
+        "",
+    ).strip()
+
+    if not reason:
+        messages.error(
+            request,
+            "A void reason is required.",
+        )
+        return _redirect_to_expense_detail(
+            expense
+        )
+
+    try:
+        void_expense(
+            user=request.user,
+            expense=expense,
+            reason=reason,
+        )
+
+        messages.warning(
+            request,
+            "Expense voided successfully.",
+        )
+
+    except ValidationError as error:
+        _handle_validation_error(
+            request,
+            error,
+        )
+
+    return _redirect_to_expense_detail(
+        expense
+    )
+
+
+# =============================================================================
+# CATEGORIES
+# =============================================================================
+
+@login_required
+def categories(request):
+    """
+    Display all financial categories.
+    """
+    _require_permission(
+        request.user,
+        can_manage_categories,
+    )
+
+    category_queryset = (
+        FinancialCategory.objects
+        .order_by(
+            "category_type",
+            "name",
+        )
+    )
+
+    return render(
+        request,
+        "finance/categories.html",
+        {
+            "categories": category_queryset,
+        },
+    )
+
+
+@login_required
+def category_list(request):
+    """
+    Backwards-compatible alias for categories().
+
+    This allows existing URLs that use category_list
+    to continue working.
+    """
+    return categories(request)
+
+
+# =============================================================================
+# CREATE CATEGORY
+# =============================================================================
+
+@login_required
+def category_create(request):
+    """
+    Create a new financial category.
+
+    Business logic is handled by create_category().
+    """
+    _require_permission(
+        request.user,
+        can_manage_categories,
+    )
+
+    if request.method == "POST":
+        form = FinancialCategoryForm(
+            request.POST,
+        )
+
+        if form.is_valid():
+            cleaned = form.cleaned_data
+
+            try:
+                category = create_category(
+                    user=request.user,
+                    name=cleaned["name"],
+                    category_type=cleaned[
+                        "category_type"
+                    ],
+                    description=cleaned.get(
+                        "description",
+                        "",
+                    ),
+                    is_active=cleaned.get(
+                        "is_active",
+                        True,
+                    ),
+                    is_system=cleaned.get(
+                        "is_system",
+                        False,
+                    ),
+                )
+
+                messages.success(
+                    request,
+                    (
+                        f"Category '{category.name}' "
+                        "created successfully."
+                    ),
+                )
+
+                return redirect(
+                    "finance:categories"
+                )
+
+            except ValidationError as error:
+                _handle_validation_error(
+                    request,
+                    error,
+                )
+
+    else:
+        form = FinancialCategoryForm()
+
+    return render(
+        request,
+        "finance/category_form.html",
+        {
+            "form": form,
+            "title": "Create Financial Category",
+        },
+    )
+
+
+# =============================================================================
+# UPDATE CATEGORY
+# =============================================================================
+
+@login_required
+def category_update(request, pk):
+    """
+    Update an existing financial category.
+
+    System categories cannot be modified.
+    """
+    _require_permission(
+        request.user,
+        can_manage_categories,
+    )
+
+    category = get_object_or_404(
+        FinancialCategory,
+        pk=pk,
+    )
+
+    if request.method == "POST":
+        form = FinancialCategoryForm(
+            request.POST,
+            instance=category,
+        )
+
+        if form.is_valid():
+            cleaned = form.cleaned_data
+
+            try:
+                category = update_category(
+                    user=request.user,
+                    category=category,
+                    name=cleaned.get("name"),
+                    description=cleaned.get(
+                        "description"
+                    ),
+                    is_active=cleaned.get(
+                        "is_active"
+                    ),
+                )
+
+                messages.success(
+                    request,
+                    (
+                        f"Category '{category.name}' "
+                        "updated successfully."
+                    ),
+                )
+
+                return redirect(
+                    "finance:categories"
+                )
+
+            except ValidationError as error:
+                _handle_validation_error(
+                    request,
+                    error,
+                )
+
+    else:
+        form = FinancialCategoryForm(
+            instance=category,
+        )
+
+    return render(
+        request,
+        "finance/category_form.html",
+        {
+            "form": form,
+            "category": category,
+            "title": "Update Financial Category",
+        },
+    )
+
+
+# =============================================================================
+# TOGGLE CATEGORY
+# =============================================================================
+
+@login_required
+def category_toggle(request, pk):
+    """
+    Activate or deactivate a financial category.
+
+    System categories cannot be deactivated.
+
+    The actual mutation is handled by the service layer.
+    """
+    _require_permission(
+        request.user,
+        can_manage_categories,
+    )
+
+    if request.method != "POST":
+        return redirect(
+            "finance:categories"
+        )
+
+    category = get_object_or_404(
+        FinancialCategory,
+        pk=pk,
+    )
+
+    try:
+        if category.is_active:
+            category = deactivate_category(
+                user=request.user,
+                category=category,
+            )
+
+            messages.success(
+                request,
+                (
+                    f"Category '{category.name}' "
+                    "has been deactivated."
+                ),
+            )
+
+        else:
+            # The current service layer only provides
+            # deactivate_category(). Therefore activation
+            # is handled explicitly here only if your model
+            # permits it.
+            #
+            # For a strict service architecture, create an
+            # activate_category() service before enabling
+            # this branch.
+            raise ValidationError(
+                "Category activation is not currently "
+                "implemented in the finance service layer."
+            )
+
+    except ValidationError as error:
+        _handle_validation_error(
+            request,
+            error,
+        )
+
+    return redirect(
+        "finance:categories"
+    )
+
+
+# =============================================================================
+# RECONCILIATION
+# =============================================================================
+
+@login_required
+def reconciliation(request):
+    """
+    Display financial reconciliations.
+    """
+    _require_permission(
+        request.user,
+        can_view_reconciliation,
+    )
+
+    reconciliations = (
+        FinancialReconciliation.objects
+        .select_related(
+            "prepared_by",
+            "reconciled_by",
+        )
+        .order_by(
+            "-period_end",
+            "-created_at",
+        )
+    )
+
+    return render(
+        request,
+        "finance/reconciliation.html",
+        {
+            "reconciliations": reconciliations,
+        },
+    )
+
+
+@login_required
+def reconciliation_detail(request, pk):
+    """
+    Display a single reconciliation and its audit history.
+    """
+    _require_permission(
+        request.user,
+        can_view_reconciliation,
+    )
+
+    reconciliation_record = get_object_or_404(
+        FinancialReconciliation.objects.select_related(
+            "prepared_by",
+            "reconciled_by",
+        ),
+        pk=pk,
+    )
+
+    audit_logs = (
+        reconciliation_record.audit_logs
+        .select_related("user")
+        .order_by("-created_at")
+    )
+
+    return render(
+        request,
+        "finance/reconciliation_detail.html",
+        {
+            "reconciliation": reconciliation_record,
+            "audit_logs": audit_logs,
+        },
+    )
+
+
+# =============================================================================
+# AUDIT LOGS
+# =============================================================================
+
+@login_required
+def audit_logs(request):
+    """
+    Display financial audit history.
+
+    Audit logs are read-only.
+    """
+    _require_permission(
+        request.user,
+        can_view_audit_logs,
+    )
+
+    action = request.GET.get(
+        "action"
+    )
+
+    logs = get_audit_logs(
+        user=request.user,
+    )
+
+    if action:
+        logs = logs.filter(
+            action=action,
+        )
+
+    return render(
+        request,
+        "finance/audit_logs.html",
+        {
+            "audit_logs": logs,
+            "actions": (
+                FinancialAuditLog.Action.choices
+            ),
+            "selected_action": action,
+        },
+    )

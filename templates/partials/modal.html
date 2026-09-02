@@ -1,0 +1,129 @@
+<!-- Reusable Confirmation Modal -->
+
+<div
+    class="modal fade"
+    id="confirmationModal"
+    tabindex="-1"
+    aria-labelledby="confirmationModalLabel"
+    aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <!-- Header -->
+
+            <div class="modal-header">
+
+                <h5
+                    class="modal-title"
+                    id="confirmationModalLabel">
+
+                    Confirmation
+
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close">
+                </button>
+
+            </div>
+
+            <!-- Body -->
+
+            <div
+                class="modal-body"
+                id="confirmationModalBody">
+
+                Are you sure you want to continue?
+
+            </div>
+
+            <!-- Footer -->
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Cancel
+
+                </button>
+
+                <a
+                    href="#"
+                    class="btn btn-danger"
+                    id="confirmationModalButton">
+
+                    Confirm
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const confirmationModal =
+        document.getElementById("confirmationModal");
+
+    confirmationModal.addEventListener(
+        "show.bs.modal",
+        function (event) {
+
+            const button = event.relatedTarget;
+
+            const title =
+                button.getAttribute("data-modal-title");
+
+            const message =
+                button.getAttribute("data-modal-message");
+
+            const url =
+                button.getAttribute("data-modal-url");
+
+            const btnClass =
+                button.getAttribute("data-modal-class");
+
+            const btnText =
+                button.getAttribute("data-modal-button");
+
+            document.getElementById(
+                "confirmationModalLabel"
+            ).textContent = title || "Confirmation";
+
+            document.getElementById(
+                "confirmationModalBody"
+            ).textContent =
+                message || "Are you sure you want to continue?";
+
+            const confirmButton =
+                document.getElementById(
+                    "confirmationModalButton"
+                );
+
+            confirmButton.href = url || "#";
+
+            confirmButton.textContent =
+                btnText || "Confirm";
+
+            confirmButton.className =
+                "btn " + (btnClass || "btn-danger");
+
+        });
+
+});
+
+</script>

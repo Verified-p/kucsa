@@ -1,0 +1,159 @@
+
+<div class="row g-4 mb-4">
+
+    <!-- =====================================================
+         TOTAL MEMBERS
+    ====================================================== -->
+
+    <div class="col-lg-3 col-md-6">
+
+        <div class="card border-0 shadow-sm h-100">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <h6 class="text-muted mb-2">
+                            Total Members
+                        </h6>
+
+                        <h2 class="fw-bold mb-0">
+                            {{ total_members|default:"0" }}
+                        </h2>
+
+                    </div>
+
+                    <div class="text-primary">
+
+                        <i class="bi bi-people-fill display-5"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ACTIVE MEMBERS
+    ====================================================== -->
+
+    <div class="col-lg-3 col-md-6">
+
+        <div class="card border-0 shadow-sm h-100">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <h6 class="text-muted mb-2">
+                            Active Members
+                        </h6>
+
+                        <h2 class="fw-bold text-success mb-0">
+                            {{ active_members|default:"0" }}
+                        </h2>
+
+                    </div>
+
+                    <div class="text-success">
+
+                        <i class="bi bi-person-check-fill display-5"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         PENDING MEMBERS
+    ====================================================== -->
+
+    <div class="col-lg-3 col-md-6">
+
+        <div class="card border-0 shadow-sm h-100">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <h6 class="text-muted mb-2">
+                            Pending Members
+                        </h6>
+
+                        <h2 class="fw-bold text-warning mb-0">
+                            {{ pending_members|default:"0" }}
+                        </h2>
+
+                    </div>
+
+                    <div class="text-warning">
+
+                        <i class="bi bi-hourglass-split display-5"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         EXECUTIVE TEAM
+    ====================================================== -->
+
+    <div class="col-lg-3 col-md-6">
+
+        <div class="card border-0 shadow-sm h-100">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <h6 class="text-muted mb-2">
+                            Executive Team
+                        </h6>
+
+                        <h2 class="fw-bold text-info mb-0">
+                            {{ executives|default:"0" }}
+                        </h2>
+
+                    </div>
+
+                    <div class="text-info">
+
+                        <i class="bi bi-person-badge-fill display-5"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

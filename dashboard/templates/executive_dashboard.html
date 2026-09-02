@@ -1,0 +1,1489 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+Executive Dashboard | KUCSA Platform
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- =====================================================
+         WELCOME SECTION
+    ====================================================== -->
+
+    <div class="row mb-4">
+        <div class="col-12">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                        <div>
+
+                            <h2 class="fw-bold mb-1">
+                                Welcome,
+                                {{ user.get_full_name|default:user.username }}
+                            </h2>
+
+                            <p class="text-muted mb-0">
+                                KUCSA Executive Management Dashboard
+                            </p>
+
+                        </div>
+
+                        <!-- USER ROLE -->
+
+                        <div>
+
+                            {% if current_executive %}
+
+                                <span class="badge bg-primary fs-6 px-3 py-2">
+
+                                    <i class="bi bi-person-badge-fill me-1"></i>
+
+                                    {{ current_executive.role }}
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary fs-6 px-3 py-2">
+
+                                    <i class="bi bi-shield-check me-1"></i>
+
+                                    {{ user.get_role_display }}
+
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- =====================================================
+         TREASURER FINANCE NOTICE
+         Visible only to Treasurer
+    ====================================================== -->
+
+    {% if is_treasurer %}
+
+    <div class="row mb-4">
+
+        <div class="col-12">
+
+            <div class="alert alert-success border-0 shadow-sm mb-0">
+
+                <div class="d-flex align-items-start">
+
+                    <i class="bi bi-wallet2 fs-4 me-3"></i>
+
+                    <div class="flex-grow-1">
+
+                        <h6 class="fw-bold mb-1">
+                            Treasurer Finance Management
+                        </h6>
+
+                        <p class="mb-2 small">
+                            You have Treasurer-level access to KUCSA financial
+                            management. Use the Finance module to monitor
+                            income, expenses, transactions, reconciliation
+                            and financial records.
+                        </p>
+
+                        <a
+                            href="{% url 'finance:dashboard' %}"
+                            class="btn btn-success btn-sm">
+
+                            <i class="bi bi-wallet2 me-1"></i>
+                            Open Finance Dashboard
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         MEMBERSHIP STATISTICS
+    ====================================================== -->
+
+    <div class="row g-4 mb-4">
+
+        <!-- TOTAL MEMBERS -->
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <h6 class="text-muted mb-2">
+                                Total Members
+                            </h6>
+
+                            <h3 class="fw-bold mb-0">
+                                {{ total_members|default:0 }}
+                            </h3>
+
+                        </div>
+
+                        <i class="bi bi-people-fill display-5 text-primary"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTIVE MEMBERS -->
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <h6 class="text-muted mb-2">
+                                Active Members
+                            </h6>
+
+                            <h3 class="fw-bold mb-0">
+                                {{ verified_members|default:0 }}
+                            </h3>
+
+                        </div>
+
+                        <i class="bi bi-person-check-fill display-5 text-success"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PENDING MEMBERS -->
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <h6 class="text-muted mb-2">
+                                Pending Members
+                            </h6>
+
+                            <h3 class="fw-bold mb-0">
+                                {{ pending_members|default:0 }}
+                            </h3>
+
+                        </div>
+
+                        <i class="bi bi-hourglass-split display-5 text-warning"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- EXECUTIVE TEAM -->
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <h6 class="text-muted mb-2">
+                                Executive Team
+                            </h6>
+
+                            <h3 class="fw-bold mb-0">
+                                {{ executives|default:0 }}
+                            </h3>
+
+                        </div>
+
+                        <i class="bi bi-person-badge-fill display-5 text-info"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ADDITIONAL MEMBERSHIP STATUS
+    ====================================================== -->
+
+    <div class="row g-4 mb-4">
+
+        <!-- EXPIRED -->
+
+        <div class="col-lg-4 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <h6 class="text-muted mb-1">
+                                Expired Memberships
+                            </h6>
+
+                            <h4 class="fw-bold mb-0">
+                                {{ expired_members|default:0 }}
+                            </h4>
+
+                        </div>
+
+                        <i class="bi bi-calendar-x-fill fs-2 text-danger"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SUSPENDED -->
+
+        <div class="col-lg-4 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <h6 class="text-muted mb-1">
+                                Suspended Memberships
+                            </h6>
+
+                            <h4 class="fw-bold mb-0">
+                                {{ suspended_members|default:0 }}
+                            </h4>
+
+                        </div>
+
+                        <i class="bi bi-slash-circle-fill fs-2 text-danger"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SYSTEM USERS -->
+
+        <div class="col-lg-4 col-md-12">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <h6 class="text-muted mb-1">
+                                Verified Users
+                            </h6>
+
+                            <h4 class="fw-bold mb-0">
+                                {{ verified_users|default:0 }}
+                            </h4>
+
+                        </div>
+
+                        <i class="bi bi-patch-check-fill fs-2 text-success"></i>
+
+                    </div>
+
+                    <small class="text-muted">
+
+                        {{ pending_users|default:0 }}
+                        user{{ pending_users|pluralize }}
+                        awaiting verification.
+
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         TREASURER FINANCE OVERVIEW
+         Visible only to Treasurer
+    ====================================================== -->
+
+    {% if is_treasurer %}
+
+    <div class="row mb-4">
+
+        <div class="col-12">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-header bg-success text-white py-3">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div class="d-flex align-items-center">
+
+                            <i class="bi bi-wallet2 me-2"></i>
+
+                            <span class="fw-semibold">
+                                Finance Overview
+                            </span>
+
+                        </div>
+
+                        <span class="badge bg-light text-success">
+                            Treasurer
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <!-- FINANCIAL SUMMARY -->
+
+                    <div class="row g-4 mb-4">
+
+                        <!-- TOTAL RECEIVED -->
+
+                        <div class="col-xl-4 col-md-6">
+
+                            <div class="card border-0 bg-light h-100">
+
+                                <div class="card-body">
+
+                                    <div class="d-flex justify-content-between align-items-center">
+
+                                        <div>
+
+                                            <h6 class="text-muted mb-2">
+                                                Total Received Income
+                                            </h6>
+
+                                            <h3 class="fw-bold text-success mb-0">
+
+                                                KES
+                                                {{ total_received_income|default:"0.00" }}
+
+                                            </h3>
+
+                                        </div>
+
+                                        <i class="bi bi-cash-stack fs-1 text-success"></i>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- PENDING -->
+
+                        <div class="col-xl-4 col-md-6">
+
+                            <div class="card border-0 bg-light h-100">
+
+                                <div class="card-body">
+
+                                    <div class="d-flex justify-content-between align-items-center">
+
+                                        <div>
+
+                                            <h6 class="text-muted mb-2">
+                                                Pending Payments
+                                            </h6>
+
+                                            <h3 class="fw-bold text-warning mb-0">
+
+                                                KES
+                                                {{ pending_payment_amount|default:"0.00" }}
+
+                                            </h3>
+
+                                        </div>
+
+                                        <i class="bi bi-hourglass-split fs-1 text-warning"></i>
+
+                                    </div>
+
+                                    <small class="text-muted">
+                                        {{ pending_payments|default:0 }}
+                                        pending payment{{ pending_payments|pluralize }}.
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- COMPLETED PAYMENTS -->
+
+                        <div class="col-xl-4 col-md-12">
+
+                            <div class="card border-0 bg-light h-100">
+
+                                <div class="card-body">
+
+                                    <div class="d-flex justify-content-between align-items-center">
+
+                                        <div>
+
+                                            <h6 class="text-muted mb-2">
+                                                Completed Payments
+                                            </h6>
+
+                                            <h3 class="fw-bold mb-0">
+                                                {{ completed_payments|default:0 }}
+                                            </h3>
+
+                                        </div>
+
+                                        <i class="bi bi-check-circle-fill fs-1 text-success"></i>
+
+                                    </div>
+
+                                    <small class="text-muted">
+                                        Successfully completed payments.
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PAYMENT CATEGORIES -->
+
+                    <div class="row g-4 mb-4">
+
+                        <!-- MEMBERSHIP INCOME -->
+
+                        <div class="col-lg-6">
+
+                            <div class="card border h-100">
+
+                                <div class="card-body">
+
+                                    <div class="d-flex justify-content-between align-items-center">
+
+                                        <div>
+
+                                            <h6 class="text-muted mb-2">
+                                                Membership Income
+                                            </h6>
+
+                                            <h4 class="fw-bold mb-1">
+                                                KES
+                                                {{ membership_income|default:"0.00" }}
+                                            </h4>
+
+                                            <small class="text-muted">
+                                                {{ membership_payment_count|default:0 }}
+                                                payment{{ membership_payment_count|pluralize }}
+                                            </small>
+
+                                        </div>
+
+                                        <i class="bi bi-person-badge fs-2 text-primary"></i>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- SUPPORT INCOME -->
+
+                        <div class="col-lg-6">
+
+                            <div class="card border h-100">
+
+                                <div class="card-body">
+
+                                    <div class="d-flex justify-content-between align-items-center">
+
+                                        <div>
+
+                                            <h6 class="text-muted mb-2">
+                                                Support Income
+                                            </h6>
+
+                                            <h4 class="fw-bold mb-1">
+                                                KES
+                                                {{ support_income|default:"0.00" }}
+                                            </h4>
+
+                                            <small class="text-muted">
+                                                {{ support_payment_count|default:0 }}
+                                                payment{{ support_payment_count|pluralize }}
+                                            </small>
+
+                                        </div>
+
+                                        <i class="bi bi-heart-fill fs-2 text-danger"></i>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FINANCE QUICK ACTIONS -->
+
+                    <div>
+
+                        <h6 class="fw-bold mb-3">
+                            Finance Management
+                        </h6>
+
+                        <div class="row g-3">
+
+                            <div class="col-xl-3 col-md-6">
+
+                                <a
+                                    href="{% url 'finance:dashboard' %}"
+                                    class="btn btn-success w-100">
+
+                                    <i class="bi bi-speedometer2 me-1"></i>
+                                    Finance Dashboard
+
+                                </a>
+
+                            </div>
+
+
+                            <div class="col-xl-3 col-md-6">
+
+                                <a
+                                    href="{% url 'finance:income_list' %}"
+                                    class="btn btn-outline-success w-100">
+
+                                    <i class="bi bi-arrow-down-circle me-1"></i>
+                                    Income
+
+                                </a>
+
+                            </div>
+
+
+                            <div class="col-xl-3 col-md-6">
+
+                                <a
+                                    href="{% url 'finance:expense_list' %}"
+                                    class="btn btn-outline-danger w-100">
+
+                                    <i class="bi bi-arrow-up-circle me-1"></i>
+                                    Expenses
+
+                                </a>
+
+                            </div>
+
+
+                            <div class="col-xl-3 col-md-6">
+
+                                <a
+                                    href="{% url 'finance:transaction_list' %}"
+                                    class="btn btn-outline-primary w-100">
+
+                                    <i class="bi bi-arrow-left-right me-1"></i>
+                                    Transactions
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         QUICK MANAGEMENT
+    ====================================================== -->
+
+    <div class="row g-4 mb-4">
+
+        <!-- MEMBERS -->
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body text-center">
+
+                    <i class="bi bi-people display-4 text-primary"></i>
+
+                    <h5 class="fw-bold mt-3">
+                        Members
+                    </h5>
+
+                    <p class="text-muted small">
+                        Manage KUCSA members, membership
+                        records and profiles.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="btn btn-primary w-100"
+                        disabled>
+
+                        <i class="bi bi-hourglass-split me-1"></i>
+                        Coming Soon
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- EVENTS -->
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body text-center">
+
+                    <i class="bi bi-calendar-event-fill display-4 text-success"></i>
+
+                    <h5 class="fw-bold mt-3">
+                        Events
+                    </h5>
+
+                    <p class="text-muted small">
+                        Organize workshops, meetings,
+                        training and KUCSA activities.
+                    </p>
+
+                    <a
+                        href="{% url 'events:list' %}"
+                        class="btn btn-success w-100">
+
+                        <i class="bi bi-calendar-event me-1"></i>
+                        Manage Events
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ATTENDANCE -->
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body text-center">
+
+                    <i class="bi bi-person-check-fill display-4 text-info"></i>
+
+                    <h5 class="fw-bold mt-3">
+                        Attendance
+                    </h5>
+
+                    <p class="text-muted small">
+                        Create attendance sessions,
+                        monitor member participation
+                        and manage attendance records.
+                    </p>
+
+                    <a
+                        href="{% url 'attendance:list' %}"
+                        class="btn btn-info text-white w-100">
+
+                        <i class="bi bi-clipboard-check me-1"></i>
+                        Manage Attendance
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ANALYTICS -->
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body text-center">
+
+                    <i class="bi bi-bar-chart-fill display-4 text-danger"></i>
+
+                    <h5 class="fw-bold mt-3">
+                        Analytics
+                    </h5>
+
+                    <p class="text-muted small">
+                        View KUCSA membership statistics,
+                        attendance and organizational analytics.
+                    </p>
+
+                    <a
+                        href="{% url 'dashboard:analytics' %}"
+                        class="btn btn-danger w-100">
+
+                        <i class="bi bi-graph-up me-1"></i>
+                        View Analytics
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         PLATFORM MODULES
+    ====================================================== -->
+
+    <div class="row g-4 mb-4">
+
+        <!-- EVENTS -->
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <h6 class="text-muted mb-2">
+                                Events
+                            </h6>
+
+                            <h3 class="fw-bold mb-0">
+                                {{ events|default:0 }}
+                            </h3>
+
+                        </div>
+
+                        <i class="bi bi-calendar-event fs-2 text-success"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ANNOUNCEMENTS -->
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <h6 class="text-muted mb-2">
+                                Announcements
+                            </h6>
+
+                            <h3 class="fw-bold mb-0">
+                                {{ announcements|default:0 }}
+                            </h3>
+
+                        </div>
+
+                        <i class="bi bi-megaphone fs-2 text-warning"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ATTENDANCE SESSIONS -->
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <h6 class="text-muted mb-2">
+                                Attendance Sessions
+                            </h6>
+
+                            <h3 class="fw-bold mb-0">
+                                {{ attendance_sessions|default:0 }}
+                            </h3>
+
+                        </div>
+
+                        <i class="bi bi-clipboard-check fs-2 text-info"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ATTENDANCE RATE -->
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <h6 class="text-muted mb-2">
+                                Attendance Rate
+                            </h6>
+
+                            <h3 class="fw-bold mb-0">
+                                {{ attendance_percentage|default:0 }}%
+                            </h3>
+
+                        </div>
+
+                        <i class="bi bi-graph-up-arrow fs-2 text-success"></i>
+
+                    </div>
+
+                    <small class="text-muted">
+                        Based on present and absent records.
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ATTENDANCE OVERVIEW
+    ====================================================== -->
+
+    <div class="row g-4 mb-4">
+
+        <!-- PRESENT -->
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <h6 class="text-muted mb-2">
+                                Present
+                            </h6>
+
+                            <h3 class="fw-bold mb-0 text-success">
+                                {{ attendance|default:0 }}
+                            </h3>
+
+                        </div>
+
+                        <i class="bi bi-check-circle-fill fs-2 text-success"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ABSENT -->
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <h6 class="text-muted mb-2">
+                                Absent
+                            </h6>
+
+                            <h3 class="fw-bold mb-0 text-danger">
+                                {{ absent_attendance|default:0 }}
+                            </h3>
+
+                        </div>
+
+                        <i class="bi bi-x-circle-fill fs-2 text-danger"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- EXCUSED -->
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <h6 class="text-muted mb-2">
+                                Excused
+                            </h6>
+
+                            <h3 class="fw-bold mb-0 text-warning">
+                                {{ excused_attendance|default:0 }}
+                            </h3>
+
+                        </div>
+
+                        <i class="bi bi-info-circle-fill fs-2 text-warning"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PENDING -->
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <h6 class="text-muted mb-2">
+                                Pending
+                            </h6>
+
+                            <h3 class="fw-bold mb-0 text-secondary">
+                                {{ pending_attendance|default:0 }}
+                            </h3>
+
+                        </div>
+
+                        <i class="bi bi-hourglass-split fs-2 text-secondary"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SYSTEM OVERVIEW + RECENT ACTIVITY
+    ====================================================== -->
+
+    <div class="row g-4">
+
+        <!-- SYSTEM OVERVIEW -->
+
+        <div class="col-lg-8">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-header bg-primary text-white py-3">
+
+                    <div class="d-flex align-items-center">
+
+                        <i class="bi bi-speedometer2 me-2"></i>
+
+                        <span class="fw-semibold">
+                            System Overview
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="table-responsive">
+
+                        <table class="table table-hover align-middle mb-0">
+
+                            <tbody>
+
+                                <tr>
+                                    <th>Total Members</th>
+
+                                    <td class="text-end fw-semibold">
+                                        {{ total_members|default:0 }}
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <th>Active Members</th>
+
+                                    <td class="text-end fw-semibold text-success">
+                                        {{ verified_members|default:0 }}
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <th>Pending Members</th>
+
+                                    <td class="text-end fw-semibold text-warning">
+                                        {{ pending_members|default:0 }}
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <th>Expired Memberships</th>
+
+                                    <td class="text-end fw-semibold text-danger">
+                                        {{ expired_members|default:0 }}
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <th>Suspended Memberships</th>
+
+                                    <td class="text-end fw-semibold text-danger">
+                                        {{ suspended_members|default:0 }}
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <th>Executive Team</th>
+
+                                    <td class="text-end fw-semibold">
+                                        {{ executives|default:0 }}
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <th>System Users</th>
+
+                                    <td class="text-end fw-semibold">
+                                        {{ total_users|default:0 }}
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <th>Verified Users</th>
+
+                                    <td class="text-end fw-semibold text-success">
+                                        {{ verified_users|default:0 }}
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <th>Pending User Verification</th>
+
+                                    <td class="text-end fw-semibold text-warning">
+                                        {{ pending_users|default:0 }}
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <th>Events</th>
+
+                                    <td class="text-end fw-semibold">
+                                        {{ events|default:0 }}
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <th>Announcements</th>
+
+                                    <td class="text-end fw-semibold">
+                                        {{ announcements|default:0 }}
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <th>Attendance Sessions</th>
+
+                                    <td class="text-end fw-semibold text-info">
+                                        {{ attendance_sessions|default:0 }}
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <th>Total Attendance Records</th>
+
+                                    <td class="text-end fw-semibold">
+                                        {{ attendance_records|default:0 }}
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <th>Present</th>
+
+                                    <td class="text-end fw-semibold text-success">
+                                        {{ attendance|default:0 }}
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <th>Absent</th>
+
+                                    <td class="text-end fw-semibold text-danger">
+                                        {{ absent_attendance|default:0 }}
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <th>Excused</th>
+
+                                    <td class="text-end fw-semibold text-warning">
+                                        {{ excused_attendance|default:0 }}
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <th>Pending</th>
+
+                                    <td class="text-end fw-semibold text-secondary">
+                                        {{ pending_attendance|default:0 }}
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <th>Attendance Rate</th>
+
+                                    <td class="text-end fw-semibold text-success">
+                                        {{ attendance_percentage|default:0 }}%
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RECENT ACTIVITY -->
+
+        <div class="col-lg-4">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-header bg-success text-white py-3">
+
+                    <div class="d-flex align-items-center">
+
+                        <i class="bi bi-clock-history me-2"></i>
+
+                        <span class="fw-semibold">
+                            Recent Activity
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="text-center py-5">
+
+                        <i class="bi bi-clock-history display-4 text-muted"></i>
+
+                        <p class="mt-3 text-muted mb-1">
+                            No recent activity available.
+                        </p>
+
+                        <small class="text-muted">
+
+                            Recent member registrations,
+                            attendance sessions, events,
+                            payments and announcements
+                            will appear here.
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         TREASURER FINANCE FOOTNOTE
+         Visible only to Treasurer
+    ====================================================== -->
+
+    {% if is_treasurer %}
+
+    <div class="row mt-4">
+
+        <div class="col-12">
+
+            <div class="alert alert-light border shadow-sm mb-0">
+
+                <div class="d-flex align-items-start">
+
+                    <i class="bi bi-shield-check text-success fs-5 me-2"></i>
+
+                    <div>
+
+                        <strong>
+                            Treasurer Finance Access
+                        </strong>
+
+                        <p class="mb-0 text-muted small">
+
+                            Finance management access is restricted by
+                            the Finance permission layer. Dashboard
+                            statistics are read-only; financial
+                            operations are performed through the
+                            authorized Finance module.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         DASHBOARD FOOTER
+    ====================================================== -->
+
+    <div class="mt-4">
+
+        <div class="alert alert-light border shadow-sm mb-0">
+
+            <div class="d-flex align-items-start">
+
+                <i class="bi bi-info-circle-fill text-primary fs-5 me-2"></i>
+
+                <div>
+
+                    <strong>
+                        KUCSA Management Dashboard
+                    </strong>
+
+                    <p class="mb-0 text-muted small">
+
+                        Use this dashboard to monitor membership,
+                        executive activities, attendance sessions,
+                        events and KUCSA platform operations.
+
+                        {% if is_treasurer %}
+                            As Treasurer, you also have access to
+                            the Finance management module.
+                        {% endif %}
+
+                        System administration remains available
+                        separately through Django Admin.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

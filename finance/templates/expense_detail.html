@@ -1,0 +1,980 @@
+{% extends "base.html" %}
+
+{% block title %}{{ expense.expense_number }} | KUCSA Finance{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+
+<!-- =====================================================
+     PAGE HEADER
+====================================================== -->
+<div class="d-flex flex-column flex-md-row
+            justify-content-between align-items-md-center
+            gap-3 mb-4">
+
+    <div>
+        <div class="d-flex align-items-center gap-2 mb-1">
+
+            <a href="{% url 'finance:expenses' %}"
+               class="text-decoration-none text-muted">
+                <i class="bi bi-arrow-left"></i>
+                Expenses
+            </a>
+
+            <span class="text-muted">/</span>
+
+            <span class="text-muted">
+                {{ expense.expense_number }}
+            </span>
+
+        </div>
+
+        <h3 class="fw-bold mb-1">
+            {{ expense.title }}
+        </h3>
+
+        <p class="text-muted mb-0">
+            Expense reference:
+            <span class="font-monospace">
+                {{ expense.expense_number }}
+            </span>
+        </p>
+    </div>
+
+
+    <!-- Status -->
+    <div>
+
+        {% if expense.status == "DRAFT" %}
+
+            <span class="badge bg-secondary fs-6 px-3 py-2">
+                <i class="bi bi-pencil me-1"></i>
+                Draft
+            </span>
+
+        {% elif expense.status == "SUBMITTED" %}
+
+            <span class="badge bg-warning text-dark fs-6 px-3 py-2">
+                <i class="bi bi-clock me-1"></i>
+                Submitted
+            </span>
+
+        {% elif expense.status == "APPROVED" %}
+
+            <span class="badge bg-info text-dark fs-6 px-3 py-2">
+                <i class="bi bi-check2-circle me-1"></i>
+                Approved
+            </span>
+
+        {% elif expense.status == "PAID" %}
+
+            <span class="badge bg-success fs-6 px-3 py-2">
+                <i class="bi bi-check-circle me-1"></i>
+                Paid
+            </span>
+
+        {% elif expense.status == "REJECTED" %}
+
+            <span class="badge bg-danger fs-6 px-3 py-2">
+                <i class="bi bi-x-circle me-1"></i>
+                Rejected
+            </span>
+
+        {% elif expense.status == "VOIDED" %}
+
+            <span class="badge bg-dark fs-6 px-3 py-2">
+                <i class="bi bi-slash-circle me-1"></i>
+                Voided
+            </span>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<div class="row g-4">
+
+    <!-- =================================================
+         MAIN EXPENSE INFORMATION
+    ================================================== -->
+    <div class="col-12 col-xl-8">
+
+        <!-- Amount Card -->
+        <div class="card border-0 shadow-sm mb-4">
+
+            <div class="card-body">
+
+                <div class="row g-4 align-items-center">
+
+                    <div class="col-md-6">
+
+                        <small class="text-muted d-block mb-1">
+                            Expense Amount
+                        </small>
+
+                        <h2 class="fw-bold mb-0">
+                            KES {{ expense.amount|floatformat:2 }}
+                        </h2>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <small class="text-muted d-block mb-1">
+                            Expense Date
+                        </small>
+
+                        <div class="fw-semibold">
+                            {{ expense.expense_date|date:"d F Y" }}
+                        </div>
+
+                        <small class="text-muted">
+                            {{ expense.expense_date|date:"H:i" }}
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             EXPENSE DETAILS
+        ================================================== -->
+        <div class="card border-0 shadow-sm mb-4">
+
+            <div class="card-header bg-white py-3">
+
+                <h5 class="fw-bold mb-0">
+                    Expense Details
+                </h5>
+
+            </div>
+
+
+            <div class="card-body">
+
+                <div class="row g-4">
+
+                    <!-- Title -->
+                    <div class="col-md-6">
+
+                        <small class="text-muted d-block mb-1">
+                            Title
+                        </small>
+
+                        <div class="fw-semibold">
+                            {{ expense.title }}
+                        </div>
+
+                    </div>
+
+
+                    <!-- Category -->
+                    <div class="col-md-6">
+
+                        <small class="text-muted d-block mb-1">
+                            Category
+                        </small>
+
+                        <div>
+                            {{ expense.category.name }}
+                        </div>
+
+                    </div>
+
+
+                    <!-- Payee -->
+                    <div class="col-md-6">
+
+                        <small class="text-muted d-block mb-1">
+                            Payee
+                        </small>
+
+                        <div>
+                            {{ expense.payee|default:"Not specified" }}
+                        </div>
+
+                    </div>
+
+
+                    <!-- Payment Source -->
+                    <div class="col-md-6">
+
+                        <small class="text-muted d-block mb-1">
+                            Payment Source
+                        </small>
+
+                        <div>
+
+                            {% if expense.payment_source == "MPESA" %}
+
+                                <span class="badge bg-success">
+                                    M-Pesa
+                                </span>
+
+                            {% elif expense.payment_source == "BANK" %}
+
+                                <span class="badge bg-primary">
+                                    Bank
+                                </span>
+
+                            {% elif expense.payment_source == "CASH" %}
+
+                                <span class="badge bg-warning text-dark">
+                                    Cash
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+                                    {{ expense.get_payment_source_display }}
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Payment Reference -->
+                    <div class="col-md-6">
+
+                        <small class="text-muted d-block mb-1">
+                            Payment Reference
+                        </small>
+
+                        {% if expense.payment_reference %}
+
+                            <span class="font-monospace">
+                                {{ expense.payment_reference }}
+                            </span>
+
+                        {% else %}
+
+                            <span class="text-muted">
+                                Not provided
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- Recorded By -->
+                    <div class="col-md-6">
+
+                        <small class="text-muted d-block mb-1">
+                            Recorded By
+                        </small>
+
+                        <div>
+                            {{ expense.recorded_by.get_full_name|default:expense.recorded_by.username }}
+                        </div>
+
+                    </div>
+
+
+                    <!-- Description -->
+                    <div class="col-12">
+
+                        <small class="text-muted d-block mb-1">
+                            Description
+                        </small>
+
+                        <div class="p-3 bg-light rounded">
+                            {{ expense.description|linebreaksbr }}
+                        </div>
+
+                    </div>
+
+
+                    <!-- Notes -->
+                    {% if expense.notes %}
+
+                        <div class="col-12">
+
+                            <small class="text-muted d-block mb-1">
+                                Additional Notes
+                            </small>
+
+                            <div class="p-3 bg-light rounded">
+                                {{ expense.notes|linebreaksbr }}
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             RECEIPT
+        ================================================== -->
+        {% if expense.receipt %}
+
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-header bg-white py-3">
+
+                    <h5 class="fw-bold mb-0">
+                        <i class="bi bi-paperclip me-2"></i>
+                        Supporting Receipt
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="d-flex align-items-center
+                                justify-content-between
+                                gap-3">
+
+                        <div>
+
+                            <div class="fw-semibold">
+                                Receipt attached
+                            </div>
+
+                            <small class="text-muted">
+                                Supporting financial document
+                            </small>
+
+                        </div>
+
+                        <a href="{{ expense.receipt.url }}"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="btn btn-outline-primary">
+
+                            <i class="bi bi-eye me-1"></i>
+                            View Receipt
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             REJECTION / VOID INFORMATION
+        ================================================== -->
+
+        {% if expense.is_rejected %}
+
+            <div class="alert alert-danger border-0 shadow-sm">
+
+                <h6 class="fw-bold">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Expense Rejected
+                </h6>
+
+                {% if expense.rejection_reason %}
+
+                    <p class="mb-2">
+                        {{ expense.rejection_reason|linebreaksbr }}
+                    </p>
+
+                {% endif %}
+
+                {% if expense.rejected_by %}
+
+                    <small>
+                        Rejected by:
+                        <strong>
+                            {{ expense.rejected_by.get_full_name|default:expense.rejected_by.username }}
+                        </strong>
+                    </small>
+
+                {% endif %}
+
+                {% if expense.rejected_at %}
+
+                    <small class="d-block text-muted">
+                        {{ expense.rejected_at|date:"d F Y, H:i" }}
+                    </small>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+
+        {% if expense.is_voided %}
+
+            <div class="alert alert-dark border-0 shadow-sm">
+
+                <h6 class="fw-bold">
+                    <i class="bi bi-slash-circle me-2"></i>
+                    Expense Voided
+                </h6>
+
+                {% if expense.void_reason %}
+
+                    <p class="mb-2">
+                        {{ expense.void_reason|linebreaksbr }}
+                    </p>
+
+                {% endif %}
+
+                {% if expense.voided_by %}
+
+                    <small>
+                        Voided by:
+                        <strong>
+                            {{ expense.voided_by.get_full_name|default:expense.voided_by.username }}
+                        </strong>
+                    </small>
+
+                {% endif %}
+
+                {% if expense.voided_at %}
+
+                    <small class="d-block text-muted">
+                        {{ expense.voided_at|date:"d F Y, H:i" }}
+                    </small>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             FINANCIAL TRANSACTION
+        ================================================== -->
+        {% if expense.transaction %}
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-header bg-white py-3">
+
+                    <h5 class="fw-bold mb-0">
+                        <i class="bi bi-journal-text me-2"></i>
+                        Financial Transaction
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <small class="text-muted d-block">
+                                Transaction Number
+                            </small>
+
+                            <a href="{% url 'finance:transaction_detail' expense.transaction.pk %}"
+                               class="font-monospace text-decoration-none">
+
+                                {{ expense.transaction.transaction_number }}
+
+                            </a>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <small class="text-muted d-block">
+                                Transaction Status
+                            </small>
+
+                            {% if expense.transaction.is_posted %}
+
+                                <span class="badge bg-success">
+                                    Posted
+                                </span>
+
+                            {% elif expense.transaction.is_draft %}
+
+                                <span class="badge bg-warning text-dark">
+                                    Draft
+                                </span>
+
+                            {% elif expense.transaction.is_voided %}
+
+                                <span class="badge bg-danger">
+                                    Voided
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <small class="text-muted d-block">
+                                Amount
+                            </small>
+
+                            <strong>
+                                KES {{ expense.transaction.amount|floatformat:2 }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <small class="text-muted d-block">
+                                Posted At
+                            </small>
+
+                            {% if expense.transaction.posted_at %}
+
+                                {{ expense.transaction.posted_at|date:"d F Y, H:i" }}
+
+                            {% else %}
+
+                                <span class="text-muted">
+                                    Not posted
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =================================================
+         SIDEBAR
+    ================================================== -->
+    <div class="col-12 col-xl-4">
+
+
+        <!-- =================================================
+             WORKFLOW
+        ================================================== -->
+        <div class="card border-0 shadow-sm mb-4">
+
+            <div class="card-header bg-white py-3">
+
+                <h5 class="fw-bold mb-0">
+                    Expense Workflow
+                </h5>
+
+            </div>
+
+
+            <div class="card-body">
+
+                <!-- Draft -->
+                <div class="d-flex gap-3 mb-3">
+
+                    <div>
+                        {% if expense.status == "DRAFT" %}
+                            <i class="bi bi-circle-fill text-primary"></i>
+                        {% else %}
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <div class="fw-semibold">
+                            Draft
+                        </div>
+
+                        {% if expense.created_at %}
+                            <small class="text-muted">
+                                {{ expense.created_at|date:"d M Y, H:i" }}
+                            </small>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+
+                <!-- Submitted -->
+                <div class="d-flex gap-3 mb-3">
+
+                    <div>
+
+                        {% if expense.submitted_at %}
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                        {% else %}
+                            <i class="bi bi-circle text-muted"></i>
+                        {% endif %}
+
+                    </div>
+
+                    <div>
+
+                        <div class="fw-semibold">
+                            Submitted
+                        </div>
+
+                        {% if expense.submitted_at %}
+
+                            <small class="text-muted">
+                                {{ expense.submitted_at|date:"d M Y, H:i" }}
+                            </small>
+
+                            {% if expense.submitted_by %}
+                                <small class="d-block text-muted">
+                                    By {{ expense.submitted_by.get_full_name|default:expense.submitted_by.username }}
+                                </small>
+                            {% endif %}
+
+                        {% else %}
+
+                            <small class="text-muted">
+                                Not submitted
+                            </small>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- Approved -->
+                <div class="d-flex gap-3 mb-3">
+
+                    <div>
+
+                        {% if expense.approved_at %}
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                        {% else %}
+                            <i class="bi bi-circle text-muted"></i>
+                        {% endif %}
+
+                    </div>
+
+                    <div>
+
+                        <div class="fw-semibold">
+                            Approved
+                        </div>
+
+                        {% if expense.approved_at %}
+
+                            <small class="text-muted">
+                                {{ expense.approved_at|date:"d M Y, H:i" }}
+                            </small>
+
+                            {% if expense.approved_by %}
+                                <small class="d-block text-muted">
+                                    By {{ expense.approved_by.get_full_name|default:expense.approved_by.username }}
+                                </small>
+                            {% endif %}
+
+                        {% else %}
+
+                            <small class="text-muted">
+                                Not approved
+                            </small>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- Paid -->
+                <div class="d-flex gap-3">
+
+                    <div>
+
+                        {% if expense.paid_at %}
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                        {% else %}
+                            <i class="bi bi-circle text-muted"></i>
+                        {% endif %}
+
+                    </div>
+
+                    <div>
+
+                        <div class="fw-semibold">
+                            Paid
+                        </div>
+
+                        {% if expense.paid_at %}
+
+                            <small class="text-muted">
+                                {{ expense.paid_at|date:"d M Y, H:i" }}
+                            </small>
+
+                            {% if expense.paid_by %}
+                                <small class="d-block text-muted">
+                                    By {{ expense.paid_by.get_full_name|default:expense.paid_by.username }}
+                                </small>
+                            {% endif %}
+
+                        {% else %}
+
+                            <small class="text-muted">
+                                Not paid
+                            </small>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             ACTIONS
+        ================================================== -->
+        {% if can_manage_expenses %}
+
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-header bg-white py-3">
+
+                    <h5 class="fw-bold mb-0">
+                        Actions
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    {% if expense.is_draft %}
+
+                        <a href="{% url 'finance:expense_edit' expense.pk %}"
+                           class="btn btn-outline-primary w-100 mb-2">
+
+                            <i class="bi bi-pencil me-1"></i>
+                            Edit Expense
+
+                        </a>
+
+                        <form method="post"
+                              action="{% url 'finance:expense_submit' expense.pk %}">
+
+                            {% csrf_token %}
+
+                            <button type="submit"
+                                    class="btn btn-primary w-100">
+
+                                <i class="bi bi-send me-1"></i>
+                                Submit Expense
+
+                            </button>
+
+                        </form>
+
+
+                    {% elif expense.is_submitted %}
+
+                        <form method="post"
+                              action="{% url 'finance:expense_approve' expense.pk %}"
+                              class="mb-2">
+
+                            {% csrf_token %}
+
+                            <button type="submit"
+                                    class="btn btn-success w-100">
+
+                                <i class="bi bi-check-circle me-1"></i>
+                                Approve Expense
+
+                            </button>
+
+                        </form>
+
+
+                        <form method="post"
+                              action="{% url 'finance:expense_reject' expense.pk %}">
+
+                            {% csrf_token %}
+
+                            <button type="submit"
+                                    class="btn btn-outline-danger w-100">
+
+                                <i class="bi bi-x-circle me-1"></i>
+                                Reject Expense
+
+                            </button>
+
+                        </form>
+
+
+                    {% elif expense.is_approved %}
+
+                        <form method="post"
+                              action="{% url 'finance:expense_pay' expense.pk %}">
+
+                            {% csrf_token %}
+
+                            <button type="submit"
+                                    class="btn btn-success w-100">
+
+                                <i class="bi bi-cash-stack me-1"></i>
+                                Mark as Paid
+
+                            </button>
+
+                        </form>
+
+
+                    {% elif expense.is_paid %}
+
+                        <div class="alert alert-success mb-0">
+
+                            <i class="bi bi-check-circle me-2"></i>
+
+                            This expense has been paid and recorded
+                            in the financial ledger.
+
+                        </div>
+
+                    {% elif expense.is_rejected %}
+
+                        <div class="alert alert-danger mb-0">
+
+                            <i class="bi bi-x-circle me-2"></i>
+
+                            This expense was rejected.
+
+                        </div>
+
+                    {% elif expense.is_voided %}
+
+                        <div class="alert alert-dark mb-0">
+
+                            <i class="bi bi-slash-circle me-2"></i>
+
+                            This expense has been voided.
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if expense.status != "VOIDED" and expense.status != "PAID" %}
+
+                        <hr>
+
+                        <form method="post"
+                              action="{% url 'finance:expense_void' expense.pk %}">
+
+                            {% csrf_token %}
+
+                            <button type="submit"
+                                    class="btn btn-outline-dark w-100"
+                                    onclick="return confirm('Are you sure you want to void this expense?');">
+
+                                <i class="bi bi-slash-circle me-1"></i>
+                                Void Expense
+
+                            </button>
+
+                        </form>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             RECORD INFORMATION
+        ================================================== -->
+        <div class="card border-0 shadow-sm">
+
+            <div class="card-header bg-white py-3">
+
+                <h5 class="fw-bold mb-0">
+                    Record Information
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="mb-3">
+
+                    <small class="text-muted d-block">
+                        Created
+                    </small>
+
+                    <span>
+                        {{ expense.created_at|date:"d F Y, H:i" }}
+                    </span>
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <small class="text-muted d-block">
+                        Last Updated
+                    </small>
+
+                    <span>
+                        {{ expense.updated_at|date:"d F Y, H:i" }}
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <small class="text-muted d-block">
+                        Expense Number
+                    </small>
+
+                    <span class="font-monospace">
+                        {{ expense.expense_number }}
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+{% endblock %}

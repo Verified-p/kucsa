@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+
+{% block title %}
+Frequently Asked Questions | KUCSA Platform
+{% endblock %}
+
+{% block content %}
+
+<section class="py-5">
+
+    <div class="container">
+
+        <!-- Page Header -->
+
+        <div class="text-center mb-5">
+
+            <h1 class="fw-bold">
+
+                Frequently Asked Questions
+
+            </h1>
+
+            <p class="lead text-muted">
+
+                Find answers to common questions about KUCSA and the Digital Computing Community Platform.
+
+            </p>
+
+        </div>
+
+        <div class="accordion" id="faqAccordion">
+
+            <!-- Question 1 -->
+
+            <div class="accordion-item">
+
+                <h2 class="accordion-header" id="headingOne">
+
+                    <button
+                        class="accordion-button"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseOne"
+                        aria-expanded="true"
+                        aria-controls="collapseOne">
+
+                        Who can join KUCSA?
+
+                    </button>
+
+                </h2>
+
+                <div
+                    id="collapseOne"
+                    class="accordion-collapse collapse show"
+                    aria-labelledby="headingOne"
+                    data-bs-parent="#faqAccordion">
+
+                    <div class="accordion-body">
+
+                        Any student enrolled in a computing-related programme at Kisii University is welcome to join KUCSA by creating an account, applying for membership, and completing the membership registration process.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Question 2 -->
+
+            <div class="accordion-item">
+
+                <h2 class="accordion-header" id="headingTwo">
+
+                    <button
+                        class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseTwo"
+                        aria-expanded="false"
+                        aria-controls="collapseTwo">
+
+                        How do I become a verified member?
+
+                    </button>
+
+                </h2>
+
+                <div
+                    id="collapseTwo"
+                    class="accordion-collapse collapse"
+                    aria-labelledby="headingTwo"
+                    data-bs-parent="#faqAccordion">
+
+                    <div class="accordion-body">
+
+                        Register an account, submit your membership application, upload proof of payment, and wait for verification by the KUCSA executive team. Once approved, you will gain full access to member features.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Question 3 -->
+
+            <div class="accordion-item">
+
+                <h2 class="accordion-header" id="headingThree">
+
+                    <button
+                        class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseThree"
+                        aria-expanded="false"
+                        aria-controls="collapseThree">
+
+                        What can I do after joining?
+
+                    </button>
+
+                </h2>
+
+                <div
+                    id="collapseThree"
+                    class="accordion-collapse collapse"
+                    aria-labelledby="headingThree"
+                    data-bs-parent="#faqAccordion">
+
+                    <div class="accordion-body">
+
+                        Members can view announcements, register for events, monitor attendance, update their profiles, and participate in KUCSA activities through the platform.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Question 4 -->
+
+            <div class="accordion-item">
+
+                <h2 class="accordion-header" id="headingFour">
+
+                    <button
+                        class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseFour"
+                        aria-expanded="false"
+                        aria-controls="collapseFour">
+
+                        How do I know if my membership has been approved?
+
+                    </button>
+
+                </h2>
+
+                <div
+                    id="collapseFour"
+                    class="accordion-collapse collapse"
+                    aria-labelledby="headingFour"
+                    data-bs-parent="#faqAccordion">
+
+                    <div class="accordion-body">
+
+                        Your dashboard will display your membership status. You may also receive a notification once your membership has been verified by the executive team.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Question 5 -->
+
+            <div class="accordion-item">
+
+                <h2 class="accordion-header" id="headingFive">
+
+                    <button
+                        class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseFive"
+                        aria-expanded="false"
+                        aria-controls="collapseFive">
+
+                        I forgot my password. What should I do?
+
+                    </button>
+
+                </h2>
+
+                <div
+                    id="collapseFive"
+                    class="accordion-collapse collapse"
+                    aria-labelledby="headingFive"
+                    data-bs-parent="#faqAccordion">
+
+                    <div class="accordion-body">
+
+                        Click the <strong>Forgot Password</strong> link on the login page and follow the instructions to reset your password.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Question 6 -->
+
+            <div class="accordion-item">
+
+                <h2 class="accordion-header" id="headingSix">
+
+                    <button
+                        class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseSix"
+                        aria-expanded="false"
+                        aria-controls="collapseSix">
+
+                        Who should I contact if I need help?
+
+                    </button>
+
+                </h2>
+
+                <div
+                    id="collapseSix"
+                    class="accordion-collapse collapse"
+                    aria-labelledby="headingSix"
+                    data-bs-parent="#faqAccordion">
+
+                    <div class="accordion-body">
+
+                        You can visit the Contact page and send a message to the KUCSA executive team, or reach them using the contact information provided.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

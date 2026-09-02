@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}
+404 - Page Not Found | KUCSA Platform
+{% endblock %}
+
+{% block content %}
+
+<section class="py-5">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-8">
+
+                <div class="card shadow border-0">
+
+                    <div class="card-body text-center py-5">
+
+                        <!-- Error Icon -->
+
+                        <i class="bi bi-exclamation-triangle-fill text-warning display-1"></i>
+
+                        <!-- Error Code -->
+
+                        <h1 class="display-1 fw-bold text-primary mt-3">
+
+                            404
+
+                        </h1>
+
+                        <!-- Error Title -->
+
+                        <h3 class="mb-3">
+
+                            Page Not Found
+
+                        </h3>
+
+                        <!-- Error Message -->
+
+                        <p class="lead text-muted">
+
+                            Sorry, the page you are looking for does not exist,
+                            may have been moved, or the URL may be incorrect.
+
+                        </p>
+
+                        <hr>
+
+                        <!-- Navigation Buttons -->
+
+                        <div class="d-flex justify-content-center gap-3 flex-wrap">
+
+                            <a
+                                href="{% url 'core:home' %}"
+                                class="btn btn-primary">
+
+                                <i class="bi bi-house-door-fill me-2"></i>
+
+                                Home
+
+                            </a>
+
+                            {% if user.is_authenticated %}
+
+                                <a
+                                    href="{% url 'accounts:dashboard' %}"
+                                    class="btn btn-success">
+
+                                    <i class="bi bi-speedometer2 me-2"></i>
+
+                                    Dashboard
+
+                                </a>
+
+                            {% endif %}
+
+                            <a
+                                href="{% url 'core:contact' %}"
+                                class="btn btn-outline-secondary">
+
+                                <i class="bi bi-envelope-fill me-2"></i>
+
+                                Contact Us
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

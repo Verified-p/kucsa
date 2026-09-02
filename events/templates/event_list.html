@@ -1,0 +1,1132 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}KUCSA Events{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- =========================================================
+         PAGE HEADER
+    ========================================================== -->
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <div class="d-flex align-items-center gap-2 mb-1">
+
+                <h2 class="fw-bold mb-0">
+                    <i class="bi bi-calendar-event me-2"></i>
+                    KUCSA Events
+                </h2>
+
+                {% if can_manage_events %}
+
+                    <span class="badge bg-dark">
+                        Management
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+            <p class="text-muted mb-0">
+                Discover upcoming events, workshops, talks,
+                bootcamps and other KUCSA activities.
+            </p>
+
+        </div>
+
+
+        <!-- =====================================================
+             MANAGEMENT ACTION
+        ====================================================== -->
+
+        {% if can_manage_events %}
+
+            <div class="mt-3 mt-md-0">
+
+                <a
+                    href="{% url 'events:create' %}"
+                    class="btn btn-primary"
+                >
+                    <i class="bi bi-plus-circle me-1"></i>
+                    Create Event
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =========================================================
+         STUDENT INFORMATION
+    ========================================================== -->
+
+    {% if not can_manage_events %}
+
+        <div class="alert alert-info border-0 shadow-sm mb-4">
+
+            <div class="d-flex align-items-start">
+
+                <i class="bi bi-info-circle-fill fs-5 me-2"></i>
+
+                <div>
+
+                    <strong>KUCSA Events</strong>
+
+                    <div class="small mt-1">
+
+                        Browse published events and register for
+                        activities you would like to attend.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- =========================================================
+         FILTER CARD
+    ========================================================== -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <form
+                method="get"
+                action="{% url 'events:list' %}"
+            >
+
+                <div class="row g-3 align-items-end">
+
+                    <!-- =================================================
+                         SEARCH
+                    ================================================== -->
+
+                    <div class="col-lg-4">
+
+                        <label
+                            for="eventSearch"
+                            class="form-label fw-semibold"
+                        >
+                            Search Events
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text">
+                                <i class="bi bi-search"></i>
+                            </span>
+
+                            <input
+                                type="text"
+                                name="q"
+                                id="eventSearch"
+                                value="{{ search_query }}"
+                                class="form-control"
+                                placeholder="Search events..."
+                                autocomplete="off"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         EVENT TYPE
+                    ================================================== -->
+
+                    <div class="col-md-4 col-lg-2">
+
+                        <label
+                            for="eventType"
+                            class="form-label fw-semibold"
+                        >
+                            Event Type
+                        </label>
+
+                        <select
+                            name="event_type"
+                            id="eventType"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                All Types
+                            </option>
+
+                            {% for value, label in event_types %}
+
+                                <option
+                                    value="{{ value }}"
+                                    {% if selected_event_type == value %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ label }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         STATUS
+                         EXECUTIVES / ADMINS ONLY
+                    ================================================== -->
+
+                    {% if can_manage_events %}
+
+                        <div class="col-md-4 col-lg-2">
+
+                            <label
+                                for="eventStatus"
+                                class="form-label fw-semibold"
+                            >
+                                Status
+                            </label>
+
+                            <select
+                                name="status"
+                                id="eventStatus"
+                                class="form-select"
+                            >
+
+                                <option value="">
+                                    All Statuses
+                                </option>
+
+                                {% for value, label in event_statuses %}
+
+                                    <option
+                                        value="{{ value }}"
+                                        {% if selected_status == value %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        {{ label }}
+                                    </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- =================================================
+                         UPCOMING ONLY
+                    ================================================== -->
+
+                    <div class="col-md-4 col-lg-2">
+
+                        <div class="form-check mb-2">
+
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                name="upcoming"
+                                value="1"
+                                id="upcomingFilter"
+                                {% if upcoming == "1" %}
+                                    checked
+                                {% endif %}
+                            >
+
+                            <label
+                                class="form-check-label"
+                                for="upcomingFilter"
+                            >
+                                Upcoming Only
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         FILTER BUTTON
+                    ================================================== -->
+
+                    <div class="col-lg-2">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100"
+                        >
+
+                            <i class="bi bi-funnel me-1"></i>
+
+                            Filter
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+
+            <!-- =====================================================
+                 FILTER SUMMARY
+            ====================================================== -->
+
+            {% if search_query or selected_event_type or selected_status or upcoming == "1" %}
+
+                <div class="mt-3 pt-3 border-top">
+
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+
+                        <span class="small text-muted">
+                            Active filters:
+                        </span>
+
+
+                        {% if search_query %}
+
+                            <span class="badge bg-light text-dark border">
+                                Search: {{ search_query }}
+                            </span>
+
+                        {% endif %}
+
+
+                        {% if selected_event_type %}
+
+                            <span class="badge bg-light text-dark border">
+
+                                Type:
+
+                                {% for value, label in event_types %}
+
+                                    {% if selected_event_type == value %}
+                                        {{ label }}
+                                    {% endif %}
+
+                                {% endfor %}
+
+                            </span>
+
+                        {% endif %}
+
+
+                        {% if selected_status and can_manage_events %}
+
+                            <span class="badge bg-light text-dark border">
+
+                                Status:
+
+                                {% for value, label in event_statuses %}
+
+                                    {% if selected_status == value %}
+                                        {{ label }}
+                                    {% endif %}
+
+                                {% endfor %}
+
+                            </span>
+
+                        {% endif %}
+
+
+                        {% if upcoming == "1" %}
+
+                            <span class="badge bg-light text-dark border">
+                                Upcoming
+                            </span>
+
+                        {% endif %}
+
+
+                        <a
+                            href="{% url 'events:list' %}"
+                            class="btn btn-sm btn-outline-secondary ms-auto"
+                        >
+
+                            <i class="bi bi-x-circle me-1"></i>
+
+                            Clear Filters
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         EVENT RESULTS HEADER
+    ========================================================== -->
+
+    {% if events %}
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+
+            <div>
+
+                <h5 class="fw-bold mb-1">
+                    Available Events
+                </h5>
+
+                <p class="small text-muted mb-0">
+                    Explore KUCSA activities and opportunities.
+                </p>
+
+            </div>
+
+            {% if can_manage_events %}
+
+                <span class="badge bg-primary-subtle text-primary">
+
+                    <i class="bi bi-shield-check me-1"></i>
+
+                    Management View
+
+                </span>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- =========================================================
+             EVENT CARDS
+        ========================================================== -->
+
+        <div class="row g-4">
+
+            {% for event in events %}
+
+                <div class="col-xl-4 col-lg-6">
+
+                    <div class="card h-100 border-0 shadow-sm overflow-hidden">
+
+                        <!-- =================================================
+                             EVENT IMAGE
+                        ================================================== -->
+
+                        {% if event.image %}
+
+                            <img
+                                src="{{ event.image.url }}"
+                                class="card-img-top"
+                                style="
+                                    height: 220px;
+                                    object-fit: cover;
+                                "
+                                alt="{{ event.title }}"
+                                loading="lazy"
+                            >
+
+                        {% else %}
+
+                            <div
+                                class="bg-dark text-white d-flex align-items-center justify-content-center"
+                                style="height: 220px;"
+                            >
+
+                                <div class="text-center">
+
+                                    <i class="bi bi-calendar-event display-3"></i>
+
+                                    <div class="mt-2">
+                                        KUCSA Event
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <!-- =================================================
+                             EVENT CONTENT
+                        ================================================== -->
+
+                        <div class="card-body d-flex flex-column">
+
+                            <!-- =================================================
+                                 BADGES
+                            ================================================== -->
+
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+
+                                <!-- Event Type -->
+
+                                <span class="badge bg-primary">
+
+                                    {{ event.event_type_display }}
+
+                                </span>
+
+
+                                <!-- Featured -->
+
+                                {% if event.is_featured %}
+
+                                    <span class="badge bg-warning text-dark">
+
+                                        <i class="bi bi-star-fill me-1"></i>
+
+                                        Featured
+
+                                    </span>
+
+                                {% endif %}
+
+
+                                <!-- =================================================
+                                     STATUS
+                                     Management sees all statuses.
+                                     Students normally only see published
+                                     events because the view filters them.
+                                ================================================== -->
+
+                                {% if event.status == "PUBLISHED" %}
+
+                                    <span class="badge bg-success">
+
+                                        <i class="bi bi-check-circle me-1"></i>
+
+                                        Published
+
+                                    </span>
+
+                                {% elif event.status == "ONGOING" %}
+
+                                    <span class="badge bg-info text-dark">
+
+                                        <i class="bi bi-play-circle me-1"></i>
+
+                                        Ongoing
+
+                                    </span>
+
+                                {% elif event.status == "COMPLETED" %}
+
+                                    <span class="badge bg-secondary">
+
+                                        <i class="bi bi-check2-all me-1"></i>
+
+                                        Completed
+
+                                    </span>
+
+                                {% elif event.status == "CANCELLED" %}
+
+                                    <span class="badge bg-danger">
+
+                                        <i class="bi bi-x-circle me-1"></i>
+
+                                        Cancelled
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-dark">
+
+                                        <i class="bi bi-file-earmark me-1"></i>
+
+                                        Draft
+
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- =================================================
+                                 TITLE
+                            ================================================== -->
+
+                            <h5 class="card-title fw-bold mb-2">
+
+                                {{ event.title }}
+
+                            </h5>
+
+
+                            <!-- =================================================
+                                 DESCRIPTION
+                            ================================================== -->
+
+                            <p class="card-text text-muted">
+
+                                {{ event.description|truncatewords:25 }}
+
+                            </p>
+
+
+                            <!-- =================================================
+                                 EVENT INFORMATION
+                            ================================================== -->
+
+                            <div class="small text-muted mb-3">
+
+                                <!-- Date -->
+
+                                <div class="mb-2">
+
+                                    <i class="bi bi-calendar3 me-2"></i>
+
+                                    <strong>
+                                        {{ event.start_datetime|date:"D, d M Y" }}
+                                    </strong>
+
+                                </div>
+
+
+                                <!-- Time -->
+
+                                <div class="mb-2">
+
+                                    <i class="bi bi-clock me-2"></i>
+
+                                    {{ event.start_datetime|date:"g:i A" }}
+
+                                    –
+
+                                    {{ event.end_datetime|date:"g:i A" }}
+
+                                </div>
+
+
+                                <!-- Location -->
+
+                                <div>
+
+                                    {% if event.is_online %}
+
+                                        <i class="bi bi-camera-video me-2"></i>
+
+                                        Online Event
+
+                                    {% else %}
+
+                                        <i class="bi bi-geo-alt me-2"></i>
+
+                                        {{ event.venue|default:"Venue to be announced" }}
+
+                                        {% if event.location_details %}
+
+                                            <span class="text-muted">
+                                                — {{ event.location_details }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- =================================================
+                                 TARGET AUDIENCE
+                            ================================================== -->
+
+                            {% if event.target_audience %}
+
+                                <div class="small mb-3">
+
+                                    <i class="bi bi-people me-2 text-primary"></i>
+
+                                    <strong>For:</strong>
+
+                                    {{ event.target_audience }}
+
+                                </div>
+
+                            {% endif %}
+
+
+                            <!-- =================================================
+                                 REGISTRATION INFORMATION
+                            ================================================== -->
+
+                            {% if event.requires_registration %}
+
+                                {% if event.capacity %}
+
+                                    <div class="mb-3">
+
+                                        <div class="d-flex justify-content-between small mb-1">
+
+                                            <span>
+                                                Registration
+                                            </span>
+
+                                            <span class="fw-semibold">
+
+                                                {{ event.registration_count }}/{{ event.capacity }}
+
+                                            </span>
+
+                                        </div>
+
+
+                                        <div
+                                            class="progress"
+                                            role="progressbar"
+                                            aria-label="Event registration capacity"
+                                            aria-valuemin="0"
+                                            aria-valuemax="{{ event.capacity }}"
+                                            aria-valuenow="{{ event.registration_count }}"
+                                            style="height: 6px;"
+                                        >
+
+                                            <div
+                                                class="progress-bar"
+                                                style="
+                                                    width:
+                                                    {% widthratio event.registration_count event.capacity 100 %}%;
+                                                "
+                                            ></div>
+
+                                        </div>
+
+
+                                        {% if event.is_full %}
+
+                                            <div class="small text-danger mt-1">
+
+                                                <i class="bi bi-exclamation-circle me-1"></i>
+
+                                                Event is full
+
+                                            </div>
+
+                                        {% elif event.available_slots is not None %}
+
+                                            <div class="small text-muted mt-1">
+
+                                                {{ event.available_slots }}
+
+                                                slot{{ event.available_slots|pluralize }}
+
+                                                remaining
+
+                                            </div>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                {% else %}
+
+                                    <div class="small text-muted mb-3">
+
+                                        <i class="bi bi-infinity me-1"></i>
+
+                                        Unlimited capacity
+
+                                    </div>
+
+                                {% endif %}
+
+
+                                <!-- =================================================
+                                     REGISTRATION STATUS
+                                ================================================== -->
+
+                                {% if event.registration_is_open %}
+
+                                    <div class="small text-success mb-3">
+
+                                        <i class="bi bi-check-circle me-1"></i>
+
+                                        Registration is open
+
+                                    </div>
+
+                                {% elif event.is_full %}
+
+                                    <div class="small text-danger mb-3">
+
+                                        <i class="bi bi-x-circle me-1"></i>
+
+                                        Registration is full
+
+                                    </div>
+
+                                {% elif event.registration_deadline %}
+
+                                    <div class="small text-muted mb-3">
+
+                                        <i class="bi bi-clock-history me-1"></i>
+
+                                        Registration is closed
+
+                                    </div>
+
+                                {% else %}
+
+                                    <div class="small text-muted mb-3">
+
+                                        <i class="bi bi-lock me-1"></i>
+
+                                        Registration is closed
+
+                                    </div>
+
+                                {% endif %}
+
+                            {% else %}
+
+                                <div class="small text-muted mb-3">
+
+                                    <i class="bi bi-info-circle me-1"></i>
+
+                                    Registration not required
+
+                                </div>
+
+                            {% endif %}
+
+
+                            <!-- =================================================
+                                 CERTIFICATE
+                            ================================================== -->
+
+                            {% if event.certificate_available %}
+
+                                <div class="small text-success mb-3">
+
+                                    <i class="bi bi-award me-2"></i>
+
+                                    Certificate available
+
+                                </div>
+
+                            {% endif %}
+
+
+                            <!-- =================================================
+                                 ORGANIZER
+                                 Management can see organizer information.
+                            ================================================== -->
+
+                            {% if can_manage_events and event.organizer %}
+
+                                <div class="small text-muted mb-3">
+
+                                    <i class="bi bi-person-badge me-2"></i>
+
+                                    Organized by
+
+                                    <strong>
+                                        {{ event.organizer.get_full_name|default:event.organizer.username }}
+                                    </strong>
+
+                                </div>
+
+                            {% endif %}
+
+
+                            <!-- =================================================
+                                 MANAGEMENT REGISTRATION SUMMARY
+                            ================================================== -->
+
+                            {% if can_manage_events and event.requires_registration %}
+
+                                <div class="border-top pt-3 mb-3">
+
+                                    <div class="row g-2 text-center">
+
+                                        <div class="col-4">
+
+                                            <div class="small text-muted">
+                                                Registered
+                                            </div>
+
+                                            <div class="fw-bold">
+                                                {{ event.registration_count }}
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-4">
+
+                                            <div class="small text-muted">
+                                                Attended
+                                            </div>
+
+                                            <div class="fw-bold text-success">
+                                                {{ event.attendee_count }}
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-4">
+
+                                            <div class="small text-muted">
+                                                Attendance
+                                            </div>
+
+                                            <div class="fw-bold">
+                                                {{ event.attendance_rate }}%
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            {% endif %}
+
+
+                            <!-- =================================================
+                                 ACTIONS
+                            ================================================== -->
+
+                            <div class="mt-auto">
+
+                                <div class="d-grid gap-2">
+
+                                    <!-- View Event -->
+
+                                    <a
+                                        href="{% url 'events:detail' event.pk %}"
+                                        class="btn btn-outline-primary"
+                                    >
+
+                                        <i class="bi bi-eye me-1"></i>
+
+                                        View Event
+
+                                    </a>
+
+
+                                    <!-- =================================================
+                                         MANAGEMENT ACTIONS
+                                    ================================================== -->
+
+                                    {% if can_manage_events %}
+
+                                        <div class="row g-2">
+
+                                            <div class="col-6">
+
+                                                <a
+                                                    href="{% url 'events:update' event.pk %}"
+                                                    class="btn btn-outline-secondary w-100"
+                                                >
+
+                                                    <i class="bi bi-pencil me-1"></i>
+
+                                                    Edit
+
+                                                </a>
+
+                                            </div>
+
+
+                                            <div class="col-6">
+
+                                                {% if event.status == "DRAFT" %}
+
+                                                    <form
+                                                        method="post"
+                                                        action="{% url 'events:publish' event.pk %}"
+                                                    >
+
+                                                        {% csrf_token %}
+
+                                                        <button
+                                                            type="submit"
+                                                            class="btn btn-success w-100"
+                                                        >
+
+                                                            <i class="bi bi-send me-1"></i>
+
+                                                            Publish
+
+                                                        </button>
+
+                                                    </form>
+
+                                                {% elif event.status == "PUBLISHED" or event.status == "ONGOING" %}
+
+                                                    <form
+                                                        method="post"
+                                                        action="{% url 'events:cancel' event.pk %}"
+                                                    >
+
+                                                        {% csrf_token %}
+
+                                                        <button
+                                                            type="submit"
+                                                            class="btn btn-outline-danger w-100"
+                                                            onclick="return confirm('Are you sure you want to cancel this event?');"
+                                                        >
+
+                                                            <i class="bi bi-x-circle me-1"></i>
+
+                                                            Cancel
+
+                                                        </button>
+
+                                                    </form>
+
+                                                {% elif event.status == "COMPLETED" %}
+
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-secondary w-100"
+                                                        disabled
+                                                    >
+
+                                                        <i class="bi bi-check2-all me-1"></i>
+
+                                                        Completed
+
+                                                    </button>
+
+                                                {% elif event.status == "CANCELLED" %}
+
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-danger w-100"
+                                                        disabled
+                                                    >
+
+                                                        <i class="bi bi-x-circle me-1"></i>
+
+                                                        Cancelled
+
+                                                    </button>
+
+                                                {% endif %}
+
+                                            </div>
+
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+        <!-- =========================================================
+             EMPTY STATE
+        ========================================================== -->
+
+        <div class="card border-0 shadow-sm">
+
+            <div class="card-body text-center py-5">
+
+                <i class="bi bi-calendar-x display-1 text-muted"></i>
+
+                <h4 class="mt-3">
+                    No Events Found
+                </h4>
+
+                <p class="text-muted mb-4">
+
+                    {% if search_query or selected_event_type or selected_status or upcoming == "1" %}
+
+                        There are no events matching your
+                        current filters.
+
+                    {% else %}
+
+                        There are currently no events available.
+
+                    {% endif %}
+
+                </p>
+
+
+                <div class="d-flex justify-content-center gap-2 flex-wrap">
+
+                    <!-- Clear Filters -->
+
+                    {% if search_query or selected_event_type or selected_status or upcoming == "1" %}
+
+                        <a
+                            href="{% url 'events:list' %}"
+                            class="btn btn-outline-secondary"
+                        >
+
+                            <i class="bi bi-arrow-counterclockwise me-1"></i>
+
+                            Clear Filters
+
+                        </a>
+
+                    {% endif %}
+
+
+                    <!-- Create Event -->
+
+                    {% if can_manage_events %}
+
+                        <a
+                            href="{% url 'events:create' %}"
+                            class="btn btn-primary"
+                        >
+
+                            <i class="bi bi-plus-circle me-1"></i>
+
+                            Create Event
+
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

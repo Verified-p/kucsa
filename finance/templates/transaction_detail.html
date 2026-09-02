@@ -1,0 +1,471 @@
+{% extends "base.html" %}
+
+{% block title %}Transaction Details | KUCSA Finance{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+
+<!-- =====================================================
+     PAGE HEADER
+====================================================== -->
+<div class="d-flex flex-column flex-md-row
+            justify-content-between align-items-md-center
+            gap-3 mb-4">
+
+    <div>
+        <h2 class="fw-bold mb-1">
+            Transaction Details
+        </h2>
+
+        <p class="text-muted mb-0">
+            View the details of this financial transaction.
+        </p>
+    </div>
+
+    <div>
+        <a href="{% url 'finance:transactions' %}"
+           class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Transactions
+        </a>
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     TRANSACTION SUMMARY
+====================================================== -->
+<div class="row g-4">
+
+    <!-- Main Details -->
+    <div class="col-lg-8">
+
+        <div class="card border-0 shadow-sm">
+
+            <div class="card-header bg-white py-3">
+                <div class="d-flex justify-content-between
+                            align-items-center">
+
+                    <h5 class="fw-bold mb-0">
+                        Transaction Information
+                    </h5>
+
+                    {% if transaction.is_posted %}
+                        <span class="badge bg-success">
+                            Posted
+                        </span>
+                    {% elif transaction.is_draft %}
+                        <span class="badge bg-warning text-dark">
+                            Draft
+                        </span>
+                    {% elif transaction.is_voided %}
+                        <span class="badge bg-danger">
+                            Voided
+                        </span>
+                    {% endif %}
+
+                </div>
+            </div>
+
+            <div class="card-body">
+
+                <!-- Transaction Number -->
+                <div class="row mb-3">
+
+                    <div class="col-md-4 text-muted">
+                        Transaction Number
+                    </div>
+
+                    <div class="col-md-8 fw-semibold">
+                        {{ transaction.transaction_number }}
+                    </div>
+
+                </div>
+
+
+                <!-- Transaction Type -->
+                <div class="row mb-3">
+
+                    <div class="col-md-4 text-muted">
+                        Transaction Type
+                    </div>
+
+                    <div class="col-md-8">
+
+                        {% if transaction.is_income %}
+                            <span class="badge bg-success">
+                                <i class="bi bi-arrow-down-circle me-1"></i>
+                                Income
+                            </span>
+                        {% else %}
+                            <span class="badge bg-danger">
+                                <i class="bi bi-arrow-up-circle me-1"></i>
+                                Expense
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- Amount -->
+                <div class="row mb-3">
+
+                    <div class="col-md-4 text-muted">
+                        Amount
+                    </div>
+
+                    <div class="col-md-8">
+
+                        <span class="fs-4 fw-bold
+                            {% if transaction.is_income %}
+                                text-success
+                            {% else %}
+                                text-danger
+                            {% endif %}">
+                            KES {{ transaction.amount|floatformat:2 }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Category -->
+                <div class="row mb-3">
+
+                    <div class="col-md-4 text-muted">
+                        Category
+                    </div>
+
+                    <div class="col-md-8 fw-semibold">
+                        {{ transaction.category.name }}
+                    </div>
+
+                </div>
+
+
+                <!-- Description -->
+                <div class="row mb-3">
+
+                    <div class="col-md-4 text-muted">
+                        Description
+                    </div>
+
+                    <div class="col-md-8">
+                        {{ transaction.description|default:"No description provided." }}
+                    </div>
+
+                </div>
+
+
+                <!-- Reference -->
+                <div class="row mb-3">
+
+                    <div class="col-md-4 text-muted">
+                        Reference
+                    </div>
+
+                    <div class="col-md-8">
+                        {% if transaction.reference %}
+                            <span class="font-monospace">
+                                {{ transaction.reference }}
+                            </span>
+                        {% else %}
+                            <span class="text-muted">
+                                No reference
+                            </span>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+
+                <!-- Payment Source -->
+                <div class="row mb-3">
+
+                    <div class="col-md-4 text-muted">
+                        Payment Source
+                    </div>
+
+                    <div class="col-md-8">
+                        {{ transaction.source_display }}
+                    </div>
+
+                </div>
+
+
+                <!-- Transaction Date -->
+                <div class="row mb-3">
+
+                    <div class="col-md-4 text-muted">
+                        Transaction Date
+                    </div>
+
+                    <div class="col-md-8">
+                        {{ transaction.transaction_date|date:"d M Y, H:i" }}
+                    </div>
+
+                </div>
+
+
+                <!-- Posted At -->
+                <div class="row mb-3">
+
+                    <div class="col-md-4 text-muted">
+                        Posted At
+                    </div>
+
+                    <div class="col-md-8">
+
+                        {% if transaction.posted_at %}
+                            {{ transaction.posted_at|date:"d M Y, H:i" }}
+                        {% else %}
+                            <span class="text-muted">
+                                Not posted
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- Notes -->
+                {% if transaction.notes %}
+
+                    <div class="row mb-3">
+
+                        <div class="col-md-4 text-muted">
+                            Notes
+                        </div>
+
+                        <div class="col-md-8">
+                            {{ transaction.notes|linebreaksbr }}
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         SIDE INFORMATION
+    ================================================== -->
+    <div class="col-lg-4">
+
+        <!-- Balance Effect -->
+        <div class="card border-0 shadow-sm mb-4">
+
+            <div class="card-header bg-white py-3">
+                <h6 class="fw-bold mb-0">
+                    Balance Effect
+                </h6>
+            </div>
+
+            <div class="card-body">
+
+                {% if transaction.affects_balance %}
+
+                    <div class="text-center">
+
+                        {% if transaction.is_income %}
+
+                            <div class="text-success mb-2">
+                                <i class="bi bi-plus-circle fs-1"></i>
+                            </div>
+
+                            <h4 class="fw-bold text-success">
+                                + KES {{ transaction.amount|floatformat:2 }}
+                            </h4>
+
+                            <p class="text-muted mb-0">
+                                This transaction increases the
+                                available balance.
+                            </p>
+
+                        {% else %}
+
+                            <div class="text-danger mb-2">
+                                <i class="bi bi-dash-circle fs-1"></i>
+                            </div>
+
+                            <h4 class="fw-bold text-danger">
+                                - KES {{ transaction.amount|floatformat:2 }}
+                            </h4>
+
+                            <p class="text-muted mb-0">
+                                This transaction reduces the
+                                available balance.
+                            </p>
+
+                        {% endif %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="text-center">
+
+                        <div class="text-muted mb-2">
+                            <i class="bi bi-dash-circle fs-1"></i>
+                        </div>
+
+                        <h5 class="fw-bold">
+                            No Balance Effect
+                        </h5>
+
+                        <p class="text-muted mb-0">
+                            This transaction is not currently
+                            affecting the available balance.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- Recorded By -->
+        <div class="card border-0 shadow-sm mb-4">
+
+            <div class="card-header bg-white py-3">
+                <h6 class="fw-bold mb-0">
+                    Record Information
+                </h6>
+            </div>
+
+            <div class="card-body">
+
+                <div class="mb-3">
+
+                    <small class="text-muted d-block">
+                        Recorded By
+                    </small>
+
+                    <span class="fw-semibold">
+                        {{ transaction.recorded_by }}
+                    </span>
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <small class="text-muted d-block">
+                        Created
+                    </small>
+
+                    <span>
+                        {{ transaction.created_at|date:"d M Y, H:i" }}
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <small class="text-muted d-block">
+                        Last Updated
+                    </small>
+
+                    <span>
+                        {{ transaction.updated_at|date:"d M Y, H:i" }}
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Member -->
+        {% if transaction.member %}
+
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-header bg-white py-3">
+                    <h6 class="fw-bold mb-0">
+                        Member
+                    </h6>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="d-flex align-items-center">
+
+                        <div class="bg-light rounded-circle
+                                    p-3 me-3">
+                            <i class="bi bi-person fs-4"></i>
+                        </div>
+
+                        <div>
+                            <div class="fw-semibold">
+                                {{ transaction.member }}
+                            </div>
+
+                            <small class="text-muted">
+                                Associated Member
+                            </small>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- Payment -->
+        {% if transaction.payment %}
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-header bg-white py-3">
+                    <h6 class="fw-bold mb-0">
+                        Source Payment
+                    </h6>
+                </div>
+
+                <div class="card-body">
+
+                    <p class="text-muted small mb-2">
+                        This income transaction originated
+                        from a verified payment.
+                    </p>
+
+                    <div class="fw-semibold">
+                        Payment ID:
+                        {{ transaction.payment.pk }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+</div>
+
+{% endblock %}

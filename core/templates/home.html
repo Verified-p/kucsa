@@ -1,0 +1,302 @@
+{% extends "base.html" %}
+
+{% block title %}
+Home | KUCSA Platform
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+
+<section class="py-5 bg-light">
+
+    <div class="container">
+
+        <div class="row align-items-center">
+
+            <div class="col-lg-6">
+
+                <h1 class="display-4 fw-bold">
+
+                    Welcome to the KUCSA Digital Computing Community Platform
+
+                </h1>
+
+                <p class="lead text-muted mt-4">
+
+                    A centralized platform for managing membership,
+                    events, attendance, announcements, and collaboration
+                    within the Kisii University Computing Students Association.
+
+                </p>
+
+                <div class="mt-4">
+
+                    <a href="{% url 'accounts:register' %}"
+                       class="btn btn-primary btn-lg me-2">
+
+                        <i class="bi bi-person-plus-fill"></i>
+
+                        Register
+
+                    </a>
+
+                    <a href="{% url 'accounts:login' %}"
+                       class="btn btn-outline-primary btn-lg">
+
+                        <i class="bi bi-box-arrow-in-right"></i>
+
+                        Login
+
+                    </a>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-6 text-center">
+
+                <i class="bi bi-laptop display-1 text-primary"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- About -->
+
+<section class="py-5">
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <h2>
+
+                About KUCSA
+
+            </h2>
+
+            <p class="text-muted">
+
+                The Kisii University Computing Students Association (KUCSA)
+                brings together students interested in computing and technology,
+                providing opportunities for learning, networking, innovation,
+                and professional development.
+
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- Features -->
+
+<section class="py-5 bg-light">
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <h2>
+
+                Platform Features
+
+            </h2>
+
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+
+                <div class="card h-100 shadow-sm">
+
+                    <div class="card-body text-center">
+
+                        <i class="bi bi-people-fill display-5 text-primary"></i>
+
+                        <h5 class="mt-3">
+
+                            Membership Management
+
+                        </h5>
+
+                        <p>
+
+                            Register, apply for membership, and manage member information.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <div class="card h-100 shadow-sm">
+
+                    <div class="card-body text-center">
+
+                        <i class="bi bi-calendar-event display-5 text-success"></i>
+
+                        <h5 class="mt-3">
+
+                            Events
+
+                        </h5>
+
+                        <p>
+
+                            View upcoming events, workshops, and meetings.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <div class="card h-100 shadow-sm">
+
+                    <div class="card-body text-center">
+
+                        <i class="bi bi-megaphone-fill display-5 text-warning"></i>
+
+                        <h5 class="mt-3">
+
+                            Announcements
+
+                        </h5>
+
+                        <p>
+
+                            Stay informed with the latest updates from KUCSA.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- Technical Domains -->
+
+<section class="py-5">
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <h2>
+
+                Technical Interest Areas
+
+            </h2>
+
+        </div>
+
+        <div class="row text-center g-3">
+
+            <div class="col-md-3">
+                <span class="badge bg-primary p-3 w-100">
+                    Artificial Intelligence
+                </span>
+            </div>
+
+            <div class="col-md-3">
+                <span class="badge bg-success p-3 w-100">
+                    Cybersecurity
+                </span>
+            </div>
+
+            <div class="col-md-3">
+                <span class="badge bg-info p-3 w-100">
+                    Software Engineering
+                </span>
+            </div>
+
+            <div class="col-md-3">
+                <span class="badge bg-secondary p-3 w-100">
+                    Web Development
+                </span>
+            </div>
+
+            <div class="col-md-3">
+                <span class="badge bg-danger p-3 w-100">
+                    Mobile Development
+                </span>
+            </div>
+
+            <div class="col-md-3">
+                <span class="badge bg-dark p-3 w-100">
+                    Data Science
+                </span>
+            </div>
+
+            <div class="col-md-3">
+                <span class="badge bg-warning text-dark p-3 w-100">
+                    Networking
+                </span>
+            </div>
+
+            <div class="col-md-3">
+                <span class="badge bg-primary p-3 w-100">
+                    Cloud Computing
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- Call To Action -->
+
+<section class="py-5 bg-primary text-white">
+
+    <div class="container text-center">
+
+        <h2>
+
+            Become Part of KUCSA Today
+
+        </h2>
+
+        <p class="lead">
+
+            Join the community and participate in events,
+            workshops, projects, and professional development opportunities.
+
+        </p>
+
+        <a href="{% url 'accounts:register' %}"
+           class="btn btn-light btn-lg">
+
+            Register Now
+
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

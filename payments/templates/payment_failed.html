@@ -1,0 +1,324 @@
+
+{% extends "base.html" %}
+
+{% block title %}Payment Failed | KUCSA{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-12 col-md-7 col-lg-5">
+
+            <!-- =====================================================
+                 FAILED PAYMENT CARD
+            ====================================================== -->
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body text-center p-5">
+
+                    <!-- =================================================
+                         FAILURE ICON
+                    ================================================== -->
+
+                    <div
+                        class="rounded-circle bg-danger bg-opacity-10
+                               d-inline-flex align-items-center
+                               justify-content-center mb-4"
+                        style="width: 90px; height: 90px;"
+                    >
+
+                        <i
+                            class="bi bi-x-lg text-danger"
+                            style="font-size: 42px;"
+                        ></i>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         TITLE
+                    ================================================== -->
+
+                    <h2 class="fw-bold mb-2">
+                        Payment Not Completed
+                    </h2>
+
+                    <p class="text-muted mb-4">
+                        Your KUCSA membership payment could not be
+                        completed or was cancelled.
+                    </p>
+
+
+                    <!-- =================================================
+                         PAYMENT DETAILS
+                    ================================================== -->
+
+                    <div class="bg-light rounded p-4 mb-4 text-start">
+
+                        <div
+                            class="d-flex justify-content-between
+                                   align-items-center mb-3"
+                        >
+
+                            <span class="text-muted">
+                                Amount
+                            </span>
+
+                            <strong>
+                                KES {{ payment.amount }}
+                            </strong>
+
+                        </div>
+
+
+                        <div
+                            class="d-flex justify-content-between
+                                   align-items-center mb-3"
+                        >
+
+                            <span class="text-muted">
+                                Payment Method
+                            </span>
+
+                            <strong>
+                                M-Pesa
+                            </strong>
+
+                        </div>
+
+
+                        {% if payment.phone_number %}
+
+                        <div
+                            class="d-flex justify-content-between
+                                   align-items-center mb-3"
+                        >
+
+                            <span class="text-muted">
+                                Phone
+                            </span>
+
+                            <strong>
+                                {{ payment.phone_number }}
+                            </strong>
+
+                        </div>
+
+                        {% endif %}
+
+
+                        <div
+                            class="d-flex justify-content-between
+                                   align-items-center"
+                        >
+
+                            <span class="text-muted">
+                                Status
+                            </span>
+
+                            <span class="badge bg-danger">
+                                {{ payment.get_status_display }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         FAILURE MESSAGE
+                    ================================================== -->
+
+                    <div
+                        class="alert alert-danger
+                               text-start d-flex align-items-start"
+                    >
+
+                        <i
+                            class="bi bi-exclamation-triangle-fill
+                                   me-3 mt-1"
+                            style="font-size: 20px;"
+                        ></i>
+
+                        <div>
+
+                            <strong>
+                                Payment was not confirmed
+                            </strong>
+
+                            <p class="small mb-0 mt-1">
+
+                                The M-Pesa transaction was either
+                                cancelled, declined, timed out, or
+                                could not be confirmed by Safaricom.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         WHAT TO DO
+                    ================================================== -->
+
+                    <div class="text-start mb-4">
+
+                        <h6 class="fw-bold mb-3">
+                            What you can do
+                        </h6>
+
+
+                        <div class="d-flex mb-3">
+
+                            <div
+                                class="rounded-circle bg-success
+                                       text-white d-flex
+                                       align-items-center
+                                       justify-content-center
+                                       flex-shrink-0 me-3"
+                                style="width: 30px; height: 30px;"
+                            >
+                                1
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Check your M-Pesa balance
+                                </strong>
+
+                                <p class="text-muted small mb-0">
+                                    Make sure you have sufficient
+                                    funds in your M-Pesa account.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="d-flex mb-3">
+
+                            <div
+                                class="rounded-circle bg-success
+                                       text-white d-flex
+                                       align-items-center
+                                       justify-content-center
+                                       flex-shrink-0 me-3"
+                                style="width: 30px; height: 30px;"
+                            >
+                                2
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Confirm your phone number
+                                </strong>
+
+                                <p class="text-muted small mb-0">
+                                    Make sure you are using the
+                                    correct M-Pesa number.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="d-flex">
+
+                            <div
+                                class="rounded-circle bg-success
+                                       text-white d-flex
+                                       align-items-center
+                                       justify-content-center
+                                       flex-shrink-0 me-3"
+                                style="width: 30px; height: 30px;"
+                            >
+                                3
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Try the payment again
+                                </strong>
+
+                                <p class="text-muted small mb-0">
+                                    Start a new M-Pesa payment request
+                                    to complete your membership.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         TRY AGAIN
+                    ================================================== -->
+
+                    <a
+                        href="{% url 'payments:payment_create' %}"
+                        class="btn btn-success w-100 py-2"
+                    >
+
+                        <i class="bi bi-arrow-repeat me-2"></i>
+
+                        Try Payment Again
+
+                    </a>
+
+
+                    <!-- =================================================
+                         PAYMENT HISTORY
+                    ================================================== -->
+
+                    <a
+                        href="{% url 'payments:payment_list' %}"
+                        class="btn btn-outline-secondary w-100 py-2 mt-2"
+                    >
+
+                        <i class="bi bi-receipt me-2"></i>
+
+                        View Payment History
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 SECURITY NOTE
+            ====================================================== -->
+
+            <div class="text-center mt-3">
+
+                <small class="text-muted">
+
+                    <i class="bi bi-shield-check me-1"></i>
+
+                    Payment processing is handled securely through
+                    M-Pesa.
+
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

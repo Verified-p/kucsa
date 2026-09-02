@@ -1,0 +1,841 @@
+{# attendance/templates/attendance/attendance_list.html #}
+
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+    Attendance Sessions | KUCSA
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+
+        <div>
+            <h1 class="h3 mb-1">
+                Attendance Sessions
+            </h1>
+
+            <p class="text-muted mb-0">
+                Create, monitor and manage KUCSA member attendance sessions.
+            </p>
+        </div>
+
+        {% if can_manage %}
+            <a href="{% url 'attendance:create' %}"
+               class="btn btn-primary">
+
+                <i class="bi bi-plus-circle me-1"></i>
+                Create Attendance Session
+
+            </a>
+        {% endif %}
+
+    </div>
+
+
+    <!-- =====================================================
+         SUMMARY CARDS
+    ====================================================== -->
+
+    <div class="row g-3 mb-4">
+
+        <!-- Total Sessions -->
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <p class="text-muted small mb-1">
+                                Total Sessions
+                            </p>
+
+                            <h3 class="mb-0">
+                                {{ total_sessions|default:0 }}
+                            </h3>
+                        </div>
+
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+                            <i class="bi bi-calendar-check text-primary fs-4"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Active Sessions -->
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <p class="text-muted small mb-1">
+                                Open Sessions
+                            </p>
+
+                            <h3 class="mb-0">
+                                {{ open_sessions|default:0 }}
+                            </h3>
+                        </div>
+
+                        <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                            <i class="bi bi-broadcast text-success fs-4"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Closed Sessions -->
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <p class="text-muted small mb-1">
+                                Closed Sessions
+                            </p>
+
+                            <h3 class="mb-0">
+                                {{ closed_sessions|default:0 }}
+                            </h3>
+                        </div>
+
+                        <div class="bg-secondary bg-opacity-10 rounded-circle p-3">
+                            <i class="bi bi-lock text-secondary fs-4"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- My Attendance -->
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <p class="text-muted small mb-1">
+                                My Attendance
+                            </p>
+
+                            <a href="{% url 'attendance:my_attendance' %}"
+                               class="btn btn-sm btn-outline-primary mt-1">
+
+                                View History
+
+                            </a>
+                        </div>
+
+                        <div class="bg-info bg-opacity-10 rounded-circle p-3">
+                            <i class="bi bi-person-check text-info fs-4"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ACTIVE ATTENDANCE ALERT
+    ====================================================== -->
+
+    {% if active_sessions %}
+
+        <div class="alert alert-success border-0 shadow-sm mb-4">
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+                <div class="d-flex align-items-center">
+
+                    <i class="bi bi-broadcast-pin fs-4 me-3"></i>
+
+                    <div>
+
+                        <strong>
+                            Attendance is currently open.
+                        </strong>
+
+                        <div class="small">
+                            {{ active_sessions|length }}
+                            active attendance session{{ active_sessions|length|pluralize }} available.
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <a href="{% url 'attendance:active' %}"
+                   class="btn btn-success">
+
+                    View Active Attendance
+
+                    <i class="bi bi-arrow-right ms-1"></i>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         FILTERS
+    ====================================================== -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-header bg-transparent border-0 py-3">
+
+            <div class="d-flex align-items-center">
+
+                <i class="bi bi-funnel me-2"></i>
+
+                <h5 class="mb-0">
+                    Filter Attendance Sessions
+                </h5>
+
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            <form method="get">
+
+                <div class="row g-3">
+
+                    <!-- Search -->
+
+                    <div class="col-12 col-md-5">
+
+                        <label for="{{ form.search.id_for_label }}"
+                               class="form-label">
+
+                            Search
+
+                        </label>
+
+                        {{ form.search }}
+
+                        {% if form.search.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.search.errors|striptags }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- Status -->
+
+                    <div class="col-12 col-md-3">
+
+                        <label for="{{ form.status.id_for_label }}"
+                               class="form-label">
+
+                            Status
+
+                        </label>
+
+                        {{ form.status }}
+
+                        {% if form.status.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.status.errors|striptags }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- Buttons -->
+
+                    <div class="col-12 col-md-4 d-flex align-items-end gap-2">
+
+                        <button type="submit"
+                                class="btn btn-primary">
+
+                            <i class="bi bi-search me-1"></i>
+                            Filter
+
+                        </button>
+
+                        <a href="{% url 'attendance:list' %}"
+                           class="btn btn-outline-secondary">
+
+                            <i class="bi bi-arrow-counterclockwise me-1"></i>
+                            Reset
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ATTENDANCE SESSIONS
+    ====================================================== -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-transparent border-0 py-3">
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+
+                <div>
+
+                    <h5 class="mb-1">
+                        Attendance Sessions
+                    </h5>
+
+                    <small class="text-muted">
+                        {{ session_count|default:0 }}
+                        session{{ session_count|default:0|pluralize }}
+                        found
+                    </small>
+
+                </div>
+
+                {% if can_manage %}
+
+                    <a href="{% url 'attendance:create' %}"
+                       class="btn btn-sm btn-primary">
+
+                        <i class="bi bi-plus-circle me-1"></i>
+                        New Session
+
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            {% if sessions %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th class="px-3">
+                                    #
+                                </th>
+
+                                <th>
+                                    Attendance Session
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Opens
+                                </th>
+
+                                <th>
+                                    Closes
+                                </th>
+
+                                <th>
+                                    Created
+                                </th>
+
+                                <th class="text-end px-3">
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for session in sessions %}
+
+                                <tr>
+
+                                    <!-- Number -->
+
+                                    <td class="px-3">
+
+                                        <span class="text-muted">
+                                            {{ forloop.counter }}
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- Session -->
+
+                                    <td>
+
+                                        <div class="fw-semibold">
+
+                                            {{ session.title }}
+
+                                        </div>
+
+                                        {% if session.description %}
+
+                                            <div class="small text-muted text-truncate"
+                                                 style="max-width: 320px;">
+
+                                                {{ session.description }}
+
+                                            </div>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- Status -->
+
+                                    <td>
+
+                                        {% if session.status == "DRAFT" %}
+
+                                            <span class="badge bg-secondary">
+                                                <i class="bi bi-pencil me-1"></i>
+                                                Draft
+                                            </span>
+
+                                        {% elif session.status == "OPEN" %}
+
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-broadcast me-1"></i>
+                                                Open
+                                            </span>
+
+                                        {% elif session.status == "CLOSED" %}
+
+                                            <span class="badge bg-dark">
+                                                <i class="bi bi-lock me-1"></i>
+                                                Closed
+                                            </span>
+
+                                        {% elif session.status == "EXPIRED" %}
+
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="bi bi-clock-history me-1"></i>
+                                                Expired
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+                                                {{ session.get_status_display }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- Opening -->
+
+                                    <td>
+
+                                        {% if session.opens_at %}
+
+                                            <div>
+                                                {{ session.opens_at|date:"d M Y" }}
+                                            </div>
+
+                                            <small class="text-muted">
+                                                {{ session.opens_at|time:"H:i" }}
+                                            </small>
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+                                                —
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- Closing -->
+
+                                    <td>
+
+                                        {% if session.closes_at %}
+
+                                            <div>
+                                                {{ session.closes_at|date:"d M Y" }}
+                                            </div>
+
+                                            <small class="text-muted">
+                                                {{ session.closes_at|time:"H:i" }}
+                                            </small>
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+                                                —
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- Created -->
+
+                                    <td>
+
+                                        {% if session.created_at %}
+
+                                            <div>
+                                                {{ session.created_at|date:"d M Y" }}
+                                            </div>
+
+                                            <small class="text-muted">
+                                                {{ session.created_at|time:"H:i" }}
+                                            </small>
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+                                                —
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- Action -->
+
+                                    <td class="text-end px-3">
+
+                                        <div class="dropdown">
+
+                                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                                                    type="button"
+                                                    data-bs-toggle="dropdown"
+                                                    aria-expanded="false">
+
+                                                Actions
+
+                                            </button>
+
+
+                                            <ul class="dropdown-menu dropdown-menu-end">
+
+                                                <li>
+
+                                                    <a class="dropdown-item"
+                                                       href="{% url 'attendance:detail' session.pk %}">
+
+                                                        <i class="bi bi-eye me-2"></i>
+                                                        View Attendance
+
+                                                    </a>
+
+                                                </li>
+
+
+                                                {% if session.status == "DRAFT" and can_manage %}
+
+                                                    <li>
+
+                                                        <a class="dropdown-item"
+                                                           href="{% url 'attendance:update_timing' session.pk %}">
+
+                                                            <i class="bi bi-clock me-2"></i>
+                                                            Set Timing
+
+                                                        </a>
+
+                                                    </li>
+
+                                                {% endif %}
+
+
+                                                {% if session.attendance_is_open %}
+
+                                                    <li>
+
+                                                        <a class="dropdown-item"
+                                                           href="{% url 'attendance:active_status' session.pk %}">
+
+                                                            <i class="bi bi-broadcast me-2"></i>
+                                                            Active Session
+
+                                                        </a>
+
+                                                    </li>
+
+                                                {% endif %}
+
+                                            </ul>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <!-- =================================================
+                     EMPTY STATE
+                ================================================== -->
+
+                <div class="text-center py-5 px-3">
+
+                    <div class="mb-3">
+
+                        <div class="bg-light rounded-circle d-inline-flex p-4">
+
+                            <i class="bi bi-calendar-x text-muted fs-1"></i>
+
+                        </div>
+
+                    </div>
+
+                    <h5>
+                        No Attendance Sessions Found
+                    </h5>
+
+                    <p class="text-muted mb-4">
+
+                        There are currently no attendance sessions
+                        matching your search criteria.
+
+                    </p>
+
+                    {% if can_manage %}
+
+                        <a href="{% url 'attendance:create' %}"
+                           class="btn btn-primary">
+
+                            <i class="bi bi-plus-circle me-1"></i>
+                            Create First Attendance Session
+
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         QUICK ACTIONS
+    ====================================================== -->
+
+    {% if can_manage %}
+
+        <div class="row g-3 mt-4">
+
+            <div class="col-12 col-md-4">
+
+                <a href="{% url 'attendance:create' %}"
+                   class="text-decoration-none">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex align-items-center">
+
+                                <div class="bg-primary bg-opacity-10 rounded p-3 me-3">
+
+                                    <i class="bi bi-plus-circle text-primary fs-4"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <h6 class="mb-1">
+                                        Create Session
+                                    </h6>
+
+                                    <small class="text-muted">
+                                        Start a new member attendance session.
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+
+            <div class="col-12 col-md-4">
+
+                <a href="{% url 'attendance:active' %}"
+                   class="text-decoration-none">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex align-items-center">
+
+                                <div class="bg-success bg-opacity-10 rounded p-3 me-3">
+
+                                    <i class="bi bi-broadcast text-success fs-4"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <h6 class="mb-1">
+                                        Active Attendance
+                                    </h6>
+
+                                    <small class="text-muted">
+                                        Monitor currently open sessions.
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+
+            <div class="col-12 col-md-4">
+
+                <a href="{% url 'attendance:report' %}"
+                   class="text-decoration-none">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex align-items-center">
+
+                                <div class="bg-info bg-opacity-10 rounded p-3 me-3">
+
+                                    <i class="bi bi-bar-chart text-info fs-4"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <h6 class="mb-1">
+                                        Attendance Reports
+                                    </h6>
+
+                                    <small class="text-muted">
+                                        Analyze and export attendance records.
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

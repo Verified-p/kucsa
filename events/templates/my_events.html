@@ -1,0 +1,773 @@
+{% extends "base.html" %}
+
+{% block title %}My Events | KUCSA{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- =========================================================
+         PAGE HEADER
+    ========================================================== -->
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+
+                <i class="bi bi-calendar-check me-2"></i>
+
+                My Events
+
+            </h2>
+
+            <p class="text-muted mb-0">
+
+                Manage and view the KUCSA events you have registered for.
+
+            </p>
+
+        </div>
+
+
+        <div class="d-flex gap-2 mt-3 mt-md-0">
+
+            <a
+                href="{% url 'events:list' %}"
+                class="btn btn-primary"
+            >
+
+                <i class="bi bi-calendar-event me-1"></i>
+
+                Browse Events
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         UPCOMING EVENTS
+    ========================================================== -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-header bg-white py-3">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h5 class="mb-0 fw-bold">
+
+                    <i class="bi bi-calendar2-week me-2"></i>
+
+                    Upcoming Events
+
+                    <span class="badge bg-primary ms-2">
+
+                        {{ upcoming_events|length }}
+
+                    </span>
+
+                </h5>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            {% if upcoming_events %}
+
+                <div class="row g-4">
+
+                    {% for registration in upcoming_events %}
+
+                        <div class="col-xl-4 col-lg-6 col-md-6">
+
+                            <div class="card h-100 border shadow-sm overflow-hidden">
+
+                                <!-- =================================================
+                                     EVENT IMAGE
+                                ================================================== -->
+
+                                {% if registration.event.image %}
+
+                                    <img
+                                        src="{{ registration.event.image.url }}"
+                                        class="card-img-top"
+                                        style="height: 180px; object-fit: cover;"
+                                        alt="{{ registration.event.title }}"
+                                    >
+
+                                {% else %}
+
+                                    <div
+                                        class="bg-light d-flex align-items-center justify-content-center"
+                                        style="height: 180px;"
+                                    >
+
+                                        <div class="text-center text-muted">
+
+                                            <i class="bi bi-calendar-event display-5"></i>
+
+                                            <div class="small mt-2">
+                                                KUCSA Event
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                {% endif %}
+
+
+                                <!-- =================================================
+                                     CARD BODY
+                                ================================================== -->
+
+                                <div class="card-body d-flex flex-column">
+
+                                    <!-- =================================================
+                                         REGISTRATION STATUS
+                                    ================================================== -->
+
+                                    <div class="mb-2">
+
+                                        {% if registration.status == "REGISTERED" %}
+
+                                            <span class="badge bg-success">
+
+                                                <i class="bi bi-check-circle me-1"></i>
+
+                                                Registered
+
+                                            </span>
+
+                                        {% elif registration.status == "ATTENDED" %}
+
+                                            <span class="badge bg-success">
+
+                                                <i class="bi bi-patch-check me-1"></i>
+
+                                                Attended
+
+                                            </span>
+
+                                        {% elif registration.status == "ABSENT" %}
+
+                                            <span class="badge bg-warning text-dark">
+
+                                                <i class="bi bi-person-x me-1"></i>
+
+                                                Absent
+
+                                            </span>
+
+                                        {% elif registration.status == "CANCELLED" %}
+
+                                            <span class="badge bg-secondary">
+
+                                                <i class="bi bi-x-circle me-1"></i>
+
+                                                Cancelled
+
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+
+                                                {{ registration.get_status_display }}
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+
+                                    <!-- =================================================
+                                         EVENT TYPE
+                                    ================================================== -->
+
+                                    <small class="text-muted mb-1">
+
+                                        <i class="bi bi-tag me-1"></i>
+
+                                        {{ registration.event.get_event_type_display }}
+
+                                    </small>
+
+
+                                    <!-- =================================================
+                                         EVENT TITLE
+                                    ================================================== -->
+
+                                    <h5 class="fw-bold mb-3">
+
+                                        {{ registration.event.title }}
+
+                                    </h5>
+
+
+                                    <!-- =================================================
+                                         EVENT INFORMATION
+                                    ================================================== -->
+
+                                    <div class="small text-muted mb-3">
+
+                                        <!-- DATE -->
+
+                                        <div class="mb-2">
+
+                                            <i class="bi bi-calendar3 me-2"></i>
+
+                                            {{ registration.event.start_datetime|date:"D, d M Y" }}
+
+                                        </div>
+
+
+                                        <!-- TIME -->
+
+                                        <div class="mb-2">
+
+                                            <i class="bi bi-clock me-2"></i>
+
+                                            {{ registration.event.start_datetime|date:"g:i A" }}
+
+                                            {% if registration.event.end_datetime %}
+
+                                                –
+
+                                                {{ registration.event.end_datetime|date:"g:i A" }}
+
+                                            {% endif %}
+
+                                        </div>
+
+
+                                        <!-- LOCATION -->
+
+                                        <div>
+
+                                            {% if registration.event.is_online %}
+
+                                                <i class="bi bi-camera-video me-2"></i>
+
+                                                Online Event
+
+                                            {% else %}
+
+                                                <i class="bi bi-geo-alt me-2"></i>
+
+                                                {{ registration.event.venue }}
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- =================================================
+                                         ONLINE EVENT NOTICE
+                                    ================================================== -->
+
+                                    {% if registration.event.is_online %}
+
+                                        <div class="alert alert-info py-2 px-3 small mb-3">
+
+                                            <i class="bi bi-camera-video me-1"></i>
+
+                                            This is an online event.
+
+                                        </div>
+
+                                    {% endif %}
+
+
+                                    <!-- =================================================
+                                         ACTIONS
+                                    ================================================== -->
+
+                                    <div class="mt-auto">
+
+                                        {% if registration.event.is_online and registration.event.online_link %}
+
+                                            <a
+                                                href="{{ registration.event.online_link }}"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="btn btn-sm btn-outline-info w-100 mb-2"
+                                            >
+
+                                                <i class="bi bi-camera-video me-1"></i>
+
+                                                Join Online Event
+
+                                            </a>
+
+                                        {% endif %}
+
+
+                                        <a
+                                            href="{% url 'events:detail' registration.event.pk %}"
+                                            class="btn btn-sm btn-primary w-100"
+                                        >
+
+                                            <i class="bi bi-eye me-1"></i>
+
+                                            View Event
+
+                                        </a>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <!-- =================================================
+                     EMPTY UPCOMING STATE
+                ================================================== -->
+
+                <div class="text-center py-5">
+
+                    <i class="bi bi-calendar-x display-4 text-muted"></i>
+
+                    <h5 class="fw-bold mt-3">
+                        No Upcoming Events
+                    </h5>
+
+                    <p class="text-muted mb-4">
+
+                        You have not registered for any upcoming
+                        KUCSA events.
+
+                    </p>
+
+                    <a
+                        href="{% url 'events:list' %}"
+                        class="btn btn-primary"
+                    >
+
+                        <i class="bi bi-calendar-plus me-1"></i>
+
+                        Browse Events
+
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         PAST EVENTS
+    ========================================================== -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-header bg-white py-3">
+
+            <h5 class="mb-0 fw-bold">
+
+                <i class="bi bi-clock-history me-2"></i>
+
+                Past Events
+
+                <span class="badge bg-secondary ms-2">
+
+                    {{ past_events|length }}
+
+                </span>
+
+            </h5>
+
+        </div>
+
+
+        <div class="card-body">
+
+            {% if past_events %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th>Event</th>
+
+                                <th>Date</th>
+
+                                <th>Location</th>
+
+                                <th>Registration Status</th>
+
+                                <th class="text-end">Action</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for registration in past_events %}
+
+                                <tr>
+
+                                    <!-- EVENT -->
+
+                                    <td>
+
+                                        <div class="fw-semibold">
+
+                                            {{ registration.event.title }}
+
+                                        </div>
+
+                                        <small class="text-muted">
+
+                                            {{ registration.event.get_event_type_display }}
+
+                                        </small>
+
+                                    </td>
+
+
+                                    <!-- DATE -->
+
+                                    <td>
+
+                                        <span class="text-nowrap">
+
+                                            <i class="bi bi-calendar3 me-1"></i>
+
+                                            {{ registration.event.start_datetime|date:"d M Y" }}
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- LOCATION -->
+
+                                    <td>
+
+                                        {% if registration.event.is_online %}
+
+                                            <span class="text-nowrap">
+
+                                                <i class="bi bi-camera-video me-1"></i>
+
+                                                Online
+
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="text-nowrap">
+
+                                                <i class="bi bi-geo-alt me-1"></i>
+
+                                                {{ registration.event.venue }}
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- STATUS -->
+
+                                    <td>
+
+                                        {% if registration.status == "ATTENDED" %}
+
+                                            <span class="badge bg-success">
+
+                                                <i class="bi bi-patch-check me-1"></i>
+
+                                                Attended
+
+                                            </span>
+
+                                        {% elif registration.status == "ABSENT" %}
+
+                                            <span class="badge bg-warning text-dark">
+
+                                                <i class="bi bi-person-x me-1"></i>
+
+                                                Absent
+
+                                            </span>
+
+                                        {% elif registration.status == "CANCELLED" %}
+
+                                            <span class="badge bg-secondary">
+
+                                                <i class="bi bi-x-circle me-1"></i>
+
+                                                Cancelled
+
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-primary">
+
+                                                {{ registration.get_status_display }}
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- ACTION -->
+
+                                    <td class="text-end">
+
+                                        <a
+                                            href="{% url 'events:detail' registration.event.pk %}"
+                                            class="btn btn-sm btn-outline-primary"
+                                        >
+
+                                            <i class="bi bi-eye me-1"></i>
+
+                                            View
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <!-- EMPTY PAST STATE -->
+
+                <div class="text-center py-5">
+
+                    <i class="bi bi-clock display-4 text-muted"></i>
+
+                    <h5 class="fw-bold mt-3">
+                        No Past Events
+                    </h5>
+
+                    <p class="text-muted mb-0">
+
+                        You have not attended or completed any
+                        registered events yet.
+
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         CANCELLED REGISTRATIONS
+    ========================================================== -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white py-3">
+
+            <h5 class="mb-0 fw-bold">
+
+                <i class="bi bi-x-circle me-2"></i>
+
+                Cancelled Registrations
+
+                <span class="badge bg-secondary ms-2">
+
+                    {{ cancelled_events|length }}
+
+                </span>
+
+            </h5>
+
+        </div>
+
+
+        <div class="card-body">
+
+            {% if cancelled_events %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th>Event</th>
+
+                                <th>Event Date</th>
+
+                                <th>Cancelled On</th>
+
+                                <th class="text-end">Action</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for registration in cancelled_events %}
+
+                                <tr>
+
+                                    <!-- EVENT -->
+
+                                    <td>
+
+                                        <div class="fw-semibold">
+
+                                            {{ registration.event.title }}
+
+                                        </div>
+
+                                        <small class="text-muted">
+
+                                            {{ registration.event.get_event_type_display }}
+
+                                        </small>
+
+                                    </td>
+
+
+                                    <!-- EVENT DATE -->
+
+                                    <td>
+
+                                        <span class="text-nowrap">
+
+                                            <i class="bi bi-calendar3 me-1"></i>
+
+                                            {{ registration.event.start_datetime|date:"d M Y" }}
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- CANCELLED DATE -->
+
+                                    <td>
+
+                                        {% if registration.cancelled_at %}
+
+                                            <span class="text-nowrap">
+
+                                                {{ registration.cancelled_at|date:"d M Y, g:i A" }}
+
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+                                                —
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- ACTION -->
+
+                                    <td class="text-end">
+
+                                        <a
+                                            href="{% url 'events:detail' registration.event.pk %}"
+                                            class="btn btn-sm btn-outline-primary"
+                                        >
+
+                                            <i class="bi bi-eye me-1"></i>
+
+                                            View Event
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <!-- EMPTY CANCELLED STATE -->
+
+                <div class="text-center py-5">
+
+                    <i class="bi bi-check-circle display-4 text-success"></i>
+
+                    <h5 class="fw-bold mt-3">
+                        No Cancelled Registrations
+                    </h5>
+
+                    <p class="text-muted mb-0">
+
+                        You currently have no cancelled event
+                        registrations.
+
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

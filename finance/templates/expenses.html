@@ -1,0 +1,646 @@
+{% extends "base.html" %}
+
+{% block title %}Expenses | KUCSA Finance{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+    <div class="d-flex flex-column flex-md-row
+                justify-content-between align-items-md-center
+                gap-3 mb-4">
+
+        <div>
+            <h3 class="fw-bold mb-1">
+                <i class="bi bi-wallet2 me-2"></i>
+                Expenses
+            </h3>
+
+            <p class="text-muted mb-0">
+                Manage and monitor KUCSA financial expenses.
+            </p>
+        </div>
+
+        {% if can_manage_expenses %}
+            <a href="{% url 'finance:expense_create' %}"
+               class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i>
+                Record Expense
+            </a>
+        {% endif %}
+
+    </div>
+
+
+    <!-- =====================================================
+         SUMMARY CARDS
+    ====================================================== -->
+    <div class="row g-3 mb-4">
+
+        <!-- Total Expenses -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between
+                                align-items-start">
+
+                        <div>
+                            <small class="text-muted">
+                                Total Expenses
+                            </small>
+
+                            <h4 class="fw-bold mb-0 mt-1">
+                                KES {{ total_expenses|default:"0.00"|floatformat:2 }}
+                            </h4>
+                        </div>
+
+                        <div class="rounded-circle bg-danger bg-opacity-10
+                                    p-2">
+                            <i class="bi bi-wallet2 text-danger"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Paid -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between
+                                align-items-start">
+
+                        <div>
+                            <small class="text-muted">
+                                Paid
+                            </small>
+
+                            <h4 class="fw-bold mb-0 mt-1">
+                                KES {{ paid_expenses|default:"0.00"|floatformat:2 }}
+                            </h4>
+                        </div>
+
+                        <div class="rounded-circle bg-success bg-opacity-10
+                                    p-2">
+                            <i class="bi bi-check-circle text-success"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Pending -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between
+                                align-items-start">
+
+                        <div>
+                            <small class="text-muted">
+                                Pending
+                            </small>
+
+                            <h4 class="fw-bold mb-0 mt-1">
+                                KES {{ pending_expenses|default:"0.00"|floatformat:2 }}
+                            </h4>
+                        </div>
+
+                        <div class="rounded-circle bg-warning bg-opacity-10
+                                    p-2">
+                            <i class="bi bi-hourglass-split text-warning"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Rejected -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between
+                                align-items-start">
+
+                        <div>
+                            <small class="text-muted">
+                                Rejected
+                            </small>
+
+                            <h4 class="fw-bold mb-0 mt-1">
+                                KES {{ rejected_expenses|default:"0.00"|floatformat:2 }}
+                            </h4>
+                        </div>
+
+                        <div class="rounded-circle bg-secondary bg-opacity-10
+                                    p-2">
+                            <i class="bi bi-x-circle text-secondary"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FILTERS
+    ====================================================== -->
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <form method="get">
+
+                <div class="row g-3 align-items-end">
+
+                    <!-- Search -->
+                    <div class="col-12 col-md-4">
+
+                        <label for="search"
+                               class="form-label fw-semibold">
+                            Search
+                        </label>
+
+                        <input type="text"
+                               name="search"
+                               id="search"
+                               class="form-control"
+                               placeholder="Expense number, title or payee..."
+                               value="{{ request.GET.search|default:'' }}">
+
+                    </div>
+
+
+                    <!-- Status -->
+                    <div class="col-12 col-md-3">
+
+                        <label for="status"
+                               class="form-label fw-semibold">
+                            Status
+                        </label>
+
+                        <select name="status"
+                                id="status"
+                                class="form-select">
+
+                            <option value="">
+                                All statuses
+                            </option>
+
+                            <option value="DRAFT"
+                                {% if request.GET.status == "DRAFT" %}selected{% endif %}>
+                                Draft
+                            </option>
+
+                            <option value="SUBMITTED"
+                                {% if request.GET.status == "SUBMITTED" %}selected{% endif %}>
+                                Submitted
+                            </option>
+
+                            <option value="APPROVED"
+                                {% if request.GET.status == "APPROVED" %}selected{% endif %}>
+                                Approved
+                            </option>
+
+                            <option value="PAID"
+                                {% if request.GET.status == "PAID" %}selected{% endif %}>
+                                Paid
+                            </option>
+
+                            <option value="REJECTED"
+                                {% if request.GET.status == "REJECTED" %}selected{% endif %}>
+                                Rejected
+                            </option>
+
+                            <option value="VOIDED"
+                                {% if request.GET.status == "VOIDED" %}selected{% endif %}>
+                                Voided
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Category -->
+                    <div class="col-12 col-md-3">
+
+                        <label for="category"
+                               class="form-label fw-semibold">
+                            Category
+                        </label>
+
+                        <select name="category"
+                                id="category"
+                                class="form-select">
+
+                            <option value="">
+                                All categories
+                            </option>
+
+                            {% for category in categories %}
+                                <option value="{{ category.id }}"
+                                    {% if request.GET.category == category.id|stringformat:"s" %}
+                                        selected
+                                    {% endif %}>
+                                    {{ category.name }}
+                                </option>
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Buttons -->
+                    <div class="col-12 col-md-2">
+
+                        <div class="d-flex gap-2">
+
+                            <button type="submit"
+                                    class="btn btn-primary flex-grow-1">
+                                <i class="bi bi-funnel me-1"></i>
+                                Filter
+                            </button>
+
+                            <a href="{% url 'finance:expenses' %}"
+                               class="btn btn-outline-secondary"
+                               title="Clear filters">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+
+    <!-- =====================================================
+         EXPENSE TABLE
+    ====================================================== -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white border-0 py-3">
+
+            <div class="d-flex justify-content-between
+                        align-items-center">
+
+                <h5 class="fw-bold mb-0">
+                    Expense Records
+                </h5>
+
+                <span class="badge bg-light text-dark">
+                    {{ expenses|length }} record{{ expenses|length|pluralize }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            {% if expenses %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th class="ps-3">
+                                    Expense
+                                </th>
+
+                                <th>
+                                    Category
+                                </th>
+
+                                <th>
+                                    Payee
+                                </th>
+
+                                <th>
+                                    Amount
+                                </th>
+
+                                <th>
+                                    Payment
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th class="text-end pe-3">
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for expense in expenses %}
+
+                                <tr>
+
+                                    <!-- Expense -->
+                                    <td class="ps-3">
+
+                                        <div class="fw-semibold">
+                                            {{ expense.title }}
+                                        </div>
+
+                                        <small class="text-muted">
+                                            {{ expense.expense_number }}
+                                        </small>
+
+                                    </td>
+
+
+                                    <!-- Category -->
+                                    <td>
+                                        <span class="text-muted">
+                                            {{ expense.category.name }}
+                                        </span>
+                                    </td>
+
+
+                                    <!-- Payee -->
+                                    <td>
+                                        {{ expense.payee|default:"—" }}
+                                    </td>
+
+
+                                    <!-- Amount -->
+                                    <td>
+
+                                        <span class="fw-semibold">
+                                            KES {{ expense.amount|floatformat:2 }}
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- Payment -->
+                                    <td>
+
+                                        {% if expense.payment_source %}
+
+                                            <div>
+                                                {{ expense.get_payment_source_display }}
+                                            </div>
+
+                                            {% if expense.payment_reference %}
+                                                <small class="text-muted">
+                                                    {{ expense.payment_reference }}
+                                                </small>
+                                            {% endif %}
+
+                                        {% else %}
+                                            <span class="text-muted">
+                                                —
+                                            </span>
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- Date -->
+                                    <td>
+                                        <span class="text-nowrap">
+                                            {{ expense.expense_date|date:"d M Y" }}
+                                        </span>
+                                    </td>
+
+
+                                    <!-- Status -->
+                                    <td>
+
+                                        {% if expense.status == "DRAFT" %}
+
+                                            <span class="badge bg-secondary">
+                                                Draft
+                                            </span>
+
+                                        {% elif expense.status == "SUBMITTED" %}
+
+                                            <span class="badge bg-warning text-dark">
+                                                Submitted
+                                            </span>
+
+                                        {% elif expense.status == "APPROVED" %}
+
+                                            <span class="badge bg-info text-dark">
+                                                Approved
+                                            </span>
+
+                                        {% elif expense.status == "PAID" %}
+
+                                            <span class="badge bg-success">
+                                                Paid
+                                            </span>
+
+                                        {% elif expense.status == "REJECTED" %}
+
+                                            <span class="badge bg-danger">
+                                                Rejected
+                                            </span>
+
+                                        {% elif expense.status == "VOIDED" %}
+
+                                            <span class="badge bg-dark">
+                                                Voided
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+                                                {{ expense.get_status_display }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- Action -->
+                                    <td class="text-end pe-3">
+
+                                        <a href="{% url 'finance:expense_detail' expense.pk %}"
+                                           class="btn btn-sm btn-outline-primary"
+                                           title="View expense">
+
+                                            <i class="bi bi-eye"></i>
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <!-- =================================================
+                     PAGINATION
+                ================================================== -->
+                {% if is_paginated %}
+
+                    <div class="card-footer bg-white border-0">
+
+                        <nav aria-label="Expense pagination">
+
+                            <ul class="pagination justify-content-center mb-0">
+
+                                {% if page_obj.has_previous %}
+
+                                    <li class="page-item">
+
+                                        <a class="page-link"
+                                           href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+
+                                            Previous
+
+                                        </a>
+
+                                    </li>
+
+                                {% else %}
+
+                                    <li class="page-item disabled">
+                                        <span class="page-link">
+                                            Previous
+                                        </span>
+                                    </li>
+
+                                {% endif %}
+
+
+                                <li class="page-item active">
+
+                                    <span class="page-link">
+                                        {{ page_obj.number }}
+                                    </span>
+
+                                </li>
+
+
+                                {% if page_obj.has_next %}
+
+                                    <li class="page-item">
+
+                                        <a class="page-link"
+                                           href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+
+                                            Next
+
+                                        </a>
+
+                                    </li>
+
+                                {% else %}
+
+                                    <li class="page-item disabled">
+                                        <span class="page-link">
+                                            Next
+                                        </span>
+                                    </li>
+
+                                {% endif %}
+
+                            </ul>
+
+                        </nav>
+
+                    </div>
+
+                {% endif %}
+
+
+            {% else %}
+
+                <!-- =================================================
+                     EMPTY STATE
+                ================================================== -->
+                <div class="text-center py-5 px-3">
+
+                    <div class="mb-3">
+
+                        <i class="bi bi-wallet2 display-4 text-muted"></i>
+
+                    </div>
+
+                    <h5 class="fw-semibold">
+                        No expenses found
+                    </h5>
+
+                    <p class="text-muted mb-4">
+                        There are no expense records matching
+                        your current filters.
+                    </p>
+
+                    {% if can_manage_expenses %}
+
+                        <a href="{% url 'finance:expense_create' %}"
+                           class="btn btn-primary">
+
+                            <i class="bi bi-plus-circle me-1"></i>
+                            Record First Expense
+
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

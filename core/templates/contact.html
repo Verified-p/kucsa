@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+
+{% block title %}
+Contact Us | KUCSA Platform
+{% endblock %}
+
+{% block content %}
+
+<section class="py-5">
+
+    <div class="container">
+
+        <!-- Page Header -->
+
+        <div class="text-center mb-5">
+
+            <h1 class="fw-bold">
+
+                Contact Us
+
+            </h1>
+
+            <p class="lead text-muted">
+
+                Have a question or need assistance? We'd love to hear from you.
+
+            </p>
+
+        </div>
+
+        <div class="row">
+
+            <!-- Contact Information -->
+
+            <div class="col-lg-5 mb-4">
+
+                <div class="card shadow-sm border-0 h-100">
+
+                    <div class="card-header bg-primary text-white">
+
+                        <h4 class="mb-0">
+
+                            Contact Information
+
+                        </h4>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="mb-4">
+
+                            <h6>
+
+                                <i class="bi bi-building me-2 text-primary"></i>
+
+                                Organization
+
+                            </h6>
+
+                            <p class="mb-0">
+
+                                Kisii University Computing Students Association (KUCSA)
+
+                            </p>
+
+                        </div>
+
+                        <div class="mb-4">
+
+                            <h6>
+
+                                <i class="bi bi-envelope-fill me-2 text-primary"></i>
+
+                                Email
+
+                            </h6>
+
+                            <p class="mb-0">
+
+                                kucsa@students.kisiiuniversity.ac.ke
+
+                            </p>
+
+                        </div>
+
+                        <div class="mb-4">
+
+                            <h6>
+
+                                <i class="bi bi-telephone-fill me-2 text-primary"></i>
+
+                                Phone
+
+                            </h6>
+
+                            <p class="mb-0">
+
+                                +254 XXX XXX XXX
+
+                            </p>
+
+                        </div>
+
+                        <div class="mb-4">
+
+                            <h6>
+
+                                <i class="bi bi-geo-alt-fill me-2 text-primary"></i>
+
+                                Location
+
+                            </h6>
+
+                            <p class="mb-0">
+
+                                School of Computing and Information Sciences<br>
+                                Kisii University<br>
+                                Kisii, Kenya
+
+                            </p>
+
+                        </div>
+
+                        <div>
+
+                            <h6>
+
+                                <i class="bi bi-clock-fill me-2 text-primary"></i>
+
+                                Office Hours
+
+                            </h6>
+
+                            <p class="mb-0">
+
+                                Monday - Friday<br>
+
+                                8:00 AM - 5:00 PM
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Contact Form -->
+
+            <div class="col-lg-7">
+
+                <div class="card shadow-sm border-0">
+
+                    <div class="card-header bg-success text-white">
+
+                        <h4 class="mb-0">
+
+                            Send Us a Message
+
+                        </h4>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <form method="post">
+
+                            {% csrf_token %}
+
+                            <div class="row">
+
+                                <div class="col-md-6 mb-3">
+
+                                    <label class="form-label">
+
+                                        Full Name
+
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        name="name"
+                                        placeholder="Enter your full name">
+
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+
+                                    <label class="form-label">
+
+                                        Email Address
+
+                                    </label>
+
+                                    <input
+                                        type="email"
+                                        class="form-control"
+                                        name="email"
+                                        placeholder="Enter your email">
+
+                                </div>
+
+                            </div>
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+
+                                    Subject
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    name="subject"
+                                    placeholder="Enter the subject">
+
+                            </div>
+
+                            <div class="mb-4">
+
+                                <label class="form-label">
+
+                                    Message
+
+                                </label>
+
+                                <textarea
+                                    class="form-control"
+                                    rows="6"
+                                    name="message"
+                                    placeholder="Write your message here..."></textarea>
+
+                            </div>
+
+                            <button
+                                type="submit"
+                                class="btn btn-success">
+
+                                <i class="bi bi-send-fill me-2"></i>
+
+                                Send Message
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

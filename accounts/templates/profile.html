@@ -1,0 +1,916 @@
+{% extends "base.html" %}
+
+{% block title %}
+    My Profile | KUCSA Platform
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="d-flex flex-column flex-md-row justify-content-between
+                align-items-md-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+
+                <i class="bi bi-person-circle me-2 text-primary"></i>
+
+                My Profile
+
+            </h2>
+
+            <p class="text-muted mb-0">
+                Manage your KUCSA account and membership information.
+            </p>
+
+        </div>
+
+
+        <div class="mt-3 mt-md-0">
+
+            <a
+                href="{% url 'accounts:profile_update' %}"
+                class="btn btn-primary me-2"
+            >
+                <i class="bi bi-pencil-square me-1"></i>
+                Edit Profile
+            </a>
+
+            <a
+                href="{% url 'accounts:change_password' %}"
+                class="btn btn-outline-secondary"
+            >
+                <i class="bi bi-key me-1"></i>
+                Change Password
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="row g-4">
+
+
+        <!-- =================================================
+             LEFT COLUMN
+        ================================================== -->
+
+        <div class="col-xl-4 col-lg-5">
+
+
+            <!-- Profile Card -->
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-body text-center py-4">
+
+                    {% if user.profile_picture %}
+
+                        <img
+                            src="{{ user.profile_picture.url }}"
+                            class="rounded-circle img-thumbnail mb-3"
+                            width="150"
+                            height="150"
+                            alt="{{ user.get_full_name|default:user.username }}"
+                        >
+
+                    {% else %}
+
+                        <div class="mb-3">
+
+                            <i class="bi bi-person-circle display-1 text-secondary"></i>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <h4 class="fw-bold mb-1">
+
+                        {{ user.get_full_name|default:user.username }}
+
+                    </h4>
+
+
+                    <p class="text-muted mb-2">
+
+                        @{{ user.username }}
+
+                    </p>
+
+
+                    {% if user.registration_number %}
+
+                        <p class="text-muted mb-3">
+
+                            <i class="bi bi-person-vcard me-1"></i>
+
+                            {{ user.registration_number }}
+
+                        </p>
+
+                    {% endif %}
+
+
+                    <!-- Role -->
+                    {% if user.role %}
+
+                        <span class="badge bg-primary me-1">
+
+                            <i class="bi bi-person-badge me-1"></i>
+
+                            {{ user.get_role_display }}
+
+                        </span>
+
+                    {% endif %}
+
+
+                    <!-- Verification -->
+                    {% if user.is_verified %}
+
+                        <span class="badge bg-success">
+
+                            <i class="bi bi-patch-check-fill me-1"></i>
+
+                            Verified
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge bg-warning text-dark">
+
+                            <i class="bi bi-clock me-1"></i>
+
+                            Pending Verification
+
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- Account Status -->
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-header bg-white">
+
+                    <strong>
+
+                        <i class="bi bi-shield-check me-2 text-primary"></i>
+
+                        Account Status
+
+                    </strong>
+
+                </div>
+
+
+                <div class="card-body">
+
+
+                    <div class="d-flex justify-content-between
+                                align-items-center mb-3">
+
+                        <span class="text-muted">
+                            Account
+                        </span>
+
+                        {% if user.is_active %}
+
+                            <span class="badge bg-success">
+
+                                <i class="bi bi-check-circle me-1"></i>
+                                Active
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-danger">
+
+                                <i class="bi bi-x-circle me-1"></i>
+                                Inactive
+
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="d-flex justify-content-between
+                                align-items-center mb-3">
+
+                        <span class="text-muted">
+                            Verification
+                        </span>
+
+                        {% if user.is_verified %}
+
+                            <span class="badge bg-success">
+                                Verified
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-warning text-dark">
+                                Pending
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="d-flex justify-content-between
+                                align-items-center">
+
+                        <span class="text-muted">
+                            Member Since
+                        </span>
+
+                        <span class="fw-semibold">
+
+                            {{ user.date_joined|date:"d M Y" }}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Quick Actions -->
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-white">
+
+                    <strong>
+
+                        <i class="bi bi-lightning-charge me-2 text-primary"></i>
+
+                        Quick Actions
+
+                    </strong>
+
+                </div>
+
+
+                <div class="card-body d-grid gap-2">
+
+                    <a
+                        href="{% url 'members:profile' %}"
+                        class="btn btn-outline-primary"
+                    >
+
+                        <i class="bi bi-person-vcard me-1"></i>
+
+                        My KUCSA Profile
+
+                    </a>
+
+
+                    <a
+                        href="{% url 'members:membership_status' %}"
+                        class="btn btn-outline-success"
+                    >
+
+                        <i class="bi bi-card-checklist me-1"></i>
+
+                        Membership Status
+
+                    </a>
+
+
+                    <a
+                        href="{% url 'members:edit_profile' %}"
+                        class="btn btn-outline-secondary"
+                    >
+
+                        <i class="bi bi-pencil me-1"></i>
+
+                        Edit Membership Profile
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             RIGHT COLUMN
+        ================================================== -->
+
+        <div class="col-xl-8 col-lg-7">
+
+
+            <!-- Personal Information -->
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-header bg-primary text-white">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-person-vcard me-2"></i>
+
+                        Personal Information
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+
+                    <div class="row g-3">
+
+
+                        <!-- Username -->
+                        <div class="col-md-6">
+
+                            <div class="border rounded p-3 h-100">
+
+                                <small class="text-muted d-block mb-1">
+                                    Username
+                                </small>
+
+                                <span class="fw-semibold">
+                                    {{ user.username }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- First Name -->
+                        <div class="col-md-6">
+
+                            <div class="border rounded p-3 h-100">
+
+                                <small class="text-muted d-block mb-1">
+                                    First Name
+                                </small>
+
+                                <span class="fw-semibold">
+                                    {{ user.first_name|default:"Not provided" }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Last Name -->
+                        <div class="col-md-6">
+
+                            <div class="border rounded p-3 h-100">
+
+                                <small class="text-muted d-block mb-1">
+                                    Last Name
+                                </small>
+
+                                <span class="fw-semibold">
+                                    {{ user.last_name|default:"Not provided" }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Registration Number -->
+                        <div class="col-md-6">
+
+                            <div class="border rounded p-3 h-100">
+
+                                <small class="text-muted d-block mb-1">
+                                    Registration Number
+                                </small>
+
+                                <span class="fw-semibold">
+
+                                    {{ user.registration_number|default:"Not provided" }}
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Email -->
+                        <div class="col-md-6">
+
+                            <div class="border rounded p-3 h-100">
+
+                                <small class="text-muted d-block mb-1">
+                                    Email Address
+                                </small>
+
+                                <span class="fw-semibold text-break">
+
+                                    {{ user.email|default:"Not provided" }}
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Phone -->
+                        <div class="col-md-6">
+
+                            <div class="border rounded p-3 h-100">
+
+                                <small class="text-muted d-block mb-1">
+                                    Phone Number
+                                </small>
+
+                                <span class="fw-semibold">
+
+                                    {{ user.phone_number|default:"Not provided" }}
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Role -->
+                        <div class="col-md-6">
+
+                            <div class="border rounded p-3 h-100">
+
+                                <small class="text-muted d-block mb-1">
+                                    Platform Role
+                                </small>
+
+                                <span class="fw-semibold">
+
+                                    {{ user.get_role_display }}
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Date Joined -->
+                        <div class="col-md-6">
+
+                            <div class="border rounded p-3 h-100">
+
+                                <small class="text-muted d-block mb-1">
+                                    Account Created
+                                </small>
+
+                                <span class="fw-semibold">
+
+                                    {{ user.date_joined|date:"d M Y, H:i" }}
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 MEMBERSHIP / PAYMENT INFORMATION
+            ================================================== -->
+
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-header bg-white">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-card-checklist me-2 text-primary"></i>
+
+                        KUCSA Membership
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+
+                    {% if member %}
+
+                        <div class="row g-3">
+
+
+                            <!-- Membership Number -->
+                            <div class="col-md-6">
+
+                                <div class="border rounded p-3 h-100">
+
+                                    <small class="text-muted d-block mb-1">
+                                        Membership Number
+                                    </small>
+
+                                    <span class="fw-semibold">
+
+                                        {{ member.membership_number|default:"Not assigned" }}
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Membership Status -->
+                            <div class="col-md-6">
+
+                                <div class="border rounded p-3 h-100">
+
+                                    <small class="text-muted d-block mb-1">
+                                        Membership Status
+                                    </small>
+
+
+                                    {% if member.membership_status == "ACTIVE" %}
+
+                                        <span class="badge bg-success">
+
+                                            <i class="bi bi-check-circle me-1"></i>
+                                            Active
+
+                                        </span>
+
+                                    {% elif member.membership_status == "PENDING" %}
+
+                                        <span class="badge bg-warning text-dark">
+
+                                            <i class="bi bi-clock me-1"></i>
+                                            Pending
+
+                                        </span>
+
+                                    {% elif member.membership_status == "SUSPENDED" %}
+
+                                        <span class="badge bg-danger">
+
+                                            <i class="bi bi-pause-circle me-1"></i>
+                                            Suspended
+
+                                        </span>
+
+                                    {% elif member.membership_status == "EXPIRED" %}
+
+                                        <span class="badge bg-secondary">
+
+                                            <i class="bi bi-calendar-x me-1"></i>
+                                            Expired
+
+                                        </span>
+
+                                    {% elif member.membership_status == "REJECTED" %}
+
+                                        <span class="badge bg-dark">
+
+                                            <i class="bi bi-x-circle me-1"></i>
+                                            Rejected
+
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-secondary">
+
+                                            {{ member.get_membership_status_display }}
+
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Joined Date -->
+                            <div class="col-md-6">
+
+                                <div class="border rounded p-3 h-100">
+
+                                    <small class="text-muted d-block mb-1">
+                                        Membership Start
+                                    </small>
+
+                                    <span class="fw-semibold">
+
+                                        {{ member.joined_date|default:"Not available" }}
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Expiry Date -->
+                            <div class="col-md-6">
+
+                                <div class="border rounded p-3 h-100">
+
+                                    <small class="text-muted d-block mb-1">
+                                        Membership Expiry
+                                    </small>
+
+                                    <span class="fw-semibold">
+
+                                        {{ member.expiry_date|default:"Not available" }}
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Membership Message -->
+                        {% if member.membership_status == "ACTIVE" %}
+
+                            <div class="alert alert-success mt-4 mb-0">
+
+                                <i class="bi bi-check-circle-fill me-2"></i>
+
+                                Your KUCSA membership is active.
+
+                            </div>
+
+                        {% elif member.membership_status == "PENDING" %}
+
+                            <div class="alert alert-warning mt-4 mb-0">
+
+                                <i class="bi bi-clock-fill me-2"></i>
+
+                                Your KUCSA membership is pending.
+                                Complete the required membership and payment
+                                process to activate your membership.
+
+                            </div>
+
+                        {% elif member.membership_status == "SUSPENDED" %}
+
+                            <div class="alert alert-danger mt-4 mb-0">
+
+                                <i class="bi bi-pause-circle-fill me-2"></i>
+
+                                Your KUCSA membership is currently suspended.
+                                Please contact the KUCSA administration.
+
+                            </div>
+
+                        {% elif member.membership_status == "EXPIRED" %}
+
+                            <div class="alert alert-secondary mt-4 mb-0">
+
+                                <i class="bi bi-calendar-x-fill me-2"></i>
+
+                                Your KUCSA membership has expired.
+
+                            </div>
+
+                        {% elif member.membership_status == "REJECTED" %}
+
+                            <div class="alert alert-dark mt-4 mb-0">
+
+                                <i class="bi bi-x-circle-fill me-2"></i>
+
+                                Your KUCSA membership application was rejected.
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <!-- Membership Actions -->
+                        <div class="mt-4">
+
+                            <a
+                                href="{% url 'members:membership_status' %}"
+                                class="btn btn-outline-primary me-2"
+                            >
+
+                                <i class="bi bi-eye me-1"></i>
+
+                                View Membership
+
+                            </a>
+
+
+                            {% if member.membership_status == "PENDING" %}
+
+                                <a
+                                    href="{% url 'members:edit_profile' %}"
+                                    class="btn btn-outline-secondary"
+                                >
+
+                                    <i class="bi bi-pencil me-1"></i>
+
+                                    Complete Profile
+
+                                </a>
+
+                            {% endif %}
+
+                        </div>
+
+
+                    {% else %}
+
+                        <!-- No Member Profile -->
+
+                        <div class="text-center py-4">
+
+                            <i class="bi bi-person-badge display-5 text-muted"></i>
+
+                            <h5 class="mt-3">
+                                Membership Profile Not Found
+                            </h5>
+
+                            <p class="text-muted mb-3">
+                                Your account does not currently have a KUCSA
+                                membership profile.
+                            </p>
+
+                            <a
+                                href="{% url 'members:profile' %}"
+                                class="btn btn-primary"
+                            >
+
+                                <i class="bi bi-person-plus me-1"></i>
+
+                                Set Up Membership Profile
+
+                            </a>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ACCOUNT SECURITY
+            ================================================== -->
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-white">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-shield-lock me-2 text-primary"></i>
+
+                        Account Security
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+
+                    <div class="row g-3">
+
+
+                        <!-- Password -->
+                        <div class="col-md-6">
+
+                            <div class="d-flex align-items-center">
+
+                                <div class="me-3">
+
+                                    <i class="bi bi-key fs-3 text-primary"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <h6 class="mb-1">
+                                        Password
+                                    </h6>
+
+                                    <p class="text-muted small mb-2">
+                                        Keep your account password secure.
+                                    </p>
+
+                                    <a
+                                        href="{% url 'accounts:change_password' %}"
+                                        class="btn btn-sm btn-outline-primary"
+                                    >
+                                        Change Password
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Verification -->
+                        <div class="col-md-6">
+
+                            <div class="d-flex align-items-center">
+
+                                <div class="me-3">
+
+                                    {% if user.is_verified %}
+
+                                        <i class="bi bi-patch-check-fill fs-3 text-success"></i>
+
+                                    {% else %}
+
+                                        <i class="bi bi-exclamation-circle fs-3 text-warning"></i>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div>
+
+                                    <h6 class="mb-1">
+                                        Account Verification
+                                    </h6>
+
+                                    {% if user.is_verified %}
+
+                                        <p class="text-success small mb-2">
+                                            Your account is verified.
+                                        </p>
+
+                                    {% else %}
+
+                                        <p class="text-warning small mb-2">
+                                            Your account is not yet verified.
+                                        </p>
+
+                                        <a
+                                            href="{% url 'accounts:verify_email' %}"
+                                            class="btn btn-sm btn-outline-warning"
+                                        >
+                                            Verify Account
+                                        </a>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %} 

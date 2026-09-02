@@ -1,0 +1,725 @@
+{% extends "base.html" %}
+
+{% block title %}Register | {{ event.title }} | KUCSA{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- ========================================================= -->
+    <!-- PAGE HEADER -->
+    <!-- ========================================================= -->
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+
+                <i class="bi bi-person-plus me-2"></i>
+                Event Registration
+
+            </h2>
+
+            <p class="text-muted mb-0">
+                Register for <strong>{{ event.title }}</strong>.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{% url 'events:detail' event.pk %}"
+            class="btn btn-outline-secondary mt-3 mt-md-0">
+
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Event
+
+        </a>
+
+    </div>
+
+
+    <div class="row g-4 justify-content-center">
+
+        <!-- ===================================================== -->
+        <!-- EVENT SUMMARY -->
+        <!-- ===================================================== -->
+
+        <div class="col-xl-8">
+
+            <div class="card border-0 shadow-sm overflow-hidden mb-4">
+
+                <!-- EVENT IMAGE -->
+
+                {% if event.image %}
+
+                    <img
+                        src="{{ event.image.url }}"
+                        class="w-100"
+                        style="
+                            height: 280px;
+                            object-fit: cover;
+                        "
+                        alt="{{ event.title }}">
+
+                {% else %}
+
+                    <div
+                        class="bg-dark text-white d-flex align-items-center justify-content-center"
+                        style="height: 220px;">
+
+                        <div class="text-center">
+
+                            <i class="bi bi-calendar-event display-3"></i>
+
+                            <div class="fw-semibold mt-2">
+                                KUCSA Event
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- EVENT DETAILS -->
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+
+                        <span class="badge bg-primary">
+
+                            {{ event.get_event_type_display }}
+
+                        </span>
+
+
+                        {% if event.is_featured %}
+
+                            <span class="badge bg-warning text-dark">
+
+                                <i class="bi bi-star-fill me-1"></i>
+                                Featured
+
+                            </span>
+
+                        {% endif %}
+
+
+                        {% if event.status == "PUBLISHED" %}
+
+                            <span class="badge bg-success">
+                                Published
+                            </span>
+
+                        {% elif event.status == "ONGOING" %}
+
+                            <span class="badge bg-info">
+                                Ongoing
+                            </span>
+
+                        {% elif event.status == "COMPLETED" %}
+
+                            <span class="badge bg-secondary">
+                                Completed
+                            </span>
+
+                        {% elif event.status == "CANCELLED" %}
+
+                            <span class="badge bg-danger">
+                                Cancelled
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-dark">
+                                Draft
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <h2 class="fw-bold mb-3">
+                        {{ event.title }}
+                    </h2>
+
+
+                    {% if event.description %}
+
+                        <p
+                            class="text-muted mb-0"
+                            style="white-space: pre-line;">
+
+                            {{ event.description|truncatewords:50 }}
+
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- EVENT INFORMATION -->
+            <!-- ================================================= -->
+
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-header bg-white border-bottom py-3">
+
+                    <h5 class="mb-0 fw-bold">
+
+                        <i class="bi bi-info-circle me-1"></i>
+                        Event Information
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body p-4">
+
+                    <div class="row g-3">
+
+                        <!-- DATE -->
+
+                        <div class="col-md-6">
+
+                            <div class="p-3 bg-light rounded h-100">
+
+                                <small class="text-muted d-block mb-1">
+
+                                    <i class="bi bi-calendar3 me-1"></i>
+                                    Date
+
+                                </small>
+
+                                <strong>
+                                    {{ event.start_datetime|date:"l, d F Y" }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- TIME -->
+
+                        <div class="col-md-6">
+
+                            <div class="p-3 bg-light rounded h-100">
+
+                                <small class="text-muted d-block mb-1">
+
+                                    <i class="bi bi-clock me-1"></i>
+                                    Time
+
+                                </small>
+
+                                <strong>
+
+                                    {{ event.start_datetime|date:"g:i A" }}
+
+                                    {% if event.end_datetime %}
+
+                                        –
+                                        {{ event.end_datetime|date:"g:i A" }}
+
+                                    {% endif %}
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- VENUE -->
+
+                        <div class="col-md-6">
+
+                            <div class="p-3 bg-light rounded h-100">
+
+                                <small class="text-muted d-block mb-1">
+
+                                    <i class="bi bi-geo-alt me-1"></i>
+                                    Venue
+
+                                </small>
+
+                                <strong>
+                                    {{ event.venue|default:"To be announced" }}
+                                </strong>
+
+
+                                {% if event.location_details %}
+
+                                    <small class="d-block text-muted mt-1">
+
+                                        {{ event.location_details }}
+
+                                    </small>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- AVAILABLE SLOTS -->
+
+                        <div class="col-md-6">
+
+                            <div class="p-3 bg-light rounded h-100">
+
+                                <small class="text-muted d-block mb-1">
+
+                                    <i class="bi bi-people me-1"></i>
+                                    Available Slots
+
+                                </small>
+
+                                <strong>
+
+                                    {% if event.capacity %}
+
+                                        {{ event.available_slots }}
+
+                                        {% if event.available_slots == 1 %}
+                                            slot
+                                        {% else %}
+                                            slots
+                                        {% endif %}
+
+                                    {% else %}
+
+                                        Unlimited
+
+                                    {% endif %}
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- REGISTRATION FORM -->
+            <!-- ================================================= -->
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-header bg-white border-bottom py-3">
+
+                    <h5 class="mb-0 fw-bold">
+
+                        <i class="bi bi-person-check me-2"></i>
+                        Confirm Your Registration
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body p-4">
+
+                    <!-- FORM ERRORS -->
+
+                    {% if form.non_field_errors %}
+
+                        <div class="alert alert-danger">
+
+                            <div class="d-flex align-items-start">
+
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+                                <div>
+
+                                    <strong>
+                                        Registration could not be completed.
+                                    </strong>
+
+                                    {% for error in form.non_field_errors %}
+
+                                        <div class="mt-1">
+                                            {{ error }}
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <form method="post" novalidate>
+
+                        {% csrf_token %}
+
+
+                        <!-- NOTES -->
+
+                        <div class="mb-4">
+
+                            <label
+                                for="{{ form.notes.id_for_label }}"
+                                class="form-label fw-semibold">
+
+                                {{ form.notes.label|default:"Additional Notes" }}
+
+                            </label>
+
+                            {{ form.notes }}
+
+                            {% for error in form.notes.errors %}
+
+                                <div class="text-danger small mt-1">
+
+                                    <i class="bi bi-exclamation-circle me-1"></i>
+                                    {{ error }}
+
+                                </div>
+
+                            {% endfor %}
+
+                            <div class="form-text">
+
+                                Optional. You can provide any information
+                                you would like the event organizers to know.
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CONFIRMATION -->
+
+                        <div class="alert alert-info">
+
+                            <div class="d-flex align-items-start">
+
+                                <i class="bi bi-info-circle-fill me-2 mt-1"></i>
+
+                                <div>
+
+                                    <strong>
+                                        Registration Confirmation
+                                    </strong>
+
+                                    <p class="mb-0 mt-1">
+
+                                        By registering, you confirm that you
+                                        intend to attend this KUCSA event.
+                                        Please ensure that the event date,
+                                        time, and venue are convenient for you.
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CERTIFICATE -->
+
+                        {% if event.certificate_available %}
+
+                            <div class="alert alert-success">
+
+                                <i class="bi bi-award me-2"></i>
+
+                                <strong>Certificate Available</strong>
+
+                                <div class="small mt-1">
+
+                                    Participants who meet the event
+                                    attendance requirements may receive
+                                    a certificate.
+
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <!-- ACTIONS -->
+
+                        <div class="d-flex flex-column flex-md-row gap-2 pt-2">
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary flex-grow-1">
+
+                                <i class="bi bi-check-circle me-1"></i>
+                                Confirm Registration
+
+                            </button>
+
+
+                            <a
+                                href="{% url 'events:detail' event.pk %}"
+                                class="btn btn-outline-secondary">
+
+                                <i class="bi bi-x-circle me-1"></i>
+                                Cancel
+
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ===================================================== -->
+        <!-- REGISTRATION SIDEBAR -->
+        <!-- ===================================================== -->
+
+        <div class="col-xl-4">
+
+            <!-- ================================================= -->
+            <!-- REGISTRATION SUMMARY -->
+            <!-- ================================================= -->
+
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-header bg-white border-bottom py-3">
+
+                    <h5 class="mb-0 fw-bold">
+
+                        <i class="bi bi-clipboard-check me-1"></i>
+                        Registration Summary
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body p-4">
+
+                    <!-- EVENT -->
+
+                    <div class="mb-3">
+
+                        <small class="text-muted d-block">
+                            Event
+                        </small>
+
+                        <strong>
+                            {{ event.title }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- DATE -->
+
+                    <div class="mb-3">
+
+                        <small class="text-muted d-block">
+                            Date
+                        </small>
+
+                        <strong>
+                            {{ event.start_datetime|date:"d M Y" }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- TIME -->
+
+                    <div class="mb-3">
+
+                        <small class="text-muted d-block">
+                            Time
+                        </small>
+
+                        <strong>
+                            {{ event.start_datetime|date:"g:i A" }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- VENUE -->
+
+                    <div class="mb-3">
+
+                        <small class="text-muted d-block">
+                            Venue
+                        </small>
+
+                        <strong>
+                            {{ event.venue|default:"To be announced" }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- CAPACITY -->
+
+                    <div>
+
+                        <small class="text-muted d-block">
+                            Availability
+                        </small>
+
+                        {% if event.capacity %}
+
+                            {% if event.available_slots > 0 %}
+
+                                <strong class="text-success">
+
+                                    <i class="bi bi-check-circle me-1"></i>
+
+                                    {{ event.available_slots }}
+                                    slot{{ event.available_slots|pluralize }}
+                                    available
+
+                                </strong>
+
+                            {% else %}
+
+                                <strong class="text-danger">
+
+                                    <i class="bi bi-x-circle me-1"></i>
+                                    Event is full
+
+                                </strong>
+
+                            {% endif %}
+
+                        {% else %}
+
+                            <strong class="text-success">
+
+                                <i class="bi bi-infinity me-1"></i>
+                                Unlimited capacity
+
+                            </strong>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- DEADLINE -->
+            <!-- ================================================= -->
+
+            {% if event.registration_deadline %}
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-body p-4">
+
+                        <h6 class="fw-bold mb-2">
+
+                            <i class="bi bi-hourglass-split me-1"></i>
+                            Registration Deadline
+
+                        </h6>
+
+                        <p class="mb-0 text-muted">
+
+                            {{ event.registration_deadline|date:"l, d F Y" }}
+
+                            <br>
+
+                            <strong class="text-dark">
+
+                                {{ event.registration_deadline|date:"g:i A" }}
+
+                            </strong>
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- ================================================= -->
+            <!-- IMPORTANT NOTICE -->
+            <!-- ================================================= -->
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <h6 class="fw-bold mb-3">
+
+                        <i class="bi bi-shield-check me-1"></i>
+                        Before You Register
+
+                    </h6>
+
+                    <ul class="small text-muted mb-0 ps-3">
+
+                        <li class="mb-2">
+                            Make sure the event date and time work for you.
+                        </li>
+
+                        <li class="mb-2">
+                            Check the venue and location details carefully.
+                        </li>
+
+                        <li class="mb-2">
+                            Register only if you intend to attend.
+                        </li>
+
+                        {% if event.certificate_available %}
+
+                            <li>
+                                Attendance may be required to receive a certificate.
+                            </li>
+
+                        {% endif %}
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

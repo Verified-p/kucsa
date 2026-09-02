@@ -1,0 +1,955 @@
+{% extends "base.html" %}
+
+{% block title %}Edit {{ event.title }} | KUCSA{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- ========================================================= -->
+    <!-- PAGE HEADER -->
+    <!-- ========================================================= -->
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <div class="d-flex align-items-center gap-2 mb-1">
+
+                <h2 class="fw-bold mb-0">
+                    <i class="bi bi-pencil-square me-2"></i>
+                    Update Event
+                </h2>
+
+                {% if event.status == "DRAFT" %}
+
+                    <span class="badge bg-dark">
+                        Draft
+                    </span>
+
+                {% elif event.status == "PUBLISHED" %}
+
+                    <span class="badge bg-success">
+                        Published
+                    </span>
+
+                {% elif event.status == "ONGOING" %}
+
+                    <span class="badge bg-info">
+                        Ongoing
+                    </span>
+
+                {% elif event.status == "COMPLETED" %}
+
+                    <span class="badge bg-secondary">
+                        Completed
+                    </span>
+
+                {% elif event.status == "CANCELLED" %}
+
+                    <span class="badge bg-danger">
+                        Cancelled
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+            <p class="text-muted mb-0">
+                Edit and manage <strong>{{ event.title }}</strong>.
+            </p>
+
+        </div>
+
+
+        <div class="d-flex gap-2 mt-3 mt-md-0">
+
+            <a
+                href="{% url 'events:detail' event.pk %}"
+                class="btn btn-outline-primary">
+
+                <i class="bi bi-eye me-1"></i>
+                View Event
+
+            </a>
+
+
+            <a
+                href="{% url 'events:list' %}"
+                class="btn btn-outline-secondary">
+
+                <i class="bi bi-arrow-left me-1"></i>
+                Back to Events
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- FORM -->
+    <!-- ========================================================= -->
+
+    <form
+        method="post"
+        enctype="multipart/form-data"
+        novalidate>
+
+        {% csrf_token %}
+
+
+        <!-- ===================================================== -->
+        <!-- NON-FIELD ERRORS -->
+        <!-- ===================================================== -->
+
+        {% if form.non_field_errors %}
+
+            <div class="alert alert-danger shadow-sm">
+
+                <div class="d-flex align-items-start">
+
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+                    <div>
+
+                        <strong>
+                            Please correct the following:
+                        </strong>
+
+                        <div class="mt-1">
+                            {{ form.non_field_errors }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+        <div class="row g-4">
+
+            <!-- ================================================= -->
+            <!-- MAIN COLUMN -->
+            <!-- ================================================= -->
+
+            <div class="col-xl-8">
+
+                <!-- ================================================= -->
+                <!-- EVENT INFORMATION -->
+                <!-- ================================================= -->
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-header bg-white border-bottom py-3">
+
+                        <h5 class="mb-0 fw-bold">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Event Information
+                        </h5>
+
+                    </div>
+
+
+                    <div class="card-body p-4">
+
+                        <!-- TITLE -->
+
+                        <div class="mb-4">
+
+                            <label
+                                for="{{ form.title.id_for_label }}"
+                                class="form-label fw-semibold">
+
+                                Event Title
+
+                            </label>
+
+                            {{ form.title }}
+
+                            {% for error in form.title.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    <i class="bi bi-exclamation-circle me-1"></i>
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- EVENT TYPE + IMAGE -->
+
+                        <div class="row g-4">
+
+                            <div class="col-md-6">
+
+                                <label
+                                    for="{{ form.event_type.id_for_label }}"
+                                    class="form-label fw-semibold">
+
+                                    Event Type
+
+                                </label>
+
+                                {{ form.event_type }}
+
+                                {% for error in form.event_type.errors %}
+
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <div class="col-md-6">
+
+                                <label
+                                    for="{{ form.image.id_for_label }}"
+                                    class="form-label fw-semibold">
+
+                                    Event Image
+
+                                </label>
+
+                                {{ form.image }}
+
+                                {% if event.image %}
+
+                                    <div class="mt-3">
+
+                                        <small class="text-muted d-block mb-2">
+                                            Current event image
+                                        </small>
+
+                                        <div class="position-relative">
+
+                                            <img
+                                                src="{{ event.image.url }}"
+                                                class="img-fluid rounded border"
+                                                style="
+                                                    width: 100%;
+                                                    max-height: 220px;
+                                                    object-fit: cover;
+                                                "
+                                                alt="{{ event.title }}">
+
+                                        </div>
+
+                                    </div>
+
+                                {% else %}
+
+                                    <small class="text-muted d-block mt-2">
+                                        No event image has been uploaded.
+                                    </small>
+
+                                {% endif %}
+
+
+                                {% for error in form.image.errors %}
+
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- DESCRIPTION -->
+
+                        <div class="mt-4">
+
+                            <label
+                                for="{{ form.description.id_for_label }}"
+                                class="form-label fw-semibold">
+
+                                Description
+
+                            </label>
+
+                            {{ form.description }}
+
+                            {% for error in form.description.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- DATE & TIME -->
+                <!-- ================================================= -->
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-header bg-white border-bottom py-3">
+
+                        <h5 class="mb-0 fw-bold">
+
+                            <i class="bi bi-calendar3 me-1"></i>
+                            Date & Time
+
+                        </h5>
+
+                    </div>
+
+
+                    <div class="card-body p-4">
+
+                        <div class="row g-4">
+
+                            <!-- START -->
+
+                            <div class="col-md-6">
+
+                                <label
+                                    for="{{ form.start_datetime.id_for_label }}"
+                                    class="form-label fw-semibold">
+
+                                    Start Date & Time
+
+                                </label>
+
+                                {{ form.start_datetime }}
+
+                                {% for error in form.start_datetime.errors %}
+
+                                    <div class="text-danger small mt-1">
+                                        <i class="bi bi-exclamation-circle me-1"></i>
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- END -->
+
+                            <div class="col-md-6">
+
+                                <label
+                                    for="{{ form.end_datetime.id_for_label }}"
+                                    class="form-label fw-semibold">
+
+                                    End Date & Time
+
+                                </label>
+
+                                {{ form.end_datetime }}
+
+                                {% for error in form.end_datetime.errors %}
+
+                                    <div class="text-danger small mt-1">
+                                        <i class="bi bi-exclamation-circle me-1"></i>
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- LOCATION -->
+                <!-- ================================================= -->
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-header bg-white border-bottom py-3">
+
+                        <h5 class="mb-0 fw-bold">
+
+                            <i class="bi bi-geo-alt me-1"></i>
+                            Location
+
+                        </h5>
+
+                    </div>
+
+
+                    <div class="card-body p-4">
+
+                        <!-- ONLINE EVENT -->
+
+                        <div class="form-check mb-4">
+
+                            {{ form.is_online }}
+
+                            <label
+                                for="{{ form.is_online.id_for_label }}"
+                                class="form-check-label fw-semibold">
+
+                                Online Event
+
+                            </label>
+
+                            <div class="form-text">
+                                Enable this if participants will join remotely.
+                            </div>
+
+                            {% for error in form.is_online.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- VENUE -->
+
+                        <div class="mb-4">
+
+                            <label
+                                for="{{ form.venue.id_for_label }}"
+                                class="form-label fw-semibold">
+
+                                Venue
+
+                            </label>
+
+                            {{ form.venue }}
+
+                            {% for error in form.venue.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- LOCATION DETAILS -->
+
+                        <div class="mb-4">
+
+                            <label
+                                for="{{ form.location_details.id_for_label }}"
+                                class="form-label fw-semibold">
+
+                                Location Details
+
+                            </label>
+
+                            {{ form.location_details }}
+
+                            <div class="form-text">
+                                Add room, building, campus, or other useful directions.
+                            </div>
+
+                            {% for error in form.location_details.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- ONLINE LINK -->
+
+                        <div>
+
+                            <label
+                                for="{{ form.online_link.id_for_label }}"
+                                class="form-label fw-semibold">
+
+                                Online Meeting Link
+
+                            </label>
+
+                            {{ form.online_link }}
+
+                            <div class="form-text">
+                                Required when this is an online event.
+                            </div>
+
+                            {% for error in form.online_link.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- ADDITIONAL INFORMATION -->
+                <!-- ================================================= -->
+
+                <div class="card border-0 shadow-sm">
+
+                    <div class="card-header bg-white border-bottom py-3">
+
+                        <h5 class="mb-0 fw-bold">
+
+                            <i class="bi bi-card-text me-1"></i>
+                            Additional Information
+
+                        </h5>
+
+                    </div>
+
+
+                    <div class="card-body p-4">
+
+                        <!-- REQUIREMENTS -->
+
+                        <div class="mb-4">
+
+                            <label
+                                for="{{ form.requirements.id_for_label }}"
+                                class="form-label fw-semibold">
+
+                                Requirements
+
+                            </label>
+
+                            {{ form.requirements }}
+
+                            {% for error in form.requirements.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- TARGET AUDIENCE -->
+
+                        <div class="mb-4">
+
+                            <label
+                                for="{{ form.target_audience.id_for_label }}"
+                                class="form-label fw-semibold">
+
+                                Target Audience
+
+                            </label>
+
+                            {{ form.target_audience }}
+
+                            {% for error in form.target_audience.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- CERTIFICATE -->
+
+                        <div class="form-check mb-3">
+
+                            {{ form.certificate_available }}
+
+                            <label
+                                for="{{ form.certificate_available.id_for_label }}"
+                                class="form-check-label">
+
+                                <strong>
+                                    Certificate Available
+                                </strong>
+
+                                <span class="text-muted">
+                                    — Participants can receive a certificate.
+                                </span>
+
+                            </label>
+
+                            {% for error in form.certificate_available.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- FEATURED -->
+
+                        <div class="form-check">
+
+                            {{ form.is_featured }}
+
+                            <label
+                                for="{{ form.is_featured.id_for_label }}"
+                                class="form-check-label">
+
+                                <strong>
+                                    Featured Event
+                                </strong>
+
+                                <span class="text-muted">
+                                    — Highlight this event on the KUCSA platform.
+                                </span>
+
+                            </label>
+
+                            {% for error in form.is_featured.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- SIDEBAR -->
+            <!-- ================================================= -->
+
+            <div class="col-xl-4">
+
+                <!-- ================================================= -->
+                <!-- REGISTRATION SETTINGS -->
+                <!-- ================================================= -->
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-header bg-white border-bottom py-3">
+
+                        <h5 class="mb-0 fw-bold">
+
+                            <i class="bi bi-person-check me-1"></i>
+                            Registration Settings
+
+                        </h5>
+
+                    </div>
+
+
+                    <div class="card-body p-4">
+
+                        <!-- CAPACITY -->
+
+                        <div class="mb-4">
+
+                            <label
+                                for="{{ form.capacity.id_for_label }}"
+                                class="form-label fw-semibold">
+
+                                Capacity
+
+                            </label>
+
+                            {{ form.capacity }}
+
+                            <div class="form-text">
+                                Leave blank for unlimited capacity.
+                            </div>
+
+                            {% for error in form.capacity.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- REGISTRATION STATUS -->
+
+                        <div class="mb-4">
+
+                            <label
+                                for="{{ form.registration_status.id_for_label }}"
+                                class="form-label fw-semibold">
+
+                                Registration Status
+
+                            </label>
+
+                            {{ form.registration_status }}
+
+                            {% for error in form.registration_status.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- DEADLINE -->
+
+                        <div class="mb-4">
+
+                            <label
+                                for="{{ form.registration_deadline.id_for_label }}"
+                                class="form-label fw-semibold">
+
+                                Registration Deadline
+
+                            </label>
+
+                            {{ form.registration_deadline }}
+
+                            {% for error in form.registration_deadline.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- REQUIRE REGISTRATION -->
+
+                        <div class="form-check">
+
+                            {{ form.requires_registration }}
+
+                            <label
+                                for="{{ form.requires_registration.id_for_label }}"
+                                class="form-check-label">
+
+                                <strong>
+                                    Require Registration
+                                </strong>
+
+                            </label>
+
+                            <div class="form-text">
+                                Participants must register before attending.
+                            </div>
+
+                            {% for error in form.requires_registration.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- EVENT STATUS -->
+                <!-- ================================================= -->
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-header bg-white border-bottom py-3">
+
+                        <h5 class="mb-0 fw-bold">
+
+                            <i class="bi bi-flag me-1"></i>
+                            Event Status
+
+                        </h5>
+
+                    </div>
+
+
+                    <div class="card-body p-4">
+
+                        <label
+                            for="{{ form.status.id_for_label }}"
+                            class="form-label fw-semibold">
+
+                            Status
+
+                        </label>
+
+                        {{ form.status }}
+
+                        {% for error in form.status.errors %}
+
+                            <div class="text-danger small mt-1">
+                                {{ error }}
+                            </div>
+
+                        {% endfor %}
+
+
+                        <div class="alert alert-info mt-3 mb-0 small">
+
+                            <i class="bi bi-info-circle me-1"></i>
+
+                            <strong>Note:</strong>
+                            Published events are visible to members,
+                            while draft events remain private to authorized
+                            event managers.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- CURRENT EVENT SUMMARY -->
+                <!-- ================================================= -->
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-header bg-white border-bottom py-3">
+
+                        <h5 class="mb-0 fw-bold">
+
+                            <i class="bi bi-bar-chart me-1"></i>
+                            Current Event Summary
+
+                        </h5>
+
+                    </div>
+
+
+                    <div class="card-body p-4">
+
+                        <div class="d-flex justify-content-between mb-3">
+
+                            <span class="text-muted">
+                                Registered
+                            </span>
+
+                            <strong>
+                                {{ event.registration_count|default:0 }}
+                            </strong>
+
+                        </div>
+
+
+                        {% if event.capacity %}
+
+                            <div class="d-flex justify-content-between mb-3">
+
+                                <span class="text-muted">
+                                    Capacity
+                                </span>
+
+                                <strong>
+                                    {{ event.capacity }}
+                                </strong>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <div class="d-flex justify-content-between">
+
+                            <span class="text-muted">
+                                Event Type
+                            </span>
+
+                            <strong>
+                                {{ event.get_event_type_display }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- ACTIONS -->
+                <!-- ================================================= -->
+
+                <div class="card border-0 shadow-sm">
+
+                    <div class="card-body p-4">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100 mb-2">
+
+                            <i class="bi bi-save me-1"></i>
+                            Save Changes
+
+                        </button>
+
+
+                        <a
+                            href="{% url 'events:detail' event.pk %}"
+                            class="btn btn-outline-secondary w-100">
+
+                            <i class="bi bi-x-circle me-1"></i>
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

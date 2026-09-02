@@ -1,0 +1,939 @@
+{% extends "base.html" %}
+
+{% block title %}My Payments | KUCSA{% endblock %}
+
+{% block content %}
+
+<div class="container py-4 py-md-5">
+
+    <!-- =========================================================
+         PAGE HEADER
+    ========================================================== -->
+
+    <div class="d-flex flex-column flex-md-row
+                justify-content-between
+                align-items-md-center
+                gap-3 mb-4">
+
+        <div>
+
+            <h3 class="fw-bold mb-1">
+                My Payments
+            </h3>
+
+            <p class="text-muted mb-0">
+                View your KUCSA membership payments and support
+                the association through voluntary contributions.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         PAYMENT OPTIONS
+    ========================================================== -->
+
+    <div class="row g-4 mb-4">
+
+        <!-- =====================================================
+             MEMBERSHIP PAYMENT
+        ====================================================== -->
+
+        <div class="col-12 col-lg-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex align-items-start mb-3">
+
+                        <div
+                            class="rounded-circle
+                                   bg-success bg-opacity-10
+                                   d-flex align-items-center
+                                   justify-content-center
+                                   flex-shrink-0 me-3"
+                            style="width: 52px; height: 52px;"
+                        >
+
+                            <i
+                                class="bi bi-person-check-fill
+                                       text-success fs-5"
+                            ></i>
+
+                        </div>
+
+                        <div>
+
+                            <h5 class="fw-bold mb-1">
+                                KUCSA Membership
+                            </h5>
+
+                            <small class="text-muted">
+                                Required membership payment
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    {% if member.can_access_platform %}
+
+                        <div
+                            class="alert alert-success
+                                   bg-success bg-opacity-10
+                                   border-0 mb-3"
+                        >
+
+                            <div class="d-flex align-items-center">
+
+                                <i
+                                    class="bi bi-check-circle-fill
+                                           text-success me-2"
+                                ></i>
+
+                                <div>
+
+                                    <strong class="text-success">
+                                        Membership Active
+                                    </strong>
+
+                                    <div class="small text-muted">
+                                        Your KUCSA membership payment
+                                        has already been verified.
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        {% if member.expiry_date %}
+
+                            <div class="small text-muted mb-3">
+
+                                Membership valid until
+
+                                <strong class="text-dark">
+                                    {{ member.expiry_date|date:"d M Y" }}
+                                </strong>
+
+                            </div>
+
+                        {% endif %}
+
+                        <a
+                            href="{% url 'dashboard:dashboard' %}"
+                            class="btn btn-outline-success w-100"
+                        >
+
+                            <i class="bi bi-grid-fill me-2"></i>
+
+                            Go to Dashboard
+
+                        </a>
+
+                    {% else %}
+
+                        <p class="text-muted small mb-3">
+
+                            Complete your KUCSA membership payment
+                            to activate your membership and access
+                            the KUCSA platform.
+
+                        </p>
+
+
+                        <a
+                            href="{% url 'payments:payment_create' %}"
+                            class="btn btn-success w-100"
+                        >
+
+                            <i class="bi bi-phone-fill me-2"></i>
+
+                            Pay Membership with M-Pesa
+
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             SUPPORT KUCSA
+        ====================================================== -->
+
+        <div class="col-12 col-lg-6">
+
+            <div
+                class="card border-0 shadow-sm h-100"
+            >
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex align-items-start mb-3">
+
+                        <div
+                            class="rounded-circle
+                                   bg-primary bg-opacity-10
+                                   d-flex align-items-center
+                                   justify-content-center
+                                   flex-shrink-0 me-3"
+                            style="width: 52px; height: 52px;"
+                        >
+
+                            <i
+                                class="bi bi-heart-fill
+                                       text-primary fs-5"
+                            ></i>
+
+                        </div>
+
+                        <div>
+
+                            <h5 class="fw-bold mb-1">
+                                Support KUCSA
+                            </h5>
+
+                            <small class="text-muted">
+                                Voluntary contribution
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <p class="text-muted small mb-3">
+
+                        Want to support KUCSA activities, student
+                        programs, technical initiatives, events and
+                        community development?
+
+                    </p>
+
+
+                    <div class="bg-light rounded-3 p-3 mb-3">
+
+                        <div class="d-flex align-items-start">
+
+                            <i
+                                class="bi bi-info-circle
+                                       text-primary me-2 mt-1"
+                            ></i>
+
+                            <small class="text-muted">
+
+                                You can make a voluntary contribution
+                                of any supported amount. Your
+                                contribution is separate from your
+                                KUCSA membership payment.
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         SUPPORT BUTTON
+                         ================================================= -->
+
+                    <a
+                        href="{% url 'payments:support' %}"
+                        class="btn btn-primary w-100"
+                    >
+
+                        <i class="bi bi-heart-fill me-2"></i>
+
+                        Support KUCSA
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         MEMBERSHIP STATUS
+    ========================================================== -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <div class="row align-items-center g-3">
+
+                <!-- STATUS -->
+
+                <div class="col-12 col-md-6">
+
+                    <div class="d-flex align-items-center">
+
+                        <div
+                            class="rounded-circle
+                                   {% if member.can_access_platform %}
+                                       bg-success
+                                   {% elif member.is_pending %}
+                                       bg-warning
+                                   {% elif member.is_suspended or member.is_expired %}
+                                       bg-danger
+                                   {% else %}
+                                       bg-secondary
+                                   {% endif %}
+                                   bg-opacity-10
+                                   d-flex align-items-center
+                                   justify-content-center
+                                   flex-shrink-0 me-3"
+                            style="width: 50px; height: 50px;"
+                        >
+
+                            {% if member.can_access_platform %}
+
+                                <i
+                                    class="bi bi-check-circle-fill
+                                           text-success fs-5"
+                                ></i>
+
+                            {% elif member.is_pending %}
+
+                                <i
+                                    class="bi bi-hourglass-split
+                                           text-warning fs-5"
+                                ></i>
+
+                            {% elif member.is_suspended or member.is_expired %}
+
+                                <i
+                                    class="bi bi-exclamation-circle-fill
+                                           text-danger fs-5"
+                                ></i>
+
+                            {% else %}
+
+                                <i
+                                    class="bi bi-person-circle
+                                           text-secondary fs-5"
+                                ></i>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div>
+
+                            <small class="text-muted d-block">
+                                Membership Status
+                            </small>
+
+                            <strong>
+
+                                {% if member.can_access_platform %}
+
+                                    <span class="text-success">
+                                        Active
+                                    </span>
+
+                                {% elif member.is_pending %}
+
+                                    <span class="text-warning">
+                                        Payment Required
+                                    </span>
+
+                                {% elif member.is_suspended %}
+
+                                    <span class="text-danger">
+                                        Suspended
+                                    </span>
+
+                                {% elif member.is_expired %}
+
+                                    <span class="text-danger">
+                                        Expired
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="text-secondary">
+                                        {{ member.membership_status_display }}
+                                    </span>
+
+                                {% endif %}
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- MEMBERSHIP NUMBER -->
+
+                <div class="col-12 col-md-3">
+
+                    <small class="text-muted d-block">
+                        Membership Number
+                    </small>
+
+                    <strong>
+
+                        {% if member.membership_number %}
+
+                            {{ member.membership_number }}
+
+                        {% else %}
+
+                            <span class="text-muted">
+                                Not assigned
+                            </span>
+
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+
+                <!-- EXPIRY -->
+
+                <div class="col-12 col-md-3">
+
+                    <small class="text-muted d-block">
+                        Membership Expiry
+                    </small>
+
+                    <strong>
+
+                        {% if member.expiry_date %}
+
+                            {{ member.expiry_date|date:"d M Y" }}
+
+                        {% else %}
+
+                            <span class="text-muted">
+                                Not active
+                            </span>
+
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         PAYMENT HISTORY
+    ========================================================== -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white border-0 py-3">
+
+            <div class="d-flex
+                        justify-content-between
+                        align-items-center">
+
+                <div>
+
+                    <h5 class="fw-bold mb-1">
+                        Payment History
+                    </h5>
+
+                    <small class="text-muted">
+
+                        {{ payments|length }}
+
+                        payment{{ payments|length|pluralize }}
+
+                        recorded
+
+                    </small>
+
+                </div>
+
+
+                <i
+                    class="bi bi-receipt text-success fs-4"
+                ></i>
+
+            </div>
+
+        </div>
+
+
+        {% if payments %}
+
+            <div class="card-body p-0">
+
+                <div class="table-responsive">
+
+                    <table
+                        class="table table-hover
+                               align-middle mb-0"
+                    >
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th class="ps-4">
+                                    Date
+                                </th>
+
+                                <th>
+                                    Type
+                                </th>
+
+                                <th>
+                                    Amount
+                                </th>
+
+                                <th>
+                                    Phone
+                                </th>
+
+                                <th>
+                                    Receipt
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th class="text-end pe-4">
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for payment in payments %}
+
+                                <tr>
+
+                                    <!-- DATE -->
+
+                                    <td class="ps-4">
+
+                                        <div class="fw-semibold">
+                                            {{ payment.created_at|date:"d M Y" }}
+                                        </div>
+
+                                        <small class="text-muted">
+                                            {{ payment.created_at|date:"H:i" }}
+                                        </small>
+
+                                    </td>
+
+
+                                    <!-- PAYMENT TYPE -->
+
+                                    <td>
+
+                                        {% if payment.payment_type == "MEMBERSHIP" %}
+
+                                            <span
+                                                class="badge
+                                                       bg-success
+                                                       bg-opacity-10
+                                                       text-success"
+                                            >
+
+                                                <i
+                                                    class="bi bi-person-check me-1"
+                                                ></i>
+
+                                                Membership
+
+                                            </span>
+
+                                        {% elif payment.payment_type == "SUPPORT" %}
+
+                                            <span
+                                                class="badge
+                                                       bg-primary
+                                                       bg-opacity-10
+                                                       text-primary"
+                                            >
+
+                                                <i
+                                                    class="bi bi-heart-fill me-1"
+                                                ></i>
+
+                                                Support
+
+                                            </span>
+
+                                        {% else %}
+
+                                            <span
+                                                class="badge
+                                                       bg-secondary
+                                                       bg-opacity-10
+                                                       text-secondary"
+                                            >
+
+                                                {{ payment.get_payment_type_display }}
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- AMOUNT -->
+
+                                    <td>
+
+                                        <strong>
+                                            KES {{ payment.amount|floatformat:2 }}
+                                        </strong>
+
+                                    </td>
+
+
+                                    <!-- PHONE -->
+
+                                    <td>
+
+                                        <span class="text-muted">
+                                            {{ payment.phone_number }}
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- RECEIPT -->
+
+                                    <td>
+
+                                        {% if payment.mpesa_receipt_number %}
+
+                                            <span class="fw-semibold">
+                                                {{ payment.mpesa_receipt_number }}
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+                                                —
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- STATUS -->
+
+                                    <td>
+
+                                        {% if payment.status == "COMPLETED" %}
+
+                                            <span
+                                                class="badge
+                                                       bg-success
+                                                       bg-opacity-10
+                                                       text-success
+                                                       px-3 py-2"
+                                            >
+
+                                                <i
+                                                    class="bi bi-check-circle-fill me-1"
+                                                ></i>
+
+                                                Completed
+
+                                            </span>
+
+                                        {% elif payment.status == "PENDING" %}
+
+                                            <span
+                                                class="badge
+                                                       bg-warning
+                                                       bg-opacity-10
+                                                       text-warning
+                                                       px-3 py-2"
+                                            >
+
+                                                <i
+                                                    class="bi bi-hourglass-split me-1"
+                                                ></i>
+
+                                                Pending
+
+                                            </span>
+
+                                        {% elif payment.status == "FAILED" %}
+
+                                            <span
+                                                class="badge
+                                                       bg-danger
+                                                       bg-opacity-10
+                                                       text-danger
+                                                       px-3 py-2"
+                                            >
+
+                                                <i
+                                                    class="bi bi-x-circle-fill me-1"
+                                                ></i>
+
+                                                Failed
+
+                                            </span>
+
+                                        {% elif payment.status == "CANCELLED" %}
+
+                                            <span
+                                                class="badge
+                                                       bg-secondary
+                                                       bg-opacity-10
+                                                       text-secondary
+                                                       px-3 py-2"
+                                            >
+
+                                                <i
+                                                    class="bi bi-x-circle-fill me-1"
+                                                ></i>
+
+                                                Cancelled
+
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+                                                {{ payment.get_status_display }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- ACTION -->
+
+                                    <td class="text-end pe-4">
+
+                                        <div
+                                            class="d-flex
+                                                   justify-content-end
+                                                   gap-2"
+                                        >
+
+                                            {% if payment.status == "PENDING" %}
+
+                                                <a
+                                                    href="{% url 'payments:payment_pending' payment.id %}"
+                                                    class="btn btn-sm btn-warning"
+                                                    title="Continue payment"
+                                                >
+
+                                                    <i
+                                                        class="bi bi-arrow-right-circle me-1"
+                                                    ></i>
+
+                                                    Continue
+
+                                                </a>
+
+                                            {% elif payment.status == "COMPLETED" %}
+
+                                                <a
+                                                    href="{% url 'payments:payment_success' payment.id %}"
+                                                    class="btn btn-sm btn-success"
+                                                    title="View successful payment"
+                                                >
+
+                                                    <i
+                                                        class="bi bi-check-circle me-1"
+                                                    ></i>
+
+                                                    Success
+
+                                                </a>
+
+                                            {% elif payment.status == "FAILED" or payment.status == "CANCELLED" %}
+
+                                                <a
+                                                    href="{% url 'payments:payment_failed' payment.id %}"
+                                                    class="btn btn-sm btn-outline-danger"
+                                                    title="View payment result"
+                                                >
+
+                                                    <i
+                                                        class="bi bi-exclamation-circle me-1"
+                                                    ></i>
+
+                                                    Result
+
+                                                </a>
+
+                                            {% endif %}
+
+
+                                            <a
+                                                href="{% url 'payments:payment_detail' payment.id %}"
+                                                class="btn btn-sm btn-outline-primary"
+                                                title="View payment details"
+                                            >
+
+                                                <i class="bi bi-eye"></i>
+
+                                            </a>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        {% else %}
+
+            <div class="card-body text-center py-5">
+
+                <div
+                    class="rounded-circle
+                           bg-success bg-opacity-10
+                           d-inline-flex
+                           align-items-center
+                           justify-content-center mb-4"
+                    style="width: 85px; height: 85px;"
+                >
+
+                    <i
+                        class="bi bi-receipt text-success"
+                        style="font-size: 38px;"
+                    ></i>
+
+                </div>
+
+
+                <h4 class="fw-bold mb-2">
+                    No Payment History
+                </h4>
+
+
+                <p class="text-muted mb-4">
+
+                    You have not made any KUCSA payments yet.
+
+                </p>
+
+
+                <div
+                    class="d-flex
+                           flex-column flex-sm-row
+                           justify-content-center
+                           gap-2"
+                >
+
+                    <a
+                        href="{% url 'payments:payment_create' %}"
+                        class="btn btn-success"
+                    >
+
+                        <i class="bi bi-phone-fill me-2"></i>
+
+                        Pay Membership
+
+                    </a>
+
+
+                    <a
+                        href="{% url 'payments:support' %}"
+                        class="btn btn-primary"
+                    >
+
+                        <i class="bi bi-heart-fill me-2"></i>
+
+                        Support KUCSA
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =========================================================
+         PAYMENT INFORMATION
+    ========================================================== -->
+
+    <div class="alert alert-light border mt-4 mb-0">
+
+        <div class="d-flex align-items-start">
+
+            <i
+                class="bi bi-info-circle text-success me-2 mt-1"
+            ></i>
+
+            <div>
+
+                <strong class="d-block mb-1">
+                    Payment Information
+                </strong>
+
+                <small class="text-muted">
+
+                    M-Pesa payments are verified automatically through
+                    Safaricom. Membership payments activate your KUCSA
+                    membership after successful confirmation.
+                    Voluntary support contributions are recorded
+                    separately and do not affect your membership status.
+
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

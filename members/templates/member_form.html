@@ -1,0 +1,892 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ page_title|default:"Edit Member Profile" }} | KUCSA Platform
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+    <div class="d-flex flex-column flex-lg-row
+                justify-content-between
+                align-items-lg-center
+                gap-3
+                mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+
+                <i class="bi bi-pencil-square me-2"></i>
+
+                {{ page_title|default:"Edit Member Profile" }}
+
+            </h2>
+
+            <p class="text-muted mb-0">
+
+                Update your KUCSA personal information,
+                membership profile and technical information.
+
+            </p>
+
+        </div>
+
+        <div>
+
+            <a
+                href="{% url 'members:profile' %}"
+                class="btn btn-outline-secondary">
+
+                <i class="bi bi-arrow-left me-1"></i>
+                Back to Profile
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         GENERAL NON-FIELD ERRORS
+    ====================================================== -->
+
+    {% if user_form.non_field_errors %}
+
+        <div class="alert alert-danger">
+
+            <i class="bi bi-exclamation-triangle me-2"></i>
+
+            {{ user_form.non_field_errors }}
+
+        </div>
+
+    {% endif %}
+
+
+    {% if profile_form.non_field_errors %}
+
+        <div class="alert alert-danger">
+
+            <i class="bi bi-exclamation-triangle me-2"></i>
+
+            {{ profile_form.non_field_errors }}
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         PROFILE FORM
+    ====================================================== -->
+
+    <form
+        method="post"
+        enctype="multipart/form-data"
+        novalidate>
+
+        {% csrf_token %}
+
+
+        <div class="row g-4">
+
+            <!-- =================================================
+                 PERSONAL INFORMATION
+            ================================================== -->
+
+            <div class="col-12">
+
+                <div class="card shadow-sm border-0">
+
+                    <div class="card-header bg-primary text-white">
+
+                        <h5 class="mb-0">
+
+                            <i class="bi bi-person me-2"></i>
+
+                            Personal Information
+
+                        </h5>
+
+                    </div>
+
+
+                    <div class="card-body p-4">
+
+                        <div class="row g-3">
+
+                            <!-- First Name -->
+                            <div class="col-md-6">
+
+                                <label
+                                    for="{{ user_form.first_name.id_for_label }}"
+                                    class="form-label fw-semibold">
+
+                                    First Name
+
+                                </label>
+
+                                {{ user_form.first_name }}
+
+                                {% for error in user_form.first_name.errors %}
+
+                                    <div class="text-danger small mt-1">
+
+                                        <i class="bi bi-exclamation-circle me-1"></i>
+                                        {{ error }}
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- Last Name -->
+                            <div class="col-md-6">
+
+                                <label
+                                    for="{{ user_form.last_name.id_for_label }}"
+                                    class="form-label fw-semibold">
+
+                                    Last Name
+
+                                </label>
+
+                                {{ user_form.last_name }}
+
+                                {% for error in user_form.last_name.errors %}
+
+                                    <div class="text-danger small mt-1">
+
+                                        <i class="bi bi-exclamation-circle me-1"></i>
+                                        {{ error }}
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- Email -->
+                            <div class="col-md-6">
+
+                                <label
+                                    for="{{ user_form.email.id_for_label }}"
+                                    class="form-label fw-semibold">
+
+                                    Email Address
+
+                                </label>
+
+                                {{ user_form.email }}
+
+                                {% if user_form.email.help_text %}
+
+                                    <div class="form-text">
+                                        {{ user_form.email.help_text }}
+                                    </div>
+
+                                {% endif %}
+
+                                {% for error in user_form.email.errors %}
+
+                                    <div class="text-danger small mt-1">
+
+                                        <i class="bi bi-exclamation-circle me-1"></i>
+                                        {{ error }}
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- Phone -->
+                            <div class="col-md-6">
+
+                                <label
+                                    for="{{ user_form.phone_number.id_for_label }}"
+                                    class="form-label fw-semibold">
+
+                                    Phone Number
+
+                                </label>
+
+                                {{ user_form.phone_number }}
+
+                                {% for error in user_form.phone_number.errors %}
+
+                                    <div class="text-danger small mt-1">
+
+                                        <i class="bi bi-exclamation-circle me-1"></i>
+                                        {{ error }}
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- Profile Picture -->
+                            <div class="col-12">
+
+                                <label
+                                    for="{{ user_form.profile_picture.id_for_label }}"
+                                    class="form-label fw-semibold">
+
+                                    Profile Picture
+
+                                </label>
+
+                                {{ user_form.profile_picture }}
+
+                                <div class="form-text">
+
+                                    Upload a clear profile picture.
+                                    Accepted image formats depend on
+                                    your server configuration.
+
+                                </div>
+
+                                {% for error in user_form.profile_picture.errors %}
+
+                                    <div class="text-danger small mt-1">
+
+                                        <i class="bi bi-exclamation-circle me-1"></i>
+                                        {{ error }}
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 KUCSA PROFILE
+            ================================================== -->
+
+            <div class="col-lg-8">
+
+                <div class="card shadow-sm border-0 h-100">
+
+                    <div class="card-header">
+
+                        <h5 class="mb-0 fw-bold">
+
+                            <i class="bi bi-person-vcard me-2"></i>
+
+                            KUCSA Profile
+
+                        </h5>
+
+                    </div>
+
+
+                    <div class="card-body p-4">
+
+                        <!-- Bio -->
+                        <div class="mb-4">
+
+                            <label
+                                for="{{ profile_form.bio.id_for_label }}"
+                                class="form-label fw-semibold">
+
+                                Biography
+
+                            </label>
+
+                            {{ profile_form.bio }}
+
+                            {% if profile_form.bio.help_text %}
+
+                                <div class="form-text">
+                                    {{ profile_form.bio.help_text }}
+                                </div>
+
+                            {% endif %}
+
+                            {% for error in profile_form.bio.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    <i class="bi bi-exclamation-circle me-1"></i>
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="row g-3">
+
+                            <!-- Course -->
+                            <div class="col-md-8">
+
+                                <label
+                                    for="{{ profile_form.course.id_for_label }}"
+                                    class="form-label fw-semibold">
+
+                                    Course
+
+                                </label>
+
+                                {{ profile_form.course }}
+
+                                {% for error in profile_form.course.errors %}
+
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- Year -->
+                            <div class="col-md-4">
+
+                                <label
+                                    for="{{ profile_form.year_of_study.id_for_label }}"
+                                    class="form-label fw-semibold">
+
+                                    Year of Study
+
+                                </label>
+
+                                {{ profile_form.year_of_study }}
+
+                                {% for error in profile_form.year_of_study.errors %}
+
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- Technical Level -->
+                            <div class="col-12">
+
+                                <label
+                                    for="{{ profile_form.technical_level.id_for_label }}"
+                                    class="form-label fw-semibold">
+
+                                    Technical Level
+
+                                </label>
+
+                                {{ profile_form.technical_level }}
+
+                                {% for error in profile_form.technical_level.errors %}
+
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 PROFILE SUMMARY
+            ================================================== -->
+
+            <div class="col-lg-4">
+
+                <div class="card shadow-sm border-0 h-100">
+
+                    <div class="card-header">
+
+                        <h5 class="mb-0 fw-bold">
+
+                            <i class="bi bi-person-badge me-2"></i>
+
+                            Membership Information
+
+                        </h5>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        {% if member %}
+
+                            <div class="mb-3">
+
+                                <small class="text-muted d-block">
+                                    Name
+                                </small>
+
+                                <strong>
+                                    {{ member.full_name|default:member.user.username }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="mb-3">
+
+                                <small class="text-muted d-block">
+                                    Registration Number
+                                </small>
+
+                                <strong>
+                                    {{ member.user.registration_number|default:"Not specified" }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="mb-3">
+
+                                <small class="text-muted d-block">
+                                    Membership Number
+                                </small>
+
+                                <strong>
+                                    {{ member.membership_number|default:"Not assigned" }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="mb-3">
+
+                                <small class="text-muted d-block">
+                                    Membership Status
+                                </small>
+
+                                {% if member.membership_status == "ACTIVE" %}
+
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle me-1"></i>
+                                        Active
+                                    </span>
+
+                                {% elif member.membership_status == "PENDING" %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="bi bi-clock me-1"></i>
+                                        Pending
+                                    </span>
+
+                                {% elif member.membership_status == "SUSPENDED" %}
+
+                                    <span class="badge bg-danger">
+                                        <i class="bi bi-slash-circle me-1"></i>
+                                        Suspended
+                                    </span>
+
+                                {% elif member.membership_status == "EXPIRED" %}
+
+                                    <span class="badge bg-secondary">
+                                        <i class="bi bi-calendar-x me-1"></i>
+                                        Expired
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-secondary">
+                                        {{ member.get_membership_status_display }}
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="alert alert-info small mb-0">
+
+                                <i class="bi bi-info-circle me-1"></i>
+
+                                Membership number, membership status,
+                                joined date and expiry date are controlled
+                                by the KUCSA membership and payment
+                                workflow and cannot be changed here.
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 TECHNICAL DOMAINS
+            ================================================== -->
+
+            <div class="col-md-4">
+
+                <div class="card shadow-sm border-0 h-100">
+
+                    <div class="card-header">
+
+                        <h6 class="mb-0 fw-bold">
+
+                            <i class="bi bi-code-slash me-2"></i>
+
+                            Technical Domains
+
+                        </h6>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        {{ profile_form.technical_domains }}
+
+                        <div class="form-text">
+
+                            Separate multiple domains with commas.
+
+                            <br>
+
+                            Example:
+                            Web Development, Cybersecurity,
+                            Artificial Intelligence
+
+                        </div>
+
+                        {% for error in profile_form.technical_domains.errors %}
+
+                            <div class="text-danger small mt-1">
+                                {{ error }}
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 SKILLS
+            ================================================== -->
+
+            <div class="col-md-4">
+
+                <div class="card shadow-sm border-0 h-100">
+
+                    <div class="card-header">
+
+                        <h6 class="mb-0 fw-bold">
+
+                            <i class="bi bi-tools me-2"></i>
+
+                            Skills
+
+                        </h6>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        {{ profile_form.skills }}
+
+                        <div class="form-text">
+
+                            Separate multiple skills with commas.
+
+                            <br>
+
+                            Example:
+                            Python, Django, JavaScript, Git
+
+                        </div>
+
+                        {% for error in profile_form.skills.errors %}
+
+                            <div class="text-danger small mt-1">
+                                {{ error }}
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 INTERESTS
+            ================================================== -->
+
+            <div class="col-md-4">
+
+                <div class="card shadow-sm border-0 h-100">
+
+                    <div class="card-header">
+
+                        <h6 class="mb-0 fw-bold">
+
+                            <i class="bi bi-lightbulb me-2"></i>
+
+                            Interests
+
+                        </h6>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        {{ profile_form.interests }}
+
+                        <div class="form-text">
+
+                            Separate multiple interests with commas.
+
+                            <br>
+
+                            Example:
+                            AI, Cloud Computing, Networking
+
+                        </div>
+
+                        {% for error in profile_form.interests.errors %}
+
+                            <div class="text-danger small mt-1">
+                                {{ error }}
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 PROFESSIONAL LINKS
+            ================================================== -->
+
+            <div class="col-12">
+
+                <div class="card shadow-sm border-0">
+
+                    <div class="card-header">
+
+                        <h5 class="mb-0 fw-bold">
+
+                            <i class="bi bi-link-45deg me-2"></i>
+
+                            Professional Links
+
+                        </h5>
+
+                    </div>
+
+
+                    <div class="card-body p-4">
+
+                        <div class="row g-3">
+
+                            <!-- GitHub -->
+                            <div class="col-md-4">
+
+                                <label
+                                    for="{{ profile_form.github_url.id_for_label }}"
+                                    class="form-label fw-semibold">
+
+                                    <i class="bi bi-github me-1"></i>
+                                    GitHub
+
+                                </label>
+
+                                {{ profile_form.github_url }}
+
+                                <div class="form-text">
+                                    Example:
+                                    https://github.com/username
+                                </div>
+
+                                {% for error in profile_form.github_url.errors %}
+
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- LinkedIn -->
+                            <div class="col-md-4">
+
+                                <label
+                                    for="{{ profile_form.linkedin_url.id_for_label }}"
+                                    class="form-label fw-semibold">
+
+                                    <i class="bi bi-linkedin me-1"></i>
+                                    LinkedIn
+
+                                </label>
+
+                                {{ profile_form.linkedin_url }}
+
+                                <div class="form-text">
+                                    Example:
+                                    https://linkedin.com/in/username
+                                </div>
+
+                                {% for error in profile_form.linkedin_url.errors %}
+
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- Portfolio -->
+                            <div class="col-md-4">
+
+                                <label
+                                    for="{{ profile_form.portfolio_url.id_for_label }}"
+                                    class="form-label fw-semibold">
+
+                                    <i class="bi bi-globe me-1"></i>
+                                    Portfolio
+
+                                </label>
+
+                                {{ profile_form.portfolio_url }}
+
+                                <div class="form-text">
+                                    Example:
+                                    https://example.com
+                                </div>
+
+                                {% for error in profile_form.portfolio_url.errors %}
+
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 FORM ACTIONS
+            ================================================== -->
+
+            <div class="col-12">
+
+                <div class="card shadow-sm border-0">
+
+                    <div class="card-body">
+
+                        <div class="d-flex flex-column flex-sm-row
+                                    justify-content-between
+                                    align-items-sm-center
+                                    gap-3">
+
+                            <div>
+
+                                <small class="text-muted">
+
+                                    <i class="bi bi-shield-check me-1"></i>
+
+                                    Your membership/payment information
+                                    is protected from profile editing.
+
+                                </small>
+
+                            </div>
+
+
+                            <div class="d-flex gap-2">
+
+                                <a
+                                    href="{% url 'members:profile' %}"
+                                    class="btn btn-outline-secondary">
+
+                                    <i class="bi bi-x-circle me-1"></i>
+
+                                    Cancel
+
+                                </a>
+
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary">
+
+                                    <i class="bi bi-check-circle me-1"></i>
+
+                                    Save Changes
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

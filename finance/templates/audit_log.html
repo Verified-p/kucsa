@@ -1,0 +1,456 @@
+
+{% extends "base.html" %}
+
+{% block title %}Financial Audit Logs | KUCSA{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+    <div class="d-flex flex-column flex-md-row
+                justify-content-between align-items-md-center
+                gap-3 mb-4">
+
+        <div>
+            <h3 class="fw-bold mb-1">
+                Financial Audit Logs
+            </h3>
+
+            <p class="text-muted mb-0">
+                Track important financial activities and
+                changes made within the KUCSA finance system.
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SUMMARY
+    ====================================================== -->
+    <div class="row g-3 mb-4">
+
+        <!-- Total Logs -->
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between
+                                align-items-center">
+
+                        <div>
+                            <small class="text-muted">
+                                Total Logs
+                            </small>
+
+                            <h4 class="fw-bold mb-0">
+                                {{ audit_logs|length }}
+                            </h4>
+                        </div>
+
+                        <div class="fs-3 text-primary">
+                            <i class="bi bi-journal-text"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Created -->
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between
+                                align-items-center">
+
+                        <div>
+                            <small class="text-muted">
+                                Created
+                            </small>
+
+                            <h4 class="fw-bold mb-0">
+                                {{ created_count|default:"0" }}
+                            </h4>
+                        </div>
+
+                        <div class="fs-3 text-success">
+                            <i class="bi bi-plus-circle"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Updated -->
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between
+                                align-items-center">
+
+                        <div>
+                            <small class="text-muted">
+                                Updated
+                            </small>
+
+                            <h4 class="fw-bold mb-0">
+                                {{ updated_count|default:"0" }}
+                            </h4>
+                        </div>
+
+                        <div class="fs-3 text-info">
+                            <i class="bi bi-pencil-square"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Workflow Actions -->
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between
+                                align-items-center">
+
+                        <div>
+                            <small class="text-muted">
+                                Workflow Actions
+                            </small>
+
+                            <h4 class="fw-bold mb-0">
+                                {{ workflow_count|default:"0" }}
+                            </h4>
+                        </div>
+
+                        <div class="fs-3 text-warning">
+                            <i class="bi bi-arrow-repeat"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         AUDIT LOG TABLE
+    ====================================================== -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white border-0 py-3">
+
+            <div>
+                <h5 class="fw-bold mb-1">
+                    Activity History
+                </h5>
+
+                <small class="text-muted">
+                    Financial actions recorded by the system.
+                </small>
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            {% if audit_logs %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th class="ps-4">
+                                    Date & Time
+                                </th>
+
+                                <th>
+                                    User
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                                <th>
+                                    Financial Record
+                                </th>
+
+                                <th>
+                                    Description
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for log in audit_logs %}
+
+                                <tr>
+
+                                    <!-- =================================================
+                                         DATE
+                                    ================================================== -->
+                                    <td class="ps-4">
+
+                                        <div class="fw-semibold">
+                                            {{ log.created_at|date:"d M Y" }}
+                                        </div>
+
+                                        <small class="text-muted">
+                                            {{ log.created_at|date:"H:i" }}
+                                        </small>
+
+                                    </td>
+
+
+                                    <!-- =================================================
+                                         USER
+                                    ================================================== -->
+                                    <td>
+
+                                        <div class="fw-semibold">
+                                            {{ log.user.get_full_name|default:log.user.username }}
+                                        </div>
+
+                                        {% if log.user.email %}
+                                            <small class="text-muted">
+                                                {{ log.user.email }}
+                                            </small>
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- =================================================
+                                         ACTION
+                                    ================================================== -->
+                                    <td>
+
+                                        {% if log.action == "CREATED" %}
+
+                                            <span class="badge bg-success-subtle text-success">
+                                                <i class="bi bi-plus-circle me-1"></i>
+                                                Created
+                                            </span>
+
+                                        {% elif log.action == "UPDATED" %}
+
+                                            <span class="badge bg-info-subtle text-info">
+                                                <i class="bi bi-pencil me-1"></i>
+                                                Updated
+                                            </span>
+
+                                        {% elif log.action == "SUBMITTED" %}
+
+                                            <span class="badge bg-primary-subtle text-primary">
+                                                <i class="bi bi-send me-1"></i>
+                                                Submitted
+                                            </span>
+
+                                        {% elif log.action == "APPROVED" %}
+
+                                            <span class="badge bg-success-subtle text-success">
+                                                <i class="bi bi-check-circle me-1"></i>
+                                                Approved
+                                            </span>
+
+                                        {% elif log.action == "REJECTED" %}
+
+                                            <span class="badge bg-danger-subtle text-danger">
+                                                <i class="bi bi-x-circle me-1"></i>
+                                                Rejected
+                                            </span>
+
+                                        {% elif log.action == "PAID" %}
+
+                                            <span class="badge bg-success-subtle text-success">
+                                                <i class="bi bi-cash-stack me-1"></i>
+                                                Paid
+                                            </span>
+
+                                        {% elif log.action == "POSTED" %}
+
+                                            <span class="badge bg-primary-subtle text-primary">
+                                                <i class="bi bi-journal-check me-1"></i>
+                                                Posted
+                                            </span>
+
+                                        {% elif log.action == "VOIDED" %}
+
+                                            <span class="badge bg-danger-subtle text-danger">
+                                                <i class="bi bi-slash-circle me-1"></i>
+                                                Voided
+                                            </span>
+
+                                        {% elif log.action == "RECONCILED" %}
+
+                                            <span class="badge bg-success-subtle text-success">
+                                                <i class="bi bi-check2-all me-1"></i>
+                                                Reconciled
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary-subtle text-secondary">
+                                                {{ log.get_action_display }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- =================================================
+                                         RELATED RECORD
+                                    ================================================== -->
+                                    <td>
+
+                                        {% if log.transaction %}
+
+                                            <div class="fw-semibold">
+                                                Transaction
+                                            </div>
+
+                                            <small class="text-muted">
+                                                {{ log.transaction.transaction_number }}
+                                            </small>
+
+                                        {% elif log.expense %}
+
+                                            <div class="fw-semibold">
+                                                Expense
+                                            </div>
+
+                                            <small class="text-muted">
+                                                {{ log.expense.expense_number }}
+                                            </small>
+
+                                        {% elif log.reconciliation %}
+
+                                            <div class="fw-semibold">
+                                                Reconciliation
+                                            </div>
+
+                                            <small class="text-muted">
+                                                {{ log.reconciliation.reconciliation_number }}
+                                            </small>
+
+                                        {% elif log.category %}
+
+                                            <div class="fw-semibold">
+                                                Category
+                                            </div>
+
+                                            <small class="text-muted">
+                                                {{ log.category.name }}
+                                            </small>
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+                                                General
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- =================================================
+                                         DESCRIPTION
+                                    ================================================== -->
+                                    <td>
+
+                                        <span class="text-muted">
+                                            {{ log.description|truncatechars:120 }}
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <!-- =================================================
+                     EMPTY STATE
+                ================================================== -->
+
+                <div class="text-center py-5 px-3">
+
+                    <div class="mb-3">
+
+                        <i class="bi bi-journal-text display-4 text-muted"></i>
+
+                    </div>
+
+                    <h5 class="fw-bold">
+                        No audit records
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        Financial activities will appear here
+                        as they are recorded by the system.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

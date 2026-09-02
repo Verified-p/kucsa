@@ -1,0 +1,1050 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ executive.full_name|default:executive.user.username }} | KUCSA
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="d-flex flex-column flex-lg-row
+                justify-content-between align-items-lg-center
+                gap-3 mb-4">
+
+        <div>
+
+            <div class="d-flex align-items-center gap-2 mb-1">
+
+                <a
+                    href="{% url 'executives:list' %}"
+                    class="text-decoration-none text-muted">
+
+                    <i class="bi bi-people"></i>
+
+                </a>
+
+                <span class="text-muted">/</span>
+
+                <span class="text-muted">
+                    Executive Profile
+                </span>
+
+            </div>
+
+            <h2 class="fw-bold mb-1">
+                Executive Profile
+            </h2>
+
+            <p class="text-muted mb-0">
+                KUCSA executive information, leadership role,
+                responsibilities and term details.
+            </p>
+
+        </div>
+
+
+        <div class="d-flex flex-wrap gap-2">
+
+            <!-- Edit Own Profile -->
+
+            {% if is_owner and can_edit %}
+
+                <a
+                    href="{% url 'executives:edit_profile' %}"
+                    class="btn btn-primary">
+
+                    <i class="bi bi-pencil me-1"></i>
+                    Edit Profile
+
+                </a>
+
+            {% endif %}
+
+
+            <!-- Back to Executive List -->
+
+            <a
+                href="{% url 'executives:list' %}"
+                class="btn btn-outline-secondary">
+
+                <i class="bi bi-arrow-left me-1"></i>
+                Back to Executives
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         CONFIRMATION MESSAGES
+    ====================================================== -->
+
+    {% if confirm_remove_role %}
+
+        <div class="alert alert-danger
+                    d-flex align-items-start gap-3
+                    shadow-sm border-0 mb-4">
+
+            <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+
+            <div>
+
+                <h6 class="fw-bold mb-1">
+                    Remove Executive Role
+                </h6>
+
+                <p class="mb-3">
+
+                    You are about to remove the official KUCSA
+                    executive role from
+                    <strong>
+                        {{ executive.full_name }}
+                    </strong>.
+
+                    The user will become a student and the
+                    executive profile will be deactivated.
+
+                </p>
+
+                <div class="d-flex flex-wrap gap-2">
+
+                    <form
+                        method="post"
+                        action="{% url 'executives:remove_role' executive.pk %}">
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger">
+
+                            <i class="bi bi-person-x me-1"></i>
+                            Confirm Removal
+
+                        </button>
+
+                    </form>
+
+                    <a
+                        href="{% url 'executives:profile_detail' executive.pk %}"
+                        class="btn btn-outline-secondary">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+    {% if confirm_activate %}
+
+        <div class="alert alert-success
+                    d-flex align-items-start gap-3
+                    shadow-sm border-0 mb-4">
+
+            <i class="bi bi-person-check-fill fs-4"></i>
+
+            <div>
+
+                <h6 class="fw-bold mb-1">
+                    Activate Executive
+                </h6>
+
+                <p class="mb-3">
+
+                    Are you sure you want to activate
+                    <strong>
+                        {{ executive.full_name }}
+                    </strong>
+                    as an active KUCSA executive?
+
+                </p>
+
+                <div class="d-flex flex-wrap gap-2">
+
+                    <form
+                        method="post"
+                        action="{% url 'executives:activate' executive.pk %}">
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="btn btn-success">
+
+                            <i class="bi bi-check-circle me-1"></i>
+                            Confirm Activation
+
+                        </button>
+
+                    </form>
+
+                    <a
+                        href="{% url 'executives:profile_detail' executive.pk %}"
+                        class="btn btn-outline-secondary">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+    {% if confirm_deactivate %}
+
+        <div class="alert alert-warning
+                    d-flex align-items-start gap-3
+                    shadow-sm border-0 mb-4">
+
+            <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+
+            <div>
+
+                <h6 class="fw-bold mb-1">
+                    Deactivate Executive
+                </h6>
+
+                <p class="mb-3">
+
+                    Are you sure you want to deactivate
+                    <strong>
+                        {{ executive.full_name }}
+                    </strong>?
+
+                    The executive will remain in the system,
+                    but their executive profile will no longer
+                    be administratively active.
+
+                </p>
+
+                <div class="d-flex flex-wrap gap-2">
+
+                    <form
+                        method="post"
+                        action="{% url 'executives:deactivate' executive.pk %}">
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="btn btn-warning">
+
+                            <i class="bi bi-person-dash me-1"></i>
+                            Confirm Deactivation
+
+                        </button>
+
+                    </form>
+
+                    <a
+                        href="{% url 'executives:profile_detail' executive.pk %}"
+                        class="btn btn-outline-secondary">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         PROFILE CONTENT
+    ====================================================== -->
+
+    <div class="row g-4">
+
+        <!-- =================================================
+             LEFT COLUMN
+        ================================================== -->
+
+        <div class="col-xl-4">
+
+            <!-- =============================================
+                 PROFILE CARD
+            ============================================== -->
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body text-center p-4">
+
+                    <!-- Profile Picture -->
+
+                    {% if executive.profile_picture %}
+
+                        <img
+                            src="{{ executive.profile_picture.url }}"
+                            class="rounded-circle mb-3 object-fit-cover"
+                            width="140"
+                            height="140"
+                            alt="{{ executive.full_name }} profile picture">
+
+                    {% else %}
+
+                        <div class="mb-3">
+
+                            <i
+                                class="bi bi-person-circle
+                                       display-1 text-muted">
+                            </i>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- Name -->
+
+                    <h4 class="fw-bold mb-1">
+
+                        {{ executive.full_name|default:executive.user.username }}
+
+                    </h4>
+
+
+                    <!-- Role -->
+
+                    <p class="text-primary fw-semibold mb-2">
+
+                        {{ executive.role }}
+
+                    </p>
+
+
+                    <!-- Executive Status -->
+
+                    {% if executive.is_active %}
+
+                        <span class="badge bg-success">
+
+                            <i class="bi bi-check-circle me-1"></i>
+
+                            Active Executive
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge bg-secondary">
+
+                            <i class="bi bi-dash-circle me-1"></i>
+
+                            Inactive Executive
+
+                        </span>
+
+                    {% endif %}
+
+
+                    <!-- Term Status -->
+
+                    <div class="mt-2">
+
+                        {% if executive.term_status == "Current" %}
+
+                            <span class="badge bg-primary">
+
+                                <i class="bi bi-calendar-check me-1"></i>
+                                Current Term
+
+                            </span>
+
+                        {% elif executive.term_status == "Upcoming" %}
+
+                            <span class="badge bg-info text-dark">
+
+                                <i class="bi bi-calendar-event me-1"></i>
+                                Upcoming Term
+
+                            </span>
+
+                        {% elif executive.term_status == "Ended" %}
+
+                            <span class="badge bg-dark">
+
+                                <i class="bi bi-calendar-x me-1"></i>
+                                Term Ended
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-secondary">
+
+                                <i class="bi bi-pause-circle me-1"></i>
+                                Inactive
+
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <hr class="my-4">
+
+
+                    <!-- Personal Information -->
+
+                    <div class="text-start">
+
+                        <div class="mb-3">
+
+                            <small class="text-muted d-block">
+                                Registration Number
+                            </small>
+
+                            <span class="fw-semibold">
+
+                                {{ executive.registration_number|default:"Not provided" }}
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <small class="text-muted d-block">
+                                Email Address
+                            </small>
+
+                            {% if executive.email %}
+
+                                <a
+                                    href="mailto:{{ executive.email }}"
+                                    class="fw-semibold text-decoration-none">
+
+                                    {{ executive.email }}
+
+                                </a>
+
+                            {% else %}
+
+                                <span class="fw-semibold">
+                                    Not provided
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <small class="text-muted d-block">
+                                Phone Number
+                            </small>
+
+                            {% if executive.phone_number %}
+
+                                <a
+                                    href="tel:{{ executive.phone_number }}"
+                                    class="fw-semibold text-decoration-none">
+
+                                    {{ executive.phone_number }}
+
+                                </a>
+
+                            {% else %}
+
+                                <span class="fw-semibold">
+                                    Not provided
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="mb-0">
+
+                            <small class="text-muted d-block">
+                                Committee
+                            </small>
+
+                            <span class="fw-semibold">
+
+                                {{ executive.committee_display }}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =============================================
+                 ADMINISTRATIVE ACTIONS
+            ============================================== -->
+
+            {% if is_admin %}
+
+                <div class="card shadow-sm border-0 mt-4">
+
+                    <div class="card-header bg-transparent">
+
+                        <h6 class="mb-0 fw-bold">
+
+                            <i class="bi bi-shield-lock me-2"></i>
+                            Administrative Actions
+
+                        </h6>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        <!-- Activate / Deactivate -->
+
+                        {% if executive.is_active %}
+
+                            <a
+                                href="{% url 'executives:deactivate' executive.pk %}"
+                                class="btn btn-warning w-100 mb-2">
+
+                                <i class="bi bi-person-dash me-1"></i>
+                                Deactivate Executive
+
+                            </a>
+
+                        {% else %}
+
+                            <a
+                                href="{% url 'executives:activate' executive.pk %}"
+                                class="btn btn-success w-100 mb-2">
+
+                                <i class="bi bi-person-check me-1"></i>
+                                Activate Executive
+
+                            </a>
+
+                        {% endif %}
+
+
+                        <!-- Remove Role -->
+
+                        <a
+                            href="{% url 'executives:remove_role' executive.pk %}"
+                            class="btn btn-outline-danger w-100">
+
+                            <i class="bi bi-person-x me-1"></i>
+                            Remove Executive Role
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- =============================================
+                 ACCOUNT VERIFICATION
+            ============================================== -->
+
+            <div class="card shadow-sm border-0 mt-4">
+
+                <div class="card-header bg-transparent">
+
+                    <h6 class="mb-0 fw-bold">
+
+                        <i class="bi bi-shield-check me-2"></i>
+                        Account Status
+
+                    </h6>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between
+                                align-items-center mb-3">
+
+                        <span class="text-muted">
+                            Account
+                        </span>
+
+                        {% if executive.user.is_active %}
+
+                            <span class="badge bg-success">
+                                Active
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-secondary">
+                                Inactive
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="d-flex justify-content-between
+                                align-items-center">
+
+                        <span class="text-muted">
+                            Verification
+                        </span>
+
+                        {% if executive.user.is_verified %}
+
+                            <span class="badge bg-success">
+
+                                <i class="bi bi-patch-check me-1"></i>
+                                Verified
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-warning text-dark">
+
+                                <i class="bi bi-exclamation-circle me-1"></i>
+                                Not Verified
+
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             RIGHT COLUMN
+        ================================================== -->
+
+        <div class="col-xl-8">
+
+            <!-- =============================================
+                 EXECUTIVE INFORMATION
+            ============================================== -->
+
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-header bg-transparent">
+
+                    <h5 class="mb-0 fw-bold">
+
+                        <i class="bi bi-building me-2"></i>
+                        Executive Information
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="row g-4">
+
+                        <!-- Role -->
+
+                        <div class="col-md-6">
+
+                            <small class="text-muted d-block mb-1">
+                                Executive Role
+                            </small>
+
+                            <p class="fw-semibold mb-0">
+
+                                {{ executive.role }}
+
+                            </p>
+
+                        </div>
+
+
+                        <!-- Committee -->
+
+                        <div class="col-md-6">
+
+                            <small class="text-muted d-block mb-1">
+                                Committee
+                            </small>
+
+                            <p class="fw-semibold mb-0">
+
+                                {{ executive.committee_display }}
+
+                            </p>
+
+                        </div>
+
+
+                        <!-- Office -->
+
+                        <div class="col-md-6">
+
+                            <small class="text-muted d-block mb-1">
+                                Office Location
+                            </small>
+
+                            <p class="fw-semibold mb-0">
+
+                                {{ executive.office_location|default:"Not specified" }}
+
+                            </p>
+
+                        </div>
+
+
+                        <!-- Status -->
+
+                        <div class="col-md-6">
+
+                            <small class="text-muted d-block mb-1">
+                                Executive Status
+                            </small>
+
+                            <p class="fw-semibold mb-0">
+
+                                {{ executive.status_display }}
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =============================================
+                 TERM INFORMATION
+            ============================================== -->
+
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-header bg-transparent">
+
+                    <h5 class="mb-0 fw-bold">
+
+                        <i class="bi bi-calendar-range me-2"></i>
+                        Leadership Term
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="row g-4">
+
+                        <!-- Start -->
+
+                        <div class="col-md-4">
+
+                            <small class="text-muted d-block mb-1">
+                                Term Start
+                            </small>
+
+                            <p class="fw-semibold mb-0">
+
+                                {% if executive.term_start %}
+
+                                    {{ executive.term_start|date:"d M Y" }}
+
+                                {% else %}
+
+                                    Not specified
+
+                                {% endif %}
+
+                            </p>
+
+                        </div>
+
+
+                        <!-- End -->
+
+                        <div class="col-md-4">
+
+                            <small class="text-muted d-block mb-1">
+                                Term End
+                            </small>
+
+                            <p class="fw-semibold mb-0">
+
+                                {% if executive.term_end %}
+
+                                    {{ executive.term_end|date:"d M Y" }}
+
+                                {% else %}
+
+                                    Present
+
+                                {% endif %}
+
+                            </p>
+
+                        </div>
+
+
+                        <!-- Status -->
+
+                        <div class="col-md-4">
+
+                            <small class="text-muted d-block mb-1">
+                                Term Status
+                            </small>
+
+                            <p class="fw-semibold mb-0">
+
+                                {{ executive.term_status }}
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    {% if executive.term_display %}
+
+                        <hr>
+
+                        <div class="small text-muted">
+
+                            <i class="bi bi-calendar3 me-1"></i>
+
+                            {{ executive.term_display }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- =============================================
+                 BIOGRAPHY
+            ============================================== -->
+
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-header bg-transparent">
+
+                    <h5 class="mb-0 fw-bold">
+
+                        <i class="bi bi-person-lines-fill me-2"></i>
+                        Biography
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    {% if executive.biography %}
+
+                        <div class="lh-lg">
+
+                            {{ executive.biography|linebreaksbr }}
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="text-muted">
+
+                            <i class="bi bi-info-circle me-1"></i>
+
+                            No biography has been provided.
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- =============================================
+                 RESPONSIBILITIES
+            ============================================== -->
+
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-header bg-transparent">
+
+                    <h5 class="mb-0 fw-bold">
+
+                        <i class="bi bi-list-check me-2"></i>
+                        Responsibilities
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    {% if executive.responsibilities %}
+
+                        <div class="lh-lg">
+
+                            {{ executive.responsibilities|linebreaksbr }}
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="text-muted">
+
+                            <i class="bi bi-info-circle me-1"></i>
+
+                            No responsibilities have been provided.
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- =============================================
+                 VISION
+            ============================================== -->
+
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-header bg-transparent">
+
+                    <h5 class="mb-0 fw-bold">
+
+                        <i class="bi bi-eye me-2"></i>
+                        Vision for KUCSA
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    {% if executive.vision %}
+
+                        <div class="lh-lg">
+
+                            {{ executive.vision|linebreaksbr }}
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="text-muted">
+
+                            <i class="bi bi-info-circle me-1"></i>
+
+                            No vision statement has been provided.
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- =============================================
+                 PROFILE METADATA
+            ============================================== -->
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body">
+
+                    <div class="row g-3 small">
+
+                        <div class="col-md-6">
+
+                            <span class="text-muted">
+                                Profile Created
+                            </span>
+
+                            <div class="fw-semibold">
+
+                                {{ executive.created_at|date:"d M Y, H:i" }}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <span class="text-muted">
+                                Last Updated
+                            </span>
+
+                            <div class="fw-semibold">
+
+                                {{ executive.updated_at|date:"d M Y, H:i" }}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

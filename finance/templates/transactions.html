@@ -1,0 +1,695 @@
+
+{% extends "base.html" %}
+
+{% block title %}Financial Transactions | KUCSA{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+    <div class="d-flex flex-column flex-md-row
+                justify-content-between align-items-md-center
+                gap-3 mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                Financial Transactions
+            </h2>
+
+            <p class="text-muted mb-0">
+                View and manage the KUCSA financial ledger.
+            </p>
+        </div>
+
+        {% if can_manage_transactions %}
+            <a href="{% url 'finance:transaction_create' %}"
+               class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i>
+                New Transaction
+            </a>
+        {% endif %}
+
+    </div>
+
+
+    <!-- =====================================================
+         SUMMARY CARDS
+    ====================================================== -->
+    <div class="row g-3 mb-4">
+
+        <!-- Income -->
+        <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between
+                                align-items-center">
+
+                        <div>
+                            <small class="text-muted">
+                                Posted Income
+                            </small>
+
+                            <h4 class="fw-bold mb-0 mt-1">
+                                KES {{ total_income|floatformat:2 }}
+                            </h4>
+                        </div>
+
+                        <div class="rounded-circle bg-success-subtle
+                                    p-3">
+                            <i class="bi bi-arrow-down-left
+                                      text-success fs-4"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Expenses -->
+        <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between
+                                align-items-center">
+
+                        <div>
+                            <small class="text-muted">
+                                Posted Expenses
+                            </small>
+
+                            <h4 class="fw-bold mb-0 mt-1">
+                                KES {{ total_expenses|floatformat:2 }}
+                            </h4>
+                        </div>
+
+                        <div class="rounded-circle bg-danger-subtle
+                                    p-3">
+                            <i class="bi bi-arrow-up-right
+                                      text-danger fs-4"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Balance -->
+        <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between
+                                align-items-center">
+
+                        <div>
+                            <small class="text-muted">
+                                Available Balance
+                            </small>
+
+                            <h4 class="fw-bold mb-0 mt-1">
+                                KES {{ balance|floatformat:2 }}
+                            </h4>
+                        </div>
+
+                        <div class="rounded-circle bg-primary-subtle
+                                    p-3">
+                            <i class="bi bi-wallet2
+                                      text-primary fs-4"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FILTERS
+    ====================================================== -->
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <form method="get">
+
+                <div class="row g-3 align-items-end">
+
+                    <!-- Search -->
+                    <div class="col-12 col-lg-4">
+
+                        <label for="search"
+                               class="form-label fw-semibold">
+                            Search
+                        </label>
+
+                        <input
+                            type="text"
+                            name="search"
+                            id="search"
+                            class="form-control"
+                            placeholder="Transaction number, reference..."
+                            value="{{ request.GET.search|default:'' }}"
+                        >
+
+                    </div>
+
+
+                    <!-- Type -->
+                    <div class="col-12 col-md-4 col-lg-2">
+
+                        <label for="type"
+                               class="form-label fw-semibold">
+                            Type
+                        </label>
+
+                        <select name="type"
+                                id="type"
+                                class="form-select">
+
+                            <option value="">
+                                All Types
+                            </option>
+
+                            <option value="INCOME"
+                                {% if request.GET.type == "INCOME" %}
+                                    selected
+                                {% endif %}>
+                                Income
+                            </option>
+
+                            <option value="EXPENSE"
+                                {% if request.GET.type == "EXPENSE" %}
+                                    selected
+                                {% endif %}>
+                                Expense
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Status -->
+                    <div class="col-12 col-md-4 col-lg-2">
+
+                        <label for="status"
+                               class="form-label fw-semibold">
+                            Status
+                        </label>
+
+                        <select name="status"
+                                id="status"
+                                class="form-select">
+
+                            <option value="">
+                                All Statuses
+                            </option>
+
+                            <option value="DRAFT"
+                                {% if request.GET.status == "DRAFT" %}
+                                    selected
+                                {% endif %}>
+                                Draft
+                            </option>
+
+                            <option value="POSTED"
+                                {% if request.GET.status == "POSTED" %}
+                                    selected
+                                {% endif %}>
+                                Posted
+                            </option>
+
+                            <option value="VOIDED"
+                                {% if request.GET.status == "VOIDED" %}
+                                    selected
+                                {% endif %}>
+                                Voided
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Source -->
+                    <div class="col-12 col-md-4 col-lg-2">
+
+                        <label for="source"
+                               class="form-label fw-semibold">
+                            Source
+                        </label>
+
+                        <select name="source"
+                                id="source"
+                                class="form-select">
+
+                            <option value="">
+                                All Sources
+                            </option>
+
+                            <option value="MPESA"
+                                {% if request.GET.source == "MPESA" %}
+                                    selected
+                                {% endif %}>
+                                M-Pesa
+                            </option>
+
+                            <option value="CASH"
+                                {% if request.GET.source == "CASH" %}
+                                    selected
+                                {% endif %}>
+                                Cash
+                            </option>
+
+                            <option value="BANK"
+                                {% if request.GET.source == "BANK" %}
+                                    selected
+                                {% endif %}>
+                                Bank
+                            </option>
+
+                            <option value="OTHER"
+                                {% if request.GET.source == "OTHER" %}
+                                    selected
+                                {% endif %}>
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Buttons -->
+                    <div class="col-12 col-lg-2">
+
+                        <div class="d-flex gap-2">
+
+                            <button type="submit"
+                                    class="btn btn-primary flex-grow-1">
+                                <i class="bi bi-search me-1"></i>
+                                Filter
+                            </button>
+
+                            <a href="{% url 'finance:transactions' %}"
+                               class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         TRANSACTIONS TABLE
+    ====================================================== -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white border-0 py-3">
+
+            <div class="d-flex justify-content-between
+                        align-items-center">
+
+                <div>
+                    <h5 class="fw-bold mb-1">
+                        Transaction Ledger
+                    </h5>
+
+                    <small class="text-muted">
+                        {% if transactions %}
+                            {{ transactions|length }} transaction{{ transactions|length|pluralize }}
+                        {% else %}
+                            No transactions found
+                        {% endif %}
+                    </small>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            {% if transactions %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover
+                                  align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th class="px-3">
+                                    Transaction
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th>
+                                    Type
+                                </th>
+
+                                <th>
+                                    Category
+                                </th>
+
+                                <th>
+                                    Source
+                                </th>
+
+                                <th class="text-end">
+                                    Amount
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th class="text-center">
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for transaction in transactions %}
+
+                                <tr>
+
+                                    <!-- Transaction -->
+                                    <td class="px-3">
+
+                                        <div class="fw-semibold">
+                                            {{ transaction.transaction_number }}
+                                        </div>
+
+                                        {% if transaction.reference %}
+                                            <small class="text-muted">
+                                                Ref:
+                                                {{ transaction.reference }}
+                                            </small>
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- Date -->
+                                    <td>
+
+                                        <div>
+                                            {{ transaction.transaction_date|date:"d M Y" }}
+                                        </div>
+
+                                        <small class="text-muted">
+                                            {{ transaction.transaction_date|time:"H:i" }}
+                                        </small>
+
+                                    </td>
+
+
+                                    <!-- Type -->
+                                    <td>
+
+                                        {% if transaction.is_income %}
+
+                                            <span class="badge
+                                                         bg-success-subtle
+                                                         text-success">
+                                                <i class="bi bi-arrow-down-left me-1"></i>
+                                                Income
+                                            </span>
+
+                                        {% elif transaction.is_expense %}
+
+                                            <span class="badge
+                                                         bg-danger-subtle
+                                                         text-danger">
+                                                <i class="bi bi-arrow-up-right me-1"></i>
+                                                Expense
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+                                                {{ transaction.get_transaction_type_display }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- Category -->
+                                    <td>
+                                        {{ transaction.category.name }}
+                                    </td>
+
+
+                                    <!-- Source -->
+                                    <td>
+
+                                        {% if transaction.payment_source == "MPESA" %}
+                                            <span class="text-success">
+                                                <i class="bi bi-phone me-1"></i>
+                                                M-Pesa
+                                            </span>
+
+                                        {% elif transaction.payment_source == "BANK" %}
+                                            <span>
+                                                <i class="bi bi-bank me-1"></i>
+                                                Bank
+                                            </span>
+
+                                        {% elif transaction.payment_source == "CASH" %}
+                                            <span>
+                                                <i class="bi bi-cash-stack me-1"></i>
+                                                Cash
+                                            </span>
+
+                                        {% else %}
+                                            {{ transaction.get_payment_source_display }}
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- Amount -->
+                                    <td class="text-end">
+
+                                        {% if transaction.is_income %}
+
+                                            <span class="fw-bold text-success">
+                                                + KES {{ transaction.amount|floatformat:2 }}
+                                            </span>
+
+                                        {% elif transaction.is_expense %}
+
+                                            <span class="fw-bold text-danger">
+                                                - KES {{ transaction.amount|floatformat:2 }}
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="fw-bold">
+                                                KES {{ transaction.amount|floatformat:2 }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- Status -->
+                                    <td>
+
+                                        {% if transaction.status == "POSTED" %}
+
+                                            <span class="badge bg-success">
+                                                Posted
+                                            </span>
+
+                                        {% elif transaction.status == "DRAFT" %}
+
+                                            <span class="badge bg-warning text-dark">
+                                                Draft
+                                            </span>
+
+                                        {% elif transaction.status == "VOIDED" %}
+
+                                            <span class="badge bg-secondary">
+                                                Voided
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-light text-dark">
+                                                {{ transaction.get_status_display }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- Action -->
+                                    <td class="text-center">
+
+                                        <a href="{% url 'finance:transaction_detail' transaction.pk %}"
+                                           class="btn btn-sm btn-outline-primary"
+                                           title="View transaction">
+
+                                            <i class="bi bi-eye"></i>
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <!-- =================================================
+                     PAGINATION
+                ================================================== -->
+                {% if transactions.has_other_pages %}
+
+                    <div class="card-footer bg-white border-0 py-3">
+
+                        <nav aria-label="Transaction pagination">
+
+                            <ul class="pagination
+                                       justify-content-center
+                                       mb-0">
+
+                                {% if transactions.has_previous %}
+
+                                    <li class="page-item">
+
+                                        <a class="page-link"
+                                           href="?page={{ transactions.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search|urlencode }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.source %}&source={{ request.GET.source }}{% endif %}">
+
+                                            Previous
+
+                                        </a>
+
+                                    </li>
+
+                                {% endif %}
+
+
+                                <li class="page-item active">
+
+                                    <span class="page-link">
+                                        {{ transactions.number }}
+                                    </span>
+
+                                </li>
+
+
+                                {% if transactions.has_next %}
+
+                                    <li class="page-item">
+
+                                        <a class="page-link"
+                                           href="?page={{ transactions.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search|urlencode }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.source %}&source={{ request.GET.source }}{% endif %}">
+
+                                            Next
+
+                                        </a>
+
+                                    </li>
+
+                                {% endif %}
+
+                            </ul>
+
+                        </nav>
+
+                    </div>
+
+                {% endif %}
+
+
+            {% else %}
+
+                <!-- =================================================
+                     EMPTY STATE
+                ================================================== -->
+                <div class="text-center py-5 px-3">
+
+                    <div class="mb-3">
+
+                        <i class="bi bi-receipt
+                                  display-4 text-muted"></i>
+
+                    </div>
+
+                    <h5 class="fw-bold">
+                        No transactions found
+                    </h5>
+
+                    <p class="text-muted mb-4">
+                        There are currently no financial transactions
+                        matching your filters.
+                    </p>
+
+                    {% if can_manage_transactions %}
+
+                        <a href="{% url 'finance:transaction_create' %}"
+                           class="btn btn-primary">
+
+                            <i class="bi bi-plus-circle me-1"></i>
+                            Create Transaction
+
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

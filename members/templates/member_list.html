@@ -1,0 +1,556 @@
+{% extends "base.html" %}
+
+{% block title %}Members | KUCSA Platform{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-people me-2"></i>
+                KUCSA Members
+            </h2>
+
+            <p class="text-muted mb-0">
+                Browse and manage members of the KUCSA Digital Computing Community.
+            </p>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 mt-3 mt-lg-0">
+
+            <a href="{% url 'members:profile' %}"
+               class="btn btn-outline-primary">
+                <i class="bi bi-person-circle me-1"></i>
+                My Profile
+            </a>
+
+            {% if user.is_authenticated %}
+                {% if user.role == "ADMIN" or user.is_staff or user.is_superuser or user.is_executive %}
+                    <a href="{% url 'members:create' %}"
+                       class="btn btn-primary">
+                        <i class="bi bi-person-plus me-1"></i>
+                        Add Member
+                    </a>
+                {% endif %}
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SEARCH & FILTERS
+    ====================================================== -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-header bg-white border-0 py-3">
+
+            <h5 class="fw-bold mb-0">
+                <i class="bi bi-funnel me-2"></i>
+                Search & Filter Members
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <form method="get">
+
+                <div class="row g-3">
+
+                    <!-- Search -->
+                    <div class="col-lg-6">
+
+                        <label for="member-search"
+                               class="form-label fw-semibold">
+                            Search
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text">
+                                <i class="bi bi-search"></i>
+                            </span>
+
+                            <input
+                                id="member-search"
+                                type="search"
+                                name="q"
+                                value="{{ search_query }}"
+                                class="form-control"
+                                placeholder="Name, registration number, email, membership number or course..."
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Membership Status -->
+                    <div class="col-md-6 col-lg-3">
+
+                        <label for="membership-status"
+                               class="form-label fw-semibold">
+                            Membership Status
+                        </label>
+
+                        <select
+                            id="membership-status"
+                            name="status"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                All statuses
+                            </option>
+
+                            {% for value, label in membership_statuses %}
+
+                                <option
+                                    value="{{ value }}"
+                                    {% if selected_status == value %}selected{% endif %}
+                                >
+                                    {{ label }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Technical Level -->
+                    <div class="col-md-6 col-lg-3">
+
+                        <label for="technical-level"
+                               class="form-label fw-semibold">
+                            Technical Level
+                        </label>
+
+                        <select
+                            id="technical-level"
+                            name="technical_level"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                All levels
+                            </option>
+
+                            {% for value, label in technical_levels %}
+
+                                <option
+                                    value="{{ value }}"
+                                    {% if selected_technical_level == value %}selected{% endif %}
+                                >
+                                    {{ label }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Filter Buttons -->
+                <div class="d-flex flex-wrap gap-2 mt-3">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        <i class="bi bi-search me-1"></i>
+                        Search & Filter
+                    </button>
+
+                    <a
+                        href="{% url 'members:list' %}"
+                        class="btn btn-outline-secondary"
+                    >
+                        <i class="bi bi-arrow-counterclockwise me-1"></i>
+                        Clear Filters
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         RESULT SUMMARY
+    ====================================================== -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
+
+        <div>
+
+            <h5 class="fw-bold mb-1">
+                Member Directory
+            </h5>
+
+            <p class="text-muted mb-0">
+
+                {% if search_query or selected_status or selected_technical_level %}
+                    Showing
+                    <strong>{{ members|length }}</strong>
+                    matching member{{ members|length|pluralize }}.
+                {% else %}
+                    Showing
+                    <strong>{{ members|length }}</strong>
+                    member{{ members|length|pluralize }}.
+                {% endif %}
+
+            </p>
+
+        </div>
+
+        <span class="badge bg-primary rounded-pill mt-2 mt-md-0 px-3 py-2">
+            {{ members|length }} Member{{ members|length|pluralize }}
+        </span>
+
+    </div>
+
+
+    <!-- =====================================================
+         MEMBERS TABLE
+    ====================================================== -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body p-0">
+
+            {% if members %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th class="px-3">
+                                    Member
+                                </th>
+
+                                <th>
+                                    Registration No.
+                                </th>
+
+                                <th>
+                                    Membership No.
+                                </th>
+
+                                <th>
+                                    Course
+                                </th>
+
+                                <th>
+                                    Technical Level
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th class="text-end px-3">
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for member in members %}
+
+                                <tr>
+
+                                    <!-- =================================
+                                         MEMBER
+                                    ================================== -->
+                                    <td class="px-3">
+
+                                        <div class="d-flex align-items-center">
+
+                                            {% if member.user.profile_picture %}
+
+                                                <img
+                                                    src="{{ member.user.profile_picture.url }}"
+                                                    width="45"
+                                                    height="45"
+                                                    class="rounded-circle me-3"
+                                                    style="object-fit: cover;"
+                                                    alt="{{ member.full_name }}"
+                                                >
+
+                                            {% else %}
+
+                                                <div
+                                                    class="rounded-circle bg-light d-flex align-items-center justify-content-center me-3"
+                                                    style="width: 45px; height: 45px;"
+                                                >
+                                                    <i class="bi bi-person text-secondary fs-4"></i>
+                                                </div>
+
+                                            {% endif %}
+
+
+                                            <div>
+
+                                                <div class="fw-semibold">
+
+                                                    {{ member.full_name|default:"Unnamed Member" }}
+
+                                                </div>
+
+                                                <small class="text-muted">
+
+                                                    {{ member.user.email }}
+
+                                                </small>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- =================================
+                                         REGISTRATION NUMBER
+                                    ================================== -->
+                                    <td>
+
+                                        <span class="fw-medium">
+
+                                            {{ member.user.registration_number|default:"Not provided" }}
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- =================================
+                                         MEMBERSHIP NUMBER
+                                    ================================== -->
+                                    <td>
+
+                                        {% if member.membership_number %}
+
+                                            <span class="badge bg-primary-subtle text-primary">
+                                                {{ member.membership_number }}
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+                                                Not assigned
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- =================================
+                                         COURSE
+                                    ================================== -->
+                                    <td>
+
+                                        {% if member.course %}
+
+                                            {{ member.course }}
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+                                                Not specified
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- =================================
+                                         TECHNICAL LEVEL
+                                    ================================== -->
+                                    <td>
+
+                                        {% if member.technical_level == "BEGINNER" %}
+
+                                            <span class="badge bg-secondary">
+                                                Beginner
+                                            </span>
+
+                                        {% elif member.technical_level == "INTERMEDIATE" %}
+
+                                            <span class="badge bg-info text-dark">
+                                                Intermediate
+                                            </span>
+
+                                        {% elif member.technical_level == "ADVANCED" %}
+
+                                            <span class="badge bg-warning text-dark">
+                                                Advanced
+                                            </span>
+
+                                        {% elif member.technical_level == "EXPERT" %}
+
+                                            <span class="badge bg-success">
+                                                Expert
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+                                                {{ member.get_technical_level_display|default:"Not specified" }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- =================================
+                                         MEMBERSHIP STATUS
+                                    ================================== -->
+                                    <td>
+
+                                        {% if member.membership_status == "ACTIVE" %}
+
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-check-circle me-1"></i>
+                                                Active
+                                            </span>
+
+                                        {% elif member.membership_status == "PENDING" %}
+
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="bi bi-hourglass-split me-1"></i>
+                                                Pending
+                                            </span>
+
+                                        {% elif member.membership_status == "SUSPENDED" %}
+
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-slash-circle me-1"></i>
+                                                Suspended
+                                            </span>
+
+                                        {% elif member.membership_status == "EXPIRED" %}
+
+                                            <span class="badge bg-secondary">
+                                                <i class="bi bi-calendar-x me-1"></i>
+                                                Expired
+                                            </span>
+
+                                        {% elif member.membership_status == "REJECTED" %}
+
+                                            <span class="badge bg-dark">
+                                                <i class="bi bi-x-circle me-1"></i>
+                                                Rejected
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+                                                {{ member.get_membership_status_display|default:"Unknown" }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- =================================
+                                         ACTION
+                                    ================================== -->
+                                    <td class="text-end px-3">
+
+                                        <a
+                                            href="{% url 'members:detail' pk=member.pk %}"
+                                            class="btn btn-sm btn-outline-primary"
+                                        >
+                                            <i class="bi bi-eye me-1"></i>
+                                            View
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <!-- =============================================
+                     EMPTY STATE
+                ============================================== -->
+                <div class="text-center py-5 px-3">
+
+                    <div class="mb-3">
+
+                        <i class="bi bi-people display-3 text-muted"></i>
+
+                    </div>
+
+                    <h5 class="fw-bold">
+                        No members found
+                    </h5>
+
+                    {% if search_query or selected_status or selected_technical_level %}
+
+                        <p class="text-muted mb-3">
+                            No members match the current search or filters.
+                        </p>
+
+                        <a
+                            href="{% url 'members:list' %}"
+                            class="btn btn-outline-primary"
+                        >
+                            <i class="bi bi-arrow-counterclockwise me-1"></i>
+                            Clear Filters
+                        </a>
+
+                    {% else %}
+
+                        <p class="text-muted mb-0">
+                            There are currently no KUCSA members to display.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

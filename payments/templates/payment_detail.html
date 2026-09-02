@@ -1,0 +1,863 @@
+
+{% extends "base.html" %}
+
+{% block title %}Payment Details | KUCSA{% endblock %}
+
+{% block content %}
+
+<div class="container py-4 py-md-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-12 col-md-9 col-lg-7">
+
+
+            <!-- =====================================================
+                 PAGE HEADER
+            ====================================================== -->
+
+            <div class="d-flex
+                        flex-column flex-sm-row
+                        justify-content-between
+                        align-items-sm-center
+                        gap-3 mb-4">
+
+                <div>
+
+                    <h3 class="fw-bold mb-1">
+                        Payment Details
+                    </h3>
+
+                    <p class="text-muted mb-0">
+                        View the details of your KUCSA payment.
+                    </p>
+
+                </div>
+
+
+                <a
+                    href="{% url 'payments:payment_list' %}"
+                    class="btn btn-outline-secondary"
+                >
+
+                    <i class="bi bi-arrow-left me-2"></i>
+
+                    Payment History
+
+                </a>
+
+            </div>
+
+
+            <!-- =====================================================
+                 PAYMENT CARD
+            ====================================================== -->
+
+            <div class="card border-0 shadow-sm">
+
+                <!-- =================================================
+                     STATUS HEADER
+                ================================================== -->
+
+                <div class="card-header bg-white border-0 text-center py-4">
+
+                    {% if payment.status == "COMPLETED" %}
+
+                        <div
+                            class="rounded-circle
+                                   bg-success bg-opacity-10
+                                   d-inline-flex
+                                   align-items-center
+                                   justify-content-center mb-3"
+                            style="width: 78px; height: 78px;"
+                        >
+
+                            <i
+                                class="bi bi-check-circle-fill text-success"
+                                style="font-size: 38px;"
+                            ></i>
+
+                        </div>
+
+
+                        <h4 class="fw-bold text-success mb-1">
+                            Payment Successful
+                        </h4>
+
+
+                        <p class="text-muted mb-0">
+                            Your payment has been successfully verified.
+                        </p>
+
+
+                    {% elif payment.status == "PENDING" %}
+
+                        <div
+                            class="rounded-circle
+                                   bg-warning bg-opacity-10
+                                   d-inline-flex
+                                   align-items-center
+                                   justify-content-center mb-3"
+                            style="width: 78px; height: 78px;"
+                        >
+
+                            <i
+                                class="bi bi-hourglass-split text-warning"
+                                style="font-size: 38px;"
+                            ></i>
+
+                        </div>
+
+
+                        <h4 class="fw-bold text-warning mb-1">
+                            Payment Pending
+                        </h4>
+
+
+                        <p class="text-muted mb-0">
+                            Waiting for M-Pesa payment confirmation.
+                        </p>
+
+
+                    {% elif payment.status == "FAILED" %}
+
+                        <div
+                            class="rounded-circle
+                                   bg-danger bg-opacity-10
+                                   d-inline-flex
+                                   align-items-center
+                                   justify-content-center mb-3"
+                            style="width: 78px; height: 78px;"
+                        >
+
+                            <i
+                                class="bi bi-x-circle-fill text-danger"
+                                style="font-size: 38px;"
+                            ></i>
+
+                        </div>
+
+
+                        <h4 class="fw-bold text-danger mb-1">
+                            Payment Failed
+                        </h4>
+
+
+                        <p class="text-muted mb-0">
+                            This M-Pesa payment was not completed.
+                        </p>
+
+
+                    {% elif payment.status == "CANCELLED" %}
+
+                        <div
+                            class="rounded-circle
+                                   bg-secondary bg-opacity-10
+                                   d-inline-flex
+                                   align-items-center
+                                   justify-content-center mb-3"
+                            style="width: 78px; height: 78px;"
+                        >
+
+                            <i
+                                class="bi bi-x-circle-fill text-secondary"
+                                style="font-size: 38px;"
+                            ></i>
+
+                        </div>
+
+
+                        <h4 class="fw-bold text-secondary mb-1">
+                            Payment Cancelled
+                        </h4>
+
+
+                        <p class="text-muted mb-0">
+                            This M-Pesa payment was cancelled.
+                        </p>
+
+
+                    {% else %}
+
+                        <div
+                            class="rounded-circle
+                                   bg-secondary bg-opacity-10
+                                   d-inline-flex
+                                   align-items-center
+                                   justify-content-center mb-3"
+                            style="width: 78px; height: 78px;"
+                        >
+
+                            <i
+                                class="bi bi-receipt text-secondary"
+                                style="font-size: 38px;"
+                            ></i>
+
+                        </div>
+
+
+                        <h4 class="fw-bold mb-1">
+                            Payment Information
+                        </h4>
+
+
+                        <p class="text-muted mb-0">
+                            Details of your KUCSA payment.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     PAYMENT INFORMATION
+                ================================================== -->
+
+                <div class="card-body p-4">
+
+
+                    <!-- =================================================
+                         AMOUNT
+                    ================================================== -->
+
+                    <div
+                        class="bg-light rounded-3
+                               p-4 mb-4 text-center"
+                    >
+
+                        <small class="text-muted d-block mb-1">
+                            Amount
+                        </small>
+
+                        <h2 class="fw-bold text-success mb-0">
+                            KES {{ payment.amount }}
+                        </h2>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         TRANSACTION DETAILS
+                    ================================================== -->
+
+                    <h6 class="fw-bold mb-3">
+                        Transaction Information
+                    </h6>
+
+
+                    <div class="border rounded-3 overflow-hidden mb-4">
+
+
+                        <!-- Payment ID -->
+
+                        <div
+                            class="d-flex
+                                   justify-content-between
+                                   align-items-center
+                                   px-3 py-3
+                                   border-bottom"
+                        >
+
+                            <span class="text-muted">
+                                Payment ID
+                            </span>
+
+                            <strong>
+                                #{{ payment.id }}
+                            </strong>
+
+                        </div>
+
+
+                        <!-- Payment Method -->
+
+                        <div
+                            class="d-flex
+                                   justify-content-between
+                                   align-items-center
+                                   px-3 py-3
+                                   border-bottom"
+                        >
+
+                            <span class="text-muted">
+                                Payment Method
+                            </span>
+
+                            <strong>
+                                {{ payment.get_method_display|default:"M-Pesa" }}
+                            </strong>
+
+                        </div>
+
+
+                        <!-- Phone Number -->
+
+                        <div
+                            class="d-flex
+                                   justify-content-between
+                                   align-items-center
+                                   px-3 py-3
+                                   border-bottom"
+                        >
+
+                            <span class="text-muted">
+                                Phone Number
+                            </span>
+
+                            <strong>
+                                {{ payment.phone_number }}
+                            </strong>
+
+                        </div>
+
+
+                        <!-- Status -->
+
+                        <div
+                            class="d-flex
+                                   justify-content-between
+                                   align-items-center
+                                   px-3 py-3
+                                   border-bottom"
+                        >
+
+                            <span class="text-muted">
+                                Status
+                            </span>
+
+
+                            <div>
+
+                                {% if payment.status == "COMPLETED" %}
+
+                                    <span
+                                        class="badge
+                                               bg-success
+                                               bg-opacity-10
+                                               text-success
+                                               px-3 py-2"
+                                    >
+
+                                        <i
+                                            class="bi bi-check-circle me-1"
+                                        ></i>
+
+                                        Completed
+
+                                    </span>
+
+
+                                {% elif payment.status == "PENDING" %}
+
+                                    <span
+                                        class="badge
+                                               bg-warning
+                                               bg-opacity-10
+                                               text-warning
+                                               px-3 py-2"
+                                    >
+
+                                        <i
+                                            class="bi bi-hourglass-split me-1"
+                                        ></i>
+
+                                        Pending
+
+                                    </span>
+
+
+                                {% elif payment.status == "FAILED" %}
+
+                                    <span
+                                        class="badge
+                                               bg-danger
+                                               bg-opacity-10
+                                               text-danger
+                                               px-3 py-2"
+                                    >
+
+                                        <i
+                                            class="bi bi-x-circle me-1"
+                                        ></i>
+
+                                        Failed
+
+                                    </span>
+
+
+                                {% elif payment.status == "CANCELLED" %}
+
+                                    <span
+                                        class="badge
+                                               bg-secondary
+                                               bg-opacity-10
+                                               text-secondary
+                                               px-3 py-2"
+                                    >
+
+                                        <i
+                                            class="bi bi-x-circle me-1"
+                                        ></i>
+
+                                        Cancelled
+
+                                    </span>
+
+
+                                {% else %}
+
+                                    <span class="badge bg-secondary">
+
+                                        {{ payment.get_status_display }}
+
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Created At -->
+
+                        <div
+                            class="d-flex
+                                   justify-content-between
+                                   align-items-center
+                                   px-3 py-3
+                                   border-bottom"
+                        >
+
+                            <span class="text-muted">
+                                Payment Initiated
+                            </span>
+
+                            <strong class="text-end">
+
+                                {{ payment.created_at|date:"d M Y" }}
+
+                                <br>
+
+                                <small class="text-muted">
+                                    {{ payment.created_at|date:"H:i" }}
+                                </small>
+
+                            </strong>
+
+                        </div>
+
+
+                        <!-- Updated At -->
+
+                        {% if payment.updated_at %}
+
+                            <div
+                                class="d-flex
+                                       justify-content-between
+                                       align-items-center
+                                       px-3 py-3"
+                            >
+
+                                <span class="text-muted">
+                                    Last Updated
+                                </span>
+
+                                <strong class="text-end">
+
+                                    {{ payment.updated_at|date:"d M Y" }}
+
+                                    <br>
+
+                                    <small class="text-muted">
+                                        {{ payment.updated_at|date:"H:i" }}
+                                    </small>
+
+                                </strong>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- =================================================
+                         M-PESA INFORMATION
+                    ================================================== -->
+
+                    <h6 class="fw-bold mb-3">
+                        M-Pesa Information
+                    </h6>
+
+
+                    <div class="border rounded-3 overflow-hidden mb-4">
+
+
+                        <!-- Receipt -->
+
+                        <div
+                            class="d-flex
+                                   justify-content-between
+                                   align-items-center
+                                   px-3 py-3
+                                   border-bottom"
+                        >
+
+                            <span class="text-muted">
+                                M-Pesa Receipt
+                            </span>
+
+
+                            {% if payment.mpesa_receipt_number %}
+
+                                <strong class="text-success">
+                                    {{ payment.mpesa_receipt_number }}
+                                </strong>
+
+                            {% else %}
+
+                                <span class="text-muted">
+                                    Not available
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- Merchant Request ID -->
+
+                        {% if payment.merchant_request_id %}
+
+                            <div
+                                class="d-flex
+                                       justify-content-between
+                                       align-items-center
+                                       px-3 py-3
+                                       border-bottom"
+                            >
+
+                                <span class="text-muted">
+                                    Merchant Request ID
+                                </span>
+
+                                <span
+                                    class="text-end small
+                                           text-break"
+                                >
+
+                                    {{ payment.merchant_request_id }}
+
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <!-- Checkout Request ID -->
+
+                        {% if payment.checkout_request_id %}
+
+                            <div
+                                class="d-flex
+                                       justify-content-between
+                                       align-items-center
+                                       px-3 py-3
+                                       border-bottom"
+                            >
+
+                                <span class="text-muted">
+                                    Checkout Request ID
+                                </span>
+
+                                <span
+                                    class="text-end small
+                                           text-break"
+                                >
+
+                                    {{ payment.checkout_request_id }}
+
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <!-- Transaction Date -->
+
+                        {% if payment.transaction_date %}
+
+                            <div
+                                class="d-flex
+                                       justify-content-between
+                                       align-items-center
+                                       px-3 py-3"
+                            >
+
+                                <span class="text-muted">
+                                    Transaction Date
+                                </span>
+
+                                <strong class="text-end">
+
+                                    {{ payment.transaction_date|date:"d M Y" }}
+
+                                    <br>
+
+                                    <small class="text-muted">
+                                        {{ payment.transaction_date|date:"H:i:s" }}
+                                    </small>
+
+                                </strong>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- =================================================
+                         COMPLETED PAYMENT
+                    ================================================== -->
+
+                    {% if payment.status == "COMPLETED" %}
+
+                        <div
+                            class="alert alert-success
+                                   d-flex align-items-start mb-4"
+                        >
+
+                            <i
+                                class="bi bi-check-circle-fill
+                                       me-3 mt-1"
+                            ></i>
+
+                            <div>
+
+                                <strong>
+                                    Payment Verified
+                                </strong>
+
+                                <p class="small mb-0 mt-1">
+
+                                    Your M-Pesa payment has been
+                                    successfully verified. Your KUCSA
+                                    membership should now be active.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="d-grid gap-2">
+
+                            <a
+                                href="{% url 'payments:payment_success' payment.id %}"
+                                class="btn btn-success"
+                            >
+
+                                <i
+                                    class="bi bi-check-circle me-2"
+                                ></i>
+
+                                View Payment Confirmation
+
+                            </a>
+
+
+                            <a
+                                href="{% url 'dashboard:dashboard' %}"
+                                class="btn btn-outline-success"
+                            >
+
+                                <i
+                                    class="bi bi-grid-fill me-2"
+                                ></i>
+
+                                Go to Dashboard
+
+                            </a>
+
+                        </div>
+
+
+                    <!-- =================================================
+                         PENDING PAYMENT
+                    ================================================== -->
+
+                    {% elif payment.status == "PENDING" %}
+
+                        <div
+                            class="alert alert-warning
+                                   d-flex align-items-start mb-4"
+                        >
+
+                            <i
+                                class="bi bi-hourglass-split
+                                       me-3 mt-1"
+                            ></i>
+
+                            <div>
+
+                                <strong>
+                                    Payment Still Pending
+                                </strong>
+
+                                <p class="small mb-0 mt-1">
+
+                                    Please complete the M-Pesa request
+                                    on your phone. We will automatically
+                                    verify the transaction once Safaricom
+                                    sends the confirmation.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="d-grid gap-2">
+
+                            <a
+                                href="{% url 'payments:payment_pending' payment.id %}"
+                                class="btn btn-warning"
+                            >
+
+                                <i
+                                    class="bi bi-arrow-repeat me-2"
+                                ></i>
+
+                                Continue Waiting
+
+                            </a>
+
+                        </div>
+
+
+                    <!-- =================================================
+                         FAILED / CANCELLED
+                    ================================================== -->
+
+                    {% elif payment.status == "FAILED" or payment.status == "CANCELLED" %}
+
+                        <div
+                            class="alert alert-danger
+                                   d-flex align-items-start mb-4"
+                        >
+
+                            <i
+                                class="bi bi-exclamation-circle-fill
+                                       me-3 mt-1"
+                            ></i>
+
+                            <div>
+
+                                <strong>
+                                    Payment Not Completed
+                                </strong>
+
+                                <p class="small mb-0 mt-1">
+
+                                    This payment was not successfully
+                                    completed. You can return to the
+                                    payment page and try again.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="d-grid gap-2">
+
+                            <a
+                                href="{% url 'payments:payment_failed' payment.id %}"
+                                class="btn btn-outline-danger"
+                            >
+
+                                <i
+                                    class="bi bi-exclamation-circle me-2"
+                                ></i>
+
+                                View Payment Result
+
+                            </a>
+
+
+                            <a
+                                href="{% url 'payments:payment_create' %}"
+                                class="btn btn-success"
+                            >
+
+                                <i
+                                    class="bi bi-phone-fill me-2"
+                                ></i>
+
+                                Try Again with M-Pesa
+
+                            </a>
+
+                        </div>
+
+                    {% endif %}
+
+
+                </div>
+
+
+                <!-- =================================================
+                     CARD FOOTER
+                ================================================== -->
+
+                <div class="card-footer bg-white border-0 text-center py-3">
+
+                    <small class="text-muted">
+
+                        <i
+                            class="bi bi-shield-check text-success me-1"
+                        ></i>
+
+                        Payment securely processed through M-Pesa.
+
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 BACK TO PAYMENT HISTORY
+            ====================================================== -->
+
+            <div class="text-center mt-3">
+
+                <a
+                    href="{% url 'payments:payment_list' %}"
+                    class="text-decoration-none text-muted"
+                >
+
+                    <i class="bi bi-arrow-left me-1"></i>
+
+                    Back to Payment History
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

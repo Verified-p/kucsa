@@ -1,0 +1,835 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ member.full_name|default:"Member" }} | KUCSA
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="d-flex flex-column flex-md-row justify-content-between
+                align-items-md-center mb-4">
+
+        <div>
+
+            <a href="{% url 'members:list' %}"
+               class="text-decoration-none">
+                <i class="bi bi-arrow-left me-1"></i>
+                Back to Members
+            </a>
+
+            <h2 class="fw-bold mt-2 mb-1">
+                <i class="bi bi-person-badge me-2"></i>
+                Member Profile
+            </h2>
+
+            <p class="text-muted mb-0">
+                View KUCSA member information and technical profile.
+            </p>
+
+        </div>
+
+
+        <!-- =================================================
+             ACTIONS
+        ================================================== -->
+
+        <div class="mt-3 mt-md-0 d-flex gap-2">
+
+            {% if user == member.user %}
+
+                <a href="{% url 'members:edit_profile' %}"
+                   class="btn btn-primary">
+                    <i class="bi bi-pencil me-1"></i>
+                    Edit My Profile
+                </a>
+
+            {% elif user.is_authenticated and user.is_executive %}
+
+                <a href="{% url 'members:edit' member.pk %}"
+                   class="btn btn-outline-primary">
+                    <i class="bi bi-pencil me-1"></i>
+                    Edit Member
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         PROFILE CONTENT
+    ====================================================== -->
+
+    <div class="row g-4">
+
+
+        <!-- =================================================
+             LEFT COLUMN
+        ================================================== -->
+
+        <div class="col-lg-4">
+
+
+            <!-- =================================================
+                 PROFILE CARD
+            ================================================== -->
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body text-center py-4">
+
+                    {% if member.user.profile_picture %}
+
+                        <img
+                            src="{{ member.user.profile_picture.url }}"
+                            width="130"
+                            height="130"
+                            class="rounded-circle mb-3 object-fit-cover"
+                            alt="{{ member.full_name }}"
+                        >
+
+                    {% else %}
+
+                        <div class="mb-3">
+
+                            <i class="bi bi-person-circle
+                                      display-1 text-secondary"></i>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <h4 class="fw-bold mb-1">
+
+                        {{ member.full_name|default:"Unnamed Member" }}
+
+                    </h4>
+
+
+                    <p class="text-muted mb-2">
+
+                        {{ member.user.registration_number }}
+
+                    </p>
+
+
+                    {% if member.user.role %}
+
+                        <span class="badge bg-primary mb-2">
+
+                            {{ member.user.get_role_display }}
+
+                        </span>
+
+                    {% endif %}
+
+
+                    <div class="mt-2">
+
+                        {% if member.membership_status == "ACTIVE" %}
+
+                            <span class="badge bg-success">
+                                <i class="bi bi-check-circle me-1"></i>
+                                Active
+                            </span>
+
+                        {% elif member.membership_status == "PENDING" %}
+
+                            <span class="badge bg-warning text-dark">
+                                <i class="bi bi-clock me-1"></i>
+                                Pending
+                            </span>
+
+                        {% elif member.membership_status == "SUSPENDED" %}
+
+                            <span class="badge bg-danger">
+                                <i class="bi bi-slash-circle me-1"></i>
+                                Suspended
+                            </span>
+
+                        {% elif member.membership_status == "EXPIRED" %}
+
+                            <span class="badge bg-secondary">
+                                <i class="bi bi-calendar-x me-1"></i>
+                                Expired
+                            </span>
+
+                        {% elif member.membership_status == "REJECTED" %}
+
+                            <span class="badge bg-dark">
+                                <i class="bi bi-x-circle me-1"></i>
+                                Rejected
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-secondary">
+                                {{ member.get_membership_status_display }}
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 CONTACT INFORMATION
+            ================================================== -->
+
+            <div class="card shadow-sm border-0 mt-4">
+
+                <div class="card-header bg-white">
+
+                    <strong>
+                        <i class="bi bi-person-lines-fill me-2"></i>
+                        Contact Information
+                    </strong>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="mb-3">
+
+                        <small class="text-muted d-block">
+                            Email Address
+                        </small>
+
+                        <span>
+                            <i class="bi bi-envelope me-2"></i>
+                            {{ member.user.email|default:"Not provided" }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <small class="text-muted d-block">
+                            Phone Number
+                        </small>
+
+                        {% if member.user.phone_number %}
+
+                            <span>
+                                <i class="bi bi-telephone me-2"></i>
+                                {{ member.user.phone_number }}
+                            </span>
+
+                        {% else %}
+
+                            <span class="text-muted">
+                                Not provided
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div>
+
+                        <small class="text-muted d-block">
+                            Username
+                        </small>
+
+                        <span>
+                            <i class="bi bi-at me-2"></i>
+                            {{ member.user.username }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 PROFILE COMPLETENESS
+            ================================================== -->
+
+            <div class="card shadow-sm border-0 mt-4">
+
+                <div class="card-header bg-white">
+
+                    <strong>
+                        <i class="bi bi-bar-chart me-2"></i>
+                        Profile Status
+                    </strong>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    {% if member.is_profile_complete %}
+
+                        <div class="text-success">
+
+                            <i class="bi bi-check-circle-fill me-2"></i>
+
+                            Profile is complete.
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="text-warning">
+
+                            <i class="bi bi-exclamation-circle-fill me-2"></i>
+
+                            Profile is incomplete.
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             RIGHT COLUMN
+        ================================================== -->
+
+        <div class="col-lg-8">
+
+
+            <!-- =================================================
+                 MEMBERSHIP INFORMATION
+            ================================================== -->
+
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-header bg-white">
+
+                    <strong>
+                        <i class="bi bi-card-checklist me-2"></i>
+                        Membership Information
+                    </strong>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="row">
+
+
+                        <div class="col-md-6 mb-3">
+
+                            <small class="text-muted">
+                                Membership Number
+                            </small>
+
+                            <div class="fw-semibold">
+
+                                {{ member.membership_number|default:"Not assigned" }}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6 mb-3">
+
+                            <small class="text-muted">
+                                Registration Number
+                            </small>
+
+                            <div class="fw-semibold">
+
+                                {{ member.user.registration_number }}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6 mb-3">
+
+                            <small class="text-muted">
+                                Membership Status
+                            </small>
+
+                            <div class="fw-semibold">
+
+                                {{ member.get_membership_status_display }}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6 mb-3">
+
+                            <small class="text-muted">
+                                Verification
+                            </small>
+
+                            <div>
+
+                                {% if member.user.is_verified %}
+
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-patch-check me-1"></i>
+                                        Verified
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-secondary">
+                                        Not Verified
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6 mb-3">
+
+                            <small class="text-muted">
+                                Joined Date
+                            </small>
+
+                            <div class="fw-semibold">
+
+                                {{ member.joined_date|default:"Not available" }}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6 mb-3">
+
+                            <small class="text-muted">
+                                Expiry Date
+                            </small>
+
+                            <div class="fw-semibold">
+
+                                {{ member.expiry_date|default:"Not available" }}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ACADEMIC INFORMATION
+            ================================================== -->
+
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-header bg-white">
+
+                    <strong>
+                        <i class="bi bi-mortarboard me-2"></i>
+                        Academic Information
+                    </strong>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="row">
+
+
+                        <div class="col-md-8 mb-3">
+
+                            <small class="text-muted">
+                                Course
+                            </small>
+
+                            <div class="fw-semibold">
+
+                                {{ member.course|default:"Not specified" }}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-4 mb-3">
+
+                            <small class="text-muted">
+                                Year of Study
+                            </small>
+
+                            <div class="fw-semibold">
+
+                                {{ member.year_of_study|default:"Not specified" }}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 TECHNICAL PROFILE
+            ================================================== -->
+
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-header bg-white">
+
+                    <strong>
+                        <i class="bi bi-code-slash me-2"></i>
+                        Technical Profile
+                    </strong>
+
+                </div>
+
+
+                <div class="card-body">
+
+
+                    <!-- Technical Level -->
+
+                    <div class="mb-4">
+
+                        <small class="text-muted d-block">
+                            Technical Level
+                        </small>
+
+                        <span class="fw-semibold">
+
+                            {{ member.get_technical_level_display|default:"Not specified" }}
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- Technical Domains -->
+
+                    <div class="mb-4">
+
+                        <h6 class="fw-bold">
+                            Technical Domains
+                        </h6>
+
+                        {% if member.technical_domains %}
+
+                            {% for domain in member.technical_domains %}
+
+                                <span class="badge bg-primary me-1 mb-1">
+                                    {{ domain }}
+                                </span>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            <p class="text-muted mb-0">
+                                No technical domains added.
+                            </p>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- Skills -->
+
+                    <div class="mb-4">
+
+                        <h6 class="fw-bold">
+                            Skills
+                        </h6>
+
+                        {% if member.skills %}
+
+                            {% for skill in member.skills %}
+
+                                <span class="badge bg-light text-dark border me-1 mb-1">
+                                    {{ skill }}
+                                </span>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            <p class="text-muted mb-0">
+                                No skills added.
+                            </p>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- Interests -->
+
+                    <div>
+
+                        <h6 class="fw-bold">
+                            Interests
+                        </h6>
+
+                        {% if member.interests %}
+
+                            {% for interest in member.interests %}
+
+                                <span class="badge bg-info text-dark me-1 mb-1">
+                                    {{ interest }}
+                                </span>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            <p class="text-muted mb-0">
+                                No interests added.
+                            </p>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ABOUT
+            ================================================== -->
+
+            {% if member.bio %}
+
+                <div class="card shadow-sm border-0 mb-4">
+
+                    <div class="card-header bg-white">
+
+                        <strong>
+                            <i class="bi bi-chat-quote me-2"></i>
+                            About
+                        </strong>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        {{ member.bio|linebreaks }}
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- =================================================
+                 PROFESSIONAL LINKS
+            ================================================== -->
+
+            {% if member.github_url or member.linkedin_url or member.portfolio_url %}
+
+                <div class="card shadow-sm border-0 mb-4">
+
+                    <div class="card-header bg-white">
+
+                        <strong>
+                            <i class="bi bi-link-45deg me-2"></i>
+                            Professional Links
+                        </strong>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        {% if member.github_url %}
+
+                            <a href="{{ member.github_url }}"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="btn btn-outline-dark me-2 mb-2">
+
+                                <i class="bi bi-github me-1"></i>
+                                GitHub
+
+                            </a>
+
+                        {% endif %}
+
+
+                        {% if member.linkedin_url %}
+
+                            <a href="{{ member.linkedin_url }}"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="btn btn-outline-primary me-2 mb-2">
+
+                                <i class="bi bi-linkedin me-1"></i>
+                                LinkedIn
+
+                            </a>
+
+                        {% endif %}
+
+
+                        {% if member.portfolio_url %}
+
+                            <a href="{{ member.portfolio_url }}"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="btn btn-outline-secondary mb-2">
+
+                                <i class="bi bi-globe me-1"></i>
+                                Portfolio
+
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- =================================================
+                 ADMIN / EXECUTIVE MEMBERSHIP ACTIONS
+            ================================================== -->
+
+            {% if user.is_authenticated and user.is_executive %}
+
+                <div class="card shadow-sm border-0">
+
+                    <div class="card-header bg-white">
+
+                        <strong>
+                            <i class="bi bi-shield-check me-2"></i>
+                            Member Management
+                        </strong>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        <div class="d-flex flex-wrap gap-2">
+
+                            <a
+                                href="{% url 'members:edit' member.pk %}"
+                                class="btn btn-primary"
+                            >
+                                <i class="bi bi-pencil me-1"></i>
+                                Edit Member
+                            </a>
+
+
+                            {% if user.role == "ADMIN" or user.is_staff or user.is_superuser %}
+
+                                <form
+                                    method="post"
+                                    action="{% url 'members:update_membership_status' member.pk %}"
+                                    class="d-inline"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <input
+                                        type="hidden"
+                                        name="membership_status"
+                                        value="ACTIVE"
+                                    >
+
+                                    {% if member.membership_status != "ACTIVE" %}
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-success"
+                                        >
+                                            <i class="bi bi-check-circle me-1"></i>
+                                            Approve / Activate
+                                        </button>
+
+                                    {% endif %}
+
+                                </form>
+
+
+                                {% if member.membership_status == "ACTIVE" %}
+
+                                    <form
+                                        method="post"
+                                        action="{% url 'members:update_membership_status' member.pk %}"
+                                        class="d-inline"
+                                    >
+
+                                        {% csrf_token %}
+
+                                        <input
+                                            type="hidden"
+                                            name="membership_status"
+                                            value="SUSPENDED"
+                                        >
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-warning"
+                                        >
+                                            <i class="bi bi-pause-circle me-1"></i>
+                                            Suspend
+                                        </button>
+
+                                    </form>
+
+                                {% endif %}
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

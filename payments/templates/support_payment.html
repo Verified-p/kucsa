@@ -1,0 +1,694 @@
+{% extends "base.html" %}
+
+{% block title %}Support KUCSA | KUCSA{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-12 col-md-8 col-lg-6">
+
+            <!-- =====================================================
+                 PAGE HEADER
+            ====================================================== -->
+
+            <div class="text-center mb-4">
+
+                <div
+                    class="rounded-circle bg-success bg-opacity-10
+                           d-inline-flex align-items-center
+                           justify-content-center mb-3"
+                    style="width: 80px; height: 80px;"
+                >
+
+                    <i
+                        class="bi bi-heart-fill text-success"
+                        style="font-size: 36px;"
+                    ></i>
+
+                </div>
+
+                <h2 class="fw-bold mb-2">
+                    Support KUCSA
+                </h2>
+
+                <p class="text-muted mb-0">
+
+                    Your contribution helps KUCSA
+                    continue supporting students,
+                    activities, events, and community
+                    programs.
+
+                </p>
+
+            </div>
+
+
+            <!-- =====================================================
+                 SUPPORT PAYMENT CARD
+            ====================================================== -->
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body p-4 p-md-5">
+
+                    <!-- =================================================
+                         INFORMATION ALERT
+                    ================================================== -->
+
+                    <div
+                        class="alert alert-light border
+                               d-flex align-items-start mb-4"
+                    >
+
+                        <i
+                            class="bi bi-info-circle-fill
+                                   text-primary me-3 mt-1"
+                        ></i>
+
+                        <div>
+
+                            <strong>
+                                KUCSA Support Contribution
+                            </strong>
+
+                            <p class="text-muted small mb-0 mt-1">
+
+                                This is an optional contribution.
+                                It does not activate, renew, or change
+                                your KUCSA membership status.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         PAYMENT FORM
+                    ================================================== -->
+
+                    <form
+                        method="post"
+                        action="{% url 'payments:support_submit' %}"
+                        id="supportPaymentForm"
+                    >
+
+                        {% csrf_token %}
+
+
+                        <!-- =============================================
+                             AMOUNT
+                        ============================================== -->
+
+                        <div class="mb-4">
+
+                            <label
+                                for="amount"
+                                class="form-label fw-semibold"
+                            >
+                                Contribution Amount
+                            </label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+                                    KES
+                                </span>
+
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="amount"
+                                    name="amount"
+                                    min="1"
+                                    step="0.01"
+                                    placeholder="Enter amount"
+                                    required
+                                    inputmode="decimal"
+                                    autocomplete="off"
+                                >
+
+                            </div>
+
+                            <div
+                                id="amountHelp"
+                                class="form-text"
+                            >
+                                Enter the amount you would like
+                                to contribute to KUCSA.
+                            </div>
+
+                            <div
+                                id="amountError"
+                                class="invalid-feedback"
+                            >
+                                Please enter a valid contribution amount.
+                            </div>
+
+                        </div>
+
+
+                        <!-- =============================================
+                             QUICK AMOUNT BUTTONS
+                        ============================================== -->
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Quick Amount
+                            </label>
+
+                            <div class="d-flex flex-wrap gap-2">
+
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-success
+                                           quick-amount"
+                                    data-amount="100"
+                                >
+                                    KES 100
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-success
+                                           quick-amount"
+                                    data-amount="200"
+                                >
+                                    KES 200
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-success
+                                           quick-amount"
+                                    data-amount="500"
+                                >
+                                    KES 500
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-success
+                                           quick-amount"
+                                    data-amount="1000"
+                                >
+                                    KES 1,000
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =============================================
+                             PHONE NUMBER
+                        ============================================== -->
+
+                        <div class="mb-4">
+
+                            <label
+                                for="phone_number"
+                                class="form-label fw-semibold"
+                            >
+                                M-Pesa Phone Number
+                            </label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+                                    <i class="bi bi-phone"></i>
+                                </span>
+
+                                <input
+                                    type="tel"
+                                    class="form-control"
+                                    id="phone_number"
+                                    name="phone_number"
+                                    placeholder="0712345678"
+                                    value="{{ member.phone_number|default:'' }}"
+                                    required
+                                    autocomplete="tel"
+                                    inputmode="tel"
+                                >
+
+                            </div>
+
+                            <div class="form-text">
+
+                                Enter the Safaricom number that
+                                should receive the M-Pesa STK Push.
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =============================================
+                             HOW IT WORKS
+                        ============================================== -->
+
+                        <div
+                            class="bg-light rounded-3 p-3 p-md-4 mb-4"
+                        >
+
+                            <h6 class="fw-bold mb-3">
+
+                                <i
+                                    class="bi bi-list-check
+                                           text-success me-2"
+                                ></i>
+
+                                How it works
+
+                            </h6>
+
+
+                            <!-- STEP 1 -->
+
+                            <div class="d-flex mb-3">
+
+                                <div
+                                    class="rounded-circle bg-success
+                                           text-white d-flex
+                                           align-items-center
+                                           justify-content-center
+                                           flex-shrink-0 me-3"
+                                    style="width: 30px; height: 30px;"
+                                >
+                                    1
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        Enter your contribution
+                                    </strong>
+
+                                    <p
+                                        class="text-muted small mb-0"
+                                    >
+                                        Choose how much you would
+                                        like to contribute.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- STEP 2 -->
+
+                            <div class="d-flex mb-3">
+
+                                <div
+                                    class="rounded-circle bg-success
+                                           text-white d-flex
+                                           align-items-center
+                                           justify-content-center
+                                           flex-shrink-0 me-3"
+                                    style="width: 30px; height: 30px;"
+                                >
+                                    2
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        Receive an M-Pesa request
+                                    </strong>
+
+                                    <p
+                                        class="text-muted small mb-0"
+                                    >
+                                        An STK Push will be sent to
+                                        the phone number you provide.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- STEP 3 -->
+
+                            <div class="d-flex">
+
+                                <div
+                                    class="rounded-circle bg-success
+                                           text-white d-flex
+                                           align-items-center
+                                           justify-content-center
+                                           flex-shrink-0 me-3"
+                                    style="width: 30px; height: 30px;"
+                                >
+                                    3
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        Enter your M-Pesa PIN
+                                    </strong>
+
+                                    <p
+                                        class="text-muted small mb-0"
+                                    >
+                                        Confirm the transaction on
+                                        your phone and wait for
+                                        confirmation.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =============================================
+                             IMPORTANT NOTICE
+                        ============================================== -->
+
+                        <div
+                            class="alert alert-warning
+                                   d-flex align-items-start mb-4"
+                        >
+
+                            <i
+                                class="bi bi-shield-exclamation
+                                       me-2 mt-1"
+                            ></i>
+
+                            <div>
+
+                                <strong>
+                                    Important
+                                </strong>
+
+                                <p class="small mb-0 mt-1">
+
+                                    Never share your M-Pesa PIN with
+                                    anyone. KUCSA will never ask you
+                                    to provide your M-Pesa PIN.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =============================================
+                             SUBMIT BUTTON
+                        ============================================== -->
+
+                        <button
+                            type="submit"
+                            id="supportPaymentButton"
+                            class="btn btn-success btn-lg w-100"
+                        >
+
+                            <i
+                                class="bi bi-phone-fill me-2"
+                                id="submitIcon"
+                            ></i>
+
+                            <span id="submitText">
+                                Support KUCSA
+                            </span>
+
+                        </button>
+
+
+                        <!-- =============================================
+                             BACK TO PAYMENTS
+                        ============================================== -->
+
+                        <a
+                            href="{% url 'payments:payment_list' %}"
+                            class="btn btn-outline-secondary w-100 mt-3"
+                        >
+
+                            <i
+                                class="bi bi-arrow-left me-2"
+                            ></i>
+
+                            Back to Payments
+
+                        </a>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 SECURITY NOTE
+            ====================================================== -->
+
+            <div class="text-center mt-3">
+
+                <small class="text-muted">
+
+                    <i
+                        class="bi bi-shield-check me-1"
+                    ></i>
+
+                    Payments are securely processed through
+                    M-Pesa.
+
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =============================================================
+     SUPPORT PAYMENT JAVASCRIPT
+============================================================== -->
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const form =
+            document.getElementById(
+                "supportPaymentForm"
+            );
+
+        const amount =
+            document.getElementById(
+                "amount"
+            );
+
+        const phone =
+            document.getElementById(
+                "phone_number"
+            );
+
+        const submitButton =
+            document.getElementById(
+                "supportPaymentButton"
+            );
+
+        const submitText =
+            document.getElementById(
+                "submitText"
+            );
+
+        const submitIcon =
+            document.getElementById(
+                "submitIcon"
+            );
+
+
+        /*
+         * ---------------------------------------------------------
+         * QUICK AMOUNT BUTTONS
+         * ---------------------------------------------------------
+         */
+
+        const quickAmountButtons =
+            document.querySelectorAll(
+                ".quick-amount"
+            );
+
+
+        quickAmountButtons.forEach(
+            function (button) {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        amount.value =
+                            this.dataset.amount;
+
+                        amount.classList.remove(
+                            "is-invalid"
+                        );
+
+                        amount.classList.add(
+                            "is-valid"
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+        /*
+         * ---------------------------------------------------------
+         * AMOUNT VALIDATION
+         * ---------------------------------------------------------
+         */
+
+        amount.addEventListener(
+            "input",
+            function () {
+
+                const value =
+                    parseFloat(
+                        amount.value
+                    );
+
+                if (
+                    !isNaN(value) &&
+                    value > 0
+                ) {
+
+                    amount.classList.remove(
+                        "is-invalid"
+                    );
+
+                }
+
+            }
+        );
+
+
+        /*
+         * ---------------------------------------------------------
+         * PHONE VALIDATION
+         * ---------------------------------------------------------
+         */
+
+        phone.addEventListener(
+            "input",
+            function () {
+
+                phone.classList.remove(
+                    "is-invalid"
+                );
+
+            }
+        );
+
+
+        /*
+         * ---------------------------------------------------------
+         * FORM SUBMISSION
+         * ---------------------------------------------------------
+         */
+
+        form.addEventListener(
+            "submit",
+            function (event) {
+
+                const amountValue =
+                    parseFloat(
+                        amount.value
+                    );
+
+                const phoneValue =
+                    phone.value.trim();
+
+
+                /*
+                 * Validate amount
+                 */
+
+                if (
+                    isNaN(amountValue) ||
+                    amountValue <= 0
+                ) {
+
+                    event.preventDefault();
+
+                    amount.classList.add(
+                        "is-invalid"
+                    );
+
+                    amount.focus();
+
+                    return;
+
+                }
+
+
+                /*
+                 * Validate phone
+                 *
+                 * The backend performs the authoritative
+                 * phone-number validation.
+                 */
+
+                if (!phoneValue) {
+
+                    event.preventDefault();
+
+                    phone.classList.add(
+                        "is-invalid"
+                    );
+
+                    phone.focus();
+
+                    return;
+
+                }
+
+
+                /*
+                 * Prevent double submission.
+                 */
+
+                submitButton.disabled =
+                    true;
+
+
+                /*
+                 * Change button appearance.
+                 */
+
+                submitIcon.className =
+                    "spinner-border spinner-border-sm me-2";
+
+
+                submitText.textContent =
+                    "Sending M-Pesa Request...";
+
+            }
+        );
+
+    }
+);
+
+</script>
+
+{% endblock %}

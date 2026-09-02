@@ -1,0 +1,844 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if session %}
+        Edit Attendance Session | KUCSA
+    {% else %}
+        Create Attendance Session | KUCSA
+    {% endif %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+    <div class="d-flex flex-column flex-md-row
+                justify-content-between
+                align-items-md-center
+                gap-3
+                mb-4">
+
+        <div>
+
+            <div class="d-flex align-items-center gap-2 mb-1">
+
+                <a href="{% url 'attendance:list' %}"
+                   class="btn btn-sm btn-outline-secondary">
+
+                    <i class="bi bi-arrow-left"></i>
+
+                </a>
+
+                <h1 class="h3 fw-bold mb-0">
+
+                    {% if session %}
+                        Edit Attendance Session
+                    {% else %}
+                        Create Attendance Session
+                    {% endif %}
+
+                </h1>
+
+            </div>
+
+            <p class="text-muted mb-0">
+
+                {% if session %}
+                    Update the details and attendance window
+                    for this session.
+                {% else %}
+                    Create a general KUCSA attendance session
+                    for members and students.
+                {% endif %}
+
+            </p>
+
+        </div>
+
+
+        {% if session %}
+
+            <div class="d-flex align-items-center gap-2">
+
+                {% if session.status == "DRAFT" %}
+
+                    <span class="badge text-bg-secondary px-3 py-2">
+                        <i class="bi bi-pencil-square me-1"></i>
+                        Draft
+                    </span>
+
+                {% elif session.status == "OPEN" %}
+
+                    <span class="badge text-bg-success px-3 py-2">
+                        <i class="bi bi-broadcast me-1"></i>
+                        Open
+                    </span>
+
+                {% elif session.status == "CLOSED" %}
+
+                    <span class="badge text-bg-dark px-3 py-2">
+                        <i class="bi bi-lock me-1"></i>
+                        Closed
+                    </span>
+
+                {% elif session.status == "EXPIRED" %}
+
+                    <span class="badge text-bg-warning px-3 py-2">
+                        <i class="bi bi-clock-history me-1"></i>
+                        Expired
+                    </span>
+
+                {% else %}
+
+                    <span class="badge text-bg-secondary px-3 py-2">
+                        {{ session.get_status_display }}
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+    <div class="row g-4">
+
+        <!-- =================================================
+             FORM
+        ================================================== -->
+        <div class="col-12 col-lg-8">
+
+            <div class="card border-0 shadow-sm">
+
+                <!-- CARD HEADER -->
+                <div class="card-header bg-transparent border-bottom">
+
+                    <div class="d-flex align-items-center gap-3">
+
+                        <div class="rounded-circle
+                                    bg-primary-subtle
+                                    p-3">
+
+                            <i class="bi bi-calendar-check
+                                      text-primary fs-5"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h5 class="fw-bold mb-1">
+
+                                {% if session %}
+                                    Session Details
+                                {% else %}
+                                    New Attendance Session
+                                {% endif %}
+
+                            </h5>
+
+                            <p class="text-muted small mb-0">
+
+                                Define the attendance session
+                                members will use to record
+                                their presence.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FORM BODY -->
+                <div class="card-body">
+
+                    {% if form.non_field_errors %}
+
+                        <div class="alert alert-danger">
+
+                            <div class="d-flex gap-2">
+
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+
+                                <div>
+
+                                    <strong>
+                                        Please correct the following:
+                                    </strong>
+
+                                    <div class="mt-1">
+                                        {{ form.non_field_errors }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <form method="post"
+                          novalidate>
+
+                        {% csrf_token %}
+
+
+                        <!-- =================================
+                             SESSION TITLE
+                        ================================== -->
+                        <div class="mb-4">
+
+                            <label for="{{ form.title.id_for_label }}"
+                                   class="form-label fw-semibold">
+
+                                Attendance Session Title
+
+                                <span class="text-danger">
+                                    *
+                                </span>
+
+                            </label>
+
+                            {{ form.title }}
+
+                            {% if form.title.errors %}
+
+                                <div class="text-danger small mt-1">
+
+                                    {{ form.title.errors }}
+
+                                </div>
+
+                            {% endif %}
+
+                            {% if form.title.help_text %}
+
+                                <div class="form-text">
+
+                                    {{ form.title.help_text }}
+
+                                </div>
+
+                            {% else %}
+
+                                <div class="form-text">
+
+                                    Give this attendance session
+                                    a clear and recognizable name.
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- =================================
+                             DESCRIPTION
+                        ================================== -->
+                        <div class="mb-4">
+
+                            <label for="{{ form.description.id_for_label }}"
+                                   class="form-label fw-semibold">
+
+                                Description
+
+                                <span class="text-muted fw-normal">
+                                    (Optional)
+                                </span>
+
+                            </label>
+
+                            {{ form.description }}
+
+                            {% if form.description.errors %}
+
+                                <div class="text-danger small mt-1">
+
+                                    {{ form.description.errors }}
+
+                                </div>
+
+                            {% endif %}
+
+                            {% if form.description.help_text %}
+
+                                <div class="form-text">
+
+                                    {{ form.description.help_text }}
+
+                                </div>
+
+                            {% else %}
+
+                                <div class="form-text">
+
+                                    Add instructions or information
+                                    that members should know before
+                                    marking attendance.
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- =================================
+                             TIMING SECTION
+                        ================================== -->
+                        <div class="border rounded-3 p-3 p-md-4 mb-4">
+
+                            <div class="d-flex
+                                        align-items-start
+                                        gap-3
+                                        mb-4">
+
+                                <div class="rounded-circle
+                                            bg-info-subtle
+                                            p-2">
+
+                                    <i class="bi bi-clock
+                                              text-info"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <h6 class="fw-bold mb-1">
+                                        Attendance Window
+                                    </h6>
+
+                                    <p class="text-muted small mb-0">
+
+                                        Define when members can
+                                        mark their attendance.
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="row g-3">
+
+                                <!-- OPENING TIME -->
+                                <div class="col-12 col-md-6">
+
+                                    <label for="{{ form.opens_at.id_for_label }}"
+                                           class="form-label fw-semibold">
+
+                                        Opening Time
+
+                                        <span class="text-muted fw-normal">
+                                            (Optional)
+                                        </span>
+
+                                    </label>
+
+                                    {{ form.opens_at }}
+
+                                    {% if form.opens_at.errors %}
+
+                                        <div class="text-danger small mt-1">
+
+                                            {{ form.opens_at.errors }}
+
+                                        </div>
+
+                                    {% endif %}
+
+                                    {% if form.opens_at.help_text %}
+
+                                        <div class="form-text">
+
+                                            {{ form.opens_at.help_text }}
+
+                                        </div>
+
+                                    {% else %}
+
+                                        <div class="form-text">
+
+                                            When attendance should
+                                            become available.
+
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <!-- CLOSING TIME -->
+                                <div class="col-12 col-md-6">
+
+                                    <label for="{{ form.closes_at.id_for_label }}"
+                                           class="form-label fw-semibold">
+
+                                        Closing Time
+
+                                        <span class="text-muted fw-normal">
+                                            (Optional)
+                                        </span>
+
+                                    </label>
+
+                                    {{ form.closes_at }}
+
+                                    {% if form.closes_at.errors %}
+
+                                        <div class="text-danger small mt-1">
+
+                                            {{ form.closes_at.errors }}
+
+                                        </div>
+
+                                    {% endif %}
+
+                                    {% if form.closes_at.help_text %}
+
+                                        <div class="form-text">
+
+                                            {{ form.closes_at.help_text }}
+
+                                        </div>
+
+                                    {% else %}
+
+                                        <div class="form-text">
+
+                                            When attendance should
+                                            stop accepting member
+                                            submissions.
+
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =================================
+                             SESSION INFORMATION
+                        ================================== -->
+                        <div class="alert alert-info border-0">
+
+                            <div class="d-flex gap-3">
+
+                                <i class="bi bi-info-circle-fill fs-5"></i>
+
+                                <div>
+
+                                    <h6 class="fw-bold mb-1">
+                                        How attendance works
+                                    </h6>
+
+                                    <ul class="small mb-0 ps-3">
+
+                                        <li>
+                                            A new session starts as
+                                            <strong>Draft</strong>.
+                                        </li>
+
+                                        <li>
+                                            A management user opens
+                                            the session when attendance
+                                            should begin.
+                                        </li>
+
+                                        <li>
+                                            Members can mark themselves
+                                            present while the session
+                                            is open.
+                                        </li>
+
+                                        <li>
+                                            Each member receives an
+                                            attendance record for the
+                                            session.
+                                        </li>
+
+                                        <li>
+                                            Management can review and
+                                            correct attendance records.
+                                        </li>
+
+                                        <li>
+                                            The session can be closed
+                                            manually or become expired
+                                            after its attendance window.
+                                        </li>
+
+                                    </ul>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =================================
+                             FORM ACTIONS
+                        ================================== -->
+                        <div class="d-flex
+                                    flex-column flex-sm-row
+                                    justify-content-between
+                                    gap-2
+                                    pt-3
+                                    border-top">
+
+                            <a href="{% if session %}{% url 'attendance:detail' session.pk %}{% else %}{% url 'attendance:list' %}{% endif %}"
+                               class="btn btn-outline-secondary">
+
+                                <i class="bi bi-x-circle me-1"></i>
+
+                                Cancel
+
+                            </a>
+
+
+                            <button type="submit"
+                                    class="btn btn-primary">
+
+                                {% if session %}
+
+                                    <i class="bi bi-save me-1"></i>
+                                    Save Changes
+
+                                {% else %}
+
+                                    <i class="bi bi-plus-circle me-1"></i>
+                                    Create Attendance Session
+
+                                {% endif %}
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             SIDE INFORMATION
+        ================================================== -->
+        <div class="col-12 col-lg-4">
+
+            <!-- =============================================
+                 SESSION PURPOSE
+            ============================================== -->
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-header bg-transparent border-bottom">
+
+                    <h6 class="fw-bold mb-0">
+
+                        <i class="bi bi-question-circle
+                                  text-primary me-2"></i>
+
+                        Attendance Session
+
+                    </h6>
+
+                </div>
+
+                <div class="card-body">
+
+                    <p class="text-muted small">
+
+                        An attendance session represents a
+                        specific period during which KUCSA
+                        members can record their presence.
+
+                    </p>
+
+                    <div class="d-flex gap-3 mb-3">
+
+                        <div class="rounded-circle
+                                    bg-primary-subtle
+                                    p-2
+                                    flex-shrink-0">
+
+                            <i class="bi bi-people
+                                      text-primary"></i>
+
+                        </div>
+
+                        <div>
+
+                            <div class="fw-semibold small">
+                                Members
+                            </div>
+
+                            <div class="text-muted small">
+                                Members identify themselves
+                                and mark their attendance.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="d-flex gap-3 mb-3">
+
+                        <div class="rounded-circle
+                                    bg-success-subtle
+                                    p-2
+                                    flex-shrink-0">
+
+                            <i class="bi bi-check-circle
+                                      text-success"></i>
+
+                        </div>
+
+                        <div>
+
+                            <div class="fw-semibold small">
+                                Attendance Records
+                            </div>
+
+                            <div class="text-muted small">
+                                Each attendance action is
+                                stored against the member.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="d-flex gap-3">
+
+                        <div class="rounded-circle
+                                    bg-warning-subtle
+                                    p-2
+                                    flex-shrink-0">
+
+                            <i class="bi bi-bar-chart
+                                      text-warning"></i>
+
+                        </div>
+
+                        <div>
+
+                            <div class="fw-semibold small">
+                                Reports
+                            </div>
+
+                            <div class="text-muted small">
+                                Management can analyze
+                                attendance trends and records.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =============================================
+                 SESSION STATUS
+            ============================================== -->
+            {% if session %}
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-header bg-transparent border-bottom">
+
+                        <h6 class="fw-bold mb-0">
+
+                            <i class="bi bi-activity
+                                      text-success me-2"></i>
+
+                            Current Session
+
+                        </h6>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="mb-3">
+
+                            <div class="text-muted small mb-1">
+                                Status
+                            </div>
+
+                            {% if session.status == "DRAFT" %}
+
+                                <span class="badge text-bg-secondary">
+                                    Draft
+                                </span>
+
+                            {% elif session.status == "OPEN" %}
+
+                                <span class="badge text-bg-success">
+                                    Open
+                                </span>
+
+                            {% elif session.status == "CLOSED" %}
+
+                                <span class="badge text-bg-dark">
+                                    Closed
+                                </span>
+
+                            {% elif session.status == "EXPIRED" %}
+
+                                <span class="badge text-bg-warning">
+                                    Expired
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge text-bg-secondary">
+                                    {{ session.get_status_display }}
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        {% if session.opens_at %}
+
+                            <div class="mb-3">
+
+                                <div class="text-muted small mb-1">
+                                    Opens
+                                </div>
+
+                                <div class="fw-semibold">
+
+                                    {{ session.opens_at|date:"d M Y, H:i" }}
+
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if session.closes_at %}
+
+                            <div class="mb-3">
+
+                                <div class="text-muted small mb-1">
+                                    Closes
+                                </div>
+
+                                <div class="fw-semibold">
+
+                                    {{ session.closes_at|date:"d M Y, H:i" }}
+
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if session.created_at %}
+
+                            <div>
+
+                                <div class="text-muted small mb-1">
+                                    Created
+                                </div>
+
+                                <div class="fw-semibold">
+
+                                    {{ session.created_at|date:"d M Y, H:i" }}
+
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- =============================================
+                 IMPORTANT NOTICE
+            ============================================== -->
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body">
+
+                    <div class="d-flex gap-3">
+
+                        <div class="rounded-circle
+                                    bg-warning-subtle
+                                    p-3
+                                    flex-shrink-0">
+
+                            <i class="bi bi-shield-check
+                                      text-warning fs-5"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h6 class="fw-bold">
+                                Important
+                            </h6>
+
+                            <p class="text-muted small mb-0">
+
+                                Attendance permissions,
+                                session state changes and
+                                member eligibility are handled
+                                by the attendance system's
+                                service layer.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

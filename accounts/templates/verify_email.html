@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}
+Verify Email | KUCSA Platform
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-6 col-md-8">
+
+            <div class="card shadow-lg border-0 mt-5">
+
+                <div class="card-body text-center p-5">
+
+                    <!-- Icon -->
+
+                    <i class="bi bi-envelope-check-fill text-success display-1"></i>
+
+                    <!-- Title -->
+
+                    <h2 class="fw-bold mt-4">
+
+                        Verify Your Email
+
+                    </h2>
+
+                    <!-- Message -->
+
+                    <p class="text-muted mt-3">
+
+                        We've sent a verification email to your registered email address.
+
+                    </p>
+
+                    <p class="text-muted">
+
+                        Please check your inbox and click the verification link to activate your account.
+
+                    </p>
+
+                    <p class="small text-muted">
+
+                        If you don't see the email, check your spam or junk folder.
+
+                    </p>
+
+                    <hr>
+
+                    <div class="d-grid gap-2">
+
+                        <a
+                            href="{% url 'accounts:login' %}"
+                            class="btn btn-primary">
+
+                            <i class="bi bi-box-arrow-in-right"></i>
+
+                            Back to Login
+
+                        </a>
+
+                    </div>
+
+                    <div class="mt-3">
+
+                        <small class="text-muted">
+
+                            Didn't receive the email?
+
+                            <a
+                                href="#"
+                                class="text-decoration-none">
+
+                                Resend Verification Email
+
+                            </a>
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

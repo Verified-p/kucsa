@@ -1,0 +1,531 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title|default:"Expense Form" }} | KUCSA Finance{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+<!-- =====================================================
+     PAGE HEADER
+====================================================== -->
+<div class="d-flex flex-column flex-md-row
+            justify-content-between align-items-md-center
+            gap-3 mb-4">
+
+    <div>
+        <h2 class="fw-bold mb-1">
+            {% if expense %}
+                Edit Expense
+            {% else %}
+                Record Expense
+            {% endif %}
+        </h2>
+
+        <p class="text-muted mb-0">
+            {% if expense %}
+                Update the expense details below.
+            {% else %}
+                Record a new KUCSA expense for approval and payment.
+            {% endif %}
+        </p>
+    </div>
+
+    <div>
+        <a href="{% url 'finance:expenses' %}"
+           class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Expenses
+        </a>
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     FORM CARD
+====================================================== -->
+<div class="row justify-content-center">
+
+    <div class="col-12 col-xl-9">
+
+        <div class="card border-0 shadow-sm">
+
+            <!-- CARD HEADER -->
+            <div class="card-header bg-white border-bottom py-3">
+                <div class="d-flex align-items-center">
+
+                    <div class="rounded-circle bg-danger-subtle
+                                text-danger d-flex align-items-center
+                                justify-content-center me-3"
+                         style="width: 44px; height: 44px;">
+
+                        <i class="bi bi-wallet2 fs-5"></i>
+
+                    </div>
+
+                    <div>
+                        <h5 class="fw-bold mb-0">
+                            {% if expense %}
+                                Expense Information
+                            {% else %}
+                                New Expense
+                            {% endif %}
+                        </h5>
+
+                        <small class="text-muted">
+                            Enter accurate financial information.
+                        </small>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <!-- FORM -->
+            <div class="card-body p-4">
+
+                <form method="post"
+                      enctype="multipart/form-data"
+                      novalidate>
+
+                    {% csrf_token %}
+
+
+                    <!-- =================================================
+                         NON-FIELD FORM ERRORS
+                    ================================================== -->
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            <div class="fw-semibold mb-1">
+                                <i class="bi bi-exclamation-triangle me-1"></i>
+                                Please correct the following:
+                            </div>
+
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+
+                    <!-- =================================================
+                         BASIC INFORMATION
+                    ================================================== -->
+                    <div class="mb-4">
+
+                        <h6 class="fw-bold border-bottom pb-2 mb-3">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Basic Information
+                        </h6>
+
+                        <div class="row g-3">
+
+                            <!-- TITLE -->
+                            <div class="col-12">
+
+                                <label for="{{ form.title.id_for_label }}"
+                                       class="form-label fw-semibold">
+
+                                    Expense Title
+
+                                    {% if form.title.field.required %}
+                                        <span class="text-danger">*</span>
+                                    {% endif %}
+
+                                </label>
+
+                                {{ form.title }}
+
+                                {% if form.title.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.title.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- CATEGORY -->
+                            <div class="col-md-6">
+
+                                <label for="{{ form.category.id_for_label }}"
+                                       class="form-label fw-semibold">
+
+                                    Category
+
+                                    {% if form.category.field.required %}
+                                        <span class="text-danger">*</span>
+                                    {% endif %}
+
+                                </label>
+
+                                {{ form.category }}
+
+                                {% if form.category.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.category.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- AMOUNT -->
+                            <div class="col-md-6">
+
+                                <label for="{{ form.amount.id_for_label }}"
+                                       class="form-label fw-semibold">
+
+                                    Amount (KES)
+
+                                    {% if form.amount.field.required %}
+                                        <span class="text-danger">*</span>
+                                    {% endif %}
+
+                                </label>
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text">
+                                        KES
+                                    </span>
+
+                                    {{ form.amount }}
+
+                                </div>
+
+                                {% if form.amount.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.amount.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- DESCRIPTION -->
+                            <div class="col-12">
+
+                                <label for="{{ form.description.id_for_label }}"
+                                       class="form-label fw-semibold">
+
+                                    Description
+
+                                    {% if form.description.field.required %}
+                                        <span class="text-danger">*</span>
+                                    {% endif %}
+
+                                </label>
+
+                                {{ form.description }}
+
+                                {% if form.description.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.description.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                                <div class="form-text">
+                                    Provide a clear explanation of what
+                                    the money was or will be used for.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         PAYMENT INFORMATION
+                    ================================================== -->
+                    <div class="mb-4">
+
+                        <h6 class="fw-bold border-bottom pb-2 mb-3">
+                            <i class="bi bi-credit-card me-1"></i>
+                            Payment Information
+                        </h6>
+
+                        <div class="row g-3">
+
+                            <!-- PAYEE -->
+                            <div class="col-md-6">
+
+                                <label for="{{ form.payee.id_for_label }}"
+                                       class="form-label fw-semibold">
+
+                                    Payee
+
+                                    {% if form.payee.field.required %}
+                                        <span class="text-danger">*</span>
+                                    {% endif %}
+
+                                </label>
+
+                                {{ form.payee }}
+
+                                {% if form.payee.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.payee.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                                <div class="form-text">
+                                    Person, supplier, organization, or
+                                    service provider receiving the money.
+                                </div>
+
+                            </div>
+
+
+                            <!-- PAYMENT SOURCE -->
+                            <div class="col-md-6">
+
+                                <label for="{{ form.payment_source.id_for_label }}"
+                                       class="form-label fw-semibold">
+
+                                    Payment Source
+
+                                    {% if form.payment_source.field.required %}
+                                        <span class="text-danger">*</span>
+                                    {% endif %}
+
+                                </label>
+
+                                {{ form.payment_source }}
+
+                                {% if form.payment_source.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.payment_source.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- PAYMENT REFERENCE -->
+                            <div class="col-12">
+
+                                <label for="{{ form.payment_reference.id_for_label }}"
+                                       class="form-label fw-semibold">
+
+                                    Payment Reference
+
+                                </label>
+
+                                {{ form.payment_reference }}
+
+                                {% if form.payment_reference.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.payment_reference.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                                <div class="form-text">
+                                    Enter the M-Pesa receipt number,
+                                    bank reference, cheque number,
+                                    voucher number, or other available
+                                    payment reference.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         EXPENSE DATE
+                    ================================================== -->
+                    <div class="mb-4">
+
+                        <h6 class="fw-bold border-bottom pb-2 mb-3">
+                            <i class="bi bi-calendar-event me-1"></i>
+                            Expense Date
+                        </h6>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+
+                                <label for="{{ form.expense_date.id_for_label }}"
+                                       class="form-label fw-semibold">
+
+                                    Expense Date
+
+                                    {% if form.expense_date.field.required %}
+                                        <span class="text-danger">*</span>
+                                    {% endif %}
+
+                                </label>
+
+                                {{ form.expense_date }}
+
+                                {% if form.expense_date.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.expense_date.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         RECEIPT
+                    ================================================== -->
+                    <div class="mb-4">
+
+                        <h6 class="fw-bold border-bottom pb-2 mb-3">
+                            <i class="bi bi-receipt me-1"></i>
+                            Supporting Document
+                        </h6>
+
+                        <div class="row g-3">
+
+                            <div class="col-12">
+
+                                <label for="{{ form.receipt.id_for_label }}"
+                                       class="form-label fw-semibold">
+
+                                    Receipt / Supporting Document
+
+                                </label>
+
+                                {{ form.receipt }}
+
+                                {% if form.receipt.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.receipt.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                                <div class="form-text">
+                                    Upload a receipt, invoice, payment
+                                    evidence, or other relevant document
+                                    where available.
+                                </div>
+
+                                {% if expense and expense.receipt %}
+
+                                    <div class="alert alert-light
+                                                border mt-3">
+
+                                        <i class="bi bi-paperclip me-1"></i>
+
+                                        Existing document:
+
+                                        <a href="{{ expense.receipt.url }}"
+                                           target="_blank"
+                                           class="fw-semibold text-decoration-none">
+
+                                            View current receipt
+
+                                        </a>
+
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         NOTES
+                    ================================================== -->
+                    <div class="mb-4">
+
+                        <h6 class="fw-bold border-bottom pb-2 mb-3">
+                            <i class="bi bi-chat-left-text me-1"></i>
+                            Additional Notes
+                        </h6>
+
+                        <label for="{{ form.notes.id_for_label }}"
+                               class="form-label fw-semibold">
+
+                            Notes
+
+                        </label>
+
+                        {{ form.notes }}
+
+                        {% if form.notes.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.notes.errors|striptags }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- =================================================
+                         FORM ACTIONS
+                    ================================================== -->
+                    <div class="border-top pt-4">
+
+                        <div class="d-flex flex-column
+                                    flex-md-row
+                                    justify-content-between
+                                    align-items-md-center
+                                    gap-3">
+
+                            <div class="text-muted small">
+
+                                <i class="bi bi-shield-check me-1"></i>
+
+                                Financial records are protected and
+                                recorded in the KUCSA audit trail.
+
+                            </div>
+
+
+                            <div class="d-flex gap-2">
+
+                                <a href="{% url 'finance:expenses' %}"
+                                   class="btn btn-outline-secondary">
+
+                                    Cancel
+
+                                </a>
+
+                                <button type="submit"
+                                        class="btn btn-primary">
+
+                                    <i class="bi bi-save me-1"></i>
+
+                                    {% if expense %}
+                                        Update Expense
+                                    {% else %}
+                                        Save Expense
+                                    {% endif %}
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Successful | KUCSA{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-7 col-lg-5">
+
+            <!-- =====================================================
+                 SUCCESS CARD
+            ====================================================== -->
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body text-center p-5">
+
+                    <!-- =================================================
+                         SUCCESS ICON
+                    ================================================== -->
+
+                    <div
+                        class="rounded-circle bg-success bg-opacity-10
+                               d-inline-flex align-items-center
+                               justify-content-center mb-4"
+                        style="width: 90px; height: 90px;"
+                    >
+
+                        <i
+                            class="bi bi-check-lg text-success"
+                            style="font-size: 48px;"
+                        ></i>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         TITLE
+                    ================================================== -->
+
+                    <h2 class="fw-bold mb-2">
+                        Payment Successful!
+                    </h2>
+
+                    <p class="text-muted mb-4">
+                        Your KUCSA membership payment has been
+                        successfully received.
+                    </p>
+
+
+                    <!-- =================================================
+                         PAYMENT DETAILS
+                    ================================================== -->
+
+                    <div class="bg-light rounded p-4 mb-4 text-start">
+
+                        <div
+                            class="d-flex justify-content-between
+                                   align-items-center mb-3"
+                        >
+
+                            <span class="text-muted">
+                                Amount Paid
+                            </span>
+
+                            <strong class="text-success fs-5">
+                                KES {{ payment.amount }}
+                            </strong>
+
+                        </div>
+
+
+                        <div
+                            class="d-flex justify-content-between
+                                   align-items-center mb-3"
+                        >
+
+                            <span class="text-muted">
+                                Payment Method
+                            </span>
+
+                            <strong>
+                                M-Pesa
+                            </strong>
+
+                        </div>
+
+
+                        {% if payment.mpesa_receipt_number %}
+
+                        <div
+                            class="d-flex justify-content-between
+                                   align-items-center mb-3"
+                        >
+
+                            <span class="text-muted">
+                                M-Pesa Receipt
+                            </span>
+
+                            <strong>
+                                {{ payment.mpesa_receipt_number }}
+                            </strong>
+
+                        </div>
+
+                        {% endif %}
+
+
+                        {% if payment.transaction_date %}
+
+                        <div
+                            class="d-flex justify-content-between
+                                   align-items-center"
+                        >
+
+                            <span class="text-muted">
+                                Date
+                            </span>
+
+                            <strong>
+                                {{ payment.transaction_date|date:"d M Y, H:i" }}
+                            </strong>
+
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- =================================================
+                         MEMBERSHIP ACCESS
+                    ================================================== -->
+
+                    <div
+                        class="alert alert-success
+                               text-start d-flex align-items-start"
+                    >
+
+                        <i
+                            class="bi bi-unlock-fill me-3 mt-1"
+                            style="font-size: 20px;"
+                        ></i>
+
+                        <div>
+
+                            <strong>
+                                Membership Activated
+                            </strong>
+
+                            <p class="small mb-0 mt-1">
+                                Your payment has been confirmed.
+                                You can now access KUCSA member
+                                features.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         DASHBOARD BUTTON
+                    ================================================== -->
+
+                    <a
+                        href="{% url 'dashboard:dashboard' %}"
+                        class="btn btn-success w-100 py-2 mt-3"
+                    >
+
+                        <i class="bi bi-grid-fill me-2"></i>
+
+                        Go to Dashboard
+
+                    </a>
+
+
+                    <!-- =================================================
+                         PAYMENT HISTORY
+                    ================================================== -->
+
+                    <a
+                        href="{% url 'payments:payment_list' %}"
+                        class="btn btn-outline-secondary w-100 py-2 mt-2"
+                    >
+
+                        <i class="bi bi-receipt me-2"></i>
+
+                        View Payment History
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 SECURITY NOTE
+            ====================================================== -->
+
+            <div class="text-center mt-3">
+
+                <small class="text-muted">
+
+                    <i class="bi bi-shield-check me-1"></i>
+
+                    Payment securely processed through M-Pesa.
+
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

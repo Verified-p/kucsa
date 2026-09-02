@@ -782,3 +782,41 @@ def widgets_view(request):
         "widgets.html",
         context,
     )
+
+
+
+
+# ============================================================================
+# ADMIN DASHBOARD
+# ============================================================================
+
+@login_required
+def admin_dashboard_view(request):
+    """
+    Display the KUCSA Administrative Control Center.
+
+    Only users with KUCSA administrator privileges may access
+    this dashboard.
+    """
+
+    require_admin(request.user)
+
+    context = DashboardService.get_admin_dashboard()
+
+    context.update({
+        "full_name": (
+            request.user.get_full_name()
+            or request.user.username
+        ),
+        "role": getattr(
+            request.user,
+            "role",
+            None,
+        ),
+    })
+
+    return render(
+        request,
+        "admin_dashboard.html",
+        context,
+    )

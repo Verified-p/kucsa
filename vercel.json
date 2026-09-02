@@ -3,7 +3,7 @@
 
   "builds": [
     {
-      "src": "kucsa/wsgi.py",
+      "src": "kucsa_platform/wsgi.py",
       "use": "@vercel/python"
     }
   ],
@@ -21,7 +21,7 @@
 
     {
       "src": "/(.*)",
-      "dest": "kucsa/wsgi.py"
+      "dest": "kucsa_platform/wsgi.py"
     }
   ]
 }

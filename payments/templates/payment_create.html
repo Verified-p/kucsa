@@ -4,464 +4,1315 @@
 
 {% block content %}
 
-<div class="container py-4 py-md-5">
+<style>
+    /* =========================================================
+       KUCSA MEMBERSHIP PAYMENT
+       Scoped styles — safe for base.html and other pages.
+    ========================================================== */
+
+    .kucsa-payment-page {
+        --kucsa-primary: #198754;
+        --kucsa-primary-dark: #146c43;
+        --kucsa-primary-soft: rgba(25, 135, 84, 0.09);
+        --kucsa-primary-soft-2: rgba(25, 135, 84, 0.14);
+
+        --kucsa-dark: #172033;
+        --kucsa-text: #263248;
+        --kucsa-muted: #6c757d;
+        --kucsa-border: #e7ebf0;
+        --kucsa-surface: #ffffff;
+        --kucsa-background: #f7f9fc;
+
+        --kucsa-warning: #ffc107;
+        --kucsa-danger: #dc3545;
+
+        --kucsa-radius: 20px;
+        --kucsa-radius-sm: 13px;
+        --kucsa-shadow: 0 12px 40px rgba(23, 32, 51, 0.08);
+        --kucsa-shadow-hover: 0 18px 46px rgba(23, 32, 51, 0.12);
+
+        width: 100%;
+        min-height: 100%;
+        padding: 26px 0 42px;
+    }
+
+    .kucsa-payment-page * {
+        box-sizing: border-box;
+    }
+
+    /* =========================================================
+       PAYMENT SHELL
+    ========================================================== */
+
+    .kucsa-payment-shell {
+        width: 100%;
+        max-width: 720px;
+        margin: 0 auto;
+    }
+
+    .kucsa-payment-card {
+        overflow: hidden;
+        border: 1px solid var(--kucsa-border);
+        border-radius: var(--kucsa-radius);
+        background: var(--kucsa-surface);
+        box-shadow: var(--kucsa-shadow);
+    }
+
+    /* =========================================================
+       HEADER
+    ========================================================== */
+
+    .kucsa-payment-header {
+        position: relative;
+        overflow: hidden;
+        padding: 32px 28px 29px;
+        border-bottom: 1px solid var(--kucsa-border);
+        text-align: center;
+        background:
+            radial-gradient(
+                circle at 15% 10%,
+                rgba(25, 135, 84, 0.12),
+                transparent 34%
+            ),
+            radial-gradient(
+                circle at 90% 90%,
+                rgba(25, 135, 84, 0.07),
+                transparent 38%
+            ),
+            #fff;
+    }
+
+    .kucsa-payment-header::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -45px;
+        width: 180px;
+        height: 90px;
+        transform: translateX(-50%);
+        border-radius: 50%;
+        background: rgba(25, 135, 84, 0.045);
+        pointer-events: none;
+    }
+
+    .kucsa-payment-icon {
+        position: relative;
+        z-index: 1;
+        width: 76px;
+        height: 76px;
+        margin: 0 auto 17px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(25, 135, 84, 0.14);
+        border-radius: 23px;
+        background: var(--kucsa-primary-soft);
+        color: var(--kucsa-primary);
+        font-size: 2rem;
+        box-shadow: 0 9px 25px rgba(25, 135, 84, 0.1);
+    }
+
+    .kucsa-payment-eyebrow {
+        position: relative;
+        z-index: 1;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 8px;
+        color: var(--kucsa-primary-dark);
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .kucsa-payment-title {
+        position: relative;
+        z-index: 1;
+        margin: 0 0 7px;
+        color: var(--kucsa-dark);
+        font-size: clamp(1.4rem, 3vw, 1.75rem);
+        font-weight: 800;
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+    }
+
+    .kucsa-payment-subtitle {
+        position: relative;
+        z-index: 1;
+        max-width: 480px;
+        margin: 0 auto;
+        color: var(--kucsa-muted);
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    /* =========================================================
+       BODY
+    ========================================================== */
+
+    .kucsa-payment-body {
+        padding: 30px;
+    }
+
+    /* =========================================================
+       FEE DISPLAY
+    ========================================================== */
+
+    .kucsa-fee-panel {
+        margin-bottom: 25px;
+        padding: 22px;
+        border: 1px solid rgba(25, 135, 84, 0.14);
+        border-radius: var(--kucsa-radius-sm);
+        background:
+            linear-gradient(
+                135deg,
+                rgba(25, 135, 84, 0.075),
+                rgba(25, 135, 84, 0.025)
+            );
+        text-align: center;
+    }
+
+    .kucsa-fee-label {
+        display: block;
+        margin-bottom: 4px;
+        color: var(--kucsa-muted);
+        font-size: 0.76rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    .kucsa-fee-amount {
+        margin: 0;
+        color: var(--kucsa-primary-dark);
+        font-size: clamp(2rem, 7vw, 2.55rem);
+        font-weight: 850;
+        line-height: 1.1;
+        letter-spacing: -0.035em;
+    }
+
+    .kucsa-fee-note {
+        display: block;
+        margin-top: 5px;
+        color: var(--kucsa-muted);
+        font-size: 0.78rem;
+    }
+
+    /* =========================================================
+       MPESA INFORMATION
+    ========================================================== */
+
+    .kucsa-mpesa-info {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 25px;
+        padding: 17px;
+        border: 1px solid var(--kucsa-border);
+        border-radius: var(--kucsa-radius-sm);
+        background: #fff;
+    }
+
+    .kucsa-mpesa-icon {
+        width: 47px;
+        height: 47px;
+        flex: 0 0 47px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        background: var(--kucsa-primary-soft);
+        color: var(--kucsa-primary);
+        font-size: 1.25rem;
+    }
+
+    .kucsa-mpesa-info h3 {
+        margin: 1px 0 4px;
+        color: var(--kucsa-dark);
+        font-size: 0.98rem;
+        font-weight: 800;
+    }
+
+    .kucsa-mpesa-info p {
+        margin: 0;
+        color: var(--kucsa-muted);
+        font-size: 0.81rem;
+        line-height: 1.6;
+    }
+
+    /* =========================================================
+       FORM
+    ========================================================== */
+
+    .kucsa-payment-form-group {
+        margin-bottom: 23px;
+    }
+
+    .kucsa-payment-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+        color: var(--kucsa-text);
+        font-size: 0.87rem;
+        font-weight: 750;
+    }
+
+    .kucsa-required {
+        color: var(--kucsa-danger);
+    }
+
+    .kucsa-phone-group {
+        display: flex;
+        width: 100%;
+        border: 1px solid #ced4da;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #fff;
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .kucsa-phone-prefix {
+        width: 50px;
+        flex: 0 0 50px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-right: 1px solid #dee2e6;
+        background: #f8f9fa;
+        color: var(--kucsa-primary);
+        font-size: 1.05rem;
+    }
+
+    .kucsa-phone-group:focus-within {
+        border-color: var(--kucsa-primary);
+        box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.12);
+    }
+
+    .kucsa-phone-input {
+        min-width: 0;
+        flex: 1;
+        height: 50px;
+        padding: 0 14px;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: var(--kucsa-text);
+        font-size: 0.95rem;
+    }
+
+    .kucsa-phone-input::placeholder {
+        color: #9aa3af;
+    }
+
+    .kucsa-phone-group.is-invalid {
+        border-color: var(--kucsa-danger);
+        box-shadow: 0 0 0 0.18rem rgba(220, 53, 69, 0.1);
+    }
+
+    .kucsa-phone-help {
+        display: block;
+        margin-top: 8px;
+        color: var(--kucsa-muted);
+        font-size: 0.74rem;
+        line-height: 1.55;
+    }
+
+    .kucsa-phone-error {
+        display: none;
+        margin-top: 7px;
+        color: var(--kucsa-danger);
+        font-size: 0.76rem;
+        font-weight: 600;
+    }
+
+    .kucsa-phone-error.is-visible {
+        display: block;
+    }
+
+    /* =========================================================
+       PAYMENT SUMMARY
+    ========================================================== */
+
+    .kucsa-payment-summary {
+        margin-bottom: 22px;
+        padding: 17px;
+        border: 1px solid var(--kucsa-border);
+        border-radius: var(--kucsa-radius-sm);
+        background: #f8f9fb;
+    }
+
+    .kucsa-summary-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 4px 0;
+        color: var(--kucsa-muted);
+        font-size: 0.83rem;
+    }
+
+    .kucsa-summary-row span:last-child {
+        color: var(--kucsa-text);
+        font-weight: 700;
+        text-align: right;
+    }
+
+    .kucsa-summary-divider {
+        height: 1px;
+        margin: 10px 0;
+        background: #e1e5ea;
+    }
+
+    .kucsa-summary-total {
+        color: var(--kucsa-dark);
+        font-size: 0.9rem;
+        font-weight: 800;
+    }
+
+    .kucsa-summary-total span:last-child {
+        color: var(--kucsa-primary-dark);
+        font-size: 1rem;
+    }
+
+    /* =========================================================
+       PAYMENT BUTTON
+    ========================================================== */
+
+    .kucsa-pay-button {
+        position: relative;
+        width: 100%;
+        min-height: 52px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        border: 0;
+        border-radius: 12px;
+        background: linear-gradient(
+            135deg,
+            var(--kucsa-primary),
+            var(--kucsa-primary-dark)
+        );
+        color: #fff;
+        font-size: 0.9rem;
+        font-weight: 800;
+        box-shadow: 0 8px 20px rgba(25, 135, 84, 0.2);
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            opacity 0.2s ease;
+    }
+
+    .kucsa-pay-button:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 26px rgba(25, 135, 84, 0.27);
+    }
+
+    .kucsa-pay-button:active:not(:disabled) {
+        transform: translateY(0);
+    }
+
+    .kucsa-pay-button:disabled {
+        cursor: wait;
+        opacity: 0.8;
+    }
+
+    /* =========================================================
+       HOW PAYMENT WORKS
+    ========================================================== */
+
+    .kucsa-how-payment {
+        margin-top: 25px;
+        padding: 19px;
+        border: 1px solid var(--kucsa-border);
+        border-radius: var(--kucsa-radius-sm);
+        background: #fbfcfd;
+    }
+
+    .kucsa-how-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+        margin-bottom: 14px;
+    }
+
+    .kucsa-how-icon {
+        width: 34px;
+        height: 34px;
+        flex: 0 0 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: var(--kucsa-primary-soft);
+        color: var(--kucsa-primary);
+    }
+
+    .kucsa-how-header h3 {
+        margin: 1px 0 0;
+        color: var(--kucsa-dark);
+        font-size: 0.88rem;
+        font-weight: 800;
+    }
+
+    .kucsa-payment-steps {
+        display: grid;
+        gap: 9px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .kucsa-payment-step {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        color: var(--kucsa-muted);
+        font-size: 0.76rem;
+        line-height: 1.5;
+    }
+
+    .kucsa-step-number {
+        width: 23px;
+        height: 23px;
+        flex: 0 0 23px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: var(--kucsa-primary-soft);
+        color: var(--kucsa-primary-dark);
+        font-size: 0.68rem;
+        font-weight: 800;
+    }
+
+    .kucsa-payment-step strong {
+        color: var(--kucsa-text);
+    }
+
+    /* =========================================================
+       SECURITY
+    ========================================================== */
+
+    .kucsa-security-note {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        margin-top: 23px;
+        color: var(--kucsa-muted);
+        font-size: 0.73rem;
+        line-height: 1.5;
+        text-align: center;
+    }
+
+    .kucsa-security-note i {
+        color: var(--kucsa-primary);
+        font-size: 0.95rem;
+    }
+
+    .kucsa-payment-footer {
+        margin-top: 14px;
+        color: var(--kucsa-muted);
+        font-size: 0.72rem;
+        text-align: center;
+    }
+
+    /* =========================================================
+       ALREADY PAID
+    ========================================================== */
+
+    .kucsa-already-paid {
+        text-align: center;
+        padding: 5px 0;
+    }
+
+    .kucsa-success-icon {
+        width: 82px;
+        height: 82px;
+        margin: 0 auto 17px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(25, 135, 84, 0.13);
+        border-radius: 25px;
+        background: var(--kucsa-primary-soft);
+        color: var(--kucsa-primary);
+        font-size: 2.15rem;
+    }
+
+    .kucsa-already-paid h2 {
+        margin: 0 0 8px;
+        color: var(--kucsa-primary-dark);
+        font-size: 1.2rem;
+        font-weight: 800;
+    }
+
+    .kucsa-already-paid-description {
+        max-width: 480px;
+        margin: 0 auto 22px;
+        color: var(--kucsa-muted);
+        font-size: 0.87rem;
+        line-height: 1.65;
+    }
+
+    .kucsa-payment-details {
+        margin-bottom: 22px;
+        padding: 17px;
+        border: 1px solid var(--kucsa-border);
+        border-radius: var(--kucsa-radius-sm);
+        background: #f8f9fb;
+        text-align: left;
+    }
+
+    .kucsa-paid-detail {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 7px 0;
+        font-size: 0.82rem;
+    }
+
+    .kucsa-paid-detail + .kucsa-paid-detail {
+        border-top: 1px solid #e5e8ed;
+    }
+
+    .kucsa-paid-detail-label {
+        color: var(--kucsa-muted);
+    }
+
+    .kucsa-paid-detail-value {
+        color: var(--kucsa-text);
+        font-weight: 750;
+        text-align: right;
+        overflow-wrap: anywhere;
+    }
+
+    .kucsa-dashboard-button {
+        width: 100%;
+        min-height: 50px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border-radius: 11px;
+        font-weight: 800;
+    }
+
+    /* =========================================================
+       FOCUS / ACCESSIBILITY
+    ========================================================== */
+
+    .kucsa-payment-page a:focus-visible,
+    .kucsa-payment-page button:focus-visible,
+    .kucsa-payment-page input:focus-visible {
+        outline: 3px solid rgba(25, 135, 84, 0.25);
+        outline-offset: 3px;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================== */
+
+    @media (max-width: 1199.98px) {
+        .kucsa-payment-shell {
+            max-width: 680px;
+        }
+    }
+
+    @media (max-width: 991.98px) {
+        .kucsa-payment-page {
+            padding-top: 22px;
+        }
+
+        .kucsa-payment-body {
+            padding: 27px;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .kucsa-payment-page {
+            padding: 17px 0 30px;
+        }
+
+        .kucsa-payment-header {
+            padding: 27px 20px 25px;
+        }
+
+        .kucsa-payment-body {
+            padding: 23px 20px;
+        }
+
+        .kucsa-payment-icon {
+            width: 68px;
+            height: 68px;
+            border-radius: 20px;
+            font-size: 1.8rem;
+        }
+
+        .kucsa-payment-title {
+            font-size: 1.4rem;
+        }
+
+        .kucsa-fee-panel {
+            padding: 19px 15px;
+        }
+
+        .kucsa-mpesa-info {
+            padding: 15px;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .kucsa-payment-page {
+            padding-top: 12px;
+        }
+
+        .kucsa-payment-card {
+            border-radius: 16px;
+        }
+
+        .kucsa-payment-header {
+            padding: 24px 16px 22px;
+        }
+
+        .kucsa-payment-body {
+            padding: 19px 15px;
+        }
+
+        .kucsa-payment-eyebrow {
+            font-size: 0.66rem;
+        }
+
+        .kucsa-payment-title {
+            font-size: 1.3rem;
+        }
+
+        .kucsa-payment-subtitle {
+            font-size: 0.83rem;
+        }
+
+        .kucsa-fee-amount {
+            font-size: 2.1rem;
+        }
+
+        .kucsa-mpesa-info {
+            gap: 11px;
+        }
+
+        .kucsa-mpesa-icon {
+            width: 42px;
+            height: 42px;
+            flex-basis: 42px;
+        }
+
+        .kucsa-phone-prefix {
+            width: 45px;
+            flex-basis: 45px;
+        }
+
+        .kucsa-phone-input {
+            height: 48px;
+            padding-left: 11px;
+            font-size: 0.9rem;
+        }
+
+        .kucsa-summary-row,
+        .kucsa-paid-detail {
+            gap: 12px;
+        }
+
+        .kucsa-how-payment {
+            padding: 16px;
+        }
+    }
+
+    @media (max-width: 359.98px) {
+        .kucsa-payment-body {
+            padding: 16px 12px;
+        }
+
+        .kucsa-payment-title {
+            font-size: 1.2rem;
+        }
+
+        .kucsa-fee-amount {
+            font-size: 1.9rem;
+        }
+
+        .kucsa-summary-row,
+        .kucsa-paid-detail {
+            font-size: 0.76rem;
+        }
+
+        .kucsa-payment-step {
+            font-size: 0.72rem;
+        }
+    }
+
+    /* =========================================================
+       REDUCED MOTION
+    ========================================================== */
+
+    @media (prefers-reduced-motion: reduce) {
+        .kucsa-pay-button {
+            transition: none;
+        }
+
+        .kucsa-pay-button:hover:not(:disabled) {
+            transform: none;
+        }
+    }
+</style>
 
 
-<div class="row justify-content-center">
+<div class="container">
+    <main class="kucsa-payment-page">
 
-    <div class="col-12 col-md-8 col-lg-6">
-
-        <!-- =====================================================
-             PAYMENT CARD
-        ====================================================== -->
-
-        <div class="card border-0 shadow-sm">
+        <div class="kucsa-payment-shell">
 
             <!-- =================================================
-                 HEADER
+                 PAYMENT CARD
             ================================================== -->
 
-            <div class="card-header bg-white border-0 text-center py-4">
+            <section class="kucsa-payment-card">
 
-                <div
-                    class="rounded-circle bg-success bg-opacity-10
-                           d-inline-flex align-items-center
-                           justify-content-center mb-3"
-                    style="width: 72px; height: 72px;"
-                >
-                    <i
-                        class="bi bi-phone-fill text-success"
-                        style="font-size: 30px;"
-                    ></i>
-                </div>
+                <!-- =================================================
+                     HEADER
+                ================================================== -->
 
-                <h4 class="fw-bold mb-1">
-                    KUCSA Membership Payment
-                </h4>
+                <header class="kucsa-payment-header">
 
-                <p class="text-muted mb-0">
-                    Complete your KUCSA membership using M-Pesa
-                </p>
-
-            </div>
-
-            <!-- =================================================
-                 BODY
-            ================================================== -->
-
-            <div class="card-body p-4">
-
-                {% if already_paid %}
-
-                    <!-- =============================================
-                         ALREADY PAID
-                    ============================================== -->
-
-                    <div class="text-center py-3">
-
-                        <div
-                            class="rounded-circle bg-success bg-opacity-10
-                                   d-inline-flex align-items-center
-                                   justify-content-center mb-3"
-                            style="width: 72px; height: 72px;"
-                        >
-                            <i
-                                class="bi bi-check-circle-fill text-success"
-                                style="font-size: 34px;"
-                            ></i>
-                        </div>
-
-                        <h5 class="fw-bold text-success mb-2">
-                            Membership Already Verified
-                        </h5>
-
-                        <p class="text-muted mb-4">
-                            Your KUCSA membership payment has already
-                            been successfully verified.
-                        </p>
-
-                        {% if payment %}
-
-                            <div class="bg-light rounded-3 p-3 mb-4 text-start">
-
-                                <div class="d-flex justify-content-between mb-2">
-                                    <span class="text-muted">
-                                        Amount
-                                    </span>
-
-                                    <strong>
-                                        KES {{ payment.amount }}
-                                    </strong>
-                                </div>
-
-                                {% if payment.mpesa_receipt_number %}
-
-                                    <div class="d-flex justify-content-between mb-2">
-                                        <span class="text-muted">
-                                            M-Pesa Receipt
-                                        </span>
-
-                                        <strong>
-                                            {{ payment.mpesa_receipt_number }}
-                                        </strong>
-                                    </div>
-
-                                {% endif %}
-
-                                {% if payment.completed_at %}
-
-                                    <div class="d-flex justify-content-between">
-                                        <span class="text-muted">
-                                            Completed
-                                        </span>
-
-                                        <strong>
-                                            {{ payment.completed_at|date:"d M Y, H:i" }}
-                                        </strong>
-                                    </div>
-
-                                {% endif %}
-
-                            </div>
-
-                        {% endif %}
-
-                        <a
-                            href="{% url 'dashboard:dashboard' %}"
-                            class="btn btn-success w-100 py-2"
-                        >
-                            <i class="bi bi-speedometer2 me-2"></i>
-                            Go to Dashboard
-                        </a>
-
+                    <div class="kucsa-payment-icon" aria-hidden="true">
+                        <i class="bi bi-phone-fill"></i>
                     </div>
 
-                {% else %}
-
-                    <!-- =============================================
-                         MEMBERSHIP FEE
-                    ============================================== -->
-
-                    <div class="text-center mb-4">
-
-                        <small class="text-muted d-block mb-1">
-                            Membership Fee
-                        </small>
-
-                        <h2 class="fw-bold text-success mb-1">
-                            KES {{ membership_fee }}
-                        </h2>
-
-                        <small class="text-muted">
-                            One-time KUCSA membership payment
-                        </small>
-
+                    <div class="kucsa-payment-eyebrow">
+                        <i class="bi bi-shield-check" aria-hidden="true"></i>
+                        Secure KUCSA Payment
                     </div>
 
-                    <!-- =============================================
-                         M-PESA INFORMATION
-                    ============================================== -->
+                    <h1 class="kucsa-payment-title">
+                        KUCSA Membership Payment
+                    </h1>
 
-                    <div class="border rounded-3 p-3 mb-4">
+                    <p class="kucsa-payment-subtitle">
+                        Complete your KUCSA membership using a secure
+                        M-Pesa STK Push.
+                    </p>
 
-                        <div class="d-flex align-items-start">
+                </header>
+
+
+                <!-- =================================================
+                     BODY
+                ================================================== -->
+
+                <div class="kucsa-payment-body">
+
+                    {% if already_paid %}
+
+                        <!-- =========================================
+                             ALREADY PAID
+                        ========================================== -->
+
+                        <div class="kucsa-already-paid">
 
                             <div
-                                class="rounded-circle bg-success
-                                       bg-opacity-10
-                                       d-flex align-items-center
-                                       justify-content-center
-                                       flex-shrink-0 me-3"
-                                style="width: 46px; height: 46px;"
+                                class="kucsa-success-icon"
+                                aria-hidden="true"
                             >
+                                <i class="bi bi-check-circle-fill"></i>
+                            </div>
+
+                            <h2>
+                                Membership Already Verified
+                            </h2>
+
+                            <p class="kucsa-already-paid-description">
+                                Your KUCSA membership payment has already
+                                been successfully verified. No additional
+                                payment is required.
+                            </p>
+
+
+                            {% if payment %}
+
+                                <div class="kucsa-payment-details">
+
+                                    <div class="kucsa-paid-detail">
+
+                                        <span class="kucsa-paid-detail-label">
+                                            Amount
+                                        </span>
+
+                                        <strong class="kucsa-paid-detail-value">
+                                            KES {{ payment.amount }}
+                                        </strong>
+
+                                    </div>
+
+
+                                    {% if payment.mpesa_receipt_number %}
+
+                                        <div class="kucsa-paid-detail">
+
+                                            <span class="kucsa-paid-detail-label">
+                                                M-Pesa Receipt
+                                            </span>
+
+                                            <strong class="kucsa-paid-detail-value">
+                                                {{ payment.mpesa_receipt_number }}
+                                            </strong>
+
+                                        </div>
+
+                                    {% endif %}
+
+
+                                    {% if payment.completed_at %}
+
+                                        <div class="kucsa-paid-detail">
+
+                                            <span class="kucsa-paid-detail-label">
+                                                Completed
+                                            </span>
+
+                                            <strong class="kucsa-paid-detail-value">
+                                                {{ payment.completed_at|date:"d M Y, H:i" }}
+                                            </strong>
+
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+                            {% endif %}
+
+
+                            <a
+                                href="{% url 'dashboard:dashboard' %}"
+                                class="btn btn-success kucsa-dashboard-button"
+                                data-navigation-button
+                                aria-label="Go to KUCSA dashboard"
+                            >
+
                                 <i
-                                    class="bi bi-phone-fill text-success"
-                                    style="font-size: 21px;"
+                                    class="bi bi-speedometer2"
+                                    aria-hidden="true"
                                 ></i>
+
+                                Go to Dashboard
+
+                            </a>
+
+                        </div>
+
+
+                    {% else %}
+
+                        <!-- =========================================
+                             MEMBERSHIP FEE
+                        ========================================== -->
+
+                        <section
+                            class="kucsa-fee-panel"
+                            aria-label="Membership fee"
+                        >
+
+                            <span class="kucsa-fee-label">
+                                Membership Fee
+                            </span>
+
+                            <p class="kucsa-fee-amount">
+                                KES {{ membership_fee }}
+                            </p>
+
+                            <span class="kucsa-fee-note">
+                                One-time KUCSA membership payment
+                            </span>
+
+                        </section>
+
+
+                        <!-- =========================================
+                             M-PESA INFORMATION
+                        ========================================== -->
+
+                        <section class="kucsa-mpesa-info">
+
+                            <div
+                                class="kucsa-mpesa-icon"
+                                aria-hidden="true"
+                            >
+                                <i class="bi bi-phone-fill"></i>
                             </div>
 
                             <div>
 
-                                <h6 class="fw-bold mb-1">
+                                <h2>
                                     M-Pesa STK Push
-                                </h6>
+                                </h2>
 
-                                <p class="text-muted small mb-0">
-                                    Enter the M-Pesa phone number you
-                                    want to use. A payment request will
-                                    be sent directly to that phone.
+                                <p>
+                                    Enter the M-Pesa phone number you want
+                                    to use. A payment request will be sent
+                                    directly to that phone.
                                 </p>
 
                             </div>
 
-                        </div>
+                        </section>
 
-                    </div>
-
-                    <!-- =============================================
-                         PAYMENT FORM
-                    ============================================== -->
-
-                    <form
-                        method="POST"
-                        action="{% url 'payments:payment_create_submit' %}"
-                        id="paymentForm"
-                        novalidate
-                    >
-
-                        {% csrf_token %}
 
                         <!-- =========================================
-                             PHONE NUMBER
+                             PAYMENT FORM
                         ========================================== -->
 
-                        <div class="mb-4">
+                        <form
+                            method="POST"
+                            action="{% url 'payments:payment_create_submit' %}"
+                            id="paymentForm"
+                            novalidate
+                        >
 
-                            <label
-                                for="phone_number"
-                                class="form-label fw-semibold"
-                            >
-                                M-Pesa Phone Number
-                            </label>
+                            {% csrf_token %}
 
-                            <div class="input-group">
 
-                                <span class="input-group-text">
-                                    <i class="bi bi-phone"></i>
-                                </span>
+                            <!-- =====================================
+                                 PHONE NUMBER
+                            ====================================== -->
 
-                                <input
-                                    type="tel"
-                                    class="form-control"
-                                    id="phone_number"
-                                    name="phone_number"
-                                    placeholder="0712345678"
-                                    maxlength="13"
-                                    autocomplete="tel"
-                                    inputmode="numeric"
-                                    required
-                                    aria-describedby="phoneHelp phoneError"
+                            <div class="kucsa-payment-form-group">
+
+                                <label
+                                    for="phone_number"
+                                    class="kucsa-payment-label"
+                                >
+                                    <span>
+                                        M-Pesa Phone Number
+                                        <span
+                                            class="kucsa-required"
+                                            aria-hidden="true"
+                                        >*</span>
+                                    </span>
+                                </label>
+
+
+                                <div
+                                    class="kucsa-phone-group"
+                                    id="phoneGroup"
                                 >
 
+                                    <span
+                                        class="kucsa-phone-prefix"
+                                        aria-hidden="true"
+                                    >
+                                        <i class="bi bi-phone"></i>
+                                    </span>
+
+                                    <input
+                                        type="tel"
+                                        class="kucsa-phone-input"
+                                        id="phone_number"
+                                        name="phone_number"
+                                        placeholder="0712345678"
+                                        maxlength="13"
+                                        autocomplete="tel"
+                                        inputmode="numeric"
+                                        required
+                                        aria-describedby="phoneHelp phoneError"
+                                    >
+
+                                </div>
+
+
+                                <small
+                                    id="phoneHelp"
+                                    class="kucsa-phone-help"
+                                >
+                                    Accepted formats:
+                                    0712345678, 0112345678,
+                                    254712345678, or +254712345678.
+                                </small>
+
+
+                                <div
+                                    id="phoneError"
+                                    class="kucsa-phone-error"
+                                    role="alert"
+                                    aria-live="polite"
+                                >
+                                    Please enter a valid Kenyan M-Pesa
+                                    phone number.
+                                </div>
+
                             </div>
 
-                            <div
-                                id="phoneHelp"
-                                class="form-text"
+
+                            <!-- =====================================
+                                 PAYMENT SUMMARY
+                            ====================================== -->
+
+                            <section
+                                class="kucsa-payment-summary"
+                                aria-label="Payment summary"
                             >
-                                Accepted formats include
-                                0712345678, 0112345678,
-                                254712345678, or +254712345678.
-                            </div>
 
-                            <div
-                                id="phoneError"
-                                class="invalid-feedback"
+                                <div class="kucsa-summary-row">
+
+                                    <span>
+                                        Membership
+                                    </span>
+
+                                    <span>
+                                        KUCSA Membership
+                                    </span>
+
+                                </div>
+
+
+                                <div
+                                    class="kucsa-summary-divider"
+                                    aria-hidden="true"
+                                ></div>
+
+
+                                <div
+                                    class="kucsa-summary-row kucsa-summary-total"
+                                >
+
+                                    <span>
+                                        Total Amount
+                                    </span>
+
+                                    <span>
+                                        KES {{ membership_fee }}
+                                    </span>
+
+                                </div>
+
+                            </section>
+
+
+                            <!-- =====================================
+                                 PAYMENT BUTTON
+                            ====================================== -->
+
+                            <button
+                                type="submit"
+                                class="kucsa-pay-button"
+                                id="payButton"
+                                aria-label="Pay KES {{ membership_fee }} with M-Pesa"
                             >
-                                Please enter a valid Kenyan M-Pesa
-                                phone number.
-                            </div>
-
-                        </div>
-
-                        <!-- =============================================
-                             PAYMENT SUMMARY
-                        ============================================== -->
-
-                        <div class="bg-light rounded-3 p-3 mb-4">
-
-                            <div class="d-flex justify-content-between">
-
-                                <span class="text-muted">
-                                    Membership
-                                </span>
-
-                                <span class="fw-semibold">
-                                    KUCSA Membership
-                                </span>
-
-                            </div>
-
-                            <hr class="my-2">
-
-                            <div class="d-flex justify-content-between">
-
-                                <span class="fw-semibold">
-                                    Total Amount
-                                </span>
-
-                                <span class="fw-bold text-success">
-                                    KES {{ membership_fee }}
-                                </span>
-
-                            </div>
-
-                        </div>
-
-                        <!-- =============================================
-                             PAYMENT BUTTON
-                        ============================================== -->
-
-                        <button
-                            type="submit"
-                            class="btn btn-success w-100 py-2"
-                            id="payButton"
-                        >
-                            <i
-                                class="bi bi-phone-fill me-2"
-                            ></i>
-
-                            Pay KES {{ membership_fee }} with M-Pesa
-                        </button>
-
-                    </form>
-
-                    <!-- =============================================
-                         HOW PAYMENT WORKS
-                    ============================================== -->
-
-                    <div class="mt-4">
-
-                        <div class="alert alert-light border mb-0">
-
-                            <div class="d-flex align-items-start">
 
                                 <i
-                                    class="bi bi-info-circle text-success
-                                           me-2 mt-1"
+                                    class="bi bi-phone-fill"
+                                    aria-hidden="true"
                                 ></i>
+
+                                <span id="payButtonText">
+                                    Pay KES {{ membership_fee }} with M-Pesa
+                                </span>
+
+                            </button>
+
+                        </form>
+
+
+                        <!-- =========================================
+                             HOW PAYMENT WORKS
+                        ========================================== -->
+
+                        <section
+                            class="kucsa-how-payment"
+                            aria-labelledby="payment-steps-heading"
+                        >
+
+                            <div class="kucsa-how-header">
+
+                                <div
+                                    class="kucsa-how-icon"
+                                    aria-hidden="true"
+                                >
+                                    <i class="bi bi-info-circle"></i>
+                                </div>
 
                                 <div>
 
-                                    <div class="fw-semibold mb-1">
+                                    <h2 id="payment-steps-heading">
                                         How the payment works
-                                    </div>
-
-                                    <small class="text-muted">
-
-                                        <span class="d-block mb-1">
-                                            <strong>1.</strong>
-                                            Enter your M-Pesa phone number.
-                                        </span>
-
-                                        <span class="d-block mb-1">
-                                            <strong>2.</strong>
-                                            Click
-                                            <strong>
-                                                Pay with M-Pesa
-                                            </strong>.
-                                        </span>
-
-                                        <span class="d-block mb-1">
-                                            <strong>3.</strong>
-                                            An STK Push will appear
-                                            on your phone.
-                                        </span>
-
-                                        <span class="d-block mb-1">
-                                            <strong>4.</strong>
-                                            Enter your M-Pesa PIN.
-                                        </span>
-
-                                        <span class="d-block mb-1">
-                                            <strong>5.</strong>
-                                            Safaricom processes the
-                                            transaction.
-                                        </span>
-
-                                        <span class="d-block">
-                                            <strong>6.</strong>
-                                            Your membership is activated
-                                            after successful verification.
-                                        </span>
-
-                                    </small>
+                                    </h2>
 
                                 </div>
 
                             </div>
 
-                        </div>
 
-                    </div>
+                            <ol class="kucsa-payment-steps">
 
-                    <!-- =============================================
-                         SECURITY
-                    ============================================== -->
+                                <li class="kucsa-payment-step">
 
-                    <div class="text-center mt-4">
+                                    <span class="kucsa-step-number">
+                                        1
+                                    </span>
 
-                        <small class="text-muted">
+                                    <span>
+                                        Enter your
+                                        <strong>M-Pesa phone number.</strong>
+                                    </span>
+
+                                </li>
+
+
+                                <li class="kucsa-payment-step">
+
+                                    <span class="kucsa-step-number">
+                                        2
+                                    </span>
+
+                                    <span>
+                                        Click
+                                        <strong>Pay with M-Pesa.</strong>
+                                    </span>
+
+                                </li>
+
+
+                                <li class="kucsa-payment-step">
+
+                                    <span class="kucsa-step-number">
+                                        3
+                                    </span>
+
+                                    <span>
+                                        An STK Push will appear
+                                        on your phone.
+                                    </span>
+
+                                </li>
+
+
+                                <li class="kucsa-payment-step">
+
+                                    <span class="kucsa-step-number">
+                                        4
+                                    </span>
+
+                                    <span>
+                                        Enter your
+                                        <strong>M-Pesa PIN.</strong>
+                                    </span>
+
+                                </li>
+
+
+                                <li class="kucsa-payment-step">
+
+                                    <span class="kucsa-step-number">
+                                        5
+                                    </span>
+
+                                    <span>
+                                        Safaricom processes the
+                                        transaction.
+                                    </span>
+
+                                </li>
+
+
+                                <li class="kucsa-payment-step">
+
+                                    <span class="kucsa-step-number">
+                                        6
+                                    </span>
+
+                                    <span>
+                                        Your membership is activated
+                                        after successful verification.
+                                    </span>
+
+                                </li>
+
+                            </ol>
+
+                        </section>
+
+
+                        <!-- =========================================
+                             SECURITY
+                        ========================================== -->
+
+                        <div class="kucsa-security-note">
 
                             <i
-                                class="bi bi-shield-check text-success me-1"
+                                class="bi bi-shield-check"
+                                aria-hidden="true"
                             ></i>
 
-                            Your payment is processed securely
-                            through M-Pesa.
+                            <span>
+                                Your payment is processed securely
+                                through M-Pesa.
+                            </span>
 
-                        </small>
+                        </div>
 
-                    </div>
+                    {% endif %}
 
-                {% endif %}
+                </div>
 
-            </div>
+            </section>
+
+
+            <!-- =================================================
+                 FOOTER NOTE
+            ================================================== -->
+
+            {% if not already_paid %}
+
+                <div class="kucsa-payment-footer">
+                    KUCSA Membership &bull; Secure M-Pesa Payment
+                </div>
+
+            {% endif %}
 
         </div>
 
-        <!-- =====================================================
-             FOOTER NOTE
-        ====================================================== -->
-
-        {% if not already_paid %}
-
-            <div class="text-center mt-3">
-
-                <small class="text-muted">
-                    KUCSA Membership &bull;
-                    Secure M-Pesa Payment
-                </small>
-
-            </div>
-
-        {% endif %}
-
-    </div>
-
-</div>
-```
-
+    </main>
 </div>
 
-<!-- =============================================================
-     PAYMENT FORM JAVASCRIPT
-============================================================== -->
 
 {% if not already_paid %}
 
 <script>
-
 document.addEventListener("DOMContentLoaded", function () {
+    "use strict";
 
     const form = document.getElementById("paymentForm");
     const button = document.getElementById("payButton");
+    const buttonText = document.getElementById("payButtonText");
     const phoneInput = document.getElementById("phone_number");
+    const phoneGroup = document.getElementById("phoneGroup");
     const phoneError = document.getElementById("phoneError");
 
-    if (!form || !button || !phoneInput) {
+    if (!form || !button || !phoneInput || !phoneGroup || !phoneError) {
         return;
     }
 
-    /*
-     * Validate Kenyan phone numbers.
-     *
-     * Backend validation remains authoritative.
-     */
+
+    /* =========================================================
+       KENYAN PHONE VALIDATION
+    ========================================================== */
 
     function isValidPhone(phone) {
-
-        const cleaned = phone.replace(/[\s()-]/g, "");
+        const cleaned = phone.replace(/[\s().-]/g, "");
 
         return (
             /^07\d{8}$/.test(cleaned) ||
@@ -473,21 +1324,57 @@ document.addEventListener("DOMContentLoaded", function () {
         );
     }
 
-    /*
-     * Clear validation state when the member edits
-     * the phone number.
-     */
+
+    /* =========================================================
+       VALIDATION HELPERS
+    ========================================================== */
+
+    function clearPhoneError() {
+        phoneGroup.classList.remove("is-invalid");
+        phoneError.classList.remove("is-visible");
+        phoneInput.setAttribute("aria-invalid", "false");
+    }
+
+
+    function showPhoneError() {
+        phoneGroup.classList.add("is-invalid");
+        phoneError.classList.add("is-visible");
+        phoneInput.setAttribute("aria-invalid", "true");
+    }
+
+
+    /* =========================================================
+       LIVE INPUT CLEANUP
+    ========================================================== */
 
     phoneInput.addEventListener("input", function () {
 
-        phoneInput.classList.remove("is-invalid");
-        phoneError.classList.remove("d-block");
+        clearPhoneError();
 
+        /*
+         * Keep the input numeric-friendly while still allowing
+         * the + symbol used by international Kenyan format.
+         */
+        phoneInput.value = phoneInput.value.replace(
+            /[^\d+\s().-]/g,
+            ""
+        );
     });
 
-    /*
-     * Submit payment.
-     */
+
+    phoneInput.addEventListener("blur", function () {
+
+        const value = phoneInput.value.trim();
+
+        if (value && !isValidPhone(value)) {
+            showPhoneError();
+        }
+    });
+
+
+    /* =========================================================
+       FORM SUBMISSION
+    ========================================================== */
 
     form.addEventListener("submit", function (event) {
 
@@ -497,36 +1384,70 @@ document.addEventListener("DOMContentLoaded", function () {
 
             event.preventDefault();
 
-            phoneInput.classList.add("is-invalid");
-            phoneError.classList.add("d-block");
+            showPhoneError();
 
             phoneInput.focus();
 
             return;
         }
 
+
         /*
-         * Prevent duplicate submissions.
+         * Prevent duplicate payment requests.
          *
-         * The backend also prevents another pending payment
-         * from being created.
+         * Backend validation remains authoritative.
          */
+        if (form.dataset.submitting === "true") {
+            event.preventDefault();
+            return;
+        }
+
+        form.dataset.submitting = "true";
 
         button.disabled = true;
+        button.setAttribute("aria-disabled", "true");
+        button.setAttribute("aria-busy", "true");
 
-        button.innerHTML = `
-            <span
-                class="spinner-border spinner-border-sm me-2"
-                role="status"
-                aria-hidden="true">
-            </span>
-            Sending STK Push...
-        `;
+        buttonText.textContent = "Sending STK Push...";
 
+        /*
+         * Replace the phone icon with a loading spinner while
+         * the payment request is being submitted.
+         */
+        const icon = button.querySelector("i");
+
+        if (icon) {
+            icon.className = "spinner-border spinner-border-sm";
+            icon.setAttribute("role", "status");
+            icon.setAttribute("aria-hidden", "true");
+        }
+    });
+
+
+    /* =========================================================
+       BROWSER BACK/FORWARD CACHE RESET
+    ========================================================== */
+
+    window.addEventListener("pageshow", function () {
+
+        form.dataset.submitting = "false";
+
+        button.disabled = false;
+        button.removeAttribute("aria-disabled");
+        button.removeAttribute("aria-busy");
+
+        buttonText.textContent =
+            "Pay KES {{ membership_fee }} with M-Pesa";
+
+        const icon = button.querySelector("i");
+
+        if (icon) {
+            icon.className = "bi bi-phone-fill";
+            icon.removeAttribute("role");
+        }
     });
 
 });
-
 </script>
 
 {% endif %}

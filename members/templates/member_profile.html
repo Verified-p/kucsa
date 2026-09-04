@@ -6,141 +6,1091 @@
 
 {% block content %}
 
-<div class="container-fluid py-4">
+<div class="kucsa-member-profile">
 
-    <!-- =====================================================
+    <style>
+        /* =========================================================
+           KUCSA MEMBER PROFILE
+           Scoped styles — does not modify global base.html styles
+        ========================================================= */
+
+        .kucsa-member-profile {
+            --kucsa-primary: #0d6efd;
+            --kucsa-primary-dark: #084298;
+            --kucsa-primary-soft: rgba(13, 110, 253, 0.08);
+            --kucsa-success: #198754;
+            --kucsa-warning: #ffc107;
+            --kucsa-danger: #dc3545;
+            --kucsa-dark: #172033;
+            --kucsa-text: #263246;
+            --kucsa-muted: #6c757d;
+            --kucsa-border: #e7ebf0;
+            --kucsa-surface: #ffffff;
+            --kucsa-background: #f6f8fb;
+            --kucsa-radius: 18px;
+            --kucsa-radius-sm: 12px;
+            --kucsa-shadow: 0 8px 28px rgba(25, 35, 55, 0.07);
+            --kucsa-shadow-hover: 0 14px 36px rgba(25, 35, 55, 0.12);
+
+            width: 100%;
+            min-height: 100%;
+            padding: 28px 24px 48px;
+            color: var(--kucsa-text);
+        }
+
+        /* =========================================================
+           PAGE HEADER
+        ========================================================= */
+
+        .kucsa-profile-header {
+            max-width: 1440px;
+            margin: 0 auto 28px;
+        }
+
+        .kucsa-profile-header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .kucsa-profile-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 8px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: var(--kucsa-primary-soft);
+            color: var(--kucsa-primary);
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .kucsa-profile-title {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            margin: 0;
+            color: var(--kucsa-dark);
+            font-size: clamp(1.65rem, 2.5vw, 2.15rem);
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .kucsa-profile-title-icon {
+            width: 45px;
+            height: 45px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border-radius: 14px;
+            background: linear-gradient(
+                135deg,
+                var(--kucsa-primary),
+                var(--kucsa-primary-dark)
+            );
+            color: #fff;
+            box-shadow: 0 8px 20px rgba(13, 110, 253, 0.22);
+        }
+
+        .kucsa-profile-description {
+            max-width: 700px;
+            margin: 8px 0 0 56px;
+            color: var(--kucsa-muted);
+            font-size: 0.96rem;
+            line-height: 1.65;
+        }
+
+        .kucsa-profile-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .kucsa-profile-action {
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 10px 17px;
+            border-radius: 11px;
+            font-weight: 700;
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease,
+                background-color 0.2s ease;
+        }
+
+        .kucsa-profile-action:hover {
+            transform: translateY(-2px);
+        }
+
+        .kucsa-profile-action:focus-visible {
+            outline: 3px solid rgba(13, 110, 253, 0.22);
+            outline-offset: 2px;
+        }
+
+        /* =========================================================
+           MAIN LAYOUT
+        ========================================================= */
+
+        .kucsa-profile-layout {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        .kucsa-profile-sidebar,
+        .kucsa-profile-main {
+            min-width: 0;
+        }
+
+        .kucsa-profile-sidebar {
+            position: sticky;
+            top: 24px;
+        }
+
+        /* =========================================================
+           COMMON CARD
+        ========================================================= */
+
+        .kucsa-profile-card {
+            background: var(--kucsa-surface);
+            border: 1px solid var(--kucsa-border);
+            border-radius: var(--kucsa-radius);
+            box-shadow: var(--kucsa-shadow);
+            overflow: hidden;
+            transition:
+                box-shadow 0.25s ease,
+                transform 0.25s ease,
+                border-color 0.25s ease;
+        }
+
+        .kucsa-profile-card:hover {
+            box-shadow: var(--kucsa-shadow-hover);
+        }
+
+        .kucsa-profile-card + .kucsa-profile-card {
+            margin-top: 20px;
+        }
+
+        .kucsa-card-header {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 17px 20px;
+            background: #fff;
+            border-bottom: 1px solid var(--kucsa-border);
+        }
+
+        .kucsa-card-header-icon {
+            width: 35px;
+            height: 35px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border-radius: 10px;
+            background: var(--kucsa-primary-soft);
+            color: var(--kucsa-primary);
+        }
+
+        .kucsa-card-header-title {
+            margin: 0;
+            color: var(--kucsa-dark);
+            font-size: 0.98rem;
+            font-weight: 800;
+        }
+
+        .kucsa-card-body {
+            padding: 22px;
+        }
+
+        /* =========================================================
+           PROFILE SUMMARY
+        ========================================================= */
+
+        .kucsa-profile-summary {
+            position: relative;
+            text-align: center;
+        }
+
+        .kucsa-profile-summary-top {
+            height: 86px;
+            background:
+                radial-gradient(
+                    circle at 20% 20%,
+                    rgba(255,255,255,0.25),
+                    transparent 35%
+                ),
+                linear-gradient(
+                    135deg,
+                    var(--kucsa-primary),
+                    var(--kucsa-primary-dark)
+                );
+        }
+
+        .kucsa-profile-avatar-wrapper {
+            margin-top: -54px;
+            position: relative;
+            display: inline-flex;
+        }
+
+        .kucsa-profile-avatar {
+            width: 108px;
+            height: 108px;
+            display: block;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 5px solid #fff;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            background: #fff;
+        }
+
+        .kucsa-profile-avatar-fallback {
+            width: 108px;
+            height: 108px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 5px solid #fff;
+            background: #f0f3f7;
+            color: #8792a2;
+            font-size: 3.5rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        .kucsa-profile-identity {
+            padding: 15px 22px 24px;
+        }
+
+        .kucsa-profile-name {
+            margin: 0;
+            color: var(--kucsa-dark);
+            font-size: 1.3rem;
+            font-weight: 800;
+            line-height: 1.35;
+        }
+
+        .kucsa-profile-registration {
+            margin: 6px 0 14px;
+            color: var(--kucsa-muted);
+            font-size: 0.88rem;
+            font-weight: 600;
+        }
+
+        .kucsa-profile-badges {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+
+        .kucsa-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            min-height: 29px;
+            padding: 5px 10px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .kucsa-role-badge {
+            background: var(--kucsa-primary-soft);
+            color: var(--kucsa-primary);
+        }
+
+        .kucsa-status-active {
+            background: rgba(25, 135, 84, 0.11);
+            color: var(--kucsa-success);
+        }
+
+        .kucsa-status-pending {
+            background: rgba(255, 193, 7, 0.18);
+            color: #805f00;
+        }
+
+        .kucsa-status-suspended {
+            background: rgba(220, 53, 69, 0.1);
+            color: var(--kucsa-danger);
+        }
+
+        .kucsa-status-expired {
+            background: rgba(108, 117, 125, 0.12);
+            color: #59616a;
+        }
+
+        .kucsa-status-rejected {
+            background: rgba(33, 37, 41, 0.1);
+            color: #212529;
+        }
+
+        /* =========================================================
+           SIDEBAR STATUS CARDS
+        ========================================================= */
+
+        .kucsa-status-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 13px;
+        }
+
+        .kucsa-status-icon {
+            width: 42px;
+            height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border-radius: 12px;
+            font-size: 1.25rem;
+        }
+
+        .kucsa-status-icon.success {
+            background: rgba(25, 135, 84, 0.1);
+            color: var(--kucsa-success);
+        }
+
+        .kucsa-status-icon.warning {
+            background: rgba(255, 193, 7, 0.14);
+            color: #a87900;
+        }
+
+        .kucsa-status-heading {
+            margin: 0 0 3px;
+            font-size: 0.92rem;
+            font-weight: 800;
+        }
+
+        .kucsa-status-description {
+            margin: 0;
+            color: var(--kucsa-muted);
+            font-size: 0.82rem;
+            line-height: 1.55;
+        }
+
+        .kucsa-complete-button {
+            width: 100%;
+            margin-top: 17px;
+            min-height: 40px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+
+        /* =========================================================
+           INFORMATION SECTIONS
+        ========================================================= */
+
+        .kucsa-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px 24px;
+        }
+
+        .kucsa-info-item {
+            min-width: 0;
+        }
+
+        .kucsa-info-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+            color: var(--kucsa-muted);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.025em;
+            text-transform: uppercase;
+        }
+
+        .kucsa-info-value {
+            color: var(--kucsa-dark);
+            font-size: 0.93rem;
+            font-weight: 700;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+
+        .kucsa-info-value.muted {
+            color: var(--kucsa-muted);
+            font-weight: 500;
+        }
+
+        .kucsa-info-value a {
+            color: var(--kucsa-primary);
+            text-decoration: none;
+        }
+
+        .kucsa-info-value a:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================================================
+           MEMBERSHIP HIGHLIGHTS
+        ========================================================= */
+
+        .kucsa-membership-highlight {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .kucsa-membership-mini {
+            padding: 15px;
+            border: 1px solid var(--kucsa-border);
+            border-radius: 13px;
+            background: #fafbfd;
+        }
+
+        .kucsa-membership-mini-label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--kucsa-muted);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .kucsa-membership-mini-value {
+            color: var(--kucsa-dark);
+            font-size: 0.91rem;
+            font-weight: 800;
+            overflow-wrap: anywhere;
+        }
+
+        /* =========================================================
+           TECHNICAL PROFILE
+        ========================================================= */
+
+        .kucsa-technical-level {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 15px 16px;
+            margin-bottom: 23px;
+            border: 1px solid var(--kucsa-border);
+            border-radius: 13px;
+            background: linear-gradient(
+                135deg,
+                #fbfcff,
+                #f7f9fc
+            );
+        }
+
+        .kucsa-technical-level-label {
+            color: var(--kucsa-muted);
+            font-size: 0.76rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .kucsa-technical-level-value {
+            color: var(--kucsa-primary);
+            font-size: 0.9rem;
+            font-weight: 800;
+        }
+
+        .kucsa-tag-section {
+            margin-top: 22px;
+        }
+
+        .kucsa-tag-title {
+            margin: 0 0 10px;
+            color: var(--kucsa-dark);
+            font-size: 0.86rem;
+            font-weight: 800;
+        }
+
+        .kucsa-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+
+        .kucsa-tag {
+            display: inline-flex;
+            align-items: center;
+            min-height: 30px;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 0.77rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .kucsa-tag-domain {
+            background: rgba(13, 110, 253, 0.09);
+            color: var(--kucsa-primary);
+        }
+
+        .kucsa-tag-skill {
+            background: #f5f6f8;
+            border: 1px solid var(--kucsa-border);
+            color: #46505f;
+        }
+
+        .kucsa-tag-interest {
+            background: rgba(13, 202, 240, 0.12);
+            color: #087990;
+        }
+
+        .kucsa-empty-text {
+            margin: 0;
+            color: var(--kucsa-muted);
+            font-size: 0.85rem;
+        }
+
+        /* =========================================================
+           ABOUT
+        ========================================================= */
+
+        .kucsa-about-content {
+            color: #46505f;
+            font-size: 0.94rem;
+            line-height: 1.8;
+        }
+
+        .kucsa-about-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* =========================================================
+           PROFESSIONAL LINKS
+        ========================================================= */
+
+        .kucsa-professional-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .kucsa-professional-link {
+            min-height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 9px 15px;
+            border: 1px solid var(--kucsa-border);
+            border-radius: 10px;
+            background: #fff;
+            color: var(--kucsa-dark);
+            font-size: 0.84rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease,
+                border-color 0.2s ease;
+        }
+
+        .kucsa-professional-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 18px rgba(25, 35, 55, 0.09);
+            text-decoration: none;
+        }
+
+        .kucsa-professional-link.github:hover {
+            border-color: #212529;
+            color: #212529;
+        }
+
+        .kucsa-professional-link.linkedin:hover {
+            border-color: #0a66c2;
+            color: #0a66c2;
+        }
+
+        .kucsa-professional-link.portfolio:hover {
+            border-color: var(--kucsa-primary);
+            color: var(--kucsa-primary);
+        }
+
+        .kucsa-external-icon {
+            font-size: 0.72rem;
+            opacity: 0.7;
+        }
+
+        /* =========================================================
+           BOTTOM ACTIONS
+        ========================================================= */
+
+        .kucsa-profile-actions {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        .kucsa-profile-actions .btn {
+            min-height: 43px;
+            border-radius: 10px;
+            font-weight: 700;
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+        /* =========================================================
+           LOADING STATE
+        ========================================================= */
+
+        .kucsa-loading-spinner {
+            width: 16px;
+            height: 16px;
+            display: none;
+            border: 2px solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: kucsaProfileSpin 0.7s linear infinite;
+        }
+
+        .kucsa-is-loading .kucsa-loading-spinner {
+            display: inline-block;
+        }
+
+        .kucsa-is-loading .kucsa-button-icon {
+            display: none;
+        }
+
+        .kucsa-is-loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        @keyframes kucsaProfileSpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* =========================================================
+           REVEAL ANIMATION
+        ========================================================= */
+
+        .kucsa-profile-reveal {
+            opacity: 0;
+            transform: translateY(12px);
+            transition:
+                opacity 0.5s ease,
+                transform 0.5s ease;
+        }
+
+        .kucsa-profile-reveal.kucsa-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* =========================================================
+           TABLET
+        ========================================================= */
+
+        @media (max-width: 1199.98px) {
+            .kucsa-profile-layout {
+                grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+                gap: 20px;
+            }
+
+            .kucsa-profile-card {
+                border-radius: 16px;
+            }
+        }
+
+        @media (max-width: 991.98px) {
+            .kucsa-member-profile {
+                padding: 24px 18px 40px;
+            }
+
+            .kucsa-profile-header-inner {
+                align-items: flex-start;
+            }
+
+            .kucsa-profile-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .kucsa-profile-sidebar {
+                position: static;
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 18px;
+                align-items: start;
+            }
+
+            .kucsa-profile-sidebar .kucsa-profile-card + .kucsa-profile-card {
+                margin-top: 0;
+            }
+
+            .kucsa-profile-sidebar .kucsa-profile-card:first-child {
+                grid-column: 1 / -1;
+            }
+        }
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
+        @media (max-width: 767.98px) {
+            .kucsa-member-profile {
+                padding: 18px 13px 32px;
+            }
+
+            .kucsa-profile-header {
+                margin-bottom: 20px;
+            }
+
+            .kucsa-profile-header-inner {
+                display: block;
+            }
+
+            .kucsa-profile-title {
+                font-size: 1.5rem;
+            }
+
+            .kucsa-profile-title-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 12px;
+            }
+
+            .kucsa-profile-description {
+                margin-left: 0;
+                margin-top: 8px;
+                font-size: 0.88rem;
+            }
+
+            .kucsa-profile-header-actions {
+                width: 100%;
+                margin-top: 16px;
+            }
+
+            .kucsa-profile-action {
+                width: 100%;
+            }
+
+            .kucsa-profile-sidebar {
+                display: block;
+            }
+
+            .kucsa-profile-sidebar .kucsa-profile-card + .kucsa-profile-card {
+                margin-top: 16px;
+            }
+
+            .kucsa-profile-card {
+                border-radius: 14px;
+            }
+
+            .kucsa-card-header {
+                padding: 15px 16px;
+            }
+
+            .kucsa-card-body {
+                padding: 18px 16px;
+            }
+
+            .kucsa-info-grid {
+                grid-template-columns: 1fr;
+                gap: 17px;
+            }
+
+            .kucsa-membership-highlight {
+                grid-template-columns: 1fr;
+            }
+
+            .kucsa-profile-actions {
+                display: grid;
+                grid-template-columns: 1fr;
+                margin-top: 18px;
+            }
+
+            .kucsa-profile-actions .btn {
+                width: 100%;
+            }
+
+            .kucsa-professional-links {
+                display: grid;
+                grid-template-columns: 1fr;
+            }
+
+            .kucsa-professional-link {
+                width: 100%;
+            }
+        }
+
+        /* =========================================================
+           SMALL PHONES
+        ========================================================= */
+
+        @media (max-width: 575.98px) {
+            .kucsa-member-profile {
+                padding: 14px 10px 28px;
+            }
+
+            .kucsa-profile-title {
+                gap: 9px;
+                font-size: 1.32rem;
+            }
+
+            .kucsa-profile-title-icon {
+                width: 37px;
+                height: 37px;
+                font-size: 0.95rem;
+            }
+
+            .kucsa-profile-eyebrow {
+                font-size: 0.68rem;
+            }
+
+            .kucsa-profile-summary-top {
+                height: 74px;
+            }
+
+            .kucsa-profile-avatar,
+            .kucsa-profile-avatar-fallback {
+                width: 96px;
+                height: 96px;
+            }
+
+            .kucsa-profile-avatar-fallback {
+                font-size: 3rem;
+            }
+
+            .kucsa-profile-avatar-wrapper {
+                margin-top: -48px;
+            }
+
+            .kucsa-profile-identity {
+                padding: 13px 15px 20px;
+            }
+
+            .kucsa-profile-name {
+                font-size: 1.12rem;
+            }
+
+            .kucsa-profile-registration {
+                font-size: 0.82rem;
+            }
+
+            .kucsa-card-header-title {
+                font-size: 0.9rem;
+            }
+
+            .kucsa-card-body {
+                padding: 16px 14px;
+            }
+
+            .kucsa-info-value {
+                font-size: 0.88rem;
+            }
+
+            .kucsa-technical-level {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .kucsa-status-content {
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 359.98px) {
+            .kucsa-member-profile {
+                padding-left: 7px;
+                padding-right: 7px;
+            }
+
+            .kucsa-profile-title {
+                font-size: 1.18rem;
+            }
+
+            .kucsa-status-badge {
+                font-size: 0.69rem;
+            }
+
+            .kucsa-card-header,
+            .kucsa-card-body {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+        }
+
+        /* =========================================================
+           ACCESSIBILITY
+        ========================================================= */
+
+        .kucsa-member-profile a:focus-visible,
+        .kucsa-member-profile button:focus-visible {
+            outline: 3px solid rgba(13, 110, 253, 0.22);
+            outline-offset: 2px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .kucsa-member-profile *,
+            .kucsa-member-profile *::before,
+            .kucsa-member-profile *::after {
+                scroll-behavior: auto !important;
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            .kucsa-profile-reveal {
+                opacity: 1;
+                transform: none;
+            }
+        }
+    </style>
+
+
+    <!-- =========================================================
          PAGE HEADER
-    ====================================================== -->
+    ========================================================== -->
 
-    <div class="d-flex flex-column flex-md-row
-                justify-content-between
-                align-items-md-center
-                mb-4">
+    <header class="kucsa-profile-header kucsa-profile-reveal">
 
-        <div>
+        <div class="kucsa-profile-header-inner">
 
-            <h2 class="fw-bold mb-1">
+            <div>
 
-                <i class="bi bi-person-circle me-2"></i>
+                <div class="kucsa-profile-eyebrow">
+                    <i class="bi bi-person-check"></i>
+                    KUCSA Member
+                </div>
 
-                My KUCSA Profile
+                <h1 class="kucsa-profile-title">
 
-            </h2>
+                    <span class="kucsa-profile-title-icon">
+                        <i class="bi bi-person-circle"></i>
+                    </span>
 
-            <p class="text-muted mb-0">
+                    My KUCSA Profile
 
-                View and manage your KUCSA membership profile.
+                </h1>
 
-            </p>
+                <p class="kucsa-profile-description">
+                    View and manage your KUCSA membership profile,
+                    academic information, technical interests, and
+                    professional presence.
+                </p>
+
+            </div>
+
+            <div class="kucsa-profile-header-actions">
+
+                <a
+                    href="{% url 'members:edit_profile' %}"
+                    class="btn btn-primary kucsa-profile-action"
+                    data-profile-navigation
+                >
+
+                    <span class="kucsa-button-icon">
+                        <i class="bi bi-pencil-square"></i>
+                    </span>
+
+                    <span class="kucsa-loading-spinner"></span>
+
+                    <span class="kucsa-button-text">
+                        Edit Profile
+                    </span>
+
+                </a>
+
+            </div>
 
         </div>
 
-
-        <div class="mt-3 mt-md-0">
-
-            <a
-                href="{% url 'members:edit_profile' %}"
-                class="btn btn-primary"
-            >
-
-                <i class="bi bi-pencil-square me-1"></i>
-
-                Edit Profile
-
-            </a>
-
-        </div>
-
-    </div>
+    </header>
 
 
-    <!-- =====================================================
-         PROFILE CONTENT
-    ====================================================== -->
+    <!-- =========================================================
+         PROFILE LAYOUT
+    ========================================================== -->
 
-    <div class="row g-4">
+    <main class="kucsa-profile-layout">
 
 
-        <!-- =================================================
-             LEFT COLUMN
-        ================================================== -->
+        <!-- =====================================================
+             SIDEBAR
+        ====================================================== -->
 
-        <div class="col-lg-4">
+        <aside class="kucsa-profile-sidebar">
 
 
             <!-- =================================================
                  PROFILE SUMMARY
             ================================================== -->
 
-            <div class="card shadow-sm border-0">
+            <section class="kucsa-profile-card kucsa-profile-summary kucsa-profile-reveal">
 
-                <div class="card-body text-center py-4">
+                <div class="kucsa-profile-summary-top"></div>
 
-
-                    <!-- Profile Picture -->
+                <div class="kucsa-profile-avatar-wrapper">
 
                     {% if member.user.profile_picture %}
 
                         <img
                             src="{{ member.user.profile_picture.url }}"
-                            width="130"
-                            height="130"
-                            class="rounded-circle mb-3 object-fit-cover"
-                            alt="{{ member.full_name }}"
+                            class="kucsa-profile-avatar"
+                            alt="{{ member.full_name|default:'KUCSA Member' }}"
+                            loading="eager"
                         >
 
                     {% else %}
 
-                        <div class="mb-3">
-
-                            <i class="bi bi-person-circle
-                                      display-1 text-secondary"></i>
-
+                        <div
+                            class="kucsa-profile-avatar-fallback"
+                            aria-label="No profile picture"
+                        >
+                            <i class="bi bi-person"></i>
                         </div>
 
                     {% endif %}
 
+                </div>
 
-                    <!-- Name -->
+                <div class="kucsa-profile-identity">
 
-                    <h4 class="fw-bold mb-1">
-
+                    <h2 class="kucsa-profile-name">
                         {{ member.full_name|default:"Unnamed Member" }}
+                    </h2>
 
-                    </h4>
-
-
-                    <!-- Registration Number -->
-
-                    <p class="text-muted mb-2">
-
+                    <p class="kucsa-profile-registration">
                         {{ member.user.registration_number }}
-
                     </p>
 
+                    <div class="kucsa-profile-badges">
 
-                    <!-- Role -->
+                        <span class="kucsa-status-badge kucsa-role-badge">
 
-                    <div class="mb-2">
-
-                        <span class="badge bg-primary">
+                            <i class="bi bi-person-badge"></i>
 
                             {{ member.user.get_role_display }}
 
                         </span>
 
-                    </div>
-
-
-                    <!-- Membership Status -->
-
-                    <div>
 
                         {% if member.membership_status == "ACTIVE" %}
 
-                            <span class="badge bg-success">
+                            <span class="kucsa-status-badge kucsa-status-active">
 
-                                <i class="bi bi-check-circle me-1"></i>
+                                <i class="bi bi-check-circle"></i>
 
                                 Active
 
@@ -148,9 +1098,9 @@
 
                         {% elif member.membership_status == "PENDING" %}
 
-                            <span class="badge bg-warning text-dark">
+                            <span class="kucsa-status-badge kucsa-status-pending">
 
-                                <i class="bi bi-clock me-1"></i>
+                                <i class="bi bi-clock"></i>
 
                                 Pending Approval
 
@@ -158,9 +1108,9 @@
 
                         {% elif member.membership_status == "SUSPENDED" %}
 
-                            <span class="badge bg-danger">
+                            <span class="kucsa-status-badge kucsa-status-suspended">
 
-                                <i class="bi bi-pause-circle me-1"></i>
+                                <i class="bi bi-pause-circle"></i>
 
                                 Suspended
 
@@ -168,9 +1118,9 @@
 
                         {% elif member.membership_status == "EXPIRED" %}
 
-                            <span class="badge bg-secondary">
+                            <span class="kucsa-status-badge kucsa-status-expired">
 
-                                <i class="bi bi-calendar-x me-1"></i>
+                                <i class="bi bi-calendar-x"></i>
 
                                 Expired
 
@@ -178,9 +1128,9 @@
 
                         {% elif member.membership_status == "REJECTED" %}
 
-                            <span class="badge bg-dark">
+                            <span class="kucsa-status-badge kucsa-status-rejected">
 
-                                <i class="bi bi-x-circle me-1"></i>
+                                <i class="bi bi-x-circle"></i>
 
                                 Rejected
 
@@ -188,7 +1138,7 @@
 
                         {% else %}
 
-                            <span class="badge bg-secondary">
+                            <span class="kucsa-status-badge kucsa-status-expired">
 
                                 {{ member.get_membership_status_display }}
 
@@ -200,50 +1150,46 @@
 
                 </div>
 
-            </div>
+            </section>
 
 
             <!-- =================================================
-                 VERIFICATION STATUS
+                 ACCOUNT VERIFICATION
             ================================================== -->
 
-            <div class="card shadow-sm border-0 mt-4">
+            <section class="kucsa-profile-card kucsa-profile-reveal">
 
-                <div class="card-header bg-white">
+                <div class="kucsa-card-header">
 
-                    <strong>
+                    <span class="kucsa-card-header-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </span>
 
-                        <i class="bi bi-shield-check me-2"></i>
-
+                    <h2 class="kucsa-card-header-title">
                         Account Verification
-
-                    </strong>
+                    </h2>
 
                 </div>
 
-
-                <div class="card-body">
+                <div class="kucsa-card-body">
 
                     {% if member.user.is_verified %}
 
-                        <div class="d-flex align-items-center">
+                        <div class="kucsa-status-content">
 
-                            <i class="bi bi-patch-check-fill
-                                      text-success fs-3 me-3"></i>
+                            <span class="kucsa-status-icon success">
+                                <i class="bi bi-patch-check-fill"></i>
+                            </span>
 
                             <div>
 
-                                <div class="fw-semibold text-success">
-
+                                <h3 class="kucsa-status-heading text-success">
                                     Verified Account
+                                </h3>
 
-                                </div>
-
-                                <small class="text-muted">
-
+                                <p class="kucsa-status-description">
                                     Your KUCSA account has been verified.
-
-                                </small>
+                                </p>
 
                             </div>
 
@@ -251,24 +1197,21 @@
 
                     {% else %}
 
-                        <div class="d-flex align-items-center">
+                        <div class="kucsa-status-content">
 
-                            <i class="bi bi-exclamation-circle-fill
-                                      text-warning fs-3 me-3"></i>
+                            <span class="kucsa-status-icon warning">
+                                <i class="bi bi-exclamation-circle-fill"></i>
+                            </span>
 
                             <div>
 
-                                <div class="fw-semibold text-warning">
-
+                                <h3 class="kucsa-status-heading text-warning">
                                     Not Verified
+                                </h3>
 
-                                </div>
-
-                                <small class="text-muted">
-
+                                <p class="kucsa-status-description">
                                     Your account is awaiting verification.
-
-                                </small>
+                                </p>
 
                             </div>
 
@@ -278,50 +1221,46 @@
 
                 </div>
 
-            </div>
+            </section>
 
 
             <!-- =================================================
                  PROFILE COMPLETENESS
             ================================================== -->
 
-            <div class="card shadow-sm border-0 mt-4">
+            <section class="kucsa-profile-card kucsa-profile-reveal">
 
-                <div class="card-header bg-white">
+                <div class="kucsa-card-header">
 
-                    <strong>
+                    <span class="kucsa-card-header-icon">
+                        <i class="bi bi-bar-chart"></i>
+                    </span>
 
-                        <i class="bi bi-bar-chart me-2"></i>
-
+                    <h2 class="kucsa-card-header-title">
                         Profile Completeness
-
-                    </strong>
+                    </h2>
 
                 </div>
 
-
-                <div class="card-body">
+                <div class="kucsa-card-body">
 
                     {% if member.is_profile_complete %}
 
-                        <div class="d-flex align-items-center">
+                        <div class="kucsa-status-content">
 
-                            <i class="bi bi-check-circle-fill
-                                      text-success fs-3 me-3"></i>
+                            <span class="kucsa-status-icon success">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </span>
 
                             <div>
 
-                                <div class="fw-semibold">
-
+                                <h3 class="kucsa-status-heading">
                                     Profile Complete
+                                </h3>
 
-                                </div>
-
-                                <small class="text-muted">
-
+                                <p class="kucsa-status-description">
                                     Your profile has been completed.
-
-                                </small>
+                                </p>
 
                             </div>
 
@@ -329,39 +1268,42 @@
 
                     {% else %}
 
-                        <div class="d-flex align-items-center">
+                        <div class="kucsa-status-content">
 
-                            <i class="bi bi-exclamation-circle-fill
-                                      text-warning fs-3 me-3"></i>
+                            <span class="kucsa-status-icon warning">
+                                <i class="bi bi-exclamation-circle-fill"></i>
+                            </span>
 
                             <div>
 
-                                <div class="fw-semibold">
-
+                                <h3 class="kucsa-status-heading">
                                     Profile Incomplete
+                                </h3>
 
-                                </div>
-
-                                <small class="text-muted">
-
+                                <p class="kucsa-status-description">
                                     Add more information to complete your
                                     profile.
-
-                                </small>
+                                </p>
 
                             </div>
 
                         </div>
 
-
                         <a
                             href="{% url 'members:edit_profile' %}"
-                            class="btn btn-outline-primary btn-sm mt-3"
+                            class="btn btn-outline-primary btn-sm kucsa-complete-button"
+                            data-profile-navigation
                         >
 
-                            <i class="bi bi-pencil me-1"></i>
+                            <span class="kucsa-button-icon">
+                                <i class="bi bi-pencil"></i>
+                            </span>
 
-                            Complete Profile
+                            <span class="kucsa-loading-spinner"></span>
+
+                            <span class="kucsa-button-text">
+                                Complete Profile
+                            </span>
 
                         </a>
 
@@ -369,110 +1311,108 @@
 
                 </div>
 
-            </div>
+            </section>
 
-        </div>
+        </aside>
 
 
-        <!-- =================================================
-             RIGHT COLUMN
-        ================================================== -->
+        <!-- =====================================================
+             MAIN CONTENT
+        ====================================================== -->
 
-        <div class="col-lg-8">
+        <section class="kucsa-profile-main">
 
 
             <!-- =================================================
                  PERSONAL INFORMATION
             ================================================== -->
 
-            <div class="card shadow-sm border-0 mb-4">
+            <article class="kucsa-profile-card kucsa-profile-reveal">
 
-                <div class="card-header bg-white">
+                <div class="kucsa-card-header">
 
-                    <strong>
+                    <span class="kucsa-card-header-icon">
+                        <i class="bi bi-person"></i>
+                    </span>
 
-                        <i class="bi bi-person me-2"></i>
-
+                    <h2 class="kucsa-card-header-title">
                         Personal Information
-
-                    </strong>
+                    </h2>
 
                 </div>
 
+                <div class="kucsa-card-body">
 
-                <div class="card-body">
+                    <div class="kucsa-info-grid">
 
-                    <div class="row">
+                        <div class="kucsa-info-item">
 
-
-                        <div class="col-md-6 mb-3">
-
-                            <small class="text-muted d-block">
-
+                            <div class="kucsa-info-label">
+                                <i class="bi bi-person"></i>
                                 First Name
+                            </div>
 
-                            </small>
-
-                            <div class="fw-semibold">
-
+                            <div class="kucsa-info-value">
                                 {{ member.user.first_name|default:"Not provided" }}
-
                             </div>
 
                         </div>
 
 
-                        <div class="col-md-6 mb-3">
+                        <div class="kucsa-info-item">
 
-                            <small class="text-muted d-block">
-
+                            <div class="kucsa-info-label">
+                                <i class="bi bi-person"></i>
                                 Last Name
+                            </div>
 
-                            </small>
-
-                            <div class="fw-semibold">
-
+                            <div class="kucsa-info-value">
                                 {{ member.user.last_name|default:"Not provided" }}
-
                             </div>
 
                         </div>
 
 
-                        <div class="col-md-6 mb-3">
+                        <div class="kucsa-info-item">
 
-                            <small class="text-muted d-block">
-
+                            <div class="kucsa-info-label">
+                                <i class="bi bi-envelope"></i>
                                 Email Address
+                            </div>
 
-                            </small>
-
-                            <div class="fw-semibold">
-
-                                {{ member.user.email|default:"Not provided" }}
-
+                            <div class="kucsa-info-value">
+                                {% if member.user.email %}
+                                    <a href="mailto:{{ member.user.email }}">
+                                        {{ member.user.email }}
+                                    </a>
+                                {% else %}
+                                    <span class="muted">Not provided</span>
+                                {% endif %}
                             </div>
 
                         </div>
 
 
-                        <div class="col-md-6 mb-3">
+                        <div class="kucsa-info-item">
 
-                            <small class="text-muted d-block">
-
+                            <div class="kucsa-info-label">
+                                <i class="bi bi-telephone"></i>
                                 Phone Number
+                            </div>
 
-                            </small>
-
-                            <div class="fw-semibold">
+                            <div class="kucsa-info-value">
 
                                 {% if member.user.phone_number %}
 
-                                    {{ member.user.phone_number }}
+                                    <a href="tel:{{ member.user.phone_number }}">
+                                        {{ member.user.phone_number }}
+                                    </a>
 
                                 {% else %}
 
-                                    Not provided
+                                    <span class="muted">
+                                        Not provided
+                                    </span>
 
                                 {% endif %}
 
@@ -481,35 +1421,29 @@
                         </div>
 
 
-                        <div class="col-md-6">
+                        <div class="kucsa-info-item">
 
-                            <small class="text-muted d-block">
-
+                            <div class="kucsa-info-label">
+                                <i class="bi bi-at"></i>
                                 Username
+                            </div>
 
-                            </small>
-
-                            <div class="fw-semibold">
-
+                            <div class="kucsa-info-value">
                                 {{ member.user.username }}
-
                             </div>
 
                         </div>
 
 
-                        <div class="col-md-6">
+                        <div class="kucsa-info-item">
 
-                            <small class="text-muted d-block">
-
+                            <div class="kucsa-info-label">
+                                <i class="bi bi-card-text"></i>
                                 Registration Number
+                            </div>
 
-                            </small>
-
-                            <div class="fw-semibold">
-
+                            <div class="kucsa-info-value">
                                 {{ member.user.registration_number }}
-
                             </div>
 
                         </div>
@@ -518,96 +1452,83 @@
 
                 </div>
 
-            </div>
+            </article>
 
 
             <!-- =================================================
                  MEMBERSHIP INFORMATION
             ================================================== -->
 
-            <div class="card shadow-sm border-0 mb-4">
+            <article class="kucsa-profile-card kucsa-profile-reveal">
 
-                <div class="card-header bg-white">
+                <div class="kucsa-card-header">
 
-                    <strong>
+                    <span class="kucsa-card-header-icon">
+                        <i class="bi bi-card-checklist"></i>
+                    </span>
 
-                        <i class="bi bi-card-checklist me-2"></i>
-
+                    <h2 class="kucsa-card-header-title">
                         Membership Information
-
-                    </strong>
+                    </h2>
 
                 </div>
 
+                <div class="kucsa-card-body">
 
-                <div class="card-body">
+                    <div class="kucsa-membership-highlight">
 
-                    <div class="row">
+                        <div class="kucsa-membership-mini">
 
-
-                        <div class="col-md-6 mb-3">
-
-                            <small class="text-muted d-block">
-
+                            <span class="kucsa-membership-mini-label">
                                 Membership Number
+                            </span>
 
-                            </small>
-
-                            <div class="fw-semibold">
-
+                            <div class="kucsa-membership-mini-value">
                                 {{ member.membership_number|default:"Not assigned" }}
-
                             </div>
 
                         </div>
 
+                        <div class="kucsa-membership-mini">
 
-                        <div class="col-md-6 mb-3">
-
-                            <small class="text-muted d-block">
-
+                            <span class="kucsa-membership-mini-label">
                                 Membership Status
+                            </span>
 
-                            </small>
-
-                            <div class="fw-semibold">
-
+                            <div class="kucsa-membership-mini-value">
                                 {{ member.get_membership_status_display }}
-
                             </div>
 
                         </div>
 
+                    </div>
 
-                        <div class="col-md-6 mb-3">
 
-                            <small class="text-muted d-block">
+                    <div class="kucsa-info-grid">
 
+                        <div class="kucsa-info-item">
+
+                            <div class="kucsa-info-label">
+                                <i class="bi bi-calendar-plus"></i>
                                 Joined Date
+                            </div>
 
-                            </small>
-
-                            <div class="fw-semibold">
-
+                            <div class="kucsa-info-value">
                                 {{ member.joined_date|default:"Not available" }}
-
                             </div>
 
                         </div>
 
 
-                        <div class="col-md-6 mb-3">
+                        <div class="kucsa-info-item">
 
-                            <small class="text-muted d-block">
-
+                            <div class="kucsa-info-label">
+                                <i class="bi bi-calendar-x"></i>
                                 Expiry Date
+                            </div>
 
-                            </small>
-
-                            <div class="fw-semibold">
-
+                            <div class="kucsa-info-value">
                                 {{ member.expiry_date|default:"Not available" }}
-
                             </div>
 
                         </div>
@@ -616,62 +1537,54 @@
 
                 </div>
 
-            </div>
+            </article>
 
 
             <!-- =================================================
                  ACADEMIC INFORMATION
             ================================================== -->
 
-            <div class="card shadow-sm border-0 mb-4">
+            <article class="kucsa-profile-card kucsa-profile-reveal">
 
-                <div class="card-header bg-white">
+                <div class="kucsa-card-header">
 
-                    <strong>
+                    <span class="kucsa-card-header-icon">
+                        <i class="bi bi-mortarboard"></i>
+                    </span>
 
-                        <i class="bi bi-mortarboard me-2"></i>
-
+                    <h2 class="kucsa-card-header-title">
                         Academic Information
-
-                    </strong>
+                    </h2>
 
                 </div>
 
+                <div class="kucsa-card-body">
 
-                <div class="card-body">
+                    <div class="kucsa-info-grid">
 
-                    <div class="row">
+                        <div class="kucsa-info-item">
 
-
-                        <div class="col-md-8 mb-3">
-
-                            <small class="text-muted d-block">
-
+                            <div class="kucsa-info-label">
+                                <i class="bi bi-book"></i>
                                 Course
+                            </div>
 
-                            </small>
-
-                            <div class="fw-semibold">
-
+                            <div class="kucsa-info-value">
                                 {{ member.course|default:"Not specified" }}
-
                             </div>
 
                         </div>
 
 
-                        <div class="col-md-4 mb-3">
+                        <div class="kucsa-info-item">
 
-                            <small class="text-muted d-block">
-
+                            <div class="kucsa-info-label">
+                                <i class="bi bi-layers"></i>
                                 Year of Study
+                            </div>
 
-                            </small>
-
-                            <div class="fw-semibold">
-
+                            <div class="kucsa-info-value">
                                 {{ member.year_of_study|default:"Not specified" }}
-
                             </div>
 
                         </div>
@@ -680,78 +1593,72 @@
 
                 </div>
 
-            </div>
+            </article>
 
 
             <!-- =================================================
                  TECHNICAL PROFILE
             ================================================== -->
 
-            <div class="card shadow-sm border-0 mb-4">
+            <article class="kucsa-profile-card kucsa-profile-reveal">
 
-                <div class="card-header bg-white">
+                <div class="kucsa-card-header">
 
-                    <strong>
+                    <span class="kucsa-card-header-icon">
+                        <i class="bi bi-code-slash"></i>
+                    </span>
 
-                        <i class="bi bi-code-slash me-2"></i>
-
+                    <h2 class="kucsa-card-header-title">
                         Technical Profile
-
-                    </strong>
+                    </h2>
 
                 </div>
 
-
-                <div class="card-body">
+                <div class="kucsa-card-body">
 
 
                     <!-- Technical Level -->
 
-                    <div class="mb-4">
+                    <div class="kucsa-technical-level">
 
-                        <small class="text-muted d-block">
-
+                        <span class="kucsa-technical-level-label">
                             Technical Level
+                        </span>
 
-                        </small>
-
-                        <div class="fw-semibold">
-
+                        <span class="kucsa-technical-level-value">
                             {{ member.get_technical_level_display|default:"Not specified" }}
-
-                        </div>
+                        </span>
 
                     </div>
 
 
                     <!-- Technical Domains -->
 
-                    <div class="mb-4">
+                    <div class="kucsa-tag-section">
 
-                        <h6 class="fw-bold">
-
+                        <h3 class="kucsa-tag-title">
                             Technical Domains
-
-                        </h6>
+                        </h3>
 
                         {% if member.technical_domains %}
 
-                            {% for domain in member.technical_domains %}
+                            <div class="kucsa-tags">
 
-                                <span class="badge bg-primary me-1 mb-1">
+                                {% for domain in member.technical_domains %}
 
-                                    {{ domain }}
+                                    <span class="kucsa-tag kucsa-tag-domain">
+                                        <i class="bi bi-code me-1"></i>
+                                        {{ domain }}
+                                    </span>
 
-                                </span>
+                                {% endfor %}
 
-                            {% endfor %}
+                            </div>
 
                         {% else %}
 
-                            <p class="text-muted mb-0">
-
+                            <p class="kucsa-empty-text">
                                 No technical domains added.
-
                             </p>
 
                         {% endif %}
@@ -761,33 +1668,31 @@
 
                     <!-- Skills -->
 
-                    <div class="mb-4">
+                    <div class="kucsa-tag-section">
 
-                        <h6 class="fw-bold">
-
+                        <h3 class="kucsa-tag-title">
                             Skills
-
-                        </h6>
+                        </h3>
 
                         {% if member.skills %}
 
-                            {% for skill in member.skills %}
+                            <div class="kucsa-tags">
 
-                                <span class="badge bg-light text-dark border
-                                             me-1 mb-1">
+                                {% for skill in member.skills %}
 
-                                    {{ skill }}
+                                    <span class="kucsa-tag kucsa-tag-skill">
+                                        <i class="bi bi-check2 me-1"></i>
+                                        {{ skill }}
+                                    </span>
 
-                                </span>
+                                {% endfor %}
 
-                            {% endfor %}
+                            </div>
 
                         {% else %}
 
-                            <p class="text-muted mb-0">
-
+                            <p class="kucsa-empty-text">
                                 No skills added.
-
                             </p>
 
                         {% endif %}
@@ -797,33 +1702,31 @@
 
                     <!-- Interests -->
 
-                    <div>
+                    <div class="kucsa-tag-section">
 
-                        <h6 class="fw-bold">
-
+                        <h3 class="kucsa-tag-title">
                             Interests
-
-                        </h6>
+                        </h3>
 
                         {% if member.interests %}
 
-                            {% for interest in member.interests %}
+                            <div class="kucsa-tags">
 
-                                <span class="badge bg-info text-dark
-                                             me-1 mb-1">
+                                {% for interest in member.interests %}
 
-                                    {{ interest }}
+                                    <span class="kucsa-tag kucsa-tag-interest">
+                                        <i class="bi bi-star me-1"></i>
+                                        {{ interest }}
+                                    </span>
 
-                                </span>
+                                {% endfor %}
 
-                            {% endfor %}
+                            </div>
 
                         {% else %}
 
-                            <p class="text-muted mb-0">
-
+                            <p class="kucsa-empty-text">
                                 No interests added.
-
                             </p>
 
                         {% endif %}
@@ -832,7 +1735,7 @@
 
                 </div>
 
-            </div>
+            </article>
 
 
             <!-- =================================================
@@ -841,28 +1744,29 @@
 
             {% if member.bio %}
 
-                <div class="card shadow-sm border-0 mb-4">
+                <article class="kucsa-profile-card kucsa-profile-reveal">
 
-                    <div class="card-header bg-white">
+                    <div class="kucsa-card-header">
 
-                        <strong>
+                        <span class="kucsa-card-header-icon">
+                            <i class="bi bi-chat-quote"></i>
+                        </span>
 
-                            <i class="bi bi-chat-quote me-2"></i>
-
+                        <h2 class="kucsa-card-header-title">
                             About Me
-
-                        </strong>
-
-                    </div>
-
-
-                    <div class="card-body">
-
-                        {{ member.bio|linebreaks }}
+                        </h2>
 
                     </div>
 
-                </div>
+                    <div class="kucsa-card-body">
+
+                        <div class="kucsa-about-content">
+                            {{ member.bio|linebreaks }}
+                        </div>
+
+                    </div>
+
+                </article>
 
             {% endif %}
 
@@ -871,106 +1775,124 @@
                  PROFESSIONAL LINKS
             ================================================== -->
 
-            <div class="card shadow-sm border-0 mb-4">
+            <article class="kucsa-profile-card kucsa-profile-reveal">
 
-                <div class="card-header bg-white">
+                <div class="kucsa-card-header">
 
-                    <strong>
+                    <span class="kucsa-card-header-icon">
+                        <i class="bi bi-link-45deg"></i>
+                    </span>
 
-                        <i class="bi bi-link-45deg me-2"></i>
-
+                    <h2 class="kucsa-card-header-title">
                         Professional Links
-
-                    </strong>
+                    </h2>
 
                 </div>
 
+                <div class="kucsa-card-body">
 
-                <div class="card-body">
+                    {% if member.github_url or member.linkedin_url or member.portfolio_url %}
 
-                    {% if member.github_url %}
+                        <div class="kucsa-professional-links">
 
-                        <a
-                            href="{{ member.github_url }}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="btn btn-outline-dark me-2 mb-2"
-                        >
+                            {% if member.github_url %}
 
-                            <i class="bi bi-github me-1"></i>
+                                <a
+                                    href="{{ member.github_url }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="kucsa-professional-link github"
+                                    aria-label="Open GitHub profile in a new tab"
+                                >
 
-                            GitHub
+                                    <i class="bi bi-github"></i>
 
-                        </a>
+                                    GitHub
 
-                    {% endif %}
+                                    <i class="bi bi-box-arrow-up-right kucsa-external-icon"></i>
 
+                                </a>
 
-                    {% if member.linkedin_url %}
-
-                        <a
-                            href="{{ member.linkedin_url }}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="btn btn-outline-primary me-2 mb-2"
-                        >
-
-                            <i class="bi bi-linkedin me-1"></i>
-
-                            LinkedIn
-
-                        </a>
-
-                    {% endif %}
+                            {% endif %}
 
 
-                    {% if member.portfolio_url %}
+                            {% if member.linkedin_url %}
 
-                        <a
-                            href="{{ member.portfolio_url }}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="btn btn-outline-secondary me-2 mb-2"
-                        >
+                                <a
+                                    href="{{ member.linkedin_url }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="kucsa-professional-link linkedin"
+                                    aria-label="Open LinkedIn profile in a new tab"
+                                >
 
-                            <i class="bi bi-globe me-1"></i>
+                                    <i class="bi bi-linkedin"></i>
 
-                            Portfolio
+                                    LinkedIn
 
-                        </a>
+                                    <i class="bi bi-box-arrow-up-right kucsa-external-icon"></i>
 
-                    {% endif %}
+                                </a>
+
+                            {% endif %}
 
 
-                    {% if not member.github_url and not member.linkedin_url and not member.portfolio_url %}
+                            {% if member.portfolio_url %}
 
-                        <p class="text-muted mb-0">
+                                <a
+                                    href="{{ member.portfolio_url }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="kucsa-professional-link portfolio"
+                                    aria-label="Open portfolio in a new tab"
+                                >
 
+                                    <i class="bi bi-globe2"></i>
+
+                                    Portfolio
+
+                                    <i class="bi bi-box-arrow-up-right kucsa-external-icon"></i>
+
+                                </a>
+
+                            {% endif %}
+
+                        </div>
+
+                    {% else %}
+
+                        <p class="kucsa-empty-text">
                             No professional links have been added yet.
-
                         </p>
 
                     {% endif %}
 
                 </div>
 
-            </div>
+            </article>
 
 
             <!-- =================================================
                  ACTIONS
             ================================================== -->
 
-            <div class="d-flex justify-content-end gap-2">
+            <div class="kucsa-profile-actions kucsa-profile-reveal">
 
                 <a
                     href="{% url 'members:list' %}"
                     class="btn btn-outline-secondary"
+                    data-profile-navigation
                 >
 
-                    <i class="bi bi-people me-1"></i>
+                    <span class="kucsa-button-icon">
+                        <i class="bi bi-people"></i>
+                    </span>
 
-                    Members
+                    <span class="kucsa-loading-spinner"></span>
+
+                    <span class="kucsa-button-text">
+                        Members
+                    </span>
 
                 </a>
 
@@ -978,19 +1900,222 @@
                 <a
                     href="{% url 'members:edit_profile' %}"
                     class="btn btn-primary"
+                    data-profile-navigation
                 >
 
-                    <i class="bi bi-pencil-square me-1"></i>
+                    <span class="kucsa-button-icon">
+                        <i class="bi bi-pencil-square"></i>
+                    </span>
 
-                    Edit Profile
+                    <span class="kucsa-loading-spinner"></span>
+
+                    <span class="kucsa-button-text">
+                        Edit Profile
+                    </span>
 
                 </a>
 
             </div>
 
-        </div>
+        </section>
 
-    </div>
+    </main>
+
+
+    <!-- =========================================================
+         INLINE JAVASCRIPT
+    ========================================================== -->
+
+    <script>
+        (function () {
+            "use strict";
+
+            const profilePage =
+                document.querySelector(".kucsa-member-profile");
+
+            if (!profilePage) return;
+
+
+            /* =====================================================
+               REVEAL PROFILE SECTIONS
+            ====================================================== */
+
+            const revealItems =
+                profilePage.querySelectorAll(".kucsa-profile-reveal");
+
+            const reducedMotion =
+                window.matchMedia &&
+                window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+            if (reducedMotion || !("IntersectionObserver" in window)) {
+
+                revealItems.forEach(function (item) {
+                    item.classList.add("kucsa-visible");
+                });
+
+            } else {
+
+                const observer = new IntersectionObserver(
+                    function (entries, observerInstance) {
+
+                        entries.forEach(function (entry) {
+
+                            if (!entry.isIntersecting) return;
+
+                            entry.target.classList.add("kucsa-visible");
+
+                            observerInstance.unobserve(entry.target);
+                        });
+
+                    },
+                    {
+                        threshold: 0.08,
+                        rootMargin: "0px 0px -30px 0px"
+                    }
+                );
+
+                revealItems.forEach(function (item) {
+                    observer.observe(item);
+                });
+            }
+
+
+            /* =====================================================
+               PROFILE NAVIGATION LOADING STATE
+            ====================================================== */
+
+            const navigationLinks =
+                profilePage.querySelectorAll(
+                    "[data-profile-navigation]"
+                );
+
+            navigationLinks.forEach(function (link) {
+
+                link.addEventListener("click", function () {
+
+                    if (link.classList.contains("kucsa-is-loading")) {
+                        return;
+                    }
+
+                    link.classList.add("kucsa-is-loading");
+
+                    const text =
+                        link.querySelector(".kucsa-button-text");
+
+                    if (text) {
+
+                        if (
+                            link.href.includes("edit_profile")
+                        ) {
+                            text.textContent = "Opening Editor...";
+                        } else {
+                            text.textContent = "Opening...";
+                        }
+                    }
+                });
+
+            });
+
+
+            /* =====================================================
+               IMAGE FALLBACK
+            ====================================================== */
+
+            const profileImage =
+                profilePage.querySelector(".kucsa-profile-avatar");
+
+            if (profileImage) {
+
+                profileImage.addEventListener("error", function () {
+
+                    const fallback =
+                        document.createElement("div");
+
+                    fallback.className =
+                        "kucsa-profile-avatar-fallback";
+
+                    fallback.setAttribute(
+                        "aria-label",
+                        "Profile picture unavailable"
+                    );
+
+                    fallback.innerHTML =
+                        '<i class="bi bi-person"></i>';
+
+                    profileImage.replaceWith(fallback);
+
+                });
+
+            }
+
+
+            /* =====================================================
+               RESET LOADING STATE ON BFCACHE RETURN
+            ====================================================== */
+
+            window.addEventListener("pageshow", function () {
+
+                navigationLinks.forEach(function (link) {
+
+                    link.classList.remove("kucsa-is-loading");
+
+                    const text =
+                        link.querySelector(".kucsa-button-text");
+
+                    if (text) {
+
+                        if (
+                            link.href.includes("edit_profile")
+                        ) {
+                            text.textContent =
+                                link.closest(".kucsa-profile-header-actions")
+                                    ? "Edit Profile"
+                                    : "Edit Profile";
+                        } else if (
+                            link.href.includes("members")
+                        ) {
+                            text.textContent = "Members";
+                        } else {
+                            text.textContent = "Edit Profile";
+                        }
+                    }
+                });
+
+            });
+
+
+            /* =====================================================
+               EXTERNAL LINK ACCESSIBILITY
+            ====================================================== */
+
+            const externalLinks =
+                profilePage.querySelectorAll(
+                    'a[target="_blank"]'
+                );
+
+            externalLinks.forEach(function (link) {
+
+                link.addEventListener("click", function () {
+
+                    link.setAttribute(
+                        "aria-busy",
+                        "true"
+                    );
+
+                    window.setTimeout(function () {
+
+                        link.removeAttribute(
+                            "aria-busy"
+                        );
+
+                    }, 1000);
+
+                });
+
+            });
+
+        })();
+    </script>
 
 </div>
 

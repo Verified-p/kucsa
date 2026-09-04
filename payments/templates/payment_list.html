@@ -4,104 +4,1231 @@
 
 {% block content %}
 
-<div class="container py-4 py-md-5">
+<div class="kucsa-payment-list-page">
 
-    <!-- =========================================================
-         PAGE HEADER
-    ========================================================== -->
+    <style>
+        /* =========================================================
+           KUCSA PAYMENT LIST
+           Scoped styles — safe for base.html
+        ========================================================== */
 
-    <div class="d-flex flex-column flex-md-row
-                justify-content-between
-                align-items-md-center
-                gap-3 mb-4">
+        .kucsa-payment-list-page {
+            --kpl-primary: #198754;
+            --kpl-primary-dark: #146c43;
+            --kpl-primary-soft: rgba(25, 135, 84, 0.09);
 
-        <div>
+            --kpl-blue: #0d6efd;
+            --kpl-blue-dark: #0a58ca;
+            --kpl-blue-soft: rgba(13, 110, 253, 0.09);
 
-            <h3 class="fw-bold mb-1">
-                My Payments
-            </h3>
+            --kpl-warning: #f59f00;
+            --kpl-warning-soft: rgba(245, 159, 0, 0.10);
 
-            <p class="text-muted mb-0">
-                View your KUCSA membership payments and support
-                the association through voluntary contributions.
-            </p>
+            --kpl-danger: #dc3545;
+            --kpl-danger-soft: rgba(220, 53, 69, 0.09);
 
-        </div>
+            --kpl-dark: #172033;
+            --kpl-text: #273142;
+            --kpl-muted: #6c757d;
+            --kpl-border: #e9edf2;
+            --kpl-surface: #ffffff;
+            --kpl-soft: #f7f9fc;
 
-    </div>
+            --kpl-radius: 18px;
+            --kpl-radius-sm: 12px;
+
+            --kpl-shadow:
+                0 8px 30px rgba(23, 32, 51, 0.07);
+
+            --kpl-shadow-hover:
+                0 16px 40px rgba(23, 32, 51, 0.11);
+
+            width: 100%;
+            min-width: 0;
+            padding: 1.25rem 0 2.5rem;
+            color: var(--kpl-text);
+        }
 
 
-    <!-- =========================================================
-         PAYMENT OPTIONS
-    ========================================================== -->
+        /* =========================================================
+           PAGE SHELL
+        ========================================================== */
 
-    <div class="row g-4 mb-4">
+        .kpl-shell {
+            width: min(100% - 2rem, 1240px);
+            margin: 0 auto;
+        }
+
+
+        /* =========================================================
+           PAGE HEADER
+        ========================================================== */
+
+        .kpl-page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.25rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .kpl-header-content {
+            min-width: 0;
+        }
+
+        .kpl-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            margin-bottom: 0.55rem;
+            color: var(--kpl-primary);
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+        }
+
+        .kpl-eyebrow-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+            box-shadow: 0 0 0 5px var(--kpl-primary-soft);
+        }
+
+        .kpl-page-title {
+            margin: 0 0 0.45rem;
+            color: var(--kpl-dark);
+            font-size: clamp(1.65rem, 3vw, 2.15rem);
+            font-weight: 800;
+            letter-spacing: -0.035em;
+            line-height: 1.15;
+        }
+
+        .kpl-page-description {
+            max-width: 760px;
+            margin: 0;
+            color: var(--kpl-muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+
+        /* =========================================================
+           GENERIC CARD
+        ========================================================== */
+
+        .kpl-card {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--kpl-border);
+            border-radius: var(--kpl-radius);
+            background: var(--kpl-surface);
+            box-shadow: var(--kpl-shadow);
+            transition:
+                transform 0.25s ease,
+                box-shadow 0.25s ease,
+                border-color 0.25s ease;
+        }
+
+        .kpl-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(25, 135, 84, 0.14);
+            box-shadow: var(--kpl-shadow-hover);
+        }
+
+        .kpl-card-body {
+            padding: 1.5rem;
+        }
+
+
+        /* =========================================================
+           PAYMENT OPTION CARDS
+        ========================================================== */
+
+        .kpl-option-card {
+            height: 100%;
+        }
+
+        .kpl-option-card::before {
+            content: "";
+            position: absolute;
+            inset: 0 0 auto 0;
+            height: 4px;
+            background: var(--kpl-primary);
+        }
+
+        .kpl-option-card.kpl-support-card::before {
+            background: var(--kpl-blue);
+        }
+
+        .kpl-option-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.9rem;
+            margin-bottom: 1.15rem;
+        }
+
+        .kpl-option-icon {
+            width: 54px;
+            height: 54px;
+            flex: 0 0 54px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+            background: var(--kpl-primary-soft);
+            color: var(--kpl-primary);
+            font-size: 1.3rem;
+        }
+
+        .kpl-support-card .kpl-option-icon {
+            background: var(--kpl-blue-soft);
+            color: var(--kpl-blue);
+        }
+
+        .kpl-option-title {
+            margin: 0 0 0.2rem;
+            color: var(--kpl-dark);
+            font-size: 1.08rem;
+            font-weight: 800;
+        }
+
+        .kpl-option-subtitle {
+            color: var(--kpl-muted);
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .kpl-option-description {
+            margin: 0 0 1.15rem;
+            color: var(--kpl-muted);
+            font-size: 0.88rem;
+            line-height: 1.7;
+        }
+
+
+        /* =========================================================
+           ACTIVE MEMBERSHIP ALERT
+        ========================================================== */
+
+        .kpl-active-alert {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            padding: 0.9rem 1rem;
+            border: 1px solid rgba(25, 135, 84, 0.14);
+            border-radius: var(--kpl-radius-sm);
+            background: var(--kpl-primary-soft);
+        }
+
+        .kpl-active-alert-icon {
+            flex: 0 0 auto;
+            margin-top: 0.1rem;
+            color: var(--kpl-primary);
+            font-size: 1rem;
+        }
+
+        .kpl-active-alert strong {
+            display: block;
+            margin-bottom: 0.15rem;
+            color: var(--kpl-primary-dark);
+            font-size: 0.88rem;
+        }
+
+        .kpl-active-alert-text {
+            color: var(--kpl-muted);
+            font-size: 0.76rem;
+            line-height: 1.55;
+        }
+
+
+        /* =========================================================
+           MEMBERSHIP VALIDITY
+        ========================================================== */
+
+        .kpl-validity {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.65rem 0.8rem;
+            border-radius: 10px;
+            background: var(--kpl-soft);
+            color: var(--kpl-muted);
+            font-size: 0.78rem;
+        }
+
+        .kpl-validity i {
+            color: var(--kpl-primary);
+        }
+
+        .kpl-validity strong {
+            color: var(--kpl-dark);
+        }
+
+
+        /* =========================================================
+           INFO BOX
+        ========================================================== */
+
+        .kpl-info-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding: 0.9rem 1rem;
+            border: 1px solid var(--kpl-border);
+            border-radius: var(--kpl-radius-sm);
+            background: var(--kpl-soft);
+        }
+
+        .kpl-info-box > i {
+            flex: 0 0 auto;
+            margin-top: 0.12rem;
+            color: var(--kpl-blue);
+        }
+
+        .kpl-info-box-text {
+            color: var(--kpl-muted);
+            font-size: 0.77rem;
+            line-height: 1.6;
+        }
+
+
+        /* =========================================================
+           BUTTONS
+        ========================================================== */
+
+        .kpl-action-btn {
+            min-height: 45px;
+            border-radius: 11px;
+            font-size: 0.86rem;
+            font-weight: 700;
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease,
+                background-color 0.2s ease;
+        }
+
+        .kpl-action-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .kpl-primary-btn {
+            border: 0;
+            background: linear-gradient(
+                135deg,
+                var(--kpl-primary),
+                var(--kpl-primary-dark)
+            );
+            box-shadow: 0 8px 18px rgba(25, 135, 84, 0.18);
+        }
+
+        .kpl-primary-btn:hover {
+            box-shadow: 0 11px 24px rgba(25, 135, 84, 0.24);
+        }
+
+        .kpl-support-btn {
+            border: 0;
+            background: linear-gradient(
+                135deg,
+                var(--kpl-blue),
+                var(--kpl-blue-dark)
+            );
+            box-shadow: 0 8px 18px rgba(13, 110, 253, 0.17);
+        }
+
+        .kpl-support-btn:hover {
+            box-shadow: 0 11px 24px rgba(13, 110, 253, 0.23);
+        }
+
+
+        /* =========================================================
+           MEMBERSHIP STATUS CARD
+        ========================================================== */
+
+        .kpl-status-card {
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .kpl-status-card-body {
+            padding: 1.25rem 1.5rem;
+        }
+
+        .kpl-status-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.8fr) minmax(160px, 0.8fr) minmax(160px, 0.8fr);
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .kpl-status-main {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            min-width: 0;
+        }
+
+        .kpl-status-icon {
+            width: 50px;
+            height: 50px;
+            flex: 0 0 50px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+            background: var(--kpl-soft);
+            font-size: 1.1rem;
+        }
+
+        .kpl-status-icon.kpl-status-active {
+            background: var(--kpl-primary-soft);
+            color: var(--kpl-primary);
+        }
+
+        .kpl-status-icon.kpl-status-pending {
+            background: var(--kpl-warning-soft);
+            color: var(--kpl-warning);
+        }
+
+        .kpl-status-icon.kpl-status-danger {
+            background: var(--kpl-danger-soft);
+            color: var(--kpl-danger);
+        }
+
+        .kpl-status-icon.kpl-status-neutral {
+            background: rgba(108, 117, 125, 0.09);
+            color: var(--kpl-muted);
+        }
+
+        .kpl-status-label {
+            display: block;
+            margin-bottom: 0.15rem;
+            color: var(--kpl-muted);
+            font-size: 0.73rem;
+            font-weight: 600;
+        }
+
+        .kpl-status-value {
+            display: block;
+            color: var(--kpl-dark);
+            font-size: 0.94rem;
+            font-weight: 800;
+        }
+
+        .kpl-status-value.kpl-green {
+            color: var(--kpl-primary);
+        }
+
+        .kpl-status-value.kpl-yellow {
+            color: var(--kpl-warning);
+        }
+
+        .kpl-status-value.kpl-red {
+            color: var(--kpl-danger);
+        }
+
+        .kpl-status-value.kpl-gray {
+            color: var(--kpl-muted);
+        }
+
+        .kpl-meta-item {
+            min-width: 0;
+            padding-left: 1rem;
+            border-left: 1px solid var(--kpl-border);
+        }
+
+        .kpl-meta-label {
+            display: block;
+            margin-bottom: 0.25rem;
+            color: var(--kpl-muted);
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        .kpl-meta-value {
+            display: block;
+            overflow: hidden;
+            color: var(--kpl-dark);
+            font-size: 0.88rem;
+            font-weight: 800;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+
+        /* =========================================================
+           PAYMENT HISTORY
+        ========================================================== */
+
+        .kpl-history-card {
+            overflow: hidden;
+        }
+
+        .kpl-history-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--kpl-border);
+            background: linear-gradient(
+                180deg,
+                #ffffff,
+                #fbfcfe
+            );
+        }
+
+        .kpl-history-title {
+            margin: 0 0 0.2rem;
+            color: var(--kpl-dark);
+            font-size: 1.05rem;
+            font-weight: 800;
+        }
+
+        .kpl-history-count {
+            color: var(--kpl-muted);
+            font-size: 0.75rem;
+        }
+
+        .kpl-history-icon {
+            width: 42px;
+            height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: var(--kpl-primary-soft);
+            color: var(--kpl-primary);
+            font-size: 1.05rem;
+        }
+
+
+        /* =========================================================
+           TABLE
+        ========================================================== */
+
+        .kpl-payment-table {
+            width: 100%;
+            margin: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .kpl-payment-table thead th {
+            padding: 0.9rem 0.75rem;
+            border-bottom: 1px solid var(--kpl-border);
+            background: #f8fafc;
+            color: #667085;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.035em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .kpl-payment-table thead th:first-child {
+            padding-left: 1.5rem;
+        }
+
+        .kpl-payment-table thead th:last-child {
+            padding-right: 1.5rem;
+        }
+
+        .kpl-payment-table tbody td {
+            padding: 1rem 0.75rem;
+            border-bottom: 1px solid #eef1f5;
+            background: #fff;
+            color: var(--kpl-text);
+            font-size: 0.8rem;
+            vertical-align: middle;
+        }
+
+        .kpl-payment-table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .kpl-payment-table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .kpl-payment-table tbody tr:hover td {
+            background: #fbfdfc;
+        }
+
+        .kpl-payment-table tbody td:first-child {
+            padding-left: 1.5rem;
+        }
+
+        .kpl-payment-table tbody td:last-child {
+            padding-right: 1.5rem;
+        }
+
+
+        /* =========================================================
+           DATE
+        ========================================================== */
+
+        .kpl-date-main {
+            color: var(--kpl-dark);
+            font-size: 0.8rem;
+            font-weight: 750;
+        }
+
+        .kpl-date-time {
+            display: block;
+            margin-top: 0.18rem;
+            color: var(--kpl-muted);
+            font-size: 0.7rem;
+        }
+
+
+        /* =========================================================
+           TYPE BADGES
+        ========================================================== */
+
+        .kpl-type-badge,
+        .kpl-status-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+            min-height: 29px;
+            padding: 0.35rem 0.65rem;
+            border: 1px solid transparent;
+            border-radius: 999px;
+            font-size: 0.69rem;
+            font-weight: 750;
+            white-space: nowrap;
+        }
+
+        .kpl-type-membership {
+            border-color: rgba(25, 135, 84, 0.12);
+            background: var(--kpl-primary-soft);
+            color: var(--kpl-primary-dark);
+        }
+
+        .kpl-type-support {
+            border-color: rgba(13, 110, 253, 0.12);
+            background: var(--kpl-blue-soft);
+            color: var(--kpl-blue-dark);
+        }
+
+        .kpl-type-other {
+            border-color: rgba(108, 117, 125, 0.12);
+            background: rgba(108, 117, 125, 0.08);
+            color: var(--kpl-muted);
+        }
+
+        .kpl-status-completed {
+            border-color: rgba(25, 135, 84, 0.12);
+            background: var(--kpl-primary-soft);
+            color: var(--kpl-primary-dark);
+        }
+
+        .kpl-status-pending {
+            border-color: rgba(245, 159, 0, 0.14);
+            background: var(--kpl-warning-soft);
+            color: #a86400;
+        }
+
+        .kpl-status-failed {
+            border-color: rgba(220, 53, 69, 0.12);
+            background: var(--kpl-danger-soft);
+            color: #b02a37;
+        }
+
+        .kpl-status-cancelled {
+            border-color: rgba(108, 117, 125, 0.12);
+            background: rgba(108, 117, 125, 0.08);
+            color: var(--kpl-muted);
+        }
+
+
+        /* =========================================================
+           AMOUNT
+        ========================================================== */
+
+        .kpl-amount {
+            color: var(--kpl-dark);
+            font-size: 0.82rem;
+            font-weight: 850;
+            white-space: nowrap;
+        }
+
+
+        /* =========================================================
+           PHONE / RECEIPT
+        ========================================================== */
+
+        .kpl-phone {
+            color: var(--kpl-muted);
+            font-size: 0.76rem;
+            white-space: nowrap;
+        }
+
+        .kpl-receipt {
+            color: var(--kpl-dark);
+            font-size: 0.76rem;
+            font-weight: 750;
+            letter-spacing: 0.02em;
+        }
+
+        .kpl-empty-value {
+            color: #adb5bd;
+            font-weight: 500;
+        }
+
+
+        /* =========================================================
+           ACTION BUTTONS
+        ========================================================== */
+
+        .kpl-actions {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .kpl-table-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 34px;
+            padding: 0.38rem 0.65rem;
+            border-radius: 9px;
+            font-size: 0.69rem;
+            font-weight: 750;
+            white-space: nowrap;
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .kpl-table-action:hover {
+            transform: translateY(-1px);
+        }
+
+        .kpl-action-warning {
+            box-shadow: 0 5px 12px rgba(245, 159, 0, 0.12);
+        }
+
+        .kpl-action-success {
+            box-shadow: 0 5px 12px rgba(25, 135, 84, 0.11);
+        }
+
+
+        /* =========================================================
+           EMPTY STATE
+        ========================================================== */
+
+        .kpl-empty-state {
+            padding: 4rem 1.5rem;
+            text-align: center;
+        }
+
+        .kpl-empty-icon {
+            width: 88px;
+            height: 88px;
+            margin: 0 auto 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 25px;
+            background: var(--kpl-primary-soft);
+            color: var(--kpl-primary);
+            font-size: 2.15rem;
+            box-shadow: 0 10px 25px rgba(25, 135, 84, 0.08);
+        }
+
+        .kpl-empty-title {
+            margin: 0 0 0.45rem;
+            color: var(--kpl-dark);
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+
+        .kpl-empty-description {
+            max-width: 480px;
+            margin: 0 auto 1.4rem;
+            color: var(--kpl-muted);
+            font-size: 0.85rem;
+            line-height: 1.7;
+        }
+
+        .kpl-empty-actions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.65rem;
+        }
+
+
+        /* =========================================================
+           PAYMENT INFORMATION
+        ========================================================== */
+
+        .kpl-information {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            padding: 1rem 1.1rem;
+            border: 1px solid var(--kpl-border);
+            border-radius: var(--kpl-radius-sm);
+            background: linear-gradient(
+                135deg,
+                #ffffff,
+                #f9fbfd
+            );
+        }
+
+        .kpl-information-icon {
+            width: 34px;
+            height: 34px;
+            flex: 0 0 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: var(--kpl-primary-soft);
+            color: var(--kpl-primary);
+        }
+
+        .kpl-information-title {
+            display: block;
+            margin-bottom: 0.2rem;
+            color: var(--kpl-dark);
+            font-size: 0.8rem;
+            font-weight: 800;
+        }
+
+        .kpl-information-text {
+            color: var(--kpl-muted);
+            font-size: 0.74rem;
+            line-height: 1.65;
+        }
+
+
+        /* =========================================================
+           REVEAL ANIMATION
+        ========================================================== */
+
+        .kpl-reveal {
+            opacity: 0;
+            transform: translateY(12px);
+            transition:
+                opacity 0.5s ease,
+                transform 0.5s ease;
+        }
+
+        .kpl-reveal.kpl-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+
+        /* =========================================================
+           FOCUS
+        ========================================================== */
+
+        .kucsa-payment-list-page a:focus-visible,
+        .kucsa-payment-list-page button:focus-visible {
+            outline: 3px solid rgba(25, 135, 84, 0.22);
+            outline-offset: 3px;
+            border-radius: 9px;
+        }
+
+
+        /* =========================================================
+           TABLET
+        ========================================================== */
+
+        @media (max-width: 991.98px) {
+
+            .kpl-shell {
+                width: min(100% - 1.5rem, 900px);
+            }
+
+            .kpl-status-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .kpl-status-main {
+                grid-column: 1 / -1;
+                padding-bottom: 0.35rem;
+            }
+
+            .kpl-meta-item {
+                padding-left: 0;
+                border-left: 0;
+                padding-top: 0.85rem;
+                border-top: 1px solid var(--kpl-border);
+            }
+
+        }
+
+
+        /* =========================================================
+           MOBILE
+        ========================================================== */
+
+        @media (max-width: 767.98px) {
+
+            .kucsa-payment-list-page {
+                padding-top: 0.75rem;
+                padding-bottom: 1.5rem;
+            }
+
+            .kpl-shell {
+                width: min(100% - 1rem, 680px);
+            }
+
+            .kpl-page-header {
+                align-items: flex-start;
+                margin-bottom: 1.25rem;
+            }
+
+            .kpl-page-title {
+                font-size: 1.55rem;
+            }
+
+            .kpl-page-description {
+                font-size: 0.85rem;
+            }
+
+            .kpl-card-body {
+                padding: 1.2rem;
+            }
+
+            .kpl-status-card-body {
+                padding: 1.1rem;
+            }
+
+            .kpl-status-grid {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .kpl-status-main {
+                grid-column: auto;
+                padding-bottom: 1rem;
+            }
+
+            .kpl-meta-item {
+                padding: 0.85rem 0;
+                border-top: 1px solid var(--kpl-border);
+            }
+
+            /* -----------------------------------------------------
+               Mobile payment table becomes cards
+            ------------------------------------------------------ */
+
+            .kpl-payment-table,
+            .kpl-payment-table tbody {
+                display: block;
+                width: 100%;
+            }
+
+            .kpl-payment-table thead {
+                display: none;
+            }
+
+            .kpl-payment-table tbody tr {
+                display: block;
+                margin: 0.85rem 1rem;
+                overflow: hidden;
+                border: 1px solid var(--kpl-border);
+                border-radius: 15px;
+                box-shadow: 0 5px 18px rgba(23, 32, 51, 0.045);
+            }
+
+            .kpl-payment-table tbody tr:hover td {
+                background: #fff;
+            }
+
+            .kpl-payment-table tbody td,
+            .kpl-payment-table tbody td:first-child,
+            .kpl-payment-table tbody td:last-child {
+                display: grid;
+                grid-template-columns: 100px minmax(0, 1fr);
+                align-items: center;
+                gap: 0.75rem;
+                width: 100%;
+                padding: 0.75rem 0.9rem;
+                border-bottom: 1px solid #eef1f5;
+                background: #fff;
+                text-align: left !important;
+            }
+
+            .kpl-payment-table tbody td:last-child {
+                border-bottom: 0;
+            }
+
+            .kpl-payment-table tbody td::before {
+                color: var(--kpl-muted);
+                font-size: 0.68rem;
+                font-weight: 800;
+                letter-spacing: 0.025em;
+                text-transform: uppercase;
+            }
+
+            .kpl-payment-table tbody td:nth-child(1)::before {
+                content: "Date";
+            }
+
+            .kpl-payment-table tbody td:nth-child(2)::before {
+                content: "Type";
+            }
+
+            .kpl-payment-table tbody td:nth-child(3)::before {
+                content: "Amount";
+            }
+
+            .kpl-payment-table tbody td:nth-child(4)::before {
+                content: "Phone";
+            }
+
+            .kpl-payment-table tbody td:nth-child(5)::before {
+                content: "Receipt";
+            }
+
+            .kpl-payment-table tbody td:nth-child(6)::before {
+                content: "Status";
+            }
+
+            .kpl-payment-table tbody td:nth-child(7)::before {
+                content: "Action";
+            }
+
+            .kpl-actions {
+                justify-content: flex-start;
+                flex-wrap: wrap;
+            }
+
+            .kpl-table-action {
+                flex: 0 0 auto;
+            }
+
+            .kpl-history-header {
+                padding: 1.1rem;
+            }
+
+            .kpl-empty-state {
+                padding: 3rem 1rem;
+            }
+
+        }
+
+
+        /* =========================================================
+           SMALL MOBILE
+        ========================================================== */
+
+        @media (max-width: 575.98px) {
+
+            .kpl-option-header {
+                gap: 0.75rem;
+            }
+
+            .kpl-option-icon {
+                width: 48px;
+                height: 48px;
+                flex-basis: 48px;
+                border-radius: 13px;
+            }
+
+            .kpl-option-title {
+                font-size: 1rem;
+            }
+
+            .kpl-option-description {
+                font-size: 0.82rem;
+            }
+
+            .kpl-active-alert {
+                padding: 0.8rem;
+            }
+
+            .kpl-history-title {
+                font-size: 0.98rem;
+            }
+
+            .kpl-empty-actions {
+                flex-direction: column;
+            }
+
+            .kpl-empty-actions .btn {
+                width: 100%;
+            }
+
+            .kpl-information {
+                padding: 0.9rem;
+            }
+
+        }
+
+
+        /* =========================================================
+           VERY SMALL DEVICES
+        ========================================================== */
+
+        @media (max-width: 359.98px) {
+
+            .kpl-shell {
+                width: calc(100% - 0.75rem);
+            }
+
+            .kpl-page-title {
+                font-size: 1.4rem;
+            }
+
+            .kpl-card-body {
+                padding: 1rem;
+            }
+
+            .kpl-payment-table tbody tr {
+                margin-left: 0.6rem;
+                margin-right: 0.6rem;
+            }
+
+            .kpl-payment-table tbody td {
+                grid-template-columns: 85px minmax(0, 1fr) !important;
+                padding: 0.7rem;
+            }
+
+            .kpl-payment-table tbody td::before {
+                font-size: 0.62rem;
+            }
+
+            .kpl-type-badge,
+            .kpl-status-badge {
+                font-size: 0.63rem;
+            }
+
+            .kpl-table-action {
+                font-size: 0.64rem;
+            }
+
+        }
+
+
+        /* =========================================================
+           REDUCED MOTION
+        ========================================================== */
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .kpl-card,
+            .kpl-action-btn,
+            .kpl-table-action,
+            .kpl-reveal {
+                transition: none !important;
+            }
+
+            .kpl-card:hover,
+            .kpl-action-btn:hover,
+            .kpl-table-action:hover {
+                transform: none !important;
+            }
+
+            .kpl-reveal {
+                opacity: 1;
+                transform: none;
+            }
+
+        }
+    </style>
+
+
+    <div class="kpl-shell">
 
         <!-- =====================================================
-             MEMBERSHIP PAYMENT
+             PAGE HEADER
         ====================================================== -->
 
-        <div class="col-12 col-lg-6">
+        <header class="kpl-page-header kpl-reveal">
 
-            <div class="card border-0 shadow-sm h-100">
+            <div class="kpl-header-content">
 
-                <div class="card-body p-4">
+                <div class="kpl-eyebrow">
+                    <span class="kpl-eyebrow-dot"></span>
+                    KUCSA Finance
+                </div>
 
-                    <div class="d-flex align-items-start mb-3">
+                <h1 class="kpl-page-title">
+                    My Payments
+                </h1>
 
-                        <div
-                            class="rounded-circle
-                                   bg-success bg-opacity-10
-                                   d-flex align-items-center
-                                   justify-content-center
-                                   flex-shrink-0 me-3"
-                            style="width: 52px; height: 52px;"
-                        >
+                <p class="kpl-page-description">
+                    View your KUCSA membership payments and support
+                    the association through voluntary contributions.
+                </p>
 
-                            <i
-                                class="bi bi-person-check-fill
-                                       text-success fs-5"
-                            ></i>
+            </div>
+
+        </header>
+
+
+        <!-- =====================================================
+             PAYMENT OPTIONS
+        ====================================================== -->
+
+        <div class="row g-4">
+
+
+            <!-- =================================================
+                 MEMBERSHIP PAYMENT
+            ================================================== -->
+
+            <div class="col-12 col-lg-6 kpl-reveal">
+
+                <div class="kpl-card kpl-option-card">
+
+                    <div class="kpl-card-body">
+
+                        <div class="kpl-option-header">
+
+                            <div class="kpl-option-icon">
+
+                                <i class="bi bi-person-check-fill"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h2 class="kpl-option-title">
+                                    KUCSA Membership
+                                </h2>
+
+                                <div class="kpl-option-subtitle">
+                                    Required membership payment
+                                </div>
+
+                            </div>
 
                         </div>
 
-                        <div>
 
-                            <h5 class="fw-bold mb-1">
-                                KUCSA Membership
-                            </h5>
+                        {% if member.can_access_platform %}
 
-                            <small class="text-muted">
-                                Required membership payment
-                            </small>
-
-                        </div>
-
-                    </div>
-
-
-                    {% if member.can_access_platform %}
-
-                        <div
-                            class="alert alert-success
-                                   bg-success bg-opacity-10
-                                   border-0 mb-3"
-                        >
-
-                            <div class="d-flex align-items-center">
+                            <div class="kpl-active-alert">
 
                                 <i
-                                    class="bi bi-check-circle-fill
-                                           text-success me-2"
+                                    class="bi bi-check-circle-fill kpl-active-alert-icon"
                                 ></i>
 
                                 <div>
 
-                                    <strong class="text-success">
+                                    <strong>
                                         Membership Active
                                     </strong>
 
-                                    <div class="small text-muted">
+                                    <div class="kpl-active-alert-text">
                                         Your KUCSA membership payment
                                         has already been verified.
                                     </div>
@@ -110,57 +1237,140 @@
 
                             </div>
 
-                        </div>
+
+                            {% if member.expiry_date %}
+
+                                <div class="kpl-validity">
+
+                                    <i class="bi bi-calendar-check"></i>
+
+                                    <span>
+                                        Membership valid until
+                                        <strong>
+                                            {{ member.expiry_date|date:"d M Y" }}
+                                        </strong>
+                                    </span>
+
+                                </div>
+
+                            {% endif %}
 
 
-                        {% if member.expiry_date %}
+                            <a
+                                href="{% url 'dashboard:dashboard' %}"
+                                class="btn btn-outline-success w-100 kpl-action-btn"
+                                data-navigation
+                            >
 
-                            <div class="small text-muted mb-3">
+                                <i class="bi bi-grid-fill me-2"></i>
 
-                                Membership valid until
+                                Go to Dashboard
 
-                                <strong class="text-dark">
-                                    {{ member.expiry_date|date:"d M Y" }}
-                                </strong>
+                            </a>
 
-                            </div>
+                        {% else %}
+
+                            <p class="kpl-option-description">
+
+                                Complete your KUCSA membership payment
+                                to activate your membership and access
+                                the KUCSA platform.
+
+                            </p>
+
+
+                            <a
+                                href="{% url 'payments:payment_create' %}"
+                                class="btn btn-success w-100 kpl-action-btn kpl-primary-btn"
+                                data-navigation
+                            >
+
+                                <i class="bi bi-phone-fill me-2"></i>
+
+                                Pay Membership with M-Pesa
+
+                            </a>
 
                         {% endif %}
 
-                        <a
-                            href="{% url 'dashboard:dashboard' %}"
-                            class="btn btn-outline-success w-100"
-                        >
+                    </div>
 
-                            <i class="bi bi-grid-fill me-2"></i>
+                </div>
 
-                            Go to Dashboard
+            </div>
 
-                        </a>
 
-                    {% else %}
+            <!-- =================================================
+                 SUPPORT KUCSA
+            ================================================== -->
 
-                        <p class="text-muted small mb-3">
+            <div class="col-12 col-lg-6 kpl-reveal">
 
-                            Complete your KUCSA membership payment
-                            to activate your membership and access
-                            the KUCSA platform.
+                <div class="kpl-card kpl-option-card kpl-support-card">
+
+                    <div class="kpl-card-body">
+
+                        <div class="kpl-option-header">
+
+                            <div class="kpl-option-icon">
+
+                                <i class="bi bi-heart-fill"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h2 class="kpl-option-title">
+                                    Support KUCSA
+                                </h2>
+
+                                <div class="kpl-option-subtitle">
+                                    Voluntary contribution
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <p class="kpl-option-description">
+
+                            Want to support KUCSA activities, student
+                            programs, technical initiatives, events and
+                            community development?
 
                         </p>
 
 
+                        <div class="kpl-info-box">
+
+                            <i class="bi bi-info-circle"></i>
+
+                            <div class="kpl-info-box-text">
+
+                                You can make a voluntary contribution
+                                of any supported amount. Your
+                                contribution is separate from your
+                                KUCSA membership payment.
+
+                            </div>
+
+                        </div>
+
+
                         <a
-                            href="{% url 'payments:payment_create' %}"
-                            class="btn btn-success w-100"
+                            href="{% url 'payments:support' %}"
+                            class="btn btn-primary w-100 kpl-action-btn kpl-support-btn"
+                            data-navigation
                         >
 
-                            <i class="bi bi-phone-fill me-2"></i>
+                            <i class="bi bi-heart-fill me-2"></i>
 
-                            Pay Membership with M-Pesa
+                            Support KUCSA
 
                         </a>
 
-                    {% endif %}
+                    </div>
 
                 </div>
 
@@ -170,272 +1380,155 @@
 
 
         <!-- =====================================================
-             SUPPORT KUCSA
+             MEMBERSHIP STATUS
         ====================================================== -->
 
-        <div class="col-12 col-lg-6">
+        <div class="kpl-card kpl-status-card kpl-reveal">
 
-            <div
-                class="card border-0 shadow-sm h-100"
-            >
+            <div class="kpl-status-card-body">
 
-                <div class="card-body p-4">
-
-                    <div class="d-flex align-items-start mb-3">
-
-                        <div
-                            class="rounded-circle
-                                   bg-primary bg-opacity-10
-                                   d-flex align-items-center
-                                   justify-content-center
-                                   flex-shrink-0 me-3"
-                            style="width: 52px; height: 52px;"
-                        >
-
-                            <i
-                                class="bi bi-heart-fill
-                                       text-primary fs-5"
-                            ></i>
-
-                        </div>
-
-                        <div>
-
-                            <h5 class="fw-bold mb-1">
-                                Support KUCSA
-                            </h5>
-
-                            <small class="text-muted">
-                                Voluntary contribution
-                            </small>
-
-                        </div>
-
-                    </div>
+                <div class="kpl-status-grid">
 
 
-                    <p class="text-muted small mb-3">
+                    <!-- STATUS -->
 
-                        Want to support KUCSA activities, student
-                        programs, technical initiatives, events and
-                        community development?
+                    <div class="kpl-status-main">
 
-                    </p>
+                        {% if member.can_access_platform %}
 
+                            <div class="kpl-status-icon kpl-status-active">
 
-                    <div class="bg-light rounded-3 p-3 mb-3">
+                                <i class="bi bi-check-circle-fill"></i>
 
-                        <div class="d-flex align-items-start">
+                            </div>
 
-                            <i
-                                class="bi bi-info-circle
-                                       text-primary me-2 mt-1"
-                            ></i>
+                        {% elif member.is_pending %}
 
-                            <small class="text-muted">
+                            <div class="kpl-status-icon kpl-status-pending">
 
-                                You can make a voluntary contribution
-                                of any supported amount. Your
-                                contribution is separate from your
-                                KUCSA membership payment.
+                                <i class="bi bi-hourglass-split"></i>
 
-                            </small>
+                            </div>
 
-                        </div>
+                        {% elif member.is_suspended or member.is_expired %}
 
-                    </div>
+                            <div class="kpl-status-icon kpl-status-danger">
 
+                                <i class="bi bi-exclamation-circle-fill"></i>
 
-                    <!-- =================================================
-                         SUPPORT BUTTON
-                         ================================================= -->
+                            </div>
 
-                    <a
-                        href="{% url 'payments:support' %}"
-                        class="btn btn-primary w-100"
-                    >
+                        {% else %}
 
-                        <i class="bi bi-heart-fill me-2"></i>
+                            <div class="kpl-status-icon kpl-status-neutral">
 
-                        Support KUCSA
+                                <i class="bi bi-person-circle"></i>
 
-                    </a>
+                            </div>
 
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- =========================================================
-         MEMBERSHIP STATUS
-    ========================================================== -->
-
-    <div class="card border-0 shadow-sm mb-4">
-
-        <div class="card-body">
-
-            <div class="row align-items-center g-3">
-
-                <!-- STATUS -->
-
-                <div class="col-12 col-md-6">
-
-                    <div class="d-flex align-items-center">
-
-                        <div
-                            class="rounded-circle
-                                   {% if member.can_access_platform %}
-                                       bg-success
-                                   {% elif member.is_pending %}
-                                       bg-warning
-                                   {% elif member.is_suspended or member.is_expired %}
-                                       bg-danger
-                                   {% else %}
-                                       bg-secondary
-                                   {% endif %}
-                                   bg-opacity-10
-                                   d-flex align-items-center
-                                   justify-content-center
-                                   flex-shrink-0 me-3"
-                            style="width: 50px; height: 50px;"
-                        >
-
-                            {% if member.can_access_platform %}
-
-                                <i
-                                    class="bi bi-check-circle-fill
-                                           text-success fs-5"
-                                ></i>
-
-                            {% elif member.is_pending %}
-
-                                <i
-                                    class="bi bi-hourglass-split
-                                           text-warning fs-5"
-                                ></i>
-
-                            {% elif member.is_suspended or member.is_expired %}
-
-                                <i
-                                    class="bi bi-exclamation-circle-fill
-                                           text-danger fs-5"
-                                ></i>
-
-                            {% else %}
-
-                                <i
-                                    class="bi bi-person-circle
-                                           text-secondary fs-5"
-                                ></i>
-
-                            {% endif %}
-
-                        </div>
+                        {% endif %}
 
 
                         <div>
 
-                            <small class="text-muted d-block">
+                            <span class="kpl-status-label">
                                 Membership Status
-                            </small>
+                            </span>
 
-                            <strong>
+
+                            <span class="kpl-status-value
+                                {% if member.can_access_platform %}
+                                    kpl-green
+                                {% elif member.is_pending %}
+                                    kpl-yellow
+                                {% elif member.is_suspended or member.is_expired %}
+                                    kpl-red
+                                {% else %}
+                                    kpl-gray
+                                {% endif %}
+                            ">
 
                                 {% if member.can_access_platform %}
 
-                                    <span class="text-success">
-                                        Active
-                                    </span>
+                                    Active
 
                                 {% elif member.is_pending %}
 
-                                    <span class="text-warning">
-                                        Payment Required
-                                    </span>
+                                    Payment Required
 
                                 {% elif member.is_suspended %}
 
-                                    <span class="text-danger">
-                                        Suspended
-                                    </span>
+                                    Suspended
 
                                 {% elif member.is_expired %}
 
-                                    <span class="text-danger">
-                                        Expired
-                                    </span>
+                                    Expired
 
                                 {% else %}
 
-                                    <span class="text-secondary">
-                                        {{ member.membership_status_display }}
-                                    </span>
+                                    {{ member.membership_status_display }}
 
                                 {% endif %}
 
-                            </strong>
+                            </span>
 
                         </div>
 
                     </div>
 
-                </div>
+
+                    <!-- MEMBERSHIP NUMBER -->
+
+                    <div class="kpl-meta-item">
+
+                        <span class="kpl-meta-label">
+                            Membership Number
+                        </span>
+
+                        <span class="kpl-meta-value">
+
+                            {% if member.membership_number %}
+
+                                {{ member.membership_number }}
+
+                            {% else %}
+
+                                <span class="text-muted">
+                                    Not assigned
+                                </span>
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
 
 
-                <!-- MEMBERSHIP NUMBER -->
+                    <!-- EXPIRY -->
 
-                <div class="col-12 col-md-3">
+                    <div class="kpl-meta-item">
 
-                    <small class="text-muted d-block">
-                        Membership Number
-                    </small>
+                        <span class="kpl-meta-label">
+                            Membership Expiry
+                        </span>
 
-                    <strong>
+                        <span class="kpl-meta-value">
 
-                        {% if member.membership_number %}
+                            {% if member.expiry_date %}
 
-                            {{ member.membership_number }}
+                                {{ member.expiry_date|date:"d M Y" }}
 
-                        {% else %}
+                            {% else %}
 
-                            <span class="text-muted">
-                                Not assigned
-                            </span>
+                                <span class="text-muted">
+                                    Not active
+                                </span>
 
-                        {% endif %}
+                            {% endif %}
 
-                    </strong>
+                        </span>
 
-                </div>
-
-
-                <!-- EXPIRY -->
-
-                <div class="col-12 col-md-3">
-
-                    <small class="text-muted d-block">
-                        Membership Expiry
-                    </small>
-
-                    <strong>
-
-                        {% if member.expiry_date %}
-
-                            {{ member.expiry_date|date:"d M Y" }}
-
-                        {% else %}
-
-                            <span class="text-muted">
-                                Not active
-                            </span>
-
-                        {% endif %}
-
-                    </strong>
+                    </div>
 
                 </div>
 
@@ -443,28 +1536,22 @@
 
         </div>
 
-    </div>
 
+        <!-- =====================================================
+             PAYMENT HISTORY
+        ====================================================== -->
 
-    <!-- =========================================================
-         PAYMENT HISTORY
-    ========================================================== -->
+        <section class="kpl-card kpl-history-card kpl-reveal">
 
-    <div class="card border-0 shadow-sm">
-
-        <div class="card-header bg-white border-0 py-3">
-
-            <div class="d-flex
-                        justify-content-between
-                        align-items-center">
+            <div class="kpl-history-header">
 
                 <div>
 
-                    <h5 class="fw-bold mb-1">
+                    <h2 class="kpl-history-title">
                         Payment History
-                    </h5>
+                    </h2>
 
-                    <small class="text-muted">
+                    <div class="kpl-history-count">
 
                         {{ payments|length }}
 
@@ -472,36 +1559,31 @@
 
                         recorded
 
-                    </small>
+                    </div>
 
                 </div>
 
 
-                <i
-                    class="bi bi-receipt text-success fs-4"
-                ></i>
+                <div class="kpl-history-icon">
+
+                    <i class="bi bi-receipt"></i>
+
+                </div>
 
             </div>
 
-        </div>
 
-
-        {% if payments %}
-
-            <div class="card-body p-0">
+            {% if payments %}
 
                 <div class="table-responsive">
 
-                    <table
-                        class="table table-hover
-                               align-middle mb-0"
-                    >
+                    <table class="kpl-payment-table">
 
-                        <thead class="table-light">
+                        <thead>
 
                             <tr>
 
-                                <th class="ps-4">
+                                <th>
                                     Date
                                 </th>
 
@@ -525,7 +1607,7 @@
                                     Status
                                 </th>
 
-                                <th class="text-end pe-4">
+                                <th class="text-end">
                                     Action
                                 </th>
 
@@ -542,15 +1624,15 @@
 
                                     <!-- DATE -->
 
-                                    <td class="ps-4">
+                                    <td>
 
-                                        <div class="fw-semibold">
+                                        <div class="kpl-date-main">
                                             {{ payment.created_at|date:"d M Y" }}
                                         </div>
 
-                                        <small class="text-muted">
+                                        <span class="kpl-date-time">
                                             {{ payment.created_at|date:"H:i" }}
-                                        </small>
+                                        </span>
 
                                     </td>
 
@@ -561,16 +1643,9 @@
 
                                         {% if payment.payment_type == "MEMBERSHIP" %}
 
-                                            <span
-                                                class="badge
-                                                       bg-success
-                                                       bg-opacity-10
-                                                       text-success"
-                                            >
+                                            <span class="kpl-type-badge kpl-type-membership">
 
-                                                <i
-                                                    class="bi bi-person-check me-1"
-                                                ></i>
+                                                <i class="bi bi-person-check"></i>
 
                                                 Membership
 
@@ -578,16 +1653,9 @@
 
                                         {% elif payment.payment_type == "SUPPORT" %}
 
-                                            <span
-                                                class="badge
-                                                       bg-primary
-                                                       bg-opacity-10
-                                                       text-primary"
-                                            >
+                                            <span class="kpl-type-badge kpl-type-support">
 
-                                                <i
-                                                    class="bi bi-heart-fill me-1"
-                                                ></i>
+                                                <i class="bi bi-heart-fill"></i>
 
                                                 Support
 
@@ -595,12 +1663,7 @@
 
                                         {% else %}
 
-                                            <span
-                                                class="badge
-                                                       bg-secondary
-                                                       bg-opacity-10
-                                                       text-secondary"
-                                            >
+                                            <span class="kpl-type-badge kpl-type-other">
 
                                                 {{ payment.get_payment_type_display }}
 
@@ -615,9 +1678,9 @@
 
                                     <td>
 
-                                        <strong>
+                                        <span class="kpl-amount">
                                             KES {{ payment.amount|floatformat:2 }}
-                                        </strong>
+                                        </span>
 
                                     </td>
 
@@ -626,7 +1689,7 @@
 
                                     <td>
 
-                                        <span class="text-muted">
+                                        <span class="kpl-phone">
                                             {{ payment.phone_number }}
                                         </span>
 
@@ -639,13 +1702,13 @@
 
                                         {% if payment.mpesa_receipt_number %}
 
-                                            <span class="fw-semibold">
+                                            <span class="kpl-receipt">
                                                 {{ payment.mpesa_receipt_number }}
                                             </span>
 
                                         {% else %}
 
-                                            <span class="text-muted">
+                                            <span class="kpl-empty-value">
                                                 —
                                             </span>
 
@@ -660,17 +1723,9 @@
 
                                         {% if payment.status == "COMPLETED" %}
 
-                                            <span
-                                                class="badge
-                                                       bg-success
-                                                       bg-opacity-10
-                                                       text-success
-                                                       px-3 py-2"
-                                            >
+                                            <span class="kpl-status-badge kpl-status-completed">
 
-                                                <i
-                                                    class="bi bi-check-circle-fill me-1"
-                                                ></i>
+                                                <i class="bi bi-check-circle-fill"></i>
 
                                                 Completed
 
@@ -678,17 +1733,9 @@
 
                                         {% elif payment.status == "PENDING" %}
 
-                                            <span
-                                                class="badge
-                                                       bg-warning
-                                                       bg-opacity-10
-                                                       text-warning
-                                                       px-3 py-2"
-                                            >
+                                            <span class="kpl-status-badge kpl-status-pending">
 
-                                                <i
-                                                    class="bi bi-hourglass-split me-1"
-                                                ></i>
+                                                <i class="bi bi-hourglass-split"></i>
 
                                                 Pending
 
@@ -696,17 +1743,9 @@
 
                                         {% elif payment.status == "FAILED" %}
 
-                                            <span
-                                                class="badge
-                                                       bg-danger
-                                                       bg-opacity-10
-                                                       text-danger
-                                                       px-3 py-2"
-                                            >
+                                            <span class="kpl-status-badge kpl-status-failed">
 
-                                                <i
-                                                    class="bi bi-x-circle-fill me-1"
-                                                ></i>
+                                                <i class="bi bi-x-circle-fill"></i>
 
                                                 Failed
 
@@ -714,17 +1753,9 @@
 
                                         {% elif payment.status == "CANCELLED" %}
 
-                                            <span
-                                                class="badge
-                                                       bg-secondary
-                                                       bg-opacity-10
-                                                       text-secondary
-                                                       px-3 py-2"
-                                            >
+                                            <span class="kpl-status-badge kpl-status-cancelled">
 
-                                                <i
-                                                    class="bi bi-x-circle-fill me-1"
-                                                ></i>
+                                                <i class="bi bi-x-circle-fill"></i>
 
                                                 Cancelled
 
@@ -732,8 +1763,10 @@
 
                                         {% else %}
 
-                                            <span class="badge bg-secondary">
+                                            <span class="kpl-status-badge kpl-status-cancelled">
+
                                                 {{ payment.get_status_display }}
+
                                             </span>
 
                                         {% endif %}
@@ -743,25 +1776,21 @@
 
                                     <!-- ACTION -->
 
-                                    <td class="text-end pe-4">
+                                    <td>
 
-                                        <div
-                                            class="d-flex
-                                                   justify-content-end
-                                                   gap-2"
-                                        >
+                                        <div class="kpl-actions">
+
 
                                             {% if payment.status == "PENDING" %}
 
                                                 <a
                                                     href="{% url 'payments:payment_pending' payment.id %}"
-                                                    class="btn btn-sm btn-warning"
+                                                    class="btn btn-warning kpl-table-action kpl-action-warning"
+                                                    data-navigation
                                                     title="Continue payment"
                                                 >
 
-                                                    <i
-                                                        class="bi bi-arrow-right-circle me-1"
-                                                    ></i>
+                                                    <i class="bi bi-arrow-right-circle me-1"></i>
 
                                                     Continue
 
@@ -771,13 +1800,12 @@
 
                                                 <a
                                                     href="{% url 'payments:payment_success' payment.id %}"
-                                                    class="btn btn-sm btn-success"
+                                                    class="btn btn-success kpl-table-action kpl-action-success"
+                                                    data-navigation
                                                     title="View successful payment"
                                                 >
 
-                                                    <i
-                                                        class="bi bi-check-circle me-1"
-                                                    ></i>
+                                                    <i class="bi bi-check-circle me-1"></i>
 
                                                     Success
 
@@ -787,13 +1815,12 @@
 
                                                 <a
                                                     href="{% url 'payments:payment_failed' payment.id %}"
-                                                    class="btn btn-sm btn-outline-danger"
+                                                    class="btn btn-outline-danger kpl-table-action"
+                                                    data-navigation
                                                     title="View payment result"
                                                 >
 
-                                                    <i
-                                                        class="bi bi-exclamation-circle me-1"
-                                                    ></i>
+                                                    <i class="bi bi-exclamation-circle me-1"></i>
 
                                                     Result
 
@@ -804,11 +1831,16 @@
 
                                             <a
                                                 href="{% url 'payments:payment_detail' payment.id %}"
-                                                class="btn btn-sm btn-outline-primary"
+                                                class="btn btn-outline-primary kpl-table-action"
+                                                data-navigation
                                                 title="View payment details"
                                             >
 
                                                 <i class="bi bi-eye"></i>
+
+                                                <span class="d-none d-sm-inline ms-1">
+                                                    Details
+                                                </span>
 
                                             </a>
 
@@ -826,99 +1858,90 @@
 
                 </div>
 
-            </div>
+            {% else %}
 
-        {% else %}
+                <!-- =================================================
+                     EMPTY STATE
+                ================================================== -->
 
-            <div class="card-body text-center py-5">
+                <div class="kpl-empty-state">
 
-                <div
-                    class="rounded-circle
-                           bg-success bg-opacity-10
-                           d-inline-flex
-                           align-items-center
-                           justify-content-center mb-4"
-                    style="width: 85px; height: 85px;"
-                >
+                    <div class="kpl-empty-icon">
 
-                    <i
-                        class="bi bi-receipt text-success"
-                        style="font-size: 38px;"
-                    ></i>
+                        <i class="bi bi-receipt"></i>
 
-                </div>
+                    </div>
 
 
-                <h4 class="fw-bold mb-2">
-                    No Payment History
-                </h4>
+                    <h3 class="kpl-empty-title">
+                        No Payment History
+                    </h3>
 
 
-                <p class="text-muted mb-4">
+                    <p class="kpl-empty-description">
 
-                    You have not made any KUCSA payments yet.
+                        You have not made any KUCSA payments yet.
+                        Once you make a payment, your transaction
+                        history will appear here.
 
-                </p>
-
-
-                <div
-                    class="d-flex
-                           flex-column flex-sm-row
-                           justify-content-center
-                           gap-2"
-                >
-
-                    <a
-                        href="{% url 'payments:payment_create' %}"
-                        class="btn btn-success"
-                    >
-
-                        <i class="bi bi-phone-fill me-2"></i>
-
-                        Pay Membership
-
-                    </a>
+                    </p>
 
 
-                    <a
-                        href="{% url 'payments:support' %}"
-                        class="btn btn-primary"
-                    >
+                    <div class="kpl-empty-actions">
 
-                        <i class="bi bi-heart-fill me-2"></i>
+                        <a
+                            href="{% url 'payments:payment_create' %}"
+                            class="btn btn-success kpl-action-btn kpl-primary-btn"
+                            data-navigation
+                        >
 
-                        Support KUCSA
+                            <i class="bi bi-phone-fill me-2"></i>
 
-                    </a>
+                            Pay Membership
+
+                        </a>
+
+
+                        <a
+                            href="{% url 'payments:support' %}"
+                            class="btn btn-primary kpl-action-btn kpl-support-btn"
+                            data-navigation
+                        >
+
+                            <i class="bi bi-heart-fill me-2"></i>
+
+                            Support KUCSA
+
+                        </a>
+
+                    </div>
 
                 </div>
 
+            {% endif %}
+
+        </section>
+
+
+        <!-- =====================================================
+             PAYMENT INFORMATION
+        ====================================================== -->
+
+        <div class="kpl-information kpl-reveal">
+
+            <div class="kpl-information-icon">
+
+                <i class="bi bi-info-circle"></i>
+
             </div>
-
-        {% endif %}
-
-    </div>
-
-
-    <!-- =========================================================
-         PAYMENT INFORMATION
-    ========================================================== -->
-
-    <div class="alert alert-light border mt-4 mb-0">
-
-        <div class="d-flex align-items-start">
-
-            <i
-                class="bi bi-info-circle text-success me-2 mt-1"
-            ></i>
 
             <div>
 
-                <strong class="d-block mb-1">
+                <span class="kpl-information-title">
                     Payment Information
-                </strong>
+                </span>
 
-                <small class="text-muted">
+                <div class="kpl-information-text">
 
                     M-Pesa payments are verified automatically through
                     Safaricom. Membership payments activate your KUCSA
@@ -926,13 +1949,200 @@
                     Voluntary support contributions are recorded
                     separately and do not affect your membership status.
 
-                </small>
+                </div>
 
             </div>
 
         </div>
 
     </div>
+
+
+    <!-- =========================================================
+         INLINE JAVASCRIPT
+    ========================================================== -->
+
+    <script>
+        (function () {
+            "use strict";
+
+            const page = document.querySelector(".kucsa-payment-list-page");
+
+            if (!page) {
+                return;
+            }
+
+
+            /* =====================================================
+               REVEAL ANIMATIONS
+            ====================================================== */
+
+            const revealItems = page.querySelectorAll(".kpl-reveal");
+
+            const reducedMotion = window.matchMedia(
+                "(prefers-reduced-motion: reduce)"
+            ).matches;
+
+
+            if (reducedMotion || !("IntersectionObserver" in window)) {
+
+                revealItems.forEach(function (element) {
+                    element.classList.add("kpl-visible");
+                });
+
+            } else {
+
+                const observer = new IntersectionObserver(
+                    function (entries, observerInstance) {
+
+                        entries.forEach(function (entry) {
+
+                            if (entry.isIntersecting) {
+
+                                entry.target.classList.add("kpl-visible");
+
+                                observerInstance.unobserve(entry.target);
+
+                            }
+
+                        });
+
+                    },
+                    {
+                        threshold: 0.08,
+                        rootMargin: "0px 0px -25px 0px"
+                    }
+                );
+
+
+                revealItems.forEach(function (element, index) {
+
+                    element.style.transitionDelay =
+                        Math.min(index * 60, 240) + "ms";
+
+                    observer.observe(element);
+
+                });
+
+            }
+
+
+            /* =====================================================
+               NAVIGATION LOADING STATES
+            ====================================================== */
+
+            const navigationLinks = page.querySelectorAll(
+                "[data-navigation]"
+            );
+
+
+            navigationLinks.forEach(function (link) {
+
+                link.addEventListener("click", function () {
+
+                    if (
+                        link.dataset.loading === "true" ||
+                        link.getAttribute("aria-disabled") === "true"
+                    ) {
+                        return;
+                    }
+
+
+                    link.dataset.loading = "true";
+
+                    const originalHTML = link.innerHTML;
+
+                    link.dataset.originalHtml = originalHTML;
+
+                    link.setAttribute("aria-disabled", "true");
+
+                    link.style.pointerEvents = "none";
+
+                    link.innerHTML =
+                        '<span class="spinner-border spinner-border-sm me-2" ' +
+                        'aria-hidden="true"></span>' +
+                        '<span>Opening...</span>';
+
+                });
+
+            });
+
+
+            /* =====================================================
+               RESTORE UI WHEN RETURNING THROUGH BFCACHE
+            ====================================================== */
+
+            window.addEventListener("pageshow", function () {
+
+                navigationLinks.forEach(function (link) {
+
+                    link.dataset.loading = "false";
+
+                    link.removeAttribute("aria-disabled");
+
+                    link.style.pointerEvents = "";
+
+                    if (link.dataset.originalHtml) {
+
+                        link.innerHTML = link.dataset.originalHtml;
+
+                    }
+
+                });
+
+            });
+
+
+            /* =====================================================
+               MOBILE TOUCH FEEDBACK
+            ====================================================== */
+
+            const cards = page.querySelectorAll(".kpl-card");
+
+            cards.forEach(function (card) {
+
+                card.addEventListener(
+                    "touchstart",
+                    function () {
+                        card.style.transitionDuration = "0.12s";
+                    },
+                    { passive: true }
+                );
+
+                card.addEventListener(
+                    "touchend",
+                    function () {
+                        card.style.transitionDuration = "";
+                    },
+                    { passive: true }
+                );
+
+            });
+
+
+            /* =====================================================
+               KEYBOARD ACCESSIBILITY
+            ====================================================== */
+
+            page.addEventListener("keydown", function (event) {
+
+                if (event.key === "Escape") {
+
+                    const activeElement = document.activeElement;
+
+                    if (
+                        activeElement &&
+                        activeElement.matches("a, button")
+                    ) {
+                        activeElement.blur();
+                    }
+
+                }
+
+            });
+
+        })();
+    </script>
 
 </div>
 

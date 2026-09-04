@@ -4,1648 +4,1331 @@
 
 {% block content %}
 
-<div class="container py-5">
-
-    <div class="row justify-content-center">
-
-        <div class="col-12 col-md-7 col-lg-5">
-
-            <!-- =====================================================
-                 PAYMENT PENDING CARD
-            ====================================================== -->
-
-            <div class="card border-0 shadow-sm">
-
-                <div class="card-body text-center p-4 p-md-5">
-
-                    <!-- =================================================
-                         PAYMENT ICON
-                    ================================================== -->
-
-                    <div
-                        id="paymentIcon"
-                        class="rounded-circle bg-warning bg-opacity-10
-                               d-inline-flex align-items-center
-                               justify-content-center mb-4"
-                        style="width: 80px; height: 80px;"
-                    >
-
-                        <i
-                            id="paymentIconElement"
-                            class="bi bi-phone-fill text-warning"
-                            style="font-size: 36px;"
-                        ></i>
-
-                    </div>
-
-
-                    <!-- =================================================
-                         TITLE
-                    ================================================== -->
-
-                    <h3
-                        id="paymentTitle"
-                        class="fw-bold mb-2"
-                    >
-                        Check Your Phone
-                    </h3>
-
-
-                    <!-- =================================================
-                         DESCRIPTION
-                    ================================================== -->
-
-                    <p
-                        id="paymentDescription"
-                        class="text-muted mb-4"
-                    >
-
-                        {% if payment.is_membership_payment %}
-
-                            An M-Pesa membership payment request
-                            has been sent to your phone.
-
-                        {% elif payment.is_support_payment %}
-
-                            An M-Pesa support contribution request
-                            has been sent to your phone.
-
-                        {% else %}
-
-                            An M-Pesa payment request has been
-                            sent to your phone.
-
-                        {% endif %}
-
-                    </p>
-
-
-                    <!-- =================================================
-                         PAYMENT DETAILS
-                    ================================================== -->
-
-                    <div class="bg-light rounded-3 p-3 mb-4">
-
-                        <!-- AMOUNT -->
-
-                        <div class="d-flex justify-content-between mb-2">
-
-                            <span class="text-muted">
-                                Amount
-                            </span>
-
-                            <strong>
-                                KES {{ payment.amount|floatformat:2 }}
-                            </strong>
-
-                        </div>
-
-
-                        <!-- PAYMENT TYPE -->
-
-                        <div class="d-flex justify-content-between mb-2">
-
-                            <span class="text-muted">
-                                Payment
-                            </span>
-
-                            <strong>
-                                {{ payment.get_payment_type_display }}
-                            </strong>
-
-                        </div>
-
-
-                        <!-- PHONE -->
-
-                        <div class="d-flex justify-content-between mb-2">
-
-                            <span class="text-muted">
-                                Phone
-                            </span>
-
-                            <strong>
-                                {{ payment.phone_number }}
-                            </strong>
-
-                        </div>
-
-
-                        <!-- STATUS -->
-
-                        <div class="d-flex justify-content-between">
-
-                            <span class="text-muted">
-                                Status
-                            </span>
-
-                            <span
-                                id="paymentStatusBadge"
-                                class="badge bg-warning text-dark"
-                            >
-                                {{ payment.get_status_display }}
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- =================================================
-                         MEMBERSHIP INFORMATION
-                    ================================================== -->
-
-                    {% if payment.is_membership_payment %}
-
-                        <div
-                            id="membershipInfo"
-                            class="alert alert-light border
-                                   text-start mb-4"
-                        >
-
-                            <div class="d-flex align-items-start">
-
-                                <i
-                                    class="bi bi-person-check text-success
-                                           me-2 mt-1"
-                                ></i>
-
-                                <div>
-
-                                    <strong>
-                                        Membership payment
-                                    </strong>
-
-                                    <p class="text-muted small mb-0 mt-1">
-
-                                        Once Safaricom confirms this
-                                        payment, your KUCSA membership
-                                        will be activated automatically.
-
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    {% elif payment.is_support_payment %}
-
-                        <div
-                            id="supportInfo"
-                            class="alert alert-light border
-                                   text-start mb-4"
-                        >
-
-                            <div class="d-flex align-items-start">
-
-                                <i
-                                    class="bi bi-heart text-success
-                                           me-2 mt-1"
-                                ></i>
-
-                                <div>
-
-                                    <strong>
-                                        KUCSA support contribution
-                                    </strong>
-
-                                    <p class="text-muted small mb-0 mt-1">
-
-                                        This contribution supports
-                                        KUCSA activities and does not
-                                        change your membership status.
-
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    {% endif %}
-
-
-                    <!-- =================================================
-                         PAYMENT INSTRUCTIONS
-                    ================================================== -->
-
-                    <div
-                        id="paymentInstructions"
-                        class="text-start mb-4"
-                    >
-
-                        <!-- STEP 1 -->
-
-                        <div class="d-flex mb-3">
-
-                            <div
-                                class="rounded-circle bg-success
-                                       text-white d-flex
-                                       align-items-center
-                                       justify-content-center
-                                       flex-shrink-0 me-3"
-                                style="width: 30px; height: 30px;"
-                            >
-                                1
-                            </div>
-
-                            <div>
-
-                                <strong>
-                                    Check your phone
-                                </strong>
-
-                                <p class="text-muted small mb-0">
-
-                                    Look for the M-Pesa payment
-                                    request on the phone number
-                                    shown above.
-
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- STEP 2 -->
-
-                        <div class="d-flex mb-3">
-
-                            <div
-                                class="rounded-circle bg-success
-                                       text-white d-flex
-                                       align-items-center
-                                       justify-content-center
-                                       flex-shrink-0 me-3"
-                                style="width: 30px; height: 30px;"
-                            >
-                                2
-                            </div>
-
-                            <div>
-
-                                <strong>
-                                    Enter your M-Pesa PIN
-                                </strong>
-
-                                <p class="text-muted small mb-0">
-
-                                    Confirm the payment request
-                                    securely on your phone.
-
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- STEP 3 -->
-
-                        <div class="d-flex">
-
-                            <div
-                                class="rounded-circle bg-success
-                                       text-white d-flex
-                                       align-items-center
-                                       justify-content-center
-                                       flex-shrink-0 me-3"
-                                style="width: 30px; height: 30px;"
-                            >
-                                3
-                            </div>
-
-                            <div>
-
-                                <strong>
-                                    Wait for confirmation
-                                </strong>
-
-                                <p
-                                    id="stepThreeDescription"
-                                    class="text-muted small mb-0"
-                                >
-
-                                    {% if payment.is_membership_payment %}
-
-                                        Your membership will be
-                                        activated automatically after
-                                        Safaricom confirms the payment.
-
-                                    {% elif payment.is_support_payment %}
-
-                                        Your support contribution will
-                                        be recorded automatically after
-                                        Safaricom confirms the payment.
-
-                                    {% else %}
-
-                                        Your payment will be recorded
-                                        after Safaricom confirms it.
-
-                                    {% endif %}
-
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- =================================================
-                         LIVE PAYMENT STATUS
-                    ================================================== -->
-
-                    <div
-                        id="paymentStatus"
-                        class="alert alert-warning
-                               d-flex align-items-center
-                               text-start"
-                        role="status"
-                        aria-live="polite"
-                    >
-
-                        <div
-                            id="statusSpinner"
-                            class="spinner-border spinner-border-sm
-                                   text-warning me-3 flex-shrink-0"
-                            role="status"
-                            aria-hidden="true"
-                        ></div>
-
-                        <div>
-
-                            <strong id="statusTitle">
-                                Payment is being processed
-                            </strong>
-
-                            <br>
-
-                            <small id="statusMessage">
-
-                                Please complete the M-Pesa request
-                                on your phone.
-
-                            </small>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- =================================================
-                         PAYMENT REFERENCE
-                    ================================================== -->
-
-                    {% if payment.checkout_request_id %}
-
-                        <div class="text-center mb-3">
-
-                            <small class="text-muted">
-
-                                Payment reference:
-
-                                <span class="fw-semibold">
-                                    {{ payment.checkout_request_id }}
-                                </span>
-
-                            </small>
-
-                        </div>
-
-                    {% endif %}
-
-
-                    <!-- =================================================
-                         BACK TO PAYMENTS
-                    ================================================== -->
-
-                    <a
-                        href="{% url 'payments:payment_list' %}"
-                        class="btn btn-outline-secondary w-100 mt-2"
-                    >
-
-                        <i class="bi bi-arrow-left me-2"></i>
-
-                        Back to Payments
-
-                    </a>
-
-                </div>
-
-            </div>
-
-
-            <!-- =====================================================
-                 SECURITY NOTE
-            ====================================================== -->
-
-            <div class="text-center mt-3">
-
-                <small class="text-muted">
-
-                    <i class="bi bi-shield-check me-1"></i>
-
-                    Your payment is securely processed through M-Pesa.
-
-                </small>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- =============================================================
-     PAYMENT STATUS POLLING
-============================================================== -->
-
-<script>
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    "use strict";
-
-
-    /* =============================================================
-       URLS
-    ============================================================= */
-
-    const statusUrl =
-        "{% url 'payments:payment_status' payment.id %}";
-
-    const successUrl =
-        "{% url 'payments:payment_success' payment.id %}";
-
-    const failedUrl =
-        "{% url 'payments:payment_failed' payment.id %}";
-
-
-    /* =============================================================
-       PAYMENT INFORMATION FROM DJANGO
-    ============================================================= */
-
-    const paymentType =
-        "{{ payment.payment_type|escapejs }}".toUpperCase();
-
-
-    const isMembershipPayment =
-        paymentType === "MEMBERSHIP";
-
-
-    const isSupportPayment =
-        paymentType === "SUPPORT";
-
-
-    /* =============================================================
-       DOM ELEMENTS
-    ============================================================= */
-
-    const statusBox =
-        document.getElementById("paymentStatus");
-
-    const statusSpinner =
-        document.getElementById("statusSpinner");
-
-    const statusTitle =
-        document.getElementById("statusTitle");
-
-    const statusMessage =
-        document.getElementById("statusMessage");
-
-    const paymentTitle =
-        document.getElementById("paymentTitle");
-
-    const paymentDescription =
-        document.getElementById("paymentDescription");
-
-    const paymentIcon =
-        document.getElementById("paymentIcon");
-
-    const paymentIconElement =
-        document.getElementById("paymentIconElement");
-
-    const paymentStatusBadge =
-        document.getElementById("paymentStatusBadge");
-
-    const paymentInstructions =
-        document.getElementById("paymentInstructions");
-
-    const stepThreeDescription =
-        document.getElementById("stepThreeDescription");
-
-
-    /* =============================================================
-       SAFETY CHECK
-    ============================================================= */
-
-    if (
-        !statusBox ||
-        !statusSpinner ||
-        !statusTitle ||
-        !statusMessage ||
-        !paymentTitle ||
-        !paymentDescription ||
-        !paymentIcon ||
-        !paymentIconElement ||
-        !paymentStatusBadge
-    ) {
-
-        console.error(
-            "Payment status UI elements are missing."
-        );
-
-        return;
-
-    }
-
-
-    /* =============================================================
-       POLLING STATE
-    ============================================================= */
-
-    let pollingTimer = null;
-
-    let checking = false;
-
-    let attempts = 0;
-
-    let terminalStateReached = false;
-
-
-    /* =============================================================
-       POLLING CONFIGURATION
-    ============================================================= */
-
-    const pollingInterval = 2500;
-
-    /*
-     * 240 × 2.5 seconds ≈ 10 minutes.
-     *
-     * This is only browser-side polling.
-     *
-     * It DOES NOT determine whether a payment has
-     * actually expired or failed.
-     */
-
-    const maxAttempts = 240;
-
-
-    /* =============================================================
-       STOP POLLING
-    ============================================================= */
-
-    function stopPolling() {
-
-        if (pollingTimer !== null) {
-
-            clearInterval(
-                pollingTimer
+<div class="kucsa-payment-pending">
+
+    <style>
+        /* =========================================================
+           KUCSA PAYMENT PENDING
+           Scoped styles — safe for base.html
+        ========================================================== */
+
+        .kucsa-payment-pending {
+            --kpp-primary: #198754;
+            --kpp-primary-dark: #146c43;
+            --kpp-primary-soft: rgba(25, 135, 84, 0.09);
+
+            --kpp-warning: #f59f00;
+            --kpp-warning-dark: #c77700;
+            --kpp-warning-soft: rgba(245, 159, 0, 0.10);
+
+            --kpp-danger: #dc3545;
+            --kpp-danger-soft: rgba(220, 53, 69, 0.09);
+
+            --kpp-blue: #0d6efd;
+            --kpp-blue-soft: rgba(13, 110, 253, 0.09);
+
+            --kpp-dark: #172033;
+            --kpp-text: #273142;
+            --kpp-muted: #6c757d;
+            --kpp-border: #e8edf2;
+            --kpp-soft: #f7f9fc;
+            --kpp-white: #ffffff;
+
+            --kpp-radius: 22px;
+            --kpp-radius-sm: 14px;
+
+            --kpp-shadow:
+                0 14px 45px rgba(23, 32, 51, 0.08);
+
+            --kpp-shadow-hover:
+                0 20px 55px rgba(23, 32, 51, 0.12);
+
+            width: 100%;
+            min-width: 0;
+            padding: 1.25rem 0 2.5rem;
+            color: var(--kpp-text);
+        }
+
+
+        /* =========================================================
+           PAGE SHELL
+        ========================================================== */
+
+        .kpp-shell {
+            width: min(100% - 2rem, 720px);
+            margin: 0 auto;
+        }
+
+
+        /* =========================================================
+           MAIN CARD
+        ========================================================== */
+
+        .kpp-main-card {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--kpp-border);
+            border-radius: var(--kpp-radius);
+            background: var(--kpp-white);
+            box-shadow: var(--kpp-shadow);
+        }
+
+        .kpp-main-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(
+                90deg,
+                var(--kpp-primary),
+                var(--kpp-warning),
+                var(--kpp-primary)
             );
-
-            pollingTimer = null;
-
-        }
-
-    }
-
-
-    /* =============================================================
-       SHOW SPINNER
-    ============================================================= */
-
-    function showSpinner() {
-
-        statusSpinner.style.display =
-            "block";
-
-        statusSpinner.className =
-            "spinner-border spinner-border-sm " +
-            "text-warning me-3 flex-shrink-0";
-
-        statusSpinner.style.fontSize =
-            "";
-
-        statusSpinner.setAttribute(
-            "aria-hidden",
-            "true"
-        );
-
-    }
-
-
-    /* =============================================================
-       SHOW SUCCESS ICON
-    ============================================================= */
-
-    function showSuccessIcon() {
-
-        statusSpinner.style.display =
-            "block";
-
-        statusSpinner.className =
-            "bi bi-check-circle-fill " +
-            "text-success me-3 flex-shrink-0";
-
-        statusSpinner.style.fontSize =
-            "20px";
-
-    }
-
-
-    /* =============================================================
-       SHOW FAILED ICON
-    ============================================================= */
-
-    function showFailedIcon() {
-
-        statusSpinner.style.display =
-            "block";
-
-        statusSpinner.className =
-            "bi bi-x-circle-fill " +
-            "text-danger me-3 flex-shrink-0";
-
-        statusSpinner.style.fontSize =
-            "20px";
-
-    }
-
-
-    /* =============================================================
-       SHOW TIMEOUT / STILL PROCESSING
-    ============================================================= */
-
-    function showLongPendingState() {
-
-        stopPolling();
-
-
-        statusSpinner.style.display =
-            "none";
-
-
-        statusBox.classList.remove(
-            "alert-success",
-            "alert-danger"
-        );
-
-        statusBox.classList.add(
-            "alert-warning"
-        );
-
-
-        statusTitle.textContent =
-            "Confirmation is taking longer than expected";
-
-
-        statusMessage.textContent =
-            "Your payment may still be processing. " +
-            "Please check your payment history later " +
-            "for the final status.";
-
-    }
-
-
-    /* =============================================================
-       MEMBERSHIP SUCCESS
-    ============================================================= */
-
-    function showMembershipSuccessState(data) {
-
-        terminalStateReached = true;
-
-        stopPolling();
-
-
-        /* STATUS BOX */
-
-        statusBox.classList.remove(
-            "alert-warning",
-            "alert-danger"
-        );
-
-        statusBox.classList.add(
-            "alert-success"
-        );
-
-
-        /* ICON */
-
-        showSuccessIcon();
-
-
-        /* TITLE */
-
-        statusTitle.textContent =
-            "Membership payment confirmed";
-
-
-        /* MESSAGE */
-
-        if (data.receipt) {
-
-            statusMessage.textContent =
-                "M-Pesa receipt: " +
-                data.receipt;
-
-        } else {
-
-            statusMessage.textContent =
-                "Your KUCSA membership payment " +
-                "has been successfully verified.";
-
+            background-size: 200% 100%;
+            animation: kppGradientFlow 5s linear infinite;
         }
 
 
-        /* PAGE TITLE */
+        /* =========================================================
+           HEADER
+        ========================================================== */
 
-        paymentTitle.textContent =
-            "Payment Successful";
+        .kpp-card-body {
+            padding: 2.25rem;
+        }
 
+        .kpp-brand-line {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            margin-bottom: 1.5rem;
+            color: var(--kpp-primary);
+            font-size: 0.7rem;
+            font-weight: 850;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
 
-        paymentDescription.textContent =
-            "Your KUCSA membership payment has " +
-            "been successfully verified.";
-
-
-        /* BADGE */
-
-        paymentStatusBadge.className =
-            "badge bg-success";
-
-        paymentStatusBadge.textContent =
-            "Completed";
-
-
-        /* MAIN ICON */
-
-        paymentIcon.classList.remove(
-            "bg-warning",
-            "bg-opacity-10",
-            "bg-danger"
-        );
-
-        paymentIcon.classList.add(
-            "bg-success",
-            "bg-opacity-10"
-        );
-
-
-        paymentIconElement.className =
-            "bi bi-check-circle-fill text-success";
-
-        paymentIconElement.style.fontSize =
-            "36px";
-
-
-        /* INSTRUCTIONS */
-
-        if (paymentInstructions) {
-
-            paymentInstructions.style.opacity =
-                "0.75";
-
+        .kpp-brand-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+            box-shadow:
+                0 0 0 5px var(--kpp-primary-soft);
         }
 
 
-        if (stepThreeDescription) {
+        /* =========================================================
+           PAYMENT ICON
+        ========================================================== */
 
-            stepThreeDescription.textContent =
-                "Your membership payment has been " +
-                "confirmed successfully.";
+        .kpp-icon-wrap {
+            position: relative;
+            width: 88px;
+            height: 88px;
+            margin: 0 auto 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 26px;
+            background: var(--kpp-warning-soft);
+            color: var(--kpp-warning);
+        }
 
+        .kpp-icon-wrap::before,
+        .kpp-icon-wrap::after {
+            content: "";
+            position: absolute;
+            inset: -7px;
+            border: 1px solid rgba(245, 159, 0, 0.18);
+            border-radius: 30px;
+            animation: kppPulse 2.3s ease-out infinite;
+        }
+
+        .kpp-icon-wrap::after {
+            inset: -14px;
+            opacity: 0.55;
+            animation-delay: 0.7s;
+        }
+
+        .kpp-icon {
+            position: relative;
+            z-index: 2;
+            font-size: 2.2rem;
         }
 
 
-        /* REDIRECT */
+        /* =========================================================
+           TITLE
+        ========================================================== */
 
-        setTimeout(function () {
+        .kpp-title {
+            margin: 0 0 0.55rem;
+            color: var(--kpp-dark);
+            font-size: clamp(1.55rem, 4vw, 2rem);
+            font-weight: 850;
+            letter-spacing: -0.035em;
+            line-height: 1.2;
+        }
 
-            window.location.href =
-                successUrl;
-
-        }, 1000);
-
-    }
-
-
-    /* =============================================================
-       SUPPORT SUCCESS
-    ============================================================= */
-
-    function showSupportSuccessState(data) {
-
-        terminalStateReached = true;
-
-        stopPolling();
-
-
-        /* STATUS BOX */
-
-        statusBox.classList.remove(
-            "alert-warning",
-            "alert-danger"
-        );
-
-        statusBox.classList.add(
-            "alert-success"
-        );
-
-
-        /* ICON */
-
-        showSuccessIcon();
-
-
-        /* TITLE */
-
-        statusTitle.textContent =
-            "Support contribution confirmed";
-
-
-        /* MESSAGE */
-
-        if (data.receipt) {
-
-            statusMessage.textContent =
-                "M-Pesa receipt: " +
-                data.receipt;
-
-        } else {
-
-            statusMessage.textContent =
-                "Your KUCSA support contribution " +
-                "has been successfully recorded.";
-
+        .kpp-description {
+            max-width: 530px;
+            margin: 0 auto 1.7rem;
+            color: var(--kpp-muted);
+            font-size: 0.9rem;
+            line-height: 1.7;
         }
 
 
-        /* PAGE TITLE */
+        /* =========================================================
+           PAYMENT DETAILS
+        ========================================================== */
 
-        paymentTitle.textContent =
-            "Contribution Successful";
+        .kpp-payment-details {
+            margin-bottom: 1.4rem;
+            padding: 1.15rem;
+            border: 1px solid var(--kpp-border);
+            border-radius: var(--kpp-radius-sm);
+            background: var(--kpp-soft);
+            text-align: left;
+        }
 
+        .kpp-details-heading {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            margin-bottom: 0.85rem;
+            color: var(--kpp-dark);
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
 
-        paymentDescription.textContent =
-            "Thank you for supporting KUCSA.";
+        .kpp-details-heading i {
+            color: var(--kpp-primary);
+        }
 
+        .kpp-detail-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.72rem 0;
+            border-bottom: 1px solid var(--kpp-border);
+        }
 
-        /* BADGE */
+        .kpp-detail-row:first-of-type {
+            padding-top: 0.2rem;
+        }
 
-        paymentStatusBadge.className =
-            "badge bg-success";
+        .kpp-detail-row:last-child {
+            padding-bottom: 0;
+            border-bottom: 0;
+        }
 
-        paymentStatusBadge.textContent =
-            "Completed";
+        .kpp-detail-label {
+            color: var(--kpp-muted);
+            font-size: 0.76rem;
+            font-weight: 600;
+        }
 
+        .kpp-detail-value {
+            max-width: 62%;
+            overflow-wrap: anywhere;
+            color: var(--kpp-dark);
+            font-size: 0.79rem;
+            font-weight: 800;
+            text-align: right;
+        }
 
-        /* MAIN ICON */
+        .kpp-amount {
+            color: var(--kpp-primary-dark);
+            font-size: 0.92rem;
+        }
 
-        paymentIcon.classList.remove(
-            "bg-warning",
-            "bg-opacity-10",
-            "bg-danger"
-        );
-
-        paymentIcon.classList.add(
-            "bg-success",
-            "bg-opacity-10"
-        );
-
-
-        paymentIconElement.className =
-            "bi bi-check-circle-fill text-success";
-
-        paymentIconElement.style.fontSize =
-            "36px";
-
-
-        /* INSTRUCTIONS */
-
-        if (paymentInstructions) {
-
-            paymentInstructions.style.opacity =
-                "0.75";
-
+        .kpp-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            min-height: 28px;
+            padding: 0.35rem 0.65rem;
+            border: 1px solid rgba(245, 159, 0, 0.15);
+            border-radius: 999px;
+            background: var(--kpp-warning-soft);
+            color: var(--kpp-warning-dark);
+            font-size: 0.68rem;
+            font-weight: 800;
         }
 
 
-        if (stepThreeDescription) {
+        /* =========================================================
+           INFORMATION BOX
+        ========================================================== */
 
-            stepThreeDescription.textContent =
-                "Your support contribution has been " +
-                "recorded successfully.";
+        .kpp-context-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border: 1px solid var(--kpp-border);
+            border-radius: var(--kpp-radius-sm);
+            background: #fff;
+            text-align: left;
+        }
 
+        .kpp-context-icon {
+            width: 34px;
+            height: 34px;
+            flex: 0 0 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: var(--kpp-primary-soft);
+            color: var(--kpp-primary);
+        }
+
+        .kpp-context-title {
+            display: block;
+            margin-bottom: 0.2rem;
+            color: var(--kpp-dark);
+            font-size: 0.8rem;
+            font-weight: 800;
+        }
+
+        .kpp-context-text {
+            margin: 0;
+            color: var(--kpp-muted);
+            font-size: 0.74rem;
+            line-height: 1.65;
         }
 
 
-        /* REDIRECT */
+        /* =========================================================
+           PAYMENT STEPS
+        ========================================================== */
 
-        setTimeout(function () {
-
-            window.location.href =
-                successUrl;
-
-        }, 1000);
-
-    }
-
-
-    /* =============================================================
-       GENERIC SUCCESS
-    ============================================================= */
-
-    function showGenericSuccessState(data) {
-
-        terminalStateReached = true;
-
-        stopPolling();
-
-
-        statusBox.classList.remove(
-            "alert-warning",
-            "alert-danger"
-        );
-
-        statusBox.classList.add(
-            "alert-success"
-        );
-
-
-        showSuccessIcon();
-
-
-        statusTitle.textContent =
-            "Payment confirmed";
-
-
-        if (data.receipt) {
-
-            statusMessage.textContent =
-                "M-Pesa receipt: " +
-                data.receipt;
-
-        } else {
-
-            statusMessage.textContent =
-                "Your payment has been successfully " +
-                "verified.";
-
+        .kpp-steps {
+            margin-bottom: 1.5rem;
+            text-align: left;
         }
 
+        .kpp-steps-heading {
+            margin-bottom: 0.85rem;
+            color: var(--kpp-dark);
+            font-size: 0.82rem;
+            font-weight: 800;
+        }
 
-        paymentTitle.textContent =
-            "Payment Successful";
+        .kpp-step {
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            padding-bottom: 1rem;
+        }
 
+        .kpp-step:last-child {
+            padding-bottom: 0;
+        }
 
-        paymentDescription.textContent =
-            "Your payment has been successfully verified.";
-
-
-        paymentStatusBadge.className =
-            "badge bg-success";
-
-        paymentStatusBadge.textContent =
-            "Completed";
-
-
-        paymentIcon.classList.remove(
-            "bg-warning",
-            "bg-opacity-10",
-            "bg-danger"
-        );
-
-        paymentIcon.classList.add(
-            "bg-success",
-            "bg-opacity-10"
-        );
-
-
-        paymentIconElement.className =
-            "bi bi-check-circle-fill text-success";
-
-        paymentIconElement.style.fontSize =
-            "36px";
-
-
-        setTimeout(function () {
-
-            window.location.href =
-                successUrl;
-
-        }, 1000);
-
-    }
-
-
-    /* =============================================================
-       SUCCESS ROUTER
-    ============================================================= */
-
-    function showSuccessState(data) {
-
-        if (isMembershipPayment) {
-
-            showMembershipSuccessState(
-                data
+        .kpp-step:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            top: 31px;
+            left: 15px;
+            width: 2px;
+            height: calc(100% - 13px);
+            background: linear-gradient(
+                to bottom,
+                rgba(25, 135, 84, 0.35),
+                var(--kpp-border)
             );
+        }
 
-            return;
+        .kpp-step-number {
+            position: relative;
+            z-index: 2;
+            width: 31px;
+            height: 31px;
+            flex: 0 0 31px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--kpp-primary);
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 850;
+            box-shadow:
+                0 0 0 5px rgba(25, 135, 84, 0.08);
+        }
 
+        .kpp-step-content {
+            min-width: 0;
+            padding-top: 0.05rem;
+        }
+
+        .kpp-step-title {
+            display: block;
+            margin-bottom: 0.18rem;
+            color: var(--kpp-dark);
+            font-size: 0.79rem;
+            font-weight: 800;
+        }
+
+        .kpp-step-description {
+            margin: 0;
+            color: var(--kpp-muted);
+            font-size: 0.73rem;
+            line-height: 1.6;
         }
 
 
-        if (isSupportPayment) {
+        /* =========================================================
+           LIVE STATUS
+        ========================================================== */
 
-            showSupportSuccessState(
-                data
-            );
+        .kpp-live-status {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 1px solid rgba(245, 159, 0, 0.17);
+            border-radius: var(--kpp-radius-sm);
+            background: var(--kpp-warning-soft);
+            text-align: left;
+            transition:
+                background-color 0.25s ease,
+                border-color 0.25s ease;
+        }
 
-            return;
+        .kpp-status-spinner {
+            width: 34px;
+            height: 34px;
+            flex: 0 0 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 11px;
+            background: rgba(245, 159, 0, 0.12);
+            color: var(--kpp-warning-dark);
+        }
 
+        .kpp-live-title {
+            display: block;
+            margin-bottom: 0.18rem;
+            color: var(--kpp-dark);
+            font-size: 0.8rem;
+            font-weight: 800;
+        }
+
+        .kpp-live-message {
+            color: var(--kpp-muted);
+            font-size: 0.72rem;
+            line-height: 1.5;
         }
 
 
-        showGenericSuccessState(
-            data
-        );
+        /* =========================================================
+           REFERENCE
+        ========================================================== */
 
-    }
+        .kpp-reference {
+            margin: 0 0 1rem;
+            padding: 0.7rem 0.8rem;
+            border-radius: 10px;
+            background: var(--kpp-soft);
+            color: var(--kpp-muted);
+            font-size: 0.68rem;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
 
-
-    /* =============================================================
-       FAILED PAYMENT
-    ============================================================= */
-
-    function showFailedState(data) {
-
-        terminalStateReached = true;
-
-        stopPolling();
-
-
-        /* STATUS BOX */
-
-        statusBox.classList.remove(
-            "alert-warning",
-            "alert-success"
-        );
-
-        statusBox.classList.add(
-            "alert-danger"
-        );
-
-
-        /* ICON */
-
-        showFailedIcon();
-
-
-        /* TITLE */
-
-        statusTitle.textContent =
-            "Payment was not completed";
-
-
-        /* MESSAGE */
-
-        if (data && data.message) {
-
-            statusMessage.textContent =
-                data.message;
-
-        } else {
-
-            statusMessage.textContent =
-                "The M-Pesa transaction failed " +
-                "or was cancelled.";
-
+        .kpp-reference strong {
+            color: var(--kpp-dark);
+            font-weight: 750;
         }
 
 
-        /* BADGE */
+        /* =========================================================
+           BACK BUTTON
+        ========================================================== */
 
-        paymentStatusBadge.className =
-            "badge bg-danger";
+        .kpp-back-btn {
+            min-height: 44px;
+            border-radius: 11px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
 
-        paymentStatusBadge.textContent =
-            "Failed";
-
-
-        /* PAGE TITLE */
-
-        paymentTitle.textContent =
-            "Payment Not Completed";
-
-
-        if (isMembershipPayment) {
-
-            paymentDescription.textContent =
-                "Your M-Pesa membership payment " +
-                "was not successfully completed.";
-
-        } else if (isSupportPayment) {
-
-            paymentDescription.textContent =
-                "Your M-Pesa support contribution " +
-                "was not successfully completed.";
-
-        } else {
-
-            paymentDescription.textContent =
-                "Your M-Pesa payment was not " +
-                "successfully completed.";
-
+        .kpp-back-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 7px 18px rgba(23, 32, 51, 0.08);
         }
 
 
-        /* MAIN ICON */
+        /* =========================================================
+           SECURITY NOTE
+        ========================================================== */
 
-        paymentIcon.classList.remove(
-            "bg-warning",
-            "bg-opacity-10",
-            "bg-success"
-        );
+        .kpp-security {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            margin-top: 1rem;
+            color: var(--kpp-muted);
+            font-size: 0.69rem;
+            text-align: center;
+        }
 
-        paymentIcon.classList.add(
-            "bg-danger",
-            "bg-opacity-10"
-        );
-
-
-        paymentIconElement.className =
-            "bi bi-x-circle-fill text-danger";
-
-        paymentIconElement.style.fontSize =
-            "36px";
-
-
-        /* INSTRUCTIONS */
-
-        if (paymentInstructions) {
-
-            paymentInstructions.style.opacity =
-                "0.5";
-
+        .kpp-security i {
+            color: var(--kpp-primary);
+            font-size: 0.85rem;
         }
 
 
-        /* REDIRECT */
+        /* =========================================================
+           JS TRANSITION HELPERS
+        ========================================================== */
 
-        setTimeout(function () {
-
-            window.location.href =
-                failedUrl;
-
-        }, 1000);
-
-    }
-
-
-    /* =============================================================
-       CANCELLED PAYMENT
-    ============================================================= */
-
-    function showCancelledState(data) {
-
-        terminalStateReached = true;
-
-        stopPolling();
-
-
-        statusBox.classList.remove(
-            "alert-warning",
-            "alert-success"
-        );
-
-        statusBox.classList.add(
-            "alert-danger"
-        );
-
-
-        showFailedIcon();
-
-
-        statusTitle.textContent =
-            "Payment cancelled";
-
-
-        statusMessage.textContent =
-            "The M-Pesa payment request was cancelled " +
-            "or was not completed.";
-
-
-        paymentStatusBadge.className =
-            "badge bg-danger";
-
-        paymentStatusBadge.textContent =
-            "Cancelled";
-
-
-        paymentTitle.textContent =
-            "Payment Cancelled";
-
-
-        if (isMembershipPayment) {
-
-            paymentDescription.textContent =
-                "Your membership payment was cancelled " +
-                "before it could be completed.";
-
-        } else if (isSupportPayment) {
-
-            paymentDescription.textContent =
-                "Your support contribution was cancelled " +
-                "before it could be completed.";
-
-        } else {
-
-            paymentDescription.textContent =
-                "Your payment was cancelled before " +
-                "it could be completed.";
-
+        .kpp-fade-transition {
+            animation: kppFade 0.35s ease;
         }
 
 
-        paymentIcon.classList.remove(
-            "bg-warning",
-            "bg-opacity-10",
-            "bg-success"
-        );
+        /* =========================================================
+           FOCUS
+        ========================================================== */
 
-        paymentIcon.classList.add(
-            "bg-danger",
-            "bg-opacity-10"
-        );
-
-
-        paymentIconElement.className =
-            "bi bi-x-circle-fill text-danger";
-
-        paymentIconElement.style.fontSize =
-            "36px";
-
-
-        if (paymentInstructions) {
-
-            paymentInstructions.style.opacity =
-                "0.5";
-
+        .kucsa-payment-pending a:focus-visible,
+        .kucsa-payment-pending button:focus-visible {
+            outline: 3px solid rgba(25, 135, 84, 0.22);
+            outline-offset: 3px;
+            border-radius: 9px;
         }
 
 
-        setTimeout(function () {
+        /* =========================================================
+           ANIMATIONS
+        ========================================================== */
 
-            window.location.href =
-                failedUrl;
+        @keyframes kppPulse {
 
-        }, 1000);
-
-    }
-
-
-    /* =============================================================
-       PENDING STATE
-    ============================================================= */
-
-    function showPendingState() {
-
-        if (terminalStateReached) {
-
-            return;
-
-        }
-
-
-        showSpinner();
-
-
-        statusBox.classList.remove(
-            "alert-success",
-            "alert-danger"
-        );
-
-        statusBox.classList.add(
-            "alert-warning"
-        );
-
-
-        statusTitle.textContent =
-            "Payment is being processed";
-
-
-        statusMessage.textContent =
-            "Waiting for M-Pesa confirmation. " +
-            "Please complete the request on your phone.";
-
-
-        paymentStatusBadge.className =
-            "badge bg-warning text-dark";
-
-        paymentStatusBadge.textContent =
-            "Pending";
-
-    }
-
-
-    /* =============================================================
-       NORMALIZE PAYMENT STATUS
-    ============================================================= */
-
-    function normalizeStatus(value) {
-
-        if (!value) {
-
-            return "";
-
-        }
-
-        return String(value)
-            .trim()
-            .toUpperCase();
-
-    }
-
-
-    /* =============================================================
-       CHECK PAYMENT STATUS
-    ============================================================= */
-
-    async function checkPaymentStatus() {
-
-        if (
-            checking ||
-            terminalStateReached
-        ) {
-
-            return;
-
-        }
-
-
-        if (attempts >= maxAttempts) {
-
-            showLongPendingState();
-
-            return;
-
-        }
-
-
-        checking = true;
-
-        attempts++;
-
-
-        try {
-
-            const response =
-                await fetch(
-                    statusUrl,
-                    {
-                        method: "GET",
-
-                        headers: {
-                            "X-Requested-With":
-                                "XMLHttpRequest",
-
-                            "Accept":
-                                "application/json"
-                        },
-
-                        cache: "no-store",
-
-                        credentials: "same-origin"
-                    }
-                );
-
-
-            /* HTTP ERROR */
-
-            if (!response.ok) {
-
-                throw new Error(
-                    "Payment status request failed with HTTP " +
-                    response.status
-                );
-
+            0% {
+                transform: scale(0.88);
+                opacity: 0.65;
             }
 
-
-            const data =
-                await response.json();
-
-
-            /* API ERROR */
-
-            if (data.success !== true) {
-
-                throw new Error(
-                    data.message ||
-                    "Unable to retrieve payment status."
-                );
-
+            70% {
+                transform: scale(1.08);
+                opacity: 0;
             }
 
-
-            /* =====================================================
-               DETERMINE STATUS
-            ===================================================== */
-
-            const status =
-                normalizeStatus(
-                    data.status
-                );
-
-
-            /* =====================================================
-               COMPLETED
-            ===================================================== */
-
-            if (
-                data.completed === true ||
-                status === "COMPLETED" ||
-                status === "SUCCESS" ||
-                status === "SUCCESSFUL"
-            ) {
-
-                showSuccessState(
-                    data
-                );
-
-                return;
-
+            100% {
+                transform: scale(1.08);
+                opacity: 0;
             }
 
+        }
 
-            /* =====================================================
-               FAILED
-            ===================================================== */
+        @keyframes kppGradientFlow {
 
-            if (
-                data.failed === true ||
-                status === "FAILED"
-            ) {
-
-                showFailedState(
-                    data
-                );
-
-                return;
-
+            0% {
+                background-position: 0% 50%;
             }
 
-
-            /* =====================================================
-               CANCELLED
-            ===================================================== */
-
-            if (
-                status === "CANCELLED" ||
-                status === "CANCELED"
-            ) {
-
-                showCancelledState(
-                    data
-                );
-
-                return;
-
+            100% {
+                background-position: 200% 50%;
             }
 
+        }
 
-            /* =====================================================
-               PENDING / PROCESSING
-            ===================================================== */
+        @keyframes kppFade {
 
-            showPendingState();
-
-
-        } catch (error) {
-
-            console.error(
-                "Payment status check error:",
-                error
-            );
-
-
-            /*
-             * IMPORTANT:
-             *
-             * A network/API error does NOT mean
-             * the payment failed.
-             */
-
-            if (!terminalStateReached) {
-
-                statusBox.classList.remove(
-                    "alert-success",
-                    "alert-danger"
-                );
-
-                statusBox.classList.add(
-                    "alert-warning"
-                );
-
-
-                showSpinner();
-
-
-                statusTitle.textContent =
-                    "Still waiting for confirmation";
-
-
-                statusMessage.textContent =
-                    "We could not check the payment status " +
-                    "right now. Your payment has not been " +
-                    "marked as failed.";
-
+            from {
+                opacity: 0;
+                transform: translateY(5px);
             }
 
-        } finally {
-
-            checking = false;
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
 
         }
 
 
         /* =========================================================
-           MAXIMUM BROWSER POLLING
-        ========================================================= */
+           TABLET
+        ========================================================== */
 
-        if (
-            attempts >= maxAttempts &&
-            !terminalStateReached
-        ) {
+        @media (max-width: 767.98px) {
 
-            showLongPendingState();
+            .kucsa-payment-pending {
+                padding-top: 0.75rem;
+                padding-bottom: 1.5rem;
+            }
+
+            .kpp-shell {
+                width: min(100% - 1rem, 620px);
+            }
+
+            .kpp-card-body {
+                padding: 1.5rem;
+            }
+
+            .kpp-icon-wrap {
+                width: 78px;
+                height: 78px;
+                border-radius: 23px;
+            }
+
+            .kpp-icon {
+                font-size: 1.95rem;
+            }
+
+            .kpp-description {
+                font-size: 0.84rem;
+            }
+
+        }
+
+
+        /* =========================================================
+           MOBILE
+        ========================================================== */
+
+        @media (max-width: 575.98px) {
+
+            .kpp-shell {
+                width: calc(100% - 0.9rem);
+            }
+
+            .kpp-main-card {
+                border-radius: 18px;
+            }
+
+            .kpp-card-body {
+                padding: 1.15rem;
+            }
+
+            .kpp-brand-line {
+                margin-bottom: 1.25rem;
+            }
+
+            .kpp-icon-wrap {
+                margin-bottom: 1.2rem;
+            }
+
+            .kpp-title {
+                font-size: 1.45rem;
+            }
+
+            .kpp-description {
+                margin-bottom: 1.35rem;
+                font-size: 0.81rem;
+            }
+
+            .kpp-payment-details {
+                padding: 0.9rem;
+            }
+
+            .kpp-detail-row {
+                align-items: flex-start;
+            }
+
+            .kpp-detail-label {
+                font-size: 0.7rem;
+            }
+
+            .kpp-detail-value {
+                max-width: 58%;
+                font-size: 0.73rem;
+            }
+
+            .kpp-context-box {
+                padding: 0.85rem;
+            }
+
+            .kpp-step-description {
+                font-size: 0.7rem;
+            }
+
+            .kpp-live-status {
+                align-items: flex-start;
+                padding: 0.85rem;
+            }
 
         }
 
-    }
 
+        /* =========================================================
+           VERY SMALL DEVICES
+        ========================================================== */
 
-    /* =============================================================
-       INITIAL STATUS CHECK
-    ============================================================= */
+        @media (max-width: 359.98px) {
 
-    checkPaymentStatus();
+            .kpp-shell {
+                width: calc(100% - 0.7rem);
+            }
 
+            .kpp-card-body {
+                padding: 1rem;
+            }
 
-    /* =============================================================
-       START POLLING
-    ============================================================= */
+            .kpp-title {
+                font-size: 1.3rem;
+            }
 
-    pollingTimer =
-        setInterval(
-            checkPaymentStatus,
-            pollingInterval
-        );
+            .kpp-detail-row {
+                gap: 0.5rem;
+            }
 
+            .kpp-detail-value {
+                max-width: 55%;
+            }
 
-    /* =============================================================
-       PAGE CLEANUP
-    ============================================================= */
-
-    window.addEventListener(
-        "beforeunload",
-        function () {
-
-            stopPolling();
+            .kpp-step {
+                gap: 0.65rem;
+            }
 
         }
-    );
 
 
-    /* =============================================================
-       PAGE VISIBILITY HANDLING
-       -------------------------------------------------------------
-       If the user switches tabs or minimizes the browser,
-       do not make unnecessary requests.
-    ============================================================= */
+        /* =========================================================
+           REDUCED MOTION
+        ========================================================== */
 
-    document.addEventListener(
-        "visibilitychange",
-        function () {
+        @media (prefers-reduced-motion: reduce) {
+
+            .kpp-main-card::before,
+            .kpp-icon-wrap::before,
+            .kpp-icon-wrap::after,
+            .kpp-fade-transition {
+                animation: none !important;
+            }
+
+            .kpp-back-btn {
+                transition: none !important;
+            }
+
+            .kpp-back-btn:hover {
+                transform: none;
+            }
+
+        }
+    </style>
+
+
+    <div class="kpp-shell">
+
+        <!-- =====================================================
+             MAIN PAYMENT CARD
+        ====================================================== -->
+
+        <div class="kpp-main-card">
+
+            <div class="kpp-card-body">
+
+                <!-- =================================================
+                     BRAND / CONTEXT
+                ================================================== -->
+
+                <div class="kpp-brand-line">
+
+                    <span class="kpp-brand-dot"></span>
+
+                    KUCSA Payments
+
+                </div>
+
+
+                <!-- =================================================
+                     PAYMENT ICON
+                ================================================== -->
+
+                <div
+                    id="paymentIcon"
+                    class="kpp-icon-wrap"
+                    aria-hidden="true"
+                >
+
+                    <i
+                        id="paymentIconElement"
+                        class="bi bi-phone-fill kpp-icon"
+                    ></i>
+
+                </div>
+
+
+                <!-- =================================================
+                     TITLE
+                ================================================== -->
+
+                <h1
+                    id="paymentTitle"
+                    class="kpp-title text-center"
+                >
+                    Check Your Phone
+                </h1>
+
+
+                <!-- =================================================
+                     DESCRIPTION
+                ================================================== -->
+
+                <p
+                    id="paymentDescription"
+                    class="kpp-description text-center"
+                >
+
+                    {% if payment.is_membership_payment %}
+
+                        An M-Pesa membership payment request
+                        has been sent to your phone.
+
+                    {% elif payment.is_support_payment %}
+
+                        An M-Pesa support contribution request
+                        has been sent to your phone.
+
+                    {% else %}
+
+                        An M-Pesa payment request has been
+                        sent to your phone.
+
+                    {% endif %}
+
+                </p>
+
+
+                <!-- =================================================
+                     PAYMENT DETAILS
+                ================================================== -->
+
+                <div class="kpp-payment-details">
+
+                    <div class="kpp-details-heading">
+
+                        <i class="bi bi-receipt"></i>
+
+                        Payment Summary
+
+                    </div>
+
+
+                    <!-- AMOUNT -->
+
+                    <div class="kpp-detail-row">
+
+                        <span class="kpp-detail-label">
+                            Amount
+                        </span>
+
+                        <span class="kpp-detail-value kpp-amount">
+                            KES {{ payment.amount|floatformat:2 }}
+                        </span>
+
+                    </div>
+
+
+                    <!-- PAYMENT TYPE -->
+
+                    <div class="kpp-detail-row">
+
+                        <span class="kpp-detail-label">
+                            Payment
+                        </span>
+
+                        <span class="kpp-detail-value">
+                            {{ payment.get_payment_type_display }}
+                        </span>
+
+                    </div>
+
+
+                    <!-- PHONE -->
+
+                    <div class="kpp-detail-row">
+
+                        <span class="kpp-detail-label">
+                            Phone
+                        </span>
+
+                        <span class="kpp-detail-value">
+                            {{ payment.phone_number }}
+                        </span>
+
+                    </div>
+
+
+                    <!-- STATUS -->
+
+                    <div class="kpp-detail-row">
+
+                        <span class="kpp-detail-label">
+                            Status
+                        </span>
+
+                        <span
+                            id="paymentStatusBadge"
+                            class="kpp-status-badge"
+                        >
+
+                            <i class="bi bi-hourglass-split"></i>
+
+                            {{ payment.get_status_display }}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     MEMBERSHIP INFORMATION
+                ================================================== -->
+
+                {% if payment.is_membership_payment %}
+
+                    <div
+                        id="membershipInfo"
+                        class="kpp-context-box"
+                    >
+
+                        <div class="kpp-context-icon">
+
+                            <i class="bi bi-person-check"></i>
+
+                        </div>
+
+                        <div>
+
+                            <span class="kpp-context-title">
+                                Membership payment
+                            </span>
+
+                            <p class="kpp-context-text">
+
+                                Once Safaricom confirms this
+                                payment, your KUCSA membership
+                                will be activated automatically.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                {% elif payment.is_support_payment %}
+
+                    <div
+                        id="supportInfo"
+                        class="kpp-context-box"
+                    >
+
+                        <div class="kpp-context-icon">
+
+                            <i class="bi bi-heart"></i>
+
+                        </div>
+
+                        <div>
+
+                            <span class="kpp-context-title">
+                                KUCSA support contribution
+                            </span>
+
+                            <p class="kpp-context-text">
+
+                                This contribution supports
+                                KUCSA activities and does not
+                                change your membership status.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- =================================================
+                     PAYMENT INSTRUCTIONS
+                ================================================== -->
+
+                <div
+                    id="paymentInstructions"
+                    class="kpp-steps"
+                >
+
+                    <div class="kpp-steps-heading">
+                        Complete your payment
+                    </div>
+
+
+                    <!-- STEP 1 -->
+
+                    <div class="kpp-step">
+
+                        <div class="kpp-step-number">
+                            1
+                        </div>
+
+                        <div class="kpp-step-content">
+
+                            <strong class="kpp-step-title">
+                                Check your phone
+                            </strong>
+
+                            <p class="kpp-step-description">
+
+                                Look for the M-Pesa payment
+                                request on the phone number
+                                shown above.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- STEP 2 -->
+
+                    <div class="kpp-step">
+
+                        <div class="kpp-step-number">
+                            2
+                        </div>
+
+                        <div class="kpp-step-content">
+
+                            <strong class="kpp-step-title">
+                                Enter your M-Pesa PIN
+                            </strong>
+
+                            <p class="kpp-step-description">
+
+                                Confirm the payment request
+                                securely on your phone.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- STEP 3 -->
+
+                    <div class="kpp-step">
+
+                        <div class="kpp-step-number">
+                            3
+                        </div>
+
+                        <div class="kpp-step-content">
+
+                            <strong class="kpp-step-title">
+                                Wait for confirmation
+                            </strong>
+
+                            <p
+                                id="stepThreeDescription"
+                                class="kpp-step-description"
+                            >
+
+                                {% if payment.is_membership_payment %}
+
+                                    Your membership will be
+                                    activated automatically after
+                                    Safaricom confirms the payment.
+
+                                {% elif payment.is_support_payment %}
+
+                                    Your support contribution will
+                                    be recorded automatically after
+                                    Safaricom confirms the payment.
+
+                                {% else %}
+
+                                    Your payment will be recorded
+                                    after Safaricom confirms it.
+
+                                {% endif %}
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     LIVE PAYMENT STATUS
+                ================================================== -->
+
+                <div
+                    id="paymentStatus"
+                    class="kpp-live-status"
+                    role="status"
+                    aria-live="polite"
+                >
+
+                    <div
+                        id="statusSpinner"
+                        class="kpp-status-spinner"
+                    >
+
+                        <div
+                            class="spinner-border spinner-border-sm text-warning"
+                            role="status"
+                            aria-hidden="true"
+                        ></div>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong
+                            id="statusTitle"
+                            class="kpp-live-title"
+                        >
+                            Payment is being processed
+                        </strong>
+
+
+                        <span
+                            id="statusMessage"
+                            class="kpp-live-message"
+                        >
+
+                            Please complete the M-Pesa request
+                            on your phone.
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     PAYMENT REFERENCE
+                ================================================== -->
+
+                {% if payment.checkout_request_id %}
+
+                    <div class="kpp-reference">
+
+                        <i class="bi bi-fingerprint me-1"></i>
+
+                        Payment reference:
+
+                        <strong>
+                            {{ payment.checkout_request_id }}
+                        </strong>
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- =================================================
+                     BACK TO PAYMENTS
+                ================================================== -->
+
+                <a
+                    href="{% url 'payments:payment_list' %}"
+                    class="btn btn-outline-secondary w-100 kpp-back-btn"
+                    data-navigation
+                >
+
+                    <i class="bi bi-arrow-left me-2"></i>
+
+                    Back to Payments
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             SECURITY NOTE
+        ====================================================== -->
+
+        <div class="kpp-security">
+
+            <i class="bi bi-shield-check"></i>
+
+            <span>
+                Your payment is securely processed through M-Pesa.
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         PAYMENT STATUS POLLING
+    ========================================================== -->
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            "use strict";
+
+
+            /* =====================================================
+               URLS
+            ====================================================== */
+
+            const statusUrl =
+                "{% url 'payments:payment_status' payment.id %}";
+
+            const successUrl =
+                "{% url 'payments:payment_success' payment.id %}";
+
+            const failedUrl =
+                "{% url 'payments:payment_failed' payment.id %}";
+
+
+            /* =====================================================
+               PAYMENT INFORMATION FROM DJANGO
+            ====================================================== */
+
+            const paymentType =
+                "{{ payment.payment_type|escapejs }}".toUpperCase();
+
+
+            const isMembershipPayment =
+                paymentType === "MEMBERSHIP";
+
+
+            const isSupportPayment =
+                paymentType === "SUPPORT";
+
+
+            /* =====================================================
+               DOM ELEMENTS
+            ====================================================== */
+
+            const statusBox =
+                document.getElementById("paymentStatus");
+
+            const statusSpinner =
+                document.getElementById("statusSpinner");
+
+            const statusTitle =
+                document.getElementById("statusTitle");
+
+            const statusMessage =
+                document.getElementById("statusMessage");
+
+            const paymentTitle =
+                document.getElementById("paymentTitle");
+
+            const paymentDescription =
+                document.getElementById("paymentDescription");
+
+            const paymentIcon =
+                document.getElementById("paymentIcon");
+
+            const paymentIconElement =
+                document.getElementById("paymentIconElement");
+
+            const paymentStatusBadge =
+                document.getElementById("paymentStatusBadge");
+
+            const paymentInstructions =
+                document.getElementById("paymentInstructions");
+
+            const stepThreeDescription =
+                document.getElementById("stepThreeDescription");
+
+
+            /* =====================================================
+               SAFETY CHECK
+            ====================================================== */
 
             if (
-                document.hidden
+                !statusBox ||
+                !statusSpinner ||
+                !statusTitle ||
+                !statusMessage ||
+                !paymentTitle ||
+                !paymentDescription ||
+                !paymentIcon ||
+                !paymentIconElement ||
+                !paymentStatusBadge
             ) {
 
-                /*
-                 * Keep the timer stopped while the page
-                 * is hidden.
-                 */
+                console.error(
+                    "Payment status UI elements are missing."
+                );
+
+                return;
+
+            }
+
+
+            /* =====================================================
+               POLLING STATE
+            ====================================================== */
+
+            let pollingTimer = null;
+
+            let checking = false;
+
+            let attempts = 0;
+
+            let terminalStateReached = false;
+
+
+            /* =====================================================
+               POLLING CONFIGURATION
+            ====================================================== */
+
+            const pollingInterval = 2500;
+
+            /*
+             * 240 × 2.5 seconds ≈ 10 minutes.
+             *
+             * This is browser-side polling only.
+             *
+             * It does NOT determine whether the payment
+             * has actually expired or failed.
+             */
+
+            const maxAttempts = 240;
+
+
+            /* =====================================================
+               STOP POLLING
+            ====================================================== */
+
+            function stopPolling() {
 
                 if (pollingTimer !== null) {
 
@@ -1657,37 +1340,1141 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 }
 
-                return;
+            }
+
+
+            /* =====================================================
+               UI REFRESH
+            ====================================================== */
+
+            function refreshElement(element) {
+
+                if (!element) {
+                    return;
+                }
+
+                element.classList.remove(
+                    "kpp-fade-transition"
+                );
+
+                void element.offsetWidth;
+
+                element.classList.add(
+                    "kpp-fade-transition"
+                );
 
             }
 
 
-            /*
-             * When the user returns to the page,
-             * immediately check the current status.
-             */
+            /* =====================================================
+               SHOW SPINNER
+            ====================================================== */
 
-            if (
-                !terminalStateReached &&
-                pollingTimer === null
+            function showSpinner() {
+
+                statusSpinner.innerHTML =
+                    '<div class="spinner-border ' +
+                    'spinner-border-sm text-warning" ' +
+                    'role="status" ' +
+                    'aria-hidden="true"></div>';
+
+            }
+
+
+            /* =====================================================
+               SHOW SUCCESS ICON
+            ====================================================== */
+
+            function showSuccessIcon() {
+
+                statusSpinner.innerHTML =
+                    '<i class="bi bi-check-circle-fill ' +
+                    'text-success" ' +
+                    'style="font-size:20px;"></i>';
+
+            }
+
+
+            /* =====================================================
+               SHOW FAILED ICON
+            ====================================================== */
+
+            function showFailedIcon() {
+
+                statusSpinner.innerHTML =
+                    '<i class="bi bi-x-circle-fill ' +
+                    'text-danger" ' +
+                    'style="font-size:20px;"></i>';
+
+            }
+
+
+            /* =====================================================
+               UPDATE STATUS BADGE
+            ====================================================== */
+
+            function updateStatusBadge(
+                text,
+                type
             ) {
 
-                checkPaymentStatus();
+                paymentStatusBadge.className =
+                    "kpp-status-badge";
+
+                const icon =
+                    document.createElement("i");
 
 
-                pollingTimer =
-                    setInterval(
-                        checkPaymentStatus,
-                        pollingInterval
-                    );
+                if (type === "success") {
+
+                    icon.className =
+                        "bi bi-check-circle-fill";
+
+                    paymentStatusBadge.style.background =
+                        "rgba(25, 135, 84, 0.09)";
+
+                    paymentStatusBadge.style.borderColor =
+                        "rgba(25, 135, 84, 0.15)";
+
+                    paymentStatusBadge.style.color =
+                        "#146c43";
+
+                } else if (type === "danger") {
+
+                    icon.className =
+                        "bi bi-x-circle-fill";
+
+                    paymentStatusBadge.style.background =
+                        "rgba(220, 53, 69, 0.09)";
+
+                    paymentStatusBadge.style.borderColor =
+                        "rgba(220, 53, 69, 0.15)";
+
+                    paymentStatusBadge.style.color =
+                        "#b02a37";
+
+                } else {
+
+                    icon.className =
+                        "bi bi-hourglass-split";
+
+                    paymentStatusBadge.style.background =
+                        "rgba(245, 159, 0, 0.10)";
+
+                    paymentStatusBadge.style.borderColor =
+                        "rgba(245, 159, 0, 0.15)";
+
+                    paymentStatusBadge.style.color =
+                        "#c77700";
+
+                }
+
+
+                paymentStatusBadge.appendChild(
+                    icon
+                );
+
+                paymentStatusBadge.appendChild(
+                    document.createTextNode(
+                        " " + text
+                    )
+                );
+
+
+                refreshElement(
+                    paymentStatusBadge
+                );
 
             }
 
-        }
-    );
 
-});
+            /* =====================================================
+               SHOW LONG PENDING STATE
+            ====================================================== */
 
-</script>
+            function showLongPendingState() {
+
+                stopPolling();
+
+
+                statusSpinner.innerHTML =
+                    '<i class="bi bi-clock-history ' +
+                    'text-warning" ' +
+                    'style="font-size:20px;"></i>';
+
+
+                statusTitle.textContent =
+                    "Confirmation is taking longer than expected";
+
+
+                statusMessage.textContent =
+                    "Your payment may still be processing. " +
+                    "Please check your payment history later " +
+                    "for the final status.";
+
+
+                statusBox.style.background =
+                    "rgba(245, 159, 0, 0.07)";
+
+                statusBox.style.borderColor =
+                    "rgba(245, 159, 0, 0.16)";
+
+
+                refreshElement(
+                    statusBox
+                );
+
+            }
+
+
+            /* =====================================================
+               MEMBERSHIP SUCCESS
+            ====================================================== */
+
+            function showMembershipSuccessState(data) {
+
+                terminalStateReached = true;
+
+                stopPolling();
+
+
+                showSuccessIcon();
+
+
+                statusTitle.textContent =
+                    "Membership payment confirmed";
+
+
+                if (data.receipt) {
+
+                    statusMessage.textContent =
+                        "M-Pesa receipt: " +
+                        data.receipt;
+
+                } else {
+
+                    statusMessage.textContent =
+                        "Your KUCSA membership payment " +
+                        "has been successfully verified.";
+
+                }
+
+
+                paymentTitle.textContent =
+                    "Payment Successful";
+
+
+                paymentDescription.textContent =
+                    "Your KUCSA membership payment has " +
+                    "been successfully verified.";
+
+
+                updateStatusBadge(
+                    "Completed",
+                    "success"
+                );
+
+
+                paymentIcon.style.background =
+                    "rgba(25, 135, 84, 0.09)";
+
+                paymentIcon.style.color =
+                    "#198754";
+
+
+                paymentIconElement.className =
+                    "bi bi-check-circle-fill kpp-icon";
+
+
+                if (paymentInstructions) {
+
+                    paymentInstructions.style.opacity =
+                        "0.7";
+
+                }
+
+
+                if (stepThreeDescription) {
+
+                    stepThreeDescription.textContent =
+                        "Your membership payment has been " +
+                        "confirmed successfully.";
+
+                }
+
+
+                statusBox.style.background =
+                    "rgba(25, 135, 84, 0.07)";
+
+                statusBox.style.borderColor =
+                    "rgba(25, 135, 84, 0.16)";
+
+
+                refreshElement(
+                    paymentTitle
+                );
+
+                refreshElement(
+                    statusBox
+                );
+
+
+                setTimeout(function () {
+
+                    window.location.href =
+                        successUrl;
+
+                }, 1000);
+
+            }
+
+
+            /* =====================================================
+               SUPPORT SUCCESS
+            ====================================================== */
+
+            function showSupportSuccessState(data) {
+
+                terminalStateReached = true;
+
+                stopPolling();
+
+
+                showSuccessIcon();
+
+
+                statusTitle.textContent =
+                    "Support contribution confirmed";
+
+
+                if (data.receipt) {
+
+                    statusMessage.textContent =
+                        "M-Pesa receipt: " +
+                        data.receipt;
+
+                } else {
+
+                    statusMessage.textContent =
+                        "Your KUCSA support contribution " +
+                        "has been successfully recorded.";
+
+                }
+
+
+                paymentTitle.textContent =
+                    "Contribution Successful";
+
+
+                paymentDescription.textContent =
+                    "Thank you for supporting KUCSA.";
+
+
+                updateStatusBadge(
+                    "Completed",
+                    "success"
+                );
+
+
+                paymentIcon.style.background =
+                    "rgba(25, 135, 84, 0.09)";
+
+                paymentIcon.style.color =
+                    "#198754";
+
+
+                paymentIconElement.className =
+                    "bi bi-heart-fill kpp-icon";
+
+
+                if (paymentInstructions) {
+
+                    paymentInstructions.style.opacity =
+                        "0.7";
+
+                }
+
+
+                if (stepThreeDescription) {
+
+                    stepThreeDescription.textContent =
+                        "Your support contribution has been " +
+                        "recorded successfully.";
+
+                }
+
+
+                statusBox.style.background =
+                    "rgba(25, 135, 84, 0.07)";
+
+                statusBox.style.borderColor =
+                    "rgba(25, 135, 84, 0.16)";
+
+
+                refreshElement(
+                    paymentTitle
+                );
+
+                refreshElement(
+                    statusBox
+                );
+
+
+                setTimeout(function () {
+
+                    window.location.href =
+                        successUrl;
+
+                }, 1000);
+
+            }
+
+
+            /* =====================================================
+               GENERIC SUCCESS
+            ====================================================== */
+
+            function showGenericSuccessState(data) {
+
+                terminalStateReached = true;
+
+                stopPolling();
+
+
+                showSuccessIcon();
+
+
+                statusTitle.textContent =
+                    "Payment confirmed";
+
+
+                if (data.receipt) {
+
+                    statusMessage.textContent =
+                        "M-Pesa receipt: " +
+                        data.receipt;
+
+                } else {
+
+                    statusMessage.textContent =
+                        "Your payment has been successfully " +
+                        "verified.";
+
+                }
+
+
+                paymentTitle.textContent =
+                    "Payment Successful";
+
+
+                paymentDescription.textContent =
+                    "Your payment has been successfully verified.";
+
+
+                updateStatusBadge(
+                    "Completed",
+                    "success"
+                );
+
+
+                paymentIcon.style.background =
+                    "rgba(25, 135, 84, 0.09)";
+
+                paymentIcon.style.color =
+                    "#198754";
+
+
+                paymentIconElement.className =
+                    "bi bi-check-circle-fill kpp-icon";
+
+
+                statusBox.style.background =
+                    "rgba(25, 135, 84, 0.07)";
+
+                statusBox.style.borderColor =
+                    "rgba(25, 135, 84, 0.16)";
+
+
+                refreshElement(
+                    paymentTitle
+                );
+
+
+                setTimeout(function () {
+
+                    window.location.href =
+                        successUrl;
+
+                }, 1000);
+
+            }
+
+
+            /* =====================================================
+               SUCCESS ROUTER
+            ====================================================== */
+
+            function showSuccessState(data) {
+
+                if (isMembershipPayment) {
+
+                    showMembershipSuccessState(
+                        data
+                    );
+
+                    return;
+
+                }
+
+
+                if (isSupportPayment) {
+
+                    showSupportSuccessState(
+                        data
+                    );
+
+                    return;
+
+                }
+
+
+                showGenericSuccessState(
+                    data
+                );
+
+            }
+
+
+            /* =====================================================
+               FAILED PAYMENT
+            ====================================================== */
+
+            function showFailedState(data) {
+
+                terminalStateReached = true;
+
+                stopPolling();
+
+
+                showFailedIcon();
+
+
+                statusTitle.textContent =
+                    "Payment was not completed";
+
+
+                if (
+                    data &&
+                    data.message
+                ) {
+
+                    statusMessage.textContent =
+                        data.message;
+
+                } else {
+
+                    statusMessage.textContent =
+                        "The M-Pesa transaction failed " +
+                        "or was cancelled.";
+
+                }
+
+
+                updateStatusBadge(
+                    "Failed",
+                    "danger"
+                );
+
+
+                paymentTitle.textContent =
+                    "Payment Not Completed";
+
+
+                if (isMembershipPayment) {
+
+                    paymentDescription.textContent =
+                        "Your M-Pesa membership payment " +
+                        "was not successfully completed.";
+
+                } else if (isSupportPayment) {
+
+                    paymentDescription.textContent =
+                        "Your M-Pesa support contribution " +
+                        "was not successfully completed.";
+
+                } else {
+
+                    paymentDescription.textContent =
+                        "Your M-Pesa payment was not " +
+                        "successfully completed.";
+
+                }
+
+
+                paymentIcon.style.background =
+                    "rgba(220, 53, 69, 0.09)";
+
+                paymentIcon.style.color =
+                    "#dc3545";
+
+
+                paymentIconElement.className =
+                    "bi bi-x-circle-fill kpp-icon";
+
+
+                if (paymentInstructions) {
+
+                    paymentInstructions.style.opacity =
+                        "0.5";
+
+                }
+
+
+                statusBox.style.background =
+                    "rgba(220, 53, 69, 0.07)";
+
+                statusBox.style.borderColor =
+                    "rgba(220, 53, 69, 0.16)";
+
+
+                refreshElement(
+                    paymentTitle
+                );
+
+                refreshElement(
+                    statusBox
+                );
+
+
+                setTimeout(function () {
+
+                    window.location.href =
+                        failedUrl;
+
+                }, 1000);
+
+            }
+
+
+            /* =====================================================
+               CANCELLED PAYMENT
+            ====================================================== */
+
+            function showCancelledState(data) {
+
+                terminalStateReached = true;
+
+                stopPolling();
+
+
+                showFailedIcon();
+
+
+                statusTitle.textContent =
+                    "Payment cancelled";
+
+
+                statusMessage.textContent =
+                    "The M-Pesa payment request was cancelled " +
+                    "or was not completed.";
+
+
+                updateStatusBadge(
+                    "Cancelled",
+                    "danger"
+                );
+
+
+                paymentTitle.textContent =
+                    "Payment Cancelled";
+
+
+                if (isMembershipPayment) {
+
+                    paymentDescription.textContent =
+                        "Your membership payment was cancelled " +
+                        "before it could be completed.";
+
+                } else if (isSupportPayment) {
+
+                    paymentDescription.textContent =
+                        "Your support contribution was cancelled " +
+                        "before it could be completed.";
+
+                } else {
+
+                    paymentDescription.textContent =
+                        "Your payment was cancelled before " +
+                        "it could be completed.";
+
+                }
+
+
+                paymentIcon.style.background =
+                    "rgba(220, 53, 69, 0.09)";
+
+                paymentIcon.style.color =
+                    "#dc3545";
+
+
+                paymentIconElement.className =
+                    "bi bi-x-circle-fill kpp-icon";
+
+
+                if (paymentInstructions) {
+
+                    paymentInstructions.style.opacity =
+                        "0.5";
+
+                }
+
+
+                statusBox.style.background =
+                    "rgba(220, 53, 69, 0.07)";
+
+                statusBox.style.borderColor =
+                    "rgba(220, 53, 69, 0.16)";
+
+
+                refreshElement(
+                    paymentTitle
+                );
+
+
+                setTimeout(function () {
+
+                    window.location.href =
+                        failedUrl;
+
+                }, 1000);
+
+            }
+
+
+            /* =====================================================
+               PENDING STATE
+            ====================================================== */
+
+            function showPendingState() {
+
+                if (terminalStateReached) {
+
+                    return;
+
+                }
+
+
+                showSpinner();
+
+
+                statusTitle.textContent =
+                    "Payment is being processed";
+
+
+                statusMessage.textContent =
+                    "Waiting for M-Pesa confirmation. " +
+                    "Please complete the request on your phone.";
+
+
+                updateStatusBadge(
+                    "Pending",
+                    "pending"
+                );
+
+
+                statusBox.style.background =
+                    "rgba(245, 159, 0, 0.07)";
+
+                statusBox.style.borderColor =
+                    "rgba(245, 159, 0, 0.16)";
+
+            }
+
+
+            /* =====================================================
+               NORMALIZE STATUS
+            ====================================================== */
+
+            function normalizeStatus(value) {
+
+                if (!value) {
+
+                    return "";
+
+                }
+
+                return String(value)
+                    .trim()
+                    .toUpperCase();
+
+            }
+
+
+            /* =====================================================
+               CHECK PAYMENT STATUS
+            ====================================================== */
+
+            async function checkPaymentStatus() {
+
+                if (
+                    checking ||
+                    terminalStateReached
+                ) {
+
+                    return;
+
+                }
+
+
+                if (attempts >= maxAttempts) {
+
+                    showLongPendingState();
+
+                    return;
+
+                }
+
+
+                checking = true;
+
+                attempts++;
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            statusUrl,
+                            {
+                                method: "GET",
+
+                                headers: {
+                                    "X-Requested-With":
+                                        "XMLHttpRequest",
+
+                                    "Accept":
+                                        "application/json"
+                                },
+
+                                cache: "no-store",
+
+                                credentials: "same-origin"
+                            }
+                        );
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            "Payment status request failed with HTTP " +
+                            response.status
+                        );
+
+                    }
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (data.success !== true) {
+
+                        throw new Error(
+                            data.message ||
+                            "Unable to retrieve payment status."
+                        );
+
+                    }
+
+
+                    const status =
+                        normalizeStatus(
+                            data.status
+                        );
+
+
+                    /* =================================================
+                       COMPLETED
+                    ================================================== */
+
+                    if (
+                        data.completed === true ||
+                        status === "COMPLETED" ||
+                        status === "SUCCESS" ||
+                        status === "SUCCESSFUL"
+                    ) {
+
+                        showSuccessState(
+                            data
+                        );
+
+                        return;
+
+                    }
+
+
+                    /* =================================================
+                       FAILED
+                    ================================================== */
+
+                    if (
+                        data.failed === true ||
+                        status === "FAILED"
+                    ) {
+
+                        showFailedState(
+                            data
+                        );
+
+                        return;
+
+                    }
+
+
+                    /* =================================================
+                       CANCELLED
+                    ================================================== */
+
+                    if (
+                        status === "CANCELLED" ||
+                        status === "CANCELED"
+                    ) {
+
+                        showCancelledState(
+                            data
+                        );
+
+                        return;
+
+                    }
+
+
+                    /* =================================================
+                       PENDING
+                    ================================================== */
+
+                    showPendingState();
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Payment status check error:",
+                        error
+                    );
+
+
+                    /*
+                     * A network/API error does NOT mean
+                     * the payment has failed.
+                     */
+
+                    if (!terminalStateReached) {
+
+                        statusSpinner.innerHTML =
+                            '<i class="bi bi-cloud-slash ' +
+                            'text-warning" ' +
+                            'style="font-size:18px;"></i>';
+
+
+                        statusTitle.textContent =
+                            "Still waiting for confirmation";
+
+
+                        statusMessage.textContent =
+                            "We could not check the payment status " +
+                            "right now. Your payment has not been " +
+                            "marked as failed.";
+
+                    }
+
+                } finally {
+
+                    checking = false;
+
+                }
+
+
+                if (
+                    attempts >= maxAttempts &&
+                    !terminalStateReached
+                ) {
+
+                    showLongPendingState();
+
+                }
+
+            }
+
+
+            /* =====================================================
+               INITIAL CHECK
+            ====================================================== */
+
+            checkPaymentStatus();
+
+
+            /* =====================================================
+               START POLLING
+            ====================================================== */
+
+            pollingTimer =
+                setInterval(
+                    checkPaymentStatus,
+                    pollingInterval
+                );
+
+
+            /* =====================================================
+               CLEANUP
+            ====================================================== */
+
+            window.addEventListener(
+                "beforeunload",
+                function () {
+
+                    stopPolling();
+
+                }
+            );
+
+
+            /* =====================================================
+               PAGE VISIBILITY
+            ====================================================== */
+
+            document.addEventListener(
+                "visibilitychange",
+                function () {
+
+                    if (document.hidden) {
+
+                        if (
+                            pollingTimer !== null
+                        ) {
+
+                            clearInterval(
+                                pollingTimer
+                            );
+
+                            pollingTimer = null;
+
+                        }
+
+                        return;
+
+                    }
+
+
+                    if (
+                        !terminalStateReached &&
+                        pollingTimer === null
+                    ) {
+
+                        checkPaymentStatus();
+
+
+                        pollingTimer =
+                            setInterval(
+                                checkPaymentStatus,
+                                pollingInterval
+                            );
+
+                    }
+
+                }
+            );
+
+
+            /* =====================================================
+               NAVIGATION LOADING
+            ====================================================== */
+
+            const navigationLinks =
+                document.querySelectorAll(
+                    "[data-navigation]"
+                );
+
+
+            navigationLinks.forEach(
+                function (link) {
+
+                    link.addEventListener(
+                        "click",
+                        function () {
+
+                            if (
+                                link.dataset.loading ===
+                                "true"
+                            ) {
+
+                                return;
+
+                            }
+
+
+                            link.dataset.loading =
+                                "true";
+
+
+                            link.dataset.originalHtml =
+                                link.innerHTML;
+
+
+                            link.style.pointerEvents =
+                                "none";
+
+
+                            link.innerHTML =
+                                '<span class="spinner-border ' +
+                                'spinner-border-sm me-2" ' +
+                                'aria-hidden="true"></span>' +
+                                '<span>Opening...</span>';
+
+                        }
+                    );
+
+                }
+            );
+
+
+            /* =====================================================
+               RESTORE BUTTON AFTER BF CACHE
+            ====================================================== */
+
+            window.addEventListener(
+                "pageshow",
+                function () {
+
+                    navigationLinks.forEach(
+                        function (link) {
+
+                            link.dataset.loading =
+                                "false";
+
+                            link.style.pointerEvents =
+                                "";
+
+
+                            if (
+                                link.dataset.originalHtml
+                            ) {
+
+                                link.innerHTML =
+                                    link.dataset.originalHtml;
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+        });
+
+    </script>
+
+</div>
 
 {% endblock %}

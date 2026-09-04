@@ -4,81 +4,1677 @@
 
 {% block content %}
 
-<div class="container py-5">
+<style>
+    /* =========================================================
+       KUCSA SUPPORT PAYMENT PAGE
+       All styles are scoped to this page.
+    ========================================================== */
 
-    <div class="row justify-content-center">
+    .kucsa-support-payment-page {
+        --ksp-primary: #198754;
+        --ksp-primary-dark: #146c43;
+        --ksp-primary-light: rgba(25, 135, 84, 0.10);
+        --ksp-primary-soft: rgba(25, 135, 84, 0.055);
 
-        <div class="col-12 col-md-8 col-lg-6">
+        --ksp-text: #172033;
+        --ksp-muted: #6c757d;
+        --ksp-border: rgba(15, 23, 42, 0.09);
+        --ksp-surface: #ffffff;
+        --ksp-soft: #f7faf8;
 
-            <!-- =====================================================
-                 PAGE HEADER
-            ====================================================== -->
+        --ksp-warning: #b7791f;
+        --ksp-warning-soft: rgba(245, 158, 11, 0.10);
 
-            <div class="text-center mb-4">
+        --ksp-radius: 24px;
+        --ksp-radius-md: 18px;
+        --ksp-radius-sm: 13px;
 
-                <div
-                    class="rounded-circle bg-success bg-opacity-10
-                           d-inline-flex align-items-center
-                           justify-content-center mb-3"
-                    style="width: 80px; height: 80px;"
-                >
+        --ksp-shadow:
+            0 22px 60px rgba(15, 23, 42, 0.09);
 
-                    <i
-                        class="bi bi-heart-fill text-success"
-                        style="font-size: 36px;"
-                    ></i>
+        --ksp-shadow-sm:
+            0 8px 25px rgba(15, 23, 42, 0.07);
 
-                </div>
+        position: relative;
+        min-height: 100%;
+        padding: 30px 16px 48px;
+        color: var(--ksp-text);
+        overflow: hidden;
+    }
 
-                <h2 class="fw-bold mb-2">
-                    Support KUCSA
-                </h2>
 
-                <p class="text-muted mb-0">
+    /* =========================================================
+       BACKGROUND DECORATION
+    ========================================================== */
 
-                    Your contribution helps KUCSA
-                    continue supporting students,
-                    activities, events, and community
-                    programs.
+    .kucsa-support-payment-page::before,
+    .kucsa-support-payment-page::after {
+        content: "";
+        position: absolute;
+        pointer-events: none;
+        border-radius: 50%;
+        z-index: 0;
+    }
 
-                </p>
+    .kucsa-support-payment-page::before {
+        width: 390px;
+        height: 390px;
+        top: -220px;
+        left: -200px;
+        background: rgba(25, 135, 84, 0.045);
+    }
+
+    .kucsa-support-payment-page::after {
+        width: 460px;
+        height: 460px;
+        right: -260px;
+        bottom: -260px;
+        background: rgba(25, 135, 84, 0.035);
+    }
+
+
+    /* =========================================================
+       MAIN SHELL
+    ========================================================== */
+
+    .ksp-shell {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 720px;
+        margin: 0 auto;
+    }
+
+
+    /* =========================================================
+       PAGE HEADER
+    ========================================================== */
+
+    .ksp-page-header {
+        text-align: center;
+        margin-bottom: 24px;
+    }
+
+    .ksp-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 7px 13px;
+        margin-bottom: 15px;
+
+        color: var(--ksp-primary-dark);
+        background: var(--ksp-primary-light);
+        border: 1px solid rgba(25, 135, 84, 0.12);
+
+        border-radius: 999px;
+
+        font-size: 0.70rem;
+        font-weight: 800;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+    }
+
+    .ksp-eyebrow i {
+        font-size: 0.78rem;
+    }
+
+
+    /* =========================================================
+       HEADER ICON
+    ========================================================== */
+
+    .ksp-header-icon {
+        position: relative;
+        width: 92px;
+        height: 92px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        margin: 0 auto 19px;
+
+        border-radius: 50%;
+
+        background:
+            radial-gradient(
+                circle at center,
+                #ffffff 0 54%,
+                rgba(25, 135, 84, 0.08) 55% 100%
+            );
+
+        border: 1px solid rgba(25, 135, 84, 0.11);
+
+        box-shadow:
+            0 14px 35px rgba(25, 135, 84, 0.10);
+    }
+
+    .ksp-header-icon::after {
+        content: "";
+        position: absolute;
+        inset: 8px;
+        border-radius: 50%;
+        border: 1px dashed rgba(25, 135, 84, 0.20);
+    }
+
+    .ksp-header-icon i {
+        position: relative;
+        z-index: 1;
+        color: var(--ksp-primary);
+        font-size: 38px;
+    }
+
+
+    /* =========================================================
+       HEADER TYPOGRAPHY
+    ========================================================== */
+
+    .ksp-page-title {
+        margin: 0;
+
+        color: var(--ksp-text);
+
+        font-size: clamp(
+            1.65rem,
+            4vw,
+            2.2rem
+        );
+
+        font-weight: 850;
+        line-height: 1.18;
+        letter-spacing: -0.03em;
+    }
+
+    .ksp-page-description {
+        max-width: 570px;
+        margin: 12px auto 0;
+
+        color: var(--ksp-muted);
+
+        font-size: 0.94rem;
+        line-height: 1.7;
+    }
+
+
+    /* =========================================================
+       MAIN PAYMENT CARD
+    ========================================================== */
+
+    .ksp-card {
+        position: relative;
+
+        background: var(--ksp-surface);
+
+        border: 1px solid var(--ksp-border);
+
+        border-radius: var(--ksp-radius);
+
+        box-shadow: var(--ksp-shadow);
+
+        overflow: hidden;
+    }
+
+    .ksp-card-accent {
+        height: 5px;
+
+        background:
+            linear-gradient(
+                90deg,
+                #146c43,
+                #198754,
+                #20a464
+            );
+    }
+
+    .ksp-card-body {
+        padding: 38px 40px 36px;
+    }
+
+
+    /* =========================================================
+       INFORMATION PANEL
+    ========================================================== */
+
+    .ksp-info-panel {
+        display: flex;
+        align-items: flex-start;
+        gap: 13px;
+
+        margin-bottom: 28px;
+        padding: 16px;
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(13, 110, 253, 0.045),
+                rgba(13, 110, 253, 0.02)
+            );
+
+        border: 1px solid rgba(13, 110, 253, 0.11);
+
+        border-radius: var(--ksp-radius-md);
+    }
+
+    .ksp-info-icon {
+        width: 39px;
+        height: 39px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        flex: 0 0 39px;
+
+        border-radius: 11px;
+
+        background: rgba(13, 110, 253, 0.09);
+        color: #0d6efd;
+
+        font-size: 17px;
+    }
+
+    .ksp-info-content {
+        min-width: 0;
+    }
+
+    .ksp-info-title {
+        display: block;
+
+        margin-bottom: 4px;
+
+        color: var(--ksp-text);
+
+        font-size: 0.89rem;
+        font-weight: 800;
+    }
+
+    .ksp-info-text {
+        margin: 0;
+
+        color: var(--ksp-muted);
+
+        font-size: 0.79rem;
+        line-height: 1.6;
+    }
+
+
+    /* =========================================================
+       FORM SECTIONS
+    ========================================================== */
+
+    .ksp-form-section {
+        margin-bottom: 26px;
+    }
+
+    .ksp-form-section:last-of-type {
+        margin-bottom: 0;
+    }
+
+    .ksp-section-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+
+        margin-bottom: 9px;
+    }
+
+    .ksp-label-main {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+
+        color: var(--ksp-text);
+
+        font-size: 0.86rem;
+        font-weight: 800;
+    }
+
+    .ksp-label-main i {
+        color: var(--ksp-primary);
+        font-size: 0.88rem;
+    }
+
+    .ksp-required {
+        color: #dc3545;
+        font-weight: 800;
+    }
+
+
+    /* =========================================================
+       INPUTS
+    ========================================================== */
+
+    .ksp-input-group {
+        display: flex;
+        width: 100%;
+    }
+
+    .ksp-input-prefix {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        min-width: 53px;
+
+        padding: 0 14px;
+
+        color: #58636e;
+
+        background: #f7f9f8;
+
+        border: 1px solid rgba(15, 23, 42, 0.12);
+        border-right: 0;
+
+        border-radius: 13px 0 0 13px;
+
+        font-size: 0.82rem;
+        font-weight: 750;
+    }
+
+    .ksp-input {
+        width: 100%;
+        min-height: 49px;
+
+        color: var(--ksp-text);
+        background: #ffffff;
+
+        border: 1px solid rgba(15, 23, 42, 0.12);
+
+        border-radius: 13px;
+
+        padding: 12px 14px;
+
+        font-size: 0.9rem;
+
+        outline: none;
+
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            background 0.2s ease;
+    }
+
+    .ksp-input-group .ksp-input {
+        border-radius: 0 13px 13px 0;
+    }
+
+    .ksp-input:focus {
+        border-color: rgba(25, 135, 84, 0.55);
+
+        box-shadow:
+            0 0 0 4px rgba(25, 135, 84, 0.09);
+
+        background: #ffffff;
+    }
+
+    .ksp-input.is-valid {
+        border-color: rgba(25, 135, 84, 0.50);
+    }
+
+    .ksp-input.is-invalid {
+        border-color: rgba(220, 53, 69, 0.65);
+
+        box-shadow:
+            0 0 0 4px rgba(220, 53, 69, 0.07);
+    }
+
+    .ksp-input::placeholder {
+        color: #a1a9b1;
+    }
+
+
+    /* =========================================================
+       PHONE PREFIX
+    ========================================================== */
+
+    .ksp-phone-prefix {
+        min-width: 50px;
+    }
+
+    .ksp-phone-input-wrap {
+        position: relative;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .ksp-phone-input-wrap .ksp-input {
+        padding-right: 43px;
+    }
+
+    .ksp-input-status {
+        position: absolute;
+
+        top: 50%;
+        right: 13px;
+
+        display: none;
+
+        transform: translateY(-50%);
+
+        font-size: 0.95rem;
+    }
+
+    .ksp-input-status.valid {
+        display: block;
+        color: var(--ksp-primary);
+    }
+
+    .ksp-input-status.invalid {
+        display: block;
+        color: #dc3545;
+    }
+
+
+    /* =========================================================
+       HELP TEXT
+    ========================================================== */
+
+    .ksp-help {
+        display: block;
+
+        margin-top: 8px;
+
+        color: #7b858e;
+
+        font-size: 0.74rem;
+        line-height: 1.55;
+    }
+
+    .ksp-error {
+        display: none;
+
+        margin-top: 7px;
+
+        color: #dc3545;
+
+        font-size: 0.74rem;
+        font-weight: 600;
+    }
+
+    .ksp-error.show {
+        display: block;
+    }
+
+
+    /* =========================================================
+       QUICK AMOUNTS
+    ========================================================== */
+
+    .ksp-quick-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+
+        gap: 9px;
+    }
+
+    .ksp-quick-button {
+        min-height: 43px;
+
+        padding: 9px 10px;
+
+        color: var(--ksp-primary-dark);
+
+        background: #ffffff;
+
+        border: 1px solid rgba(25, 135, 84, 0.20);
+
+        border-radius: 11px;
+
+        font-size: 0.78rem;
+        font-weight: 750;
+
+        cursor: pointer;
+
+        transition:
+            background 0.2s ease,
+            color 0.2s ease,
+            border-color 0.2s ease,
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .ksp-quick-button:hover {
+        background: var(--ksp-primary);
+        border-color: var(--ksp-primary);
+        color: #ffffff;
+
+        transform: translateY(-1px);
+
+        box-shadow:
+            0 6px 15px rgba(25, 135, 84, 0.15);
+    }
+
+    .ksp-quick-button.active {
+        color: #ffffff;
+
+        background: var(--ksp-primary);
+
+        border-color: var(--ksp-primary);
+
+        box-shadow:
+            0 6px 15px rgba(25, 135, 84, 0.15);
+    }
+
+    .ksp-quick-button:focus-visible {
+        outline: 3px solid rgba(25, 135, 84, 0.18);
+        outline-offset: 2px;
+    }
+
+
+    /* =========================================================
+       HOW IT WORKS
+    ========================================================== */
+
+    .ksp-steps-card {
+        position: relative;
+
+        margin-top: 28px;
+        margin-bottom: 25px;
+
+        padding: 20px;
+
+        background:
+            linear-gradient(
+                145deg,
+                #f8fbf9,
+                #f3f8f5
+            );
+
+        border: 1px solid rgba(25, 135, 84, 0.10);
+
+        border-radius: var(--ksp-radius-md);
+    }
+
+    .ksp-steps-title {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+
+        margin: 0 0 19px;
+
+        color: var(--ksp-text);
+
+        font-size: 0.88rem;
+        font-weight: 800;
+    }
+
+    .ksp-steps-title-icon {
+        width: 31px;
+        height: 31px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 9px;
+
+        background: var(--ksp-primary-light);
+        color: var(--ksp-primary);
+
+        font-size: 15px;
+    }
+
+    .ksp-step {
+        position: relative;
+
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+
+        min-width: 0;
+    }
+
+    .ksp-step:not(:last-child) {
+        padding-bottom: 19px;
+    }
+
+    .ksp-step:not(:last-child)::before {
+        content: "";
+
+        position: absolute;
+
+        left: 15px;
+        top: 31px;
+        bottom: 0;
+
+        width: 1px;
+
+        background:
+            rgba(25, 135, 84, 0.16);
+    }
+
+    .ksp-step-number {
+        position: relative;
+        z-index: 1;
+
+        width: 31px;
+        height: 31px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        flex: 0 0 31px;
+
+        border-radius: 50%;
+
+        color: #ffffff;
+
+        background:
+            linear-gradient(
+                135deg,
+                #198754,
+                #146c43
+            );
+
+        font-size: 0.75rem;
+        font-weight: 800;
+
+        box-shadow:
+            0 4px 10px rgba(25, 135, 84, 0.14);
+    }
+
+    .ksp-step-content {
+        min-width: 0;
+        padding-top: 2px;
+    }
+
+    .ksp-step-title {
+        display: block;
+
+        margin-bottom: 3px;
+
+        color: var(--ksp-text);
+
+        font-size: 0.82rem;
+        font-weight: 800;
+    }
+
+    .ksp-step-description {
+        margin: 0;
+
+        color: var(--ksp-muted);
+
+        font-size: 0.75rem;
+        line-height: 1.6;
+    }
+
+
+    /* =========================================================
+       IMPORTANT SECURITY NOTICE
+    ========================================================== */
+
+    .ksp-security-alert {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+
+        margin-bottom: 25px;
+        padding: 15px;
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(245, 158, 11, 0.09),
+                rgba(245, 158, 11, 0.045)
+            );
+
+        border: 1px solid rgba(245, 158, 11, 0.16);
+
+        border-radius: var(--ksp-radius-sm);
+    }
+
+    .ksp-security-icon {
+        width: 34px;
+        height: 34px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        flex: 0 0 34px;
+
+        border-radius: 10px;
+
+        background: rgba(245, 158, 11, 0.12);
+        color: var(--ksp-warning);
+
+        font-size: 16px;
+    }
+
+    .ksp-security-content {
+        min-width: 0;
+    }
+
+    .ksp-security-title {
+        display: block;
+
+        margin-bottom: 3px;
+
+        color: #815c1b;
+
+        font-size: 0.82rem;
+        font-weight: 800;
+    }
+
+    .ksp-security-text {
+        margin: 0;
+
+        color: #75684f;
+
+        font-size: 0.75rem;
+        line-height: 1.6;
+    }
+
+
+    /* =========================================================
+       SUBMIT BUTTON
+    ========================================================== */
+
+    .ksp-submit {
+        position: relative;
+
+        width: 100%;
+        min-height: 52px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+
+        padding: 13px 20px;
+
+        color: #ffffff;
+
+        background:
+            linear-gradient(
+                135deg,
+                #198754,
+                #146c43
+            );
+
+        border: 1px solid #198754;
+
+        border-radius: 13px;
+
+        font-size: 0.9rem;
+        font-weight: 800;
+
+        box-shadow:
+            0 10px 24px rgba(25, 135, 84, 0.18);
+
+        cursor: pointer;
+
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            opacity 0.2s ease;
+    }
+
+    .ksp-submit:hover:not(:disabled) {
+        color: #ffffff;
+
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 14px 30px rgba(25, 135, 84, 0.24);
+    }
+
+    .ksp-submit:focus-visible {
+        outline: 3px solid rgba(25, 135, 84, 0.22);
+        outline-offset: 3px;
+    }
+
+    .ksp-submit:disabled {
+        cursor: not-allowed;
+        opacity: 0.75;
+        transform: none;
+    }
+
+
+    /* =========================================================
+       BACK BUTTON
+    ========================================================== */
+
+    .ksp-back-button {
+        width: 100%;
+        min-height: 47px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+
+        margin-top: 10px;
+
+        padding: 11px 18px;
+
+        color: #56606a;
+
+        background: #ffffff;
+
+        border: 1px solid rgba(15, 23, 42, 0.12);
+
+        border-radius: 12px;
+
+        font-size: 0.84rem;
+        font-weight: 700;
+
+        text-decoration: none;
+
+        transition:
+            background 0.2s ease,
+            border-color 0.2s ease,
+            color 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .ksp-back-button:hover {
+        color: var(--ksp-text);
+
+        background: #f8f9fa;
+
+        border-color: rgba(15, 23, 42, 0.18);
+
+        transform: translateY(-1px);
+    }
+
+    .ksp-back-button:focus-visible {
+        outline: 3px solid rgba(25, 135, 84, 0.18);
+        outline-offset: 3px;
+    }
+
+
+    /* =========================================================
+       SECURITY FOOTER
+    ========================================================== */
+
+    .ksp-footer-security {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+
+        margin-top: 17px;
+
+        color: var(--ksp-muted);
+
+        font-size: 0.73rem;
+        line-height: 1.5;
+        text-align: center;
+    }
+
+    .ksp-footer-security i {
+        color: var(--ksp-primary);
+        font-size: 0.9rem;
+    }
+
+    .ksp-footer-caption {
+        margin-top: 8px;
+
+        color: #9aa39e;
+
+        font-size: 0.66rem;
+        text-align: center;
+    }
+
+
+    /* =========================================================
+       REVEAL ANIMATION
+    ========================================================== */
+
+    .ksp-reveal {
+        opacity: 0;
+        transform: translateY(12px);
+
+        transition:
+            opacity 0.45s ease,
+            transform 0.45s ease;
+    }
+
+    .ksp-reveal.ksp-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+
+    /* =========================================================
+       SUBMIT LOADING SPINNER
+    ========================================================== */
+
+    #submitIcon.ksp-spinner {
+        width: 16px;
+        height: 16px;
+
+        display: inline-block;
+
+        border: 2px solid rgba(255, 255, 255, 0.55);
+        border-top-color: #ffffff;
+
+        border-radius: 50%;
+
+        animation: kspSpin 0.7s linear infinite;
+    }
+
+    @keyframes kspSpin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+
+    /* =========================================================
+       LARGE TABLETS
+    ========================================================== */
+
+    @media (max-width: 1199.98px) {
+        .kucsa-support-payment-page {
+            padding-top: 26px;
+        }
+    }
+
+
+    /* =========================================================
+       TABLETS
+    ========================================================== */
+
+    @media (max-width: 991.98px) {
+        .ksp-card-body {
+            padding: 34px 32px 32px;
+        }
+    }
+
+
+    /* =========================================================
+       MOBILE
+    ========================================================== */
+
+    @media (max-width: 767.98px) {
+        .kucsa-support-payment-page {
+            padding: 19px 12px 36px;
+        }
+
+        .ksp-page-header {
+            margin-bottom: 20px;
+        }
+
+        .ksp-header-icon {
+            width: 82px;
+            height: 82px;
+            margin-bottom: 15px;
+        }
+
+        .ksp-header-icon i {
+            font-size: 33px;
+        }
+
+        .ksp-page-title {
+            font-size: 1.68rem;
+        }
+
+        .ksp-page-description {
+            margin-top: 9px;
+            font-size: 0.88rem;
+            line-height: 1.65;
+        }
+
+        .ksp-card {
+            border-radius: 20px;
+        }
+
+        .ksp-card-body {
+            padding: 28px 22px 26px;
+        }
+
+        .ksp-info-panel {
+            margin-bottom: 24px;
+        }
+
+        .ksp-quick-grid {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+    }
+
+
+    /* =========================================================
+       SMALL PHONES
+    ========================================================== */
+
+    @media (max-width: 575.98px) {
+        .kucsa-support-payment-page {
+            padding: 13px 9px 30px;
+        }
+
+        .ksp-eyebrow {
+            padding: 6px 11px;
+            margin-bottom: 12px;
+            font-size: 0.62rem;
+        }
+
+        .ksp-header-icon {
+            width: 76px;
+            height: 76px;
+            margin-bottom: 13px;
+        }
+
+        .ksp-header-icon i {
+            font-size: 30px;
+        }
+
+        .ksp-page-title {
+            font-size: 1.48rem;
+        }
+
+        .ksp-page-description {
+            font-size: 0.82rem;
+        }
+
+        .ksp-card {
+            border-radius: 18px;
+        }
+
+        .ksp-card-body {
+            padding: 23px 14px 22px;
+        }
+
+        .ksp-info-panel {
+            gap: 10px;
+            padding: 13px;
+            border-radius: 14px;
+        }
+
+        .ksp-info-icon {
+            width: 35px;
+            height: 35px;
+            flex-basis: 35px;
+            border-radius: 10px;
+            font-size: 15px;
+        }
+
+        .ksp-info-title {
+            font-size: 0.82rem;
+        }
+
+        .ksp-info-text {
+            font-size: 0.73rem;
+        }
+
+        .ksp-form-section {
+            margin-bottom: 22px;
+        }
+
+        .ksp-label-main {
+            font-size: 0.81rem;
+        }
+
+        .ksp-input {
+            min-height: 47px;
+            padding: 11px 12px;
+            font-size: 0.84rem;
+        }
+
+        .ksp-input-prefix {
+            min-width: 48px;
+            padding: 0 11px;
+            font-size: 0.75rem;
+        }
+
+        .ksp-help {
+            font-size: 0.70rem;
+        }
+
+        .ksp-quick-button {
+            min-height: 41px;
+            font-size: 0.74rem;
+        }
+
+        .ksp-steps-card {
+            padding: 16px;
+            margin-top: 22px;
+            margin-bottom: 21px;
+            border-radius: 14px;
+        }
+
+        .ksp-step-title {
+            font-size: 0.78rem;
+        }
+
+        .ksp-step-description {
+            font-size: 0.71rem;
+        }
+
+        .ksp-security-alert {
+            gap: 9px;
+            padding: 13px;
+            margin-bottom: 21px;
+            border-radius: 13px;
+        }
+
+        .ksp-security-icon {
+            width: 31px;
+            height: 31px;
+            flex-basis: 31px;
+            border-radius: 9px;
+        }
+
+        .ksp-security-title {
+            font-size: 0.77rem;
+        }
+
+        .ksp-security-text {
+            font-size: 0.70rem;
+        }
+
+        .ksp-submit {
+            min-height: 49px;
+            font-size: 0.83rem;
+            border-radius: 12px;
+        }
+
+        .ksp-back-button {
+            min-height: 45px;
+            font-size: 0.79rem;
+        }
+
+        .ksp-footer-security {
+            margin-top: 14px;
+            font-size: 0.68rem;
+        }
+    }
+
+
+    /* =========================================================
+       VERY SMALL DEVICES
+    ========================================================== */
+
+    @media (max-width: 359.98px) {
+        .kucsa-support-payment-page {
+            padding-left: 6px;
+            padding-right: 6px;
+        }
+
+        .ksp-card-body {
+            padding-left: 11px;
+            padding-right: 11px;
+        }
+
+        .ksp-page-title {
+            font-size: 1.35rem;
+        }
+
+        .ksp-page-description {
+            font-size: 0.77rem;
+        }
+
+        .ksp-quick-button {
+            padding-left: 6px;
+            padding-right: 6px;
+            font-size: 0.69rem;
+        }
+
+        .ksp-step {
+            gap: 9px;
+        }
+
+        .ksp-step-description {
+            font-size: 0.68rem;
+        }
+
+        .ksp-submit {
+            font-size: 0.78rem;
+        }
+    }
+
+
+    /* =========================================================
+       REDUCED MOTION
+    ========================================================== */
+
+    @media (prefers-reduced-motion: reduce) {
+        .ksp-reveal,
+        .ksp-action,
+        .ksp-quick-button,
+        .ksp-input,
+        .ksp-submit,
+        .ksp-back-button {
+            transition: none !important;
+        }
+
+        #submitIcon.ksp-spinner {
+            animation: none !important;
+        }
+
+        .ksp-reveal {
+            opacity: 1 !important;
+            transform: none !important;
+        }
+    }
+</style>
+
+
+<div class="kucsa-support-payment-page">
+
+    <div class="ksp-shell">
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <header class="ksp-page-header ksp-reveal">
+
+            <div class="ksp-eyebrow">
+
+                <i class="bi bi-heart-fill"></i>
+
+                KUCSA Community Support
 
             </div>
 
 
-            <!-- =====================================================
-                 SUPPORT PAYMENT CARD
-            ====================================================== -->
+            <div class="ksp-header-icon">
 
-            <div class="card border-0 shadow-sm">
+                <i class="bi bi-heart-fill"></i>
 
-                <div class="card-body p-4 p-md-5">
+            </div>
+
+
+            <h1 class="ksp-page-title">
+                Support KUCSA
+            </h1>
+
+
+            <p class="ksp-page-description">
+
+                Your contribution helps KUCSA continue
+                supporting students, activities, events,
+                and community programs.
+
+            </p>
+
+        </header>
+
+
+        <!-- =====================================================
+             SUPPORT PAYMENT CARD
+        ====================================================== -->
+
+        <div class="ksp-card ksp-reveal">
+
+            <div class="ksp-card-accent"></div>
+
+            <div class="ksp-card-body">
+
+                <!-- =================================================
+                     INFORMATION PANEL
+                ================================================== -->
+
+                <div class="ksp-info-panel">
+
+                    <div class="ksp-info-icon">
+
+                        <i class="bi bi-info-circle-fill"></i>
+
+                    </div>
+
+                    <div class="ksp-info-content">
+
+                        <span class="ksp-info-title">
+                            KUCSA Support Contribution
+                        </span>
+
+                        <p class="ksp-info-text">
+
+                            This is an optional contribution.
+                            It does not activate, renew, or change
+                            your KUCSA membership status.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     PAYMENT FORM
+                ================================================== -->
+
+                <form
+                    method="post"
+                    action="{% url 'payments:support_submit' %}"
+                    id="supportPaymentForm"
+                    novalidate
+                >
+
+                    {% csrf_token %}
+
+
+                    <!-- =============================================
+                         AMOUNT
+                    ============================================== -->
+
+                    <div class="ksp-form-section">
+
+                        <div class="ksp-section-label">
+
+                            <label
+                                for="amount"
+                                class="ksp-label-main"
+                            >
+
+                                <i class="bi bi-cash-stack"></i>
+
+                                <span>
+                                    Contribution Amount
+                                    <span class="ksp-required">*</span>
+                                </span>
+
+                            </label>
+
+                        </div>
+
+
+                        <div class="ksp-input-group">
+
+                            <span class="ksp-input-prefix">
+                                KES
+                            </span>
+
+                            <input
+                                type="number"
+                                class="ksp-input"
+                                id="amount"
+                                name="amount"
+                                min="1"
+                                step="0.01"
+                                placeholder="Enter amount"
+                                required
+                                inputmode="decimal"
+                                autocomplete="off"
+                                aria-describedby="amountHelp amountError"
+                            >
+
+                        </div>
+
+
+                        <div
+                            id="amountHelp"
+                            class="ksp-help"
+                        >
+                            Enter the amount you would like
+                            to contribute to KUCSA.
+                        </div>
+
+
+                        <div
+                            id="amountError"
+                            class="ksp-error"
+                            role="alert"
+                        >
+                            Please enter a valid contribution amount.
+                        </div>
+
+                    </div>
+
+
+                    <!-- =============================================
+                         QUICK AMOUNTS
+                    ============================================== -->
+
+                    <div class="ksp-form-section">
+
+                        <div class="ksp-section-label">
+
+                            <span class="ksp-label-main">
+
+                                <i class="bi bi-lightning-charge-fill"></i>
+
+                                Quick Amount
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="ksp-quick-grid">
+
+                            <button
+                                type="button"
+                                class="ksp-quick-button quick-amount"
+                                data-amount="100"
+                            >
+                                KES 100
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="ksp-quick-button quick-amount"
+                                data-amount="200"
+                            >
+                                KES 200
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="ksp-quick-button quick-amount"
+                                data-amount="500"
+                            >
+                                KES 500
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="ksp-quick-button quick-amount"
+                                data-amount="1000"
+                            >
+                                KES 1,000
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =============================================
+                         PHONE NUMBER
+                    ============================================== -->
+
+                    <div class="ksp-form-section">
+
+                        <div class="ksp-section-label">
+
+                            <label
+                                for="phone_number"
+                                class="ksp-label-main"
+                            >
+
+                                <i class="bi bi-phone-fill"></i>
+
+                                <span>
+                                    M-Pesa Phone Number
+                                    <span class="ksp-required">*</span>
+                                </span>
+
+                            </label>
+
+                        </div>
+
+
+                        <div class="ksp-input-group">
+
+                            <span
+                                class="ksp-input-prefix ksp-phone-prefix"
+                            >
+
+                                <i class="bi bi-phone"></i>
+
+                            </span>
+
+
+                            <div class="ksp-phone-input-wrap">
+
+                                <input
+                                    type="tel"
+                                    class="ksp-input"
+                                    id="phone_number"
+                                    name="phone_number"
+                                    placeholder="0712345678"
+                                    value="{{ member.phone_number|default:'' }}"
+                                    required
+                                    autocomplete="tel"
+                                    inputmode="tel"
+                                    aria-describedby="phoneHelp"
+                                >
+
+
+                                <span
+                                    id="phoneStatus"
+                                    class="ksp-input-status"
+                                    aria-hidden="true"
+                                ></span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            id="phoneHelp"
+                            class="ksp-help"
+                        >
+
+                            Enter the Safaricom number that
+                            should receive the M-Pesa STK Push.
+
+                        </div>
+
+                    </div>
+
 
                     <!-- =================================================
-                         INFORMATION ALERT
+                         HOW IT WORKS
                     ================================================== -->
 
-                    <div
-                        class="alert alert-light border
-                               d-flex align-items-start mb-4"
-                    >
+                    <div class="ksp-steps-card">
 
-                        <i
-                            class="bi bi-info-circle-fill
-                                   text-primary me-3 mt-1"
-                        ></i>
+                        <h2 class="ksp-steps-title">
 
-                        <div>
+                            <span class="ksp-steps-title-icon">
 
-                            <strong>
-                                KUCSA Support Contribution
+                                <i class="bi bi-list-check"></i>
+
+                            </span>
+
+                            How it works
+
+                        </h2>
+
+
+                        <!-- STEP 1 -->
+
+                        <div class="ksp-step">
+
+                            <div class="ksp-step-number">
+                                1
+                            </div>
+
+                            <div class="ksp-step-content">
+
+                                <strong class="ksp-step-title">
+                                    Enter your contribution
+                                </strong>
+
+                                <p class="ksp-step-description">
+                                    Choose how much you would
+                                    like to contribute.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- STEP 2 -->
+
+                        <div class="ksp-step">
+
+                            <div class="ksp-step-number">
+                                2
+                            </div>
+
+                            <div class="ksp-step-content">
+
+                                <strong class="ksp-step-title">
+                                    Receive an M-Pesa request
+                                </strong>
+
+                                <p class="ksp-step-description">
+                                    An STK Push will be sent to
+                                    the phone number you provide.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- STEP 3 -->
+
+                        <div class="ksp-step">
+
+                            <div class="ksp-step-number">
+                                3
+                            </div>
+
+                            <div class="ksp-step-content">
+
+                                <strong class="ksp-step-title">
+                                    Enter your M-Pesa PIN
+                                </strong>
+
+                                <p class="ksp-step-description">
+                                    Confirm the transaction on
+                                    your phone and wait for
+                                    confirmation.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         SECURITY NOTICE
+                    ================================================== -->
+
+                    <div class="ksp-security-alert">
+
+                        <div class="ksp-security-icon">
+
+                            <i class="bi bi-shield-exclamation"></i>
+
+                        </div>
+
+                        <div class="ksp-security-content">
+
+                            <strong class="ksp-security-title">
+                                Important
                             </strong>
 
-                            <p class="text-muted small mb-0 mt-1">
+                            <p class="ksp-security-text">
 
-                                This is an optional contribution.
-                                It does not activate, renew, or change
-                                your KUCSA membership status.
+                                Never share your M-Pesa PIN with
+                                anyone. KUCSA will never ask you
+                                to provide your M-Pesa PIN.
 
                             </p>
 
@@ -88,386 +1684,70 @@
 
 
                     <!-- =================================================
-                         PAYMENT FORM
+                         SUBMIT BUTTON
                     ================================================== -->
 
-                    <form
-                        method="post"
-                        action="{% url 'payments:support_submit' %}"
-                        id="supportPaymentForm"
+                    <button
+                        type="submit"
+                        id="supportPaymentButton"
+                        class="ksp-submit"
                     >
 
-                        {% csrf_token %}
+                        <i
+                            class="bi bi-phone-fill"
+                            id="submitIcon"
+                            aria-hidden="true"
+                        ></i>
 
+                        <span id="submitText">
+                            Support KUCSA
+                        </span>
 
-                        <!-- =============================================
-                             AMOUNT
-                        ============================================== -->
+                    </button>
 
-                        <div class="mb-4">
 
-                            <label
-                                for="amount"
-                                class="form-label fw-semibold"
-                            >
-                                Contribution Amount
-                            </label>
+                    <!-- =================================================
+                         BACK TO PAYMENTS
+                    ================================================== -->
 
-                            <div class="input-group">
+                    <a
+                        href="{% url 'payments:payment_list' %}"
+                        class="ksp-back-button"
+                        data-ksp-navigation
+                    >
 
-                                <span class="input-group-text">
-                                    KES
-                                </span>
+                        <i class="bi bi-arrow-left"></i>
 
-                                <input
-                                    type="number"
-                                    class="form-control"
-                                    id="amount"
-                                    name="amount"
-                                    min="1"
-                                    step="0.01"
-                                    placeholder="Enter amount"
-                                    required
-                                    inputmode="decimal"
-                                    autocomplete="off"
-                                >
-
-                            </div>
-
-                            <div
-                                id="amountHelp"
-                                class="form-text"
-                            >
-                                Enter the amount you would like
-                                to contribute to KUCSA.
-                            </div>
-
-                            <div
-                                id="amountError"
-                                class="invalid-feedback"
-                            >
-                                Please enter a valid contribution amount.
-                            </div>
-
-                        </div>
-
-
-                        <!-- =============================================
-                             QUICK AMOUNT BUTTONS
-                        ============================================== -->
-
-                        <div class="mb-4">
-
-                            <label class="form-label fw-semibold">
-                                Quick Amount
-                            </label>
-
-                            <div class="d-flex flex-wrap gap-2">
-
-                                <button
-                                    type="button"
-                                    class="btn btn-outline-success
-                                           quick-amount"
-                                    data-amount="100"
-                                >
-                                    KES 100
-                                </button>
-
-                                <button
-                                    type="button"
-                                    class="btn btn-outline-success
-                                           quick-amount"
-                                    data-amount="200"
-                                >
-                                    KES 200
-                                </button>
-
-                                <button
-                                    type="button"
-                                    class="btn btn-outline-success
-                                           quick-amount"
-                                    data-amount="500"
-                                >
-                                    KES 500
-                                </button>
-
-                                <button
-                                    type="button"
-                                    class="btn btn-outline-success
-                                           quick-amount"
-                                    data-amount="1000"
-                                >
-                                    KES 1,000
-                                </button>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- =============================================
-                             PHONE NUMBER
-                        ============================================== -->
-
-                        <div class="mb-4">
-
-                            <label
-                                for="phone_number"
-                                class="form-label fw-semibold"
-                            >
-                                M-Pesa Phone Number
-                            </label>
-
-                            <div class="input-group">
-
-                                <span class="input-group-text">
-                                    <i class="bi bi-phone"></i>
-                                </span>
-
-                                <input
-                                    type="tel"
-                                    class="form-control"
-                                    id="phone_number"
-                                    name="phone_number"
-                                    placeholder="0712345678"
-                                    value="{{ member.phone_number|default:'' }}"
-                                    required
-                                    autocomplete="tel"
-                                    inputmode="tel"
-                                >
-
-                            </div>
-
-                            <div class="form-text">
-
-                                Enter the Safaricom number that
-                                should receive the M-Pesa STK Push.
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- =============================================
-                             HOW IT WORKS
-                        ============================================== -->
-
-                        <div
-                            class="bg-light rounded-3 p-3 p-md-4 mb-4"
-                        >
-
-                            <h6 class="fw-bold mb-3">
-
-                                <i
-                                    class="bi bi-list-check
-                                           text-success me-2"
-                                ></i>
-
-                                How it works
-
-                            </h6>
-
-
-                            <!-- STEP 1 -->
-
-                            <div class="d-flex mb-3">
-
-                                <div
-                                    class="rounded-circle bg-success
-                                           text-white d-flex
-                                           align-items-center
-                                           justify-content-center
-                                           flex-shrink-0 me-3"
-                                    style="width: 30px; height: 30px;"
-                                >
-                                    1
-                                </div>
-
-                                <div>
-
-                                    <strong>
-                                        Enter your contribution
-                                    </strong>
-
-                                    <p
-                                        class="text-muted small mb-0"
-                                    >
-                                        Choose how much you would
-                                        like to contribute.
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-
-                            <!-- STEP 2 -->
-
-                            <div class="d-flex mb-3">
-
-                                <div
-                                    class="rounded-circle bg-success
-                                           text-white d-flex
-                                           align-items-center
-                                           justify-content-center
-                                           flex-shrink-0 me-3"
-                                    style="width: 30px; height: 30px;"
-                                >
-                                    2
-                                </div>
-
-                                <div>
-
-                                    <strong>
-                                        Receive an M-Pesa request
-                                    </strong>
-
-                                    <p
-                                        class="text-muted small mb-0"
-                                    >
-                                        An STK Push will be sent to
-                                        the phone number you provide.
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-
-                            <!-- STEP 3 -->
-
-                            <div class="d-flex">
-
-                                <div
-                                    class="rounded-circle bg-success
-                                           text-white d-flex
-                                           align-items-center
-                                           justify-content-center
-                                           flex-shrink-0 me-3"
-                                    style="width: 30px; height: 30px;"
-                                >
-                                    3
-                                </div>
-
-                                <div>
-
-                                    <strong>
-                                        Enter your M-Pesa PIN
-                                    </strong>
-
-                                    <p
-                                        class="text-muted small mb-0"
-                                    >
-                                        Confirm the transaction on
-                                        your phone and wait for
-                                        confirmation.
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- =============================================
-                             IMPORTANT NOTICE
-                        ============================================== -->
-
-                        <div
-                            class="alert alert-warning
-                                   d-flex align-items-start mb-4"
-                        >
-
-                            <i
-                                class="bi bi-shield-exclamation
-                                       me-2 mt-1"
-                            ></i>
-
-                            <div>
-
-                                <strong>
-                                    Important
-                                </strong>
-
-                                <p class="small mb-0 mt-1">
-
-                                    Never share your M-Pesa PIN with
-                                    anyone. KUCSA will never ask you
-                                    to provide your M-Pesa PIN.
-
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- =============================================
-                             SUBMIT BUTTON
-                        ============================================== -->
-
-                        <button
-                            type="submit"
-                            id="supportPaymentButton"
-                            class="btn btn-success btn-lg w-100"
-                        >
-
-                            <i
-                                class="bi bi-phone-fill me-2"
-                                id="submitIcon"
-                            ></i>
-
-                            <span id="submitText">
-                                Support KUCSA
-                            </span>
-
-                        </button>
-
-
-                        <!-- =============================================
-                             BACK TO PAYMENTS
-                        ============================================== -->
-
-                        <a
-                            href="{% url 'payments:payment_list' %}"
-                            class="btn btn-outline-secondary w-100 mt-3"
-                        >
-
-                            <i
-                                class="bi bi-arrow-left me-2"
-                            ></i>
-
+                        <span>
                             Back to Payments
+                        </span>
 
-                        </a>
+                    </a>
 
-                    </form>
-
-                </div>
-
-            </div>
-
-
-            <!-- =====================================================
-                 SECURITY NOTE
-            ====================================================== -->
-
-            <div class="text-center mt-3">
-
-                <small class="text-muted">
-
-                    <i
-                        class="bi bi-shield-check me-1"
-                    ></i>
-
-                    Payments are securely processed through
-                    M-Pesa.
-
-                </small>
+                </form>
 
             </div>
 
+        </div>
+
+
+        <!-- =====================================================
+             SECURITY FOOTER
+        ====================================================== -->
+
+        <div class="ksp-footer-security ksp-reveal">
+
+            <i class="bi bi-shield-check"></i>
+
+            <span>
+                Payments are securely processed through M-Pesa.
+            </span>
+
+        </div>
+
+
+        <div class="ksp-footer-caption">
+            KUCSA Digital Community Platform
         </div>
 
     </div>
@@ -480,10 +1760,21 @@
 ============================================================== -->
 
 <script>
-
 document.addEventListener(
     "DOMContentLoaded",
     function () {
+
+        "use strict";
+
+
+        /* =====================================================
+           ELEMENT REFERENCES
+        ====================================================== */
+
+        const page =
+            document.querySelector(
+                ".kucsa-support-payment-page"
+            );
 
         const form =
             document.getElementById(
@@ -498,6 +1789,16 @@ document.addEventListener(
         const phone =
             document.getElementById(
                 "phone_number"
+            );
+
+        const amountError =
+            document.getElementById(
+                "amountError"
+            );
+
+        const phoneStatus =
+            document.getElementById(
+                "phoneStatus"
             );
 
         const submitButton =
@@ -516,14 +1817,96 @@ document.addEventListener(
             );
 
 
-        /*
-         * ---------------------------------------------------------
-         * QUICK AMOUNT BUTTONS
-         * ---------------------------------------------------------
-         */
+        if (
+            !page ||
+            !form ||
+            !amount ||
+            !phone ||
+            !submitButton
+        ) {
+            return;
+        }
+
+
+        /* =====================================================
+           REVEAL ANIMATION
+        ====================================================== */
+
+        const revealElements =
+            page.querySelectorAll(
+                ".ksp-reveal"
+            );
+
+
+        if (
+            "IntersectionObserver" in window &&
+            !window.matchMedia(
+                "(prefers-reduced-motion: reduce)"
+            ).matches
+        ) {
+
+            const observer =
+                new IntersectionObserver(
+                    function (entries, obs) {
+
+                        entries.forEach(
+                            function (entry) {
+
+                                if (
+                                    entry.isIntersecting
+                                ) {
+
+                                    entry.target.classList.add(
+                                        "ksp-visible"
+                                    );
+
+                                    obs.unobserve(
+                                        entry.target
+                                    );
+
+                                }
+
+                            }
+                        );
+
+                    },
+                    {
+                        threshold: 0.08
+                    }
+                );
+
+
+            revealElements.forEach(
+                function (element) {
+
+                    observer.observe(
+                        element
+                    );
+
+                }
+            );
+
+        } else {
+
+            revealElements.forEach(
+                function (element) {
+
+                    element.classList.add(
+                        "ksp-visible"
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           QUICK AMOUNT BUTTONS
+        ====================================================== */
 
         const quickAmountButtons =
-            document.querySelectorAll(
+            page.querySelectorAll(
                 ".quick-amount"
             );
 
@@ -535,8 +1918,13 @@ document.addEventListener(
                     "click",
                     function () {
 
-                        amount.value =
+                        const selectedAmount =
                             this.dataset.amount;
+
+
+                        amount.value =
+                            selectedAmount;
+
 
                         amount.classList.remove(
                             "is-invalid"
@@ -546,6 +1934,39 @@ document.addEventListener(
                             "is-valid"
                         );
 
+
+                        if (amountError) {
+
+                            amountError.classList.remove(
+                                "show"
+                            );
+
+                        }
+
+
+                        quickAmountButtons.forEach(
+                            function (item) {
+
+                                item.classList.remove(
+                                    "active"
+                                );
+
+                            }
+                        );
+
+
+                        this.classList.add(
+                            "active"
+                        );
+
+
+                        /*
+                         * Keep the amount visible after
+                         * selecting a quick amount.
+                         */
+
+                        amount.focus();
+
                     }
                 );
 
@@ -553,11 +1974,65 @@ document.addEventListener(
         );
 
 
-        /*
-         * ---------------------------------------------------------
-         * AMOUNT VALIDATION
-         * ---------------------------------------------------------
-         */
+        /* =====================================================
+           AMOUNT VALIDATION
+        ====================================================== */
+
+        function validateAmount() {
+
+            const value =
+                parseFloat(
+                    amount.value
+                );
+
+
+            if (
+                isNaN(value) ||
+                value <= 0
+            ) {
+
+                amount.classList.add(
+                    "is-invalid"
+                );
+
+                amount.classList.remove(
+                    "is-valid"
+                );
+
+
+                if (amountError) {
+
+                    amountError.classList.add(
+                        "show"
+                    );
+
+                }
+
+                return false;
+
+            }
+
+
+            amount.classList.remove(
+                "is-invalid"
+            );
+
+            amount.classList.add(
+                "is-valid"
+            );
+
+
+            if (amountError) {
+
+                amountError.classList.remove(
+                    "show"
+                );
+
+            }
+
+            return true;
+        }
+
 
         amount.addEventListener(
             "input",
@@ -568,6 +2043,7 @@ document.addEventListener(
                         amount.value
                     );
 
+
                 if (
                     !isNaN(value) &&
                     value > 0
@@ -577,63 +2053,231 @@ document.addEventListener(
                         "is-invalid"
                     );
 
+                    amount.classList.add(
+                        "is-valid"
+                    );
+
+
+                    if (amountError) {
+
+                        amountError.classList.remove(
+                            "show"
+                        );
+
+                    }
+
+                } else {
+
+                    amount.classList.remove(
+                        "is-valid"
+                    );
+
                 }
 
-            }
-        );
 
+                /*
+                 * Remove active quick amount if the
+                 * user manually changes the value.
+                 */
 
-        /*
-         * ---------------------------------------------------------
-         * PHONE VALIDATION
-         * ---------------------------------------------------------
-         */
+                quickAmountButtons.forEach(
+                    function (button) {
 
-        phone.addEventListener(
-            "input",
-            function () {
+                        if (
+                            button.dataset.amount !==
+                            amount.value
+                        ) {
 
-                phone.classList.remove(
-                    "is-invalid"
+                            button.classList.remove(
+                                "active"
+                            );
+
+                        }
+
+                    }
                 );
 
             }
         );
 
 
-        /*
-         * ---------------------------------------------------------
-         * FORM SUBMISSION
-         * ---------------------------------------------------------
-         */
+        amount.addEventListener(
+            "blur",
+            function () {
+
+                if (amount.value.trim()) {
+                    validateAmount();
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           PHONE VALIDATION
+        ====================================================== */
+
+        function normalizePhone(value) {
+
+            return value
+                .replace(/[^\d+]/g, "")
+                .trim();
+
+        }
+
+
+        function isValidKenyanPhone(value) {
+
+            const cleaned =
+                normalizePhone(value);
+
+
+            /*
+             * Accepted formats:
+             *
+             * 07XXXXXXXX
+             * 01XXXXXXXX
+             * 2547XXXXXXXX
+             * 2541XXXXXXXX
+             * +2547XXXXXXXX
+             * +2541XXXXXXXX
+             */
+
+            return (
+                /^(07|01)\d{8}$/.test(cleaned) ||
+                /^254(7|1)\d{8}$/.test(cleaned) ||
+                /^\+254(7|1)\d{8}$/.test(cleaned)
+            );
+
+        }
+
+
+        function updatePhoneState() {
+
+            const value =
+                phone.value.trim();
+
+
+            if (!value) {
+
+                phoneStatus.innerHTML = "";
+
+                phoneStatus.className =
+                    "ksp-input-status";
+
+                phone.classList.remove(
+                    "is-valid",
+                    "is-invalid"
+                );
+
+                return false;
+
+            }
+
+
+            if (
+                isValidKenyanPhone(value)
+            ) {
+
+                phoneStatus.innerHTML =
+                    '<i class="bi bi-check-circle-fill"></i>';
+
+                phoneStatus.className =
+                    "ksp-input-status valid";
+
+                phone.classList.remove(
+                    "is-invalid"
+                );
+
+                phone.classList.add(
+                    "is-valid"
+                );
+
+                return true;
+
+            }
+
+
+            phoneStatus.innerHTML =
+                '<i class="bi bi-exclamation-circle-fill"></i>';
+
+            phoneStatus.className =
+                "ksp-input-status invalid";
+
+            phone.classList.remove(
+                "is-valid"
+            );
+
+            phone.classList.add(
+                "is-invalid"
+            );
+
+            return false;
+
+        }
+
+
+        phone.addEventListener(
+            "input",
+            function () {
+
+                /*
+                 * Keep common Kenyan phone characters
+                 * while allowing +254.
+                 */
+
+                this.value =
+                    this.value.replace(
+                        /[^\d+\s-]/g,
+                        ""
+                    );
+
+
+                updatePhoneState();
+
+            }
+        );
+
+
+        phone.addEventListener(
+            "blur",
+            function () {
+
+                if (phone.value.trim()) {
+
+                    updatePhoneState();
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           FORM SUBMISSION
+        ====================================================== */
 
         form.addEventListener(
             "submit",
             function (event) {
 
-                const amountValue =
-                    parseFloat(
-                        amount.value
-                    );
+                const amountValid =
+                    validateAmount();
 
-                const phoneValue =
-                    phone.value.trim();
+
+                const phoneValid =
+                    isValidKenyanPhone(
+                        phone.value.trim()
+                    );
 
 
                 /*
-                 * Validate amount
+                 * Validate amount.
                  */
 
-                if (
-                    isNaN(amountValue) ||
-                    amountValue <= 0
-                ) {
+                if (!amountValid) {
 
                     event.preventDefault();
-
-                    amount.classList.add(
-                        "is-invalid"
-                    );
 
                     amount.focus();
 
@@ -643,19 +2287,17 @@ document.addEventListener(
 
 
                 /*
-                 * Validate phone
+                 * Validate phone.
                  *
-                 * The backend performs the authoritative
-                 * phone-number validation.
+                 * The backend remains the authoritative
+                 * validator.
                  */
 
-                if (!phoneValue) {
+                if (!phoneValid) {
 
                     event.preventDefault();
 
-                    phone.classList.add(
-                        "is-invalid"
-                    );
+                    updatePhoneState();
 
                     phone.focus();
 
@@ -672,12 +2314,18 @@ document.addEventListener(
                     true;
 
 
+                submitButton.setAttribute(
+                    "aria-disabled",
+                    "true"
+                );
+
+
                 /*
-                 * Change button appearance.
+                 * Show loading state.
                  */
 
                 submitIcon.className =
-                    "spinner-border spinner-border-sm me-2";
+                    "ksp-spinner";
 
 
                 submitText.textContent =
@@ -686,9 +2334,153 @@ document.addEventListener(
             }
         );
 
+
+        /* =====================================================
+           BACK NAVIGATION LOADING STATE
+        ====================================================== */
+
+        const navigationLinks =
+            page.querySelectorAll(
+                "[data-ksp-navigation]"
+            );
+
+
+        navigationLinks.forEach(
+            function (link) {
+
+                link.addEventListener(
+                    "click",
+                    function (event) {
+
+                        /*
+                         * Preserve modifier-key navigation.
+                         */
+
+                        if (
+                            event.ctrlKey ||
+                            event.metaKey ||
+                            event.shiftKey ||
+                            event.altKey ||
+                            event.button !== 0
+                        ) {
+                            return;
+                        }
+
+
+                        if (
+                            link.dataset.loading === "true"
+                        ) {
+
+                            event.preventDefault();
+
+                            return;
+
+                        }
+
+
+                        link.dataset.loading =
+                            "true";
+
+
+                        const original =
+                            link.innerHTML;
+
+
+                        link.dataset.originalContent =
+                            original;
+
+
+                        link.style.pointerEvents =
+                            "none";
+
+                        link.style.opacity =
+                            "0.75";
+
+
+                        link.innerHTML = `
+                            <span
+                                class="ksp-spinner"
+                                style="
+                                    width:15px;
+                                    height:15px;
+                                    display:inline-block;
+                                    border:2px solid rgba(86,96,106,.35);
+                                    border-top-color:#56606a;
+                                    border-radius:50%;
+                                "
+                                aria-hidden="true"
+                            ></span>
+
+                            <span>Loading...</span>
+                        `;
+
+                    }
+                );
+
+            }
+        );
+
+
+        /* =====================================================
+           PAGE RESTORATION
+        ====================================================== */
+
+        window.addEventListener(
+            "pageshow",
+            function () {
+
+                /*
+                 * Restore navigation links if the browser
+                 * restores this page from its back-forward cache.
+                 */
+
+                navigationLinks.forEach(
+                    function (link) {
+
+                        link.dataset.loading =
+                            "false";
+
+                        link.style.pointerEvents =
+                            "";
+
+                        link.style.opacity =
+                            "";
+
+                        if (
+                            link.dataset.originalContent
+                        ) {
+
+                            link.innerHTML =
+                                link.dataset.originalContent;
+
+                        }
+
+                    }
+                );
+
+
+                /*
+                 * Restore submit button if necessary.
+                 */
+
+                submitButton.disabled =
+                    false;
+
+                submitButton.removeAttribute(
+                    "aria-disabled"
+                );
+
+                submitIcon.className =
+                    "bi bi-phone-fill";
+
+                submitText.textContent =
+                    "Support KUCSA";
+
+            }
+        );
+
     }
 );
-
 </script>
 
 {% endblock %}

@@ -4,167 +4,1058 @@
 
 {% block content %}
 
-<div class="container-fluid py-4">
+<style>
+    /* =========================================================
+       KUCSA CREATE EVENT
+       Scoped page design — does not modify global base styles
+    ========================================================== */
 
-    <!-- =========================================================
+    .kucsa-create-event {
+        --ce-primary: #0d6efd;
+        --ce-primary-dark: #0b5ed7;
+        --ce-success: #198754;
+        --ce-warning: #d99a00;
+        --ce-danger: #dc3545;
+        --ce-info: #0891b2;
+        --ce-dark: #172033;
+        --ce-text: #293548;
+        --ce-muted: #718096;
+        --ce-border: #e6eaf0;
+        --ce-surface: #ffffff;
+        --ce-soft: #f7f9fc;
+        --ce-radius-sm: 10px;
+        --ce-radius-md: 15px;
+        --ce-radius-lg: 20px;
+        --ce-shadow-sm: 0 5px 20px rgba(23, 32, 51, 0.055);
+        --ce-shadow-md: 0 12px 32px rgba(23, 32, 51, 0.08);
+
+        width: 100%;
+        min-width: 0;
+        padding: 1.25rem 0 2.5rem;
+        color: var(--ce-text);
+    }
+
+    .kucsa-create-event *,
+    .kucsa-create-event *::before,
+    .kucsa-create-event *::after {
+        box-sizing: border-box;
+    }
+
+    /* =========================================================
+       PAGE HEADER
+    ========================================================== */
+
+    .kucsa-create-event-header {
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+        padding: 1.5rem 1.6rem;
+        border: 1px solid var(--ce-border);
+        border-radius: var(--ce-radius-lg);
+        background:
+            radial-gradient(
+                circle at 92% 10%,
+                rgba(13, 110, 253, 0.12),
+                transparent 25%
+            ),
+            radial-gradient(
+                circle at 5% 110%,
+                rgba(8, 145, 178, 0.07),
+                transparent 28%
+            ),
+            #ffffff;
+        box-shadow: var(--ce-shadow-sm);
+    }
+
+    .kucsa-create-event-header::after {
+        content: "";
+        position: absolute;
+        width: 170px;
+        height: 170px;
+        right: -75px;
+        bottom: -95px;
+        border-radius: 50%;
+        background: rgba(13, 110, 253, 0.045);
+        pointer-events: none;
+    }
+
+    .kucsa-create-event-header-inner {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+    }
+
+    .kucsa-create-event-heading {
+        min-width: 0;
+    }
+
+    .kucsa-create-event-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        margin-bottom: 0.55rem;
+        color: var(--ce-primary);
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+    }
+
+    .kucsa-create-event-title {
+        margin: 0;
+        color: var(--ce-dark);
+        font-size: clamp(1.45rem, 3vw, 2rem);
+        font-weight: 850;
+        line-height: 1.2;
+        letter-spacing: -0.03em;
+    }
+
+    .kucsa-create-event-subtitle {
+        max-width: 720px;
+        margin: 0.45rem 0 0;
+        color: var(--ce-muted);
+        font-size: 0.88rem;
+        line-height: 1.6;
+    }
+
+    .kucsa-create-event-back {
+        position: relative;
+        z-index: 3;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.45rem;
+        min-height: 43px;
+        padding: 0.65rem 1rem;
+        white-space: nowrap;
+        border: 1px solid rgba(13, 110, 253, 0.2);
+        border-radius: 11px;
+        background: rgba(13, 110, 253, 0.055);
+        color: var(--ce-primary);
+        font-size: 0.8rem;
+        font-weight: 750;
+        text-decoration: none;
+        transition:
+            background-color 0.2s ease,
+            color 0.2s ease,
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .kucsa-create-event-back:hover {
+        color: #ffffff;
+        background: var(--ce-primary);
+        border-color: var(--ce-primary);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 22px rgba(13, 110, 253, 0.2);
+    }
+
+    /* =========================================================
+       FORM ERROR SUMMARY
+    ========================================================== */
+
+    .kucsa-create-event-error-summary {
+        margin-bottom: 1.25rem;
+        padding: 1rem 1.1rem;
+        border: 1px solid rgba(220, 53, 69, 0.17);
+        border-radius: 14px;
+        background: rgba(220, 53, 69, 0.045);
+        color: var(--ce-text);
+    }
+
+    .kucsa-create-event-error-summary-inner {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .kucsa-create-event-error-icon {
+        width: 35px;
+        height: 35px;
+        flex: 0 0 35px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: rgba(220, 53, 69, 0.1);
+        color: var(--ce-danger);
+    }
+
+    .kucsa-create-event-error-summary strong {
+        display: block;
+        margin-bottom: 0.25rem;
+        color: var(--ce-dark);
+        font-size: 0.82rem;
+    }
+
+    .kucsa-create-event-error-summary .errorlist {
+        margin: 0;
+        padding-left: 1rem;
+        color: #8d2632;
+        font-size: 0.75rem;
+    }
+
+    /* =========================================================
+       FORM SECTIONS
+    ========================================================== */
+
+    .kucsa-event-section {
+        margin-bottom: 1.25rem;
+        overflow: hidden;
+        background: var(--ce-surface);
+        border: 1px solid var(--ce-border);
+        border-radius: var(--ce-radius-lg);
+        box-shadow: var(--ce-shadow-sm);
+    }
+
+    .kucsa-event-section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 1rem 1.2rem;
+        border-bottom: 1px solid var(--ce-border);
+        background: #ffffff;
+    }
+
+    .kucsa-event-section-icon {
+        width: 38px;
+        height: 38px;
+        flex: 0 0 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 11px;
+        font-size: 1rem;
+    }
+
+    .kucsa-icon-primary {
+        color: var(--ce-primary);
+        background: rgba(13, 110, 253, 0.09);
+    }
+
+    .kucsa-icon-info {
+        color: var(--ce-info);
+        background: rgba(8, 145, 178, 0.09);
+    }
+
+    .kucsa-icon-success {
+        color: var(--ce-success);
+        background: rgba(25, 135, 84, 0.09);
+    }
+
+    .kucsa-icon-warning {
+        color: #a97600;
+        background: rgba(255, 193, 7, 0.13);
+    }
+
+    .kucsa-icon-dark {
+        color: var(--ce-dark);
+        background: rgba(23, 32, 51, 0.08);
+    }
+
+    .kucsa-event-section-title {
+        margin: 0;
+        color: var(--ce-dark);
+        font-size: 0.88rem;
+        font-weight: 800;
+    }
+
+    .kucsa-event-section-description {
+        margin: 0.15rem 0 0;
+        color: var(--ce-muted);
+        font-size: 0.68rem;
+        line-height: 1.4;
+    }
+
+    .kucsa-event-section-body {
+        padding: 1.25rem;
+    }
+
+    /* =========================================================
+       FORM FIELDS
+    ========================================================== */
+
+    .kucsa-field {
+        margin-bottom: 1.15rem;
+    }
+
+    .kucsa-field:last-child {
+        margin-bottom: 0;
+    }
+
+    .kucsa-field-label {
+        display: flex;
+        align-items: center;
+        gap: 0.2rem;
+        margin-bottom: 0.48rem;
+        color: #3c4759;
+        font-size: 0.76rem;
+        font-weight: 750;
+        line-height: 1.4;
+    }
+
+    .kucsa-required {
+        color: var(--ce-danger);
+    }
+
+    .kucsa-create-event input:not([type="checkbox"]):not([type="radio"]),
+    .kucsa-create-event select,
+    .kucsa-create-event textarea {
+        display: block;
+        width: 100%;
+        min-height: 44px;
+        padding: 0.7rem 0.85rem;
+        border: 1px solid #d9dee6;
+        border-radius: 10px;
+        background: #ffffff;
+        color: var(--ce-text);
+        font-size: 0.82rem;
+        line-height: 1.45;
+        box-shadow: none;
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            background-color 0.2s ease;
+    }
+
+    .kucsa-create-event textarea {
+        min-height: 130px;
+        resize: vertical;
+    }
+
+    .kucsa-create-event input::placeholder,
+    .kucsa-create-event textarea::placeholder {
+        color: #a1a9b5;
+    }
+
+    .kucsa-create-event input:not([type="checkbox"]):not([type="radio"]):focus,
+    .kucsa-create-event select:focus,
+    .kucsa-create-event textarea:focus {
+        border-color: var(--ce-primary);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.11);
+        background: #ffffff;
+    }
+
+    .kucsa-create-event input[type="file"] {
+        min-height: 44px;
+        padding: 0.48rem 0.6rem;
+        cursor: pointer;
+    }
+
+    .kucsa-create-event input[type="file"]::file-selector-button {
+        margin-right: 0.65rem;
+        padding: 0.45rem 0.7rem;
+        border: 0;
+        border-radius: 8px;
+        background: #edf3ff;
+        color: var(--ce-primary);
+        font-size: 0.72rem;
+        font-weight: 750;
+        cursor: pointer;
+    }
+
+    .kucsa-field-help {
+        display: block;
+        margin-top: 0.4rem;
+        color: #8993a3;
+        font-size: 0.65rem;
+        line-height: 1.5;
+    }
+
+    .kucsa-field-error {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.35rem;
+        margin-top: 0.4rem;
+        color: var(--ce-danger);
+        font-size: 0.68rem;
+        line-height: 1.45;
+    }
+
+    .kucsa-field-invalid {
+        border-color: var(--ce-danger) !important;
+    }
+
+    .kucsa-field-invalid:focus {
+        box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
+    }
+
+    /* =========================================================
+       IMAGE PREVIEW
+    ========================================================== */
+
+    .kucsa-event-image-preview {
+        display: none;
+        margin-top: 0.75rem;
+        overflow: hidden;
+        border: 1px solid var(--ce-border);
+        border-radius: 12px;
+        background: var(--ce-soft);
+    }
+
+    .kucsa-event-image-preview img {
+        display: block;
+        width: 100%;
+        max-height: 190px;
+        object-fit: cover;
+    }
+
+    .kucsa-event-image-preview-caption {
+        padding: 0.55rem 0.7rem;
+        color: var(--ce-muted);
+        font-size: 0.65rem;
+    }
+
+    /* =========================================================
+       CHECKBOX / SWITCH AREAS
+    ========================================================== */
+
+    .kucsa-option-box {
+        padding: 0.95rem;
+        border: 1px solid var(--ce-border);
+        border-radius: 13px;
+        background: #fbfcfd;
+        transition:
+            border-color 0.2s ease,
+            background-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .kucsa-option-box:hover {
+        border-color: rgba(13, 110, 253, 0.18);
+        background: #ffffff;
+    }
+
+    .kucsa-option-box .form-check {
+        min-height: auto;
+        margin: 0;
+    }
+
+    .kucsa-create-event input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        margin-top: 0.05rem;
+        border-color: #c7ced8;
+        cursor: pointer;
+    }
+
+    .kucsa-create-event input[type="checkbox"]:checked {
+        background-color: var(--ce-primary);
+        border-color: var(--ce-primary);
+    }
+
+    .kucsa-option-label {
+        color: var(--ce-dark);
+        font-size: 0.78rem;
+        font-weight: 750;
+        cursor: pointer;
+    }
+
+    .kucsa-option-help {
+        margin-top: 0.35rem;
+        padding-left: 1.65rem;
+        color: var(--ce-muted);
+        font-size: 0.65rem;
+        line-height: 1.5;
+    }
+
+    /* =========================================================
+       ONLINE EVENT STATUS
+    ========================================================== */
+
+    .kucsa-online-status {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        margin-top: 0.8rem;
+        padding: 0.65rem 0.75rem;
+        border-radius: 10px;
+        background: #f5f7fa;
+        color: var(--ce-muted);
+        font-size: 0.67rem;
+        transition:
+            background-color 0.2s ease,
+            color 0.2s ease;
+    }
+
+    .kucsa-online-status.active {
+        color: var(--ce-success);
+        background: rgba(25, 135, 84, 0.08);
+    }
+
+    .kucsa-online-status i {
+        font-size: 0.85rem;
+    }
+
+    /* =========================================================
+       DATE/TIME GUIDANCE
+    ========================================================== */
+
+    .kucsa-time-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.65rem;
+        margin-top: 1rem;
+        padding: 0.75rem 0.85rem;
+        border: 1px solid rgba(13, 110, 253, 0.12);
+        border-radius: 11px;
+        background: rgba(13, 110, 253, 0.045);
+        color: #647187;
+        font-size: 0.67rem;
+        line-height: 1.5;
+    }
+
+    .kucsa-time-note i {
+        color: var(--ce-primary);
+        margin-top: 0.05rem;
+    }
+
+    .kucsa-time-validation {
+        display: none;
+        margin-top: 0.75rem;
+        padding: 0.65rem 0.75rem;
+        border-radius: 10px;
+        font-size: 0.67rem;
+    }
+
+    .kucsa-time-validation.error {
+        display: block;
+        color: #8d2632;
+        background: rgba(220, 53, 69, 0.07);
+    }
+
+    .kucsa-time-validation.success {
+        display: block;
+        color: #146c43;
+        background: rgba(25, 135, 84, 0.07);
+    }
+
+    /* =========================================================
+       CHARACTER COUNTER
+    ========================================================== */
+
+    .kucsa-character-row {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 0.35rem;
+    }
+
+    .kucsa-character-counter {
+        color: #9aa3b0;
+        font-size: 0.61rem;
+    }
+
+    /* =========================================================
+       SIDEBAR GUIDANCE
+    ========================================================== */
+
+    .kucsa-event-guidance {
+        position: sticky;
+        top: 1rem;
+    }
+
+    .kucsa-guidance-card {
+        overflow: hidden;
+        margin-bottom: 1.25rem;
+        border: 1px solid var(--ce-border);
+        border-radius: var(--ce-radius-lg);
+        background: #ffffff;
+        box-shadow: var(--ce-shadow-sm);
+    }
+
+    .kucsa-guidance-header {
+        padding: 1rem 1.1rem;
+        border-bottom: 1px solid var(--ce-border);
+        background:
+            linear-gradient(
+                135deg,
+                rgba(13, 110, 253, 0.08),
+                rgba(8, 145, 178, 0.035)
+            );
+    }
+
+    .kucsa-guidance-title {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        margin: 0;
+        color: var(--ce-dark);
+        font-size: 0.82rem;
+        font-weight: 800;
+    }
+
+    .kucsa-guidance-title i {
+        color: var(--ce-primary);
+    }
+
+    .kucsa-guidance-body {
+        padding: 1rem 1.1rem;
+    }
+
+    .kucsa-guidance-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .kucsa-guidance-list li {
+        position: relative;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.6rem;
+        padding: 0.55rem 0;
+        color: var(--ce-muted);
+        font-size: 0.68rem;
+        line-height: 1.5;
+    }
+
+    .kucsa-guidance-list li + li {
+        border-top: 1px solid #f0f2f5;
+    }
+
+    .kucsa-guidance-list i {
+        flex: 0 0 auto;
+        margin-top: 0.12rem;
+        color: var(--ce-success);
+        font-size: 0.75rem;
+    }
+
+    /* =========================================================
+       FORM ACTIONS
+    ========================================================== */
+
+    .kucsa-event-actions {
+        padding: 1rem;
+        border: 1px solid var(--ce-border);
+        border-radius: var(--ce-radius-lg);
+        background: #ffffff;
+        box-shadow: var(--ce-shadow-sm);
+    }
+
+    .kucsa-event-submit {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.45rem;
+        min-height: 45px;
+        border-radius: 11px;
+        font-size: 0.8rem;
+        font-weight: 750;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .kucsa-event-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(13, 110, 253, 0.2);
+    }
+
+    .kucsa-event-cancel {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        min-height: 43px;
+        border-radius: 11px;
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+
+    .kucsa-submit-spinner {
+        display: none;
+    }
+
+    .kucsa-event-form.is-submitting
+    .kucsa-submit-content {
+        display: none;
+    }
+
+    .kucsa-event-form.is-submitting
+    .kucsa-submit-spinner {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+    }
+
+    /* =========================================================
+       RESPONSIVE — LARGE TABLETS
+    ========================================================== */
+
+    @media (max-width: 1199.98px) {
+        .kucsa-event-guidance {
+            position: static;
+        }
+    }
+
+    /* =========================================================
+       RESPONSIVE — TABLETS
+    ========================================================== */
+
+    @media (max-width: 991.98px) {
+        .kucsa-create-event {
+            padding-top: 0.9rem;
+        }
+
+        .kucsa-create-event-header {
+            padding: 1.3rem;
+        }
+
+        .kucsa-create-event-header-inner {
+            align-items: flex-start;
+        }
+
+        .kucsa-event-section-body {
+            padding: 1.1rem;
+        }
+
+        .kucsa-event-section-header {
+            padding: 0.9rem 1.1rem;
+        }
+    }
+
+    /* =========================================================
+       RESPONSIVE — MOBILE
+    ========================================================== */
+
+    @media (max-width: 767.98px) {
+        .kucsa-create-event {
+            padding: 0.6rem 0 1.5rem;
+        }
+
+        .kucsa-create-event-header {
+            margin-bottom: 1rem;
+            padding: 1.05rem;
+            border-radius: 16px;
+        }
+
+        .kucsa-create-event-header-inner {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .kucsa-create-event-eyebrow {
+            font-size: 0.62rem;
+        }
+
+        .kucsa-create-event-title {
+            font-size: 1.35rem;
+        }
+
+        .kucsa-create-event-subtitle {
+            font-size: 0.75rem;
+        }
+
+        .kucsa-create-event-back {
+            width: 100%;
+        }
+
+        .kucsa-event-section {
+            margin-bottom: 1rem;
+            border-radius: 15px;
+        }
+
+        .kucsa-event-section-header {
+            padding: 0.85rem 0.95rem;
+        }
+
+        .kucsa-event-section-body {
+            padding: 0.95rem;
+        }
+
+        .kucsa-event-section-icon {
+            width: 34px;
+            height: 34px;
+            flex-basis: 34px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+
+        .kucsa-event-section-title {
+            font-size: 0.8rem;
+        }
+
+        .kucsa-event-section-description {
+            font-size: 0.62rem;
+        }
+
+        .kucsa-field-label {
+            font-size: 0.72rem;
+        }
+
+        .kucsa-create-event input:not([type="checkbox"]):not([type="radio"]),
+        .kucsa-create-event select,
+        .kucsa-create-event textarea {
+            font-size: 0.78rem;
+        }
+
+        .kucsa-guidance-card {
+            margin-bottom: 1rem;
+            border-radius: 15px;
+        }
+
+        .kucsa-event-actions {
+            padding: 0.85rem;
+            border-radius: 15px;
+        }
+    }
+
+    /* =========================================================
+       RESPONSIVE — SMALL PHONES
+    ========================================================== */
+
+    @media (max-width: 575.98px) {
+        .kucsa-create-event-header {
+            padding: 0.9rem;
+        }
+
+        .kucsa-create-event-title {
+            font-size: 1.2rem;
+        }
+
+        .kucsa-create-event-subtitle {
+            font-size: 0.7rem;
+        }
+
+        .kucsa-event-section-body {
+            padding: 0.85rem;
+        }
+
+        .kucsa-event-section-header {
+            padding: 0.8rem 0.85rem;
+        }
+
+        .kucsa-event-section-description {
+            display: none;
+        }
+
+        .kucsa-option-box {
+            padding: 0.8rem;
+        }
+
+        .kucsa-guidance-body {
+            padding: 0.85rem;
+        }
+
+        .kucsa-guidance-list li {
+            font-size: 0.64rem;
+        }
+
+        .kucsa-time-note {
+            font-size: 0.62rem;
+        }
+    }
+
+    /* =========================================================
+       VERY SMALL DEVICES
+    ========================================================== */
+
+    @media (max-width: 359.98px) {
+        .kucsa-create-event-title {
+            font-size: 1.1rem;
+        }
+
+        .kucsa-event-section-title {
+            font-size: 0.74rem;
+        }
+
+        .kucsa-create-event input:not([type="checkbox"]):not([type="radio"]),
+        .kucsa-create-event select,
+        .kucsa-create-event textarea {
+            min-height: 42px;
+            padding: 0.65rem 0.7rem;
+            font-size: 0.74rem;
+        }
+
+        .kucsa-create-event textarea {
+            min-height: 115px;
+        }
+    }
+
+    /* =========================================================
+       ACCESSIBILITY
+    ========================================================== */
+
+    .kucsa-create-event a:focus-visible,
+    .kucsa-create-event button:focus-visible,
+    .kucsa-create-event input:focus-visible,
+    .kucsa-create-event select:focus-visible,
+    .kucsa-create-event textarea:focus-visible {
+        outline: 3px solid rgba(13, 110, 253, 0.2);
+        outline-offset: 2px;
+    }
+
+    /* =========================================================
+       REDUCED MOTION
+    ========================================================== */
+
+    @media (prefers-reduced-motion: reduce) {
+        .kucsa-create-event *,
+        .kucsa-create-event *::before,
+        .kucsa-create-event *::after {
+            scroll-behavior: auto !important;
+            transition: none !important;
+            animation: none !important;
+        }
+    }
+</style>
+
+
+<div class="kucsa-create-event">
+
+    <!-- =====================================================
          PAGE HEADER
-    ========================================================= -->
+    ====================================================== -->
 
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+    <header class="kucsa-create-event-header">
 
-        <div>
+        <div class="kucsa-create-event-header-inner">
 
-            <h2 class="fw-bold mb-1">
+            <div class="kucsa-create-event-heading">
 
-                <i class="bi bi-calendar-plus me-2"></i>
+                <div class="kucsa-create-event-eyebrow">
+                    <i class="bi bi-calendar-plus-fill"></i>
+                    KUCSA Events
+                </div>
 
-                Create Event
+                <h1 class="kucsa-create-event-title">
+                    Create Event
+                </h1>
 
-            </h2>
+                <p class="kucsa-create-event-subtitle">
+                    Create and configure a new KUCSA event with
+                    clear information, scheduling, location,
+                    registration, and visibility settings.
+                </p>
 
-            <p class="text-muted mb-0">
-
-                Create and configure a new KUCSA event.
-
-            </p>
-
-        </div>
-
-
-        <div class="mt-3 mt-md-0">
+            </div>
 
             <a
                 href="{% url 'events:list' %}"
-                class="btn btn-outline-secondary"
+                class="kucsa-create-event-back"
             >
-
-                <i class="bi bi-arrow-left me-1"></i>
-
-                Back to Events
-
+                <i class="bi bi-arrow-left"></i>
+                <span>Back to Events</span>
             </a>
 
         </div>
 
-    </div>
+    </header>
 
 
-    <!-- =========================================================
-         EVENT FORM
-    ========================================================= -->
+    <!-- =====================================================
+         FORM ERROR SUMMARY
+    ====================================================== -->
 
-    <form
-        method="post"
-        enctype="multipart/form-data"
-        novalidate
-    >
+    {% if form.non_field_errors %}
 
-        {% csrf_token %}
+        <div class="kucsa-create-event-error-summary" role="alert">
 
+            <div class="kucsa-create-event-error-summary-inner">
 
-        <!-- =====================================================
-             NON-FIELD ERRORS
-        ===================================================== -->
+                <div class="kucsa-create-event-error-icon">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                </div>
 
-        {% if form.non_field_errors %}
+                <div>
 
-            <div class="alert alert-danger shadow-sm">
-
-                <div class="d-flex align-items-start">
-
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>
+                        Please review the form
+                    </strong>
 
                     <div>
-
-                        <strong>
-                            Please correct the following errors:
-                        </strong>
-
-                        <div class="mt-1">
-
-                            {{ form.non_field_errors }}
-
-                        </div>
-
+                        {{ form.non_field_errors }}
                     </div>
 
                 </div>
 
             </div>
 
-        {% endif %}
+        </div>
+
+    {% endif %}
 
 
-        <div class="row g-4">
+    <!-- =====================================================
+         EVENT FORM
+    ====================================================== -->
+
+    <form
+        method="post"
+        enctype="multipart/form-data"
+        novalidate
+        id="kucsaCreateEventForm"
+        class="kucsa-event-form"
+    >
+
+        {% csrf_token %}
+
+
+        <div class="row g-3 g-xl-4">
 
             <!-- =================================================
                  LEFT COLUMN
-            ================================================= -->
+            ================================================== -->
 
             <div class="col-xl-8">
 
-
                 <!-- =================================================
                      EVENT INFORMATION
-                ================================================= -->
+                ================================================== -->
 
-                <div class="card border-0 shadow-sm mb-4">
+                <section class="kucsa-event-section">
 
-                    <div class="card-header bg-white py-3">
+                    <header class="kucsa-event-section-header">
 
-                        <h5 class="mb-1 fw-bold">
+                        <div class="kucsa-event-section-icon kucsa-icon-primary">
+                            <i class="bi bi-info-circle-fill"></i>
+                        </div>
 
-                            <i class="bi bi-info-circle me-1"></i>
+                        <div>
+                            <h2 class="kucsa-event-section-title">
+                                Event Information
+                            </h2>
 
-                            Event Information
+                            <p class="kucsa-event-section-description">
+                                Provide the basic information members need to know.
+                            </p>
+                        </div>
 
-                        </h5>
-
-                        <small class="text-muted">
-
-                            Provide the basic information about the event.
-
-                        </small>
-
-                    </div>
+                    </header>
 
 
-                    <div class="card-body">
+                    <div class="kucsa-event-section-body">
 
                         <!-- TITLE -->
 
-                        <div class="mb-4">
+                        <div class="kucsa-field">
 
                             <label
                                 for="{{ form.title.id_for_label }}"
-                                class="form-label fw-semibold"
+                                class="kucsa-field-label"
                             >
-
                                 Event Title
-                                <span class="text-danger">*</span>
-
+                                <span class="kucsa-required">*</span>
                             </label>
 
                             {{ form.title }}
 
                             {% if form.title.help_text %}
-
-                                <div class="form-text">
+                                <small class="kucsa-field-help">
                                     {{ form.title.help_text }}
-                                </div>
-
+                                </small>
                             {% endif %}
 
                             {% for error in form.title.errors %}
-
-                                <div class="text-danger small mt-1">
-
-                                    <i class="bi bi-exclamation-circle me-1"></i>
-
-                                    {{ error }}
-
+                                <div class="kucsa-field-error">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    <span>{{ error }}</span>
                                 </div>
-
                             {% endfor %}
 
                         </div>
@@ -176,71 +1067,87 @@
 
                             <div class="col-md-6">
 
-                                <label
-                                    for="{{ form.event_type.id_for_label }}"
-                                    class="form-label fw-semibold"
-                                >
+                                <div class="kucsa-field">
 
-                                    Event Type
-                                    <span class="text-danger">*</span>
+                                    <label
+                                        for="{{ form.event_type.id_for_label }}"
+                                        class="kucsa-field-label"
+                                    >
+                                        Event Type
+                                        <span class="kucsa-required">*</span>
+                                    </label>
 
-                                </label>
+                                    {{ form.event_type }}
 
-                                {{ form.event_type }}
+                                    {% if form.event_type.help_text %}
+                                        <small class="kucsa-field-help">
+                                            {{ form.event_type.help_text }}
+                                        </small>
+                                    {% endif %}
 
-                                {% if form.event_type.help_text %}
+                                    {% for error in form.event_type.errors %}
+                                        <div class="kucsa-field-error">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                            <span>{{ error }}</span>
+                                        </div>
+                                    {% endfor %}
 
-                                    <div class="form-text">
-                                        {{ form.event_type.help_text }}
-                                    </div>
-
-                                {% endif %}
-
-                                {% for error in form.event_type.errors %}
-
-                                    <div class="text-danger small mt-1">
-                                        {{ error }}
-                                    </div>
-
-                                {% endfor %}
+                                </div>
 
                             </div>
 
 
                             <div class="col-md-6">
 
-                                <label
-                                    for="{{ form.image.id_for_label }}"
-                                    class="form-label fw-semibold"
-                                >
+                                <div class="kucsa-field">
 
-                                    Event Image
+                                    <label
+                                        for="{{ form.image.id_for_label }}"
+                                        class="kucsa-field-label"
+                                    >
+                                        Event Image
+                                    </label>
 
-                                </label>
+                                    {{ form.image }}
 
-                                {{ form.image }}
+                                    {% if form.image.help_text %}
 
-                                {% if form.image.help_text %}
+                                        <small class="kucsa-field-help">
+                                            {{ form.image.help_text }}
+                                        </small>
 
-                                    <div class="form-text">
-                                        {{ form.image.help_text }}
+                                    {% else %}
+
+                                        <small class="kucsa-field-help">
+                                            Optional event banner or promotional image.
+                                        </small>
+
+                                    {% endif %}
+
+                                    <div
+                                        id="eventImagePreview"
+                                        class="kucsa-event-image-preview"
+                                    >
+                                        <img
+                                            id="eventImagePreviewImage"
+                                            src=""
+                                            alt="Selected event image preview"
+                                        >
+
+                                        <div
+                                            id="eventImagePreviewCaption"
+                                            class="kucsa-event-image-preview-caption"
+                                        ></div>
                                     </div>
 
-                                {% else %}
+                                    {% for error in form.image.errors %}
+                                        <div class="kucsa-field-error">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                            <span>{{ error }}</span>
+                                        </div>
+                                    {% endfor %}
 
-                                    <div class="form-text">
-                                        Optional event banner or promotional image.
-                                    </div>
-
-                                {% endif %}
-
-                                {% for error in form.image.errors %}
-
-                                    <div class="text-danger small mt-1">
-                                        {{ error }}
-                                    </div>
-
-                                {% endfor %}
+                                </div>
 
                             </div>
 
@@ -249,73 +1156,73 @@
 
                         <!-- DESCRIPTION -->
 
-                        <div class="mt-4">
+                        <div class="kucsa-field">
 
                             <label
                                 for="{{ form.description.id_for_label }}"
-                                class="form-label fw-semibold"
+                                class="kucsa-field-label"
                             >
-
                                 Description
-                                <span class="text-danger">*</span>
-
+                                <span class="kucsa-required">*</span>
                             </label>
 
                             {{ form.description }}
 
                             {% if form.description.help_text %}
-
-                                <div class="form-text">
+                                <small class="kucsa-field-help">
                                     {{ form.description.help_text }}
-                                </div>
-
+                                </small>
                             {% endif %}
 
+                            <div class="kucsa-character-row">
+                                <span
+                                    id="descriptionCounter"
+                                    class="kucsa-character-counter"
+                                >
+                                    0 characters
+                                </span>
+                            </div>
+
                             {% for error in form.description.errors %}
-
-                                <div class="text-danger small mt-1">
-
-                                    <i class="bi bi-exclamation-circle me-1"></i>
-
-                                    {{ error }}
-
+                                <div class="kucsa-field-error">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    <span>{{ error }}</span>
                                 </div>
-
                             {% endfor %}
 
                         </div>
 
                     </div>
 
-                </div>
+                </section>
 
 
                 <!-- =================================================
                      DATE & TIME
-                ================================================= -->
+                ================================================== -->
 
-                <div class="card border-0 shadow-sm mb-4">
+                <section class="kucsa-event-section">
 
-                    <div class="card-header bg-white py-3">
+                    <header class="kucsa-event-section-header">
 
-                        <h5 class="mb-1 fw-bold">
+                        <div class="kucsa-event-section-icon kucsa-icon-info">
+                            <i class="bi bi-calendar3"></i>
+                        </div>
 
-                            <i class="bi bi-calendar3 me-1"></i>
+                        <div>
+                            <h2 class="kucsa-event-section-title">
+                                Date & Time
+                            </h2>
 
-                            Date & Time
+                            <p class="kucsa-event-section-description">
+                                Set when the event starts and ends.
+                            </p>
+                        </div>
 
-                        </h5>
-
-                        <small class="text-muted">
-
-                            Set when the event starts and ends.
-
-                        </small>
-
-                    </div>
+                    </header>
 
 
-                    <div class="card-body">
+                    <div class="kucsa-event-section-body">
 
                         <div class="row g-3">
 
@@ -323,33 +1230,32 @@
 
                             <div class="col-md-6">
 
-                                <label
-                                    for="{{ form.start_datetime.id_for_label }}"
-                                    class="form-label fw-semibold"
-                                >
+                                <div class="kucsa-field">
 
-                                    Start Date & Time
-                                    <span class="text-danger">*</span>
+                                    <label
+                                        for="{{ form.start_datetime.id_for_label }}"
+                                        class="kucsa-field-label"
+                                    >
+                                        Start Date & Time
+                                        <span class="kucsa-required">*</span>
+                                    </label>
 
-                                </label>
+                                    {{ form.start_datetime }}
 
-                                {{ form.start_datetime }}
+                                    {% if form.start_datetime.help_text %}
+                                        <small class="kucsa-field-help">
+                                            {{ form.start_datetime.help_text }}
+                                        </small>
+                                    {% endif %}
 
-                                {% if form.start_datetime.help_text %}
+                                    {% for error in form.start_datetime.errors %}
+                                        <div class="kucsa-field-error">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                            <span>{{ error }}</span>
+                                        </div>
+                                    {% endfor %}
 
-                                    <div class="form-text">
-                                        {{ form.start_datetime.help_text }}
-                                    </div>
-
-                                {% endif %}
-
-                                {% for error in form.start_datetime.errors %}
-
-                                    <div class="text-danger small mt-1">
-                                        {{ error }}
-                                    </div>
-
-                                {% endfor %}
+                                </div>
 
                             </div>
 
@@ -358,108 +1264,127 @@
 
                             <div class="col-md-6">
 
-                                <label
-                                    for="{{ form.end_datetime.id_for_label }}"
-                                    class="form-label fw-semibold"
-                                >
+                                <div class="kucsa-field">
 
-                                    End Date & Time
-                                    <span class="text-danger">*</span>
+                                    <label
+                                        for="{{ form.end_datetime.id_for_label }}"
+                                        class="kucsa-field-label"
+                                    >
+                                        End Date & Time
+                                        <span class="kucsa-required">*</span>
+                                    </label>
 
-                                </label>
+                                    {{ form.end_datetime }}
 
-                                {{ form.end_datetime }}
+                                    {% if form.end_datetime.help_text %}
+                                        <small class="kucsa-field-help">
+                                            {{ form.end_datetime.help_text }}
+                                        </small>
+                                    {% endif %}
 
-                                {% if form.end_datetime.help_text %}
+                                    {% for error in form.end_datetime.errors %}
+                                        <div class="kucsa-field-error">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                            <span>{{ error }}</span>
+                                        </div>
+                                    {% endfor %}
 
-                                    <div class="form-text">
-                                        {{ form.end_datetime.help_text }}
-                                    </div>
-
-                                {% endif %}
-
-                                {% for error in form.end_datetime.errors %}
-
-                                    <div class="text-danger small mt-1">
-                                        {{ error }}
-                                    </div>
-
-                                {% endfor %}
+                                </div>
 
                             </div>
 
                         </div>
 
 
-                        <div class="alert alert-light border mt-3 mb-0">
+                        <div
+                            id="timeValidation"
+                            class="kucsa-time-validation"
+                            role="status"
+                            aria-live="polite"
+                        ></div>
 
-                            <i class="bi bi-info-circle me-2"></i>
 
-                            Make sure the end time is later than the start
-                            time.
+                        <div class="kucsa-time-note">
+
+                            <i class="bi bi-info-circle-fill"></i>
+
+                            <span>
+                                Make sure the end time is later than the
+                                start time. Check the date and time carefully
+                                before publishing the event.
+                            </span>
 
                         </div>
 
                     </div>
 
-                </div>
+                </section>
 
 
                 <!-- =================================================
                      LOCATION
-                ================================================= -->
+                ================================================== -->
 
-                <div class="card border-0 shadow-sm mb-4">
+                <section class="kucsa-event-section">
 
-                    <div class="card-header bg-white py-3">
+                    <header class="kucsa-event-section-header">
 
-                        <h5 class="mb-1 fw-bold">
+                        <div class="kucsa-event-section-icon kucsa-icon-success">
+                            <i class="bi bi-geo-alt-fill"></i>
+                        </div>
 
-                            <i class="bi bi-geo-alt me-1"></i>
+                        <div>
+                            <h2 class="kucsa-event-section-title">
+                                Location
+                            </h2>
 
-                            Location
+                            <p class="kucsa-event-section-description">
+                                Tell members where the event will take place.
+                            </p>
+                        </div>
 
-                        </h5>
-
-                        <small class="text-muted">
-
-                            Tell members where the event will take place.
-
-                        </small>
-
-                    </div>
+                    </header>
 
 
-                    <div class="card-body">
+                    <div class="kucsa-event-section-body">
 
                         <!-- ONLINE CHECKBOX -->
 
-                        <div class="form-check form-switch mb-4">
+                        <div class="kucsa-option-box mb-4">
 
-                            {{ form.is_online }}
+                            <div class="form-check form-switch">
 
-                            <label
-                                class="form-check-label fw-semibold"
-                                for="{{ form.is_online.id_for_label }}"
-                            >
+                                {{ form.is_online }}
 
-                                Online Event
-
-                            </label>
-
-                            <div class="form-text">
-
-                                Enable this if members will participate
-                                remotely.
+                                <label
+                                    class="form-check-label kucsa-option-label"
+                                    for="{{ form.is_online.id_for_label }}"
+                                >
+                                    Online Event
+                                </label>
 
                             </div>
 
+                            <div class="kucsa-option-help">
+                                Enable this if members will participate remotely.
+                            </div>
+
+                            <div
+                                id="onlineStatus"
+                                class="kucsa-online-status"
+                            >
+                                <i class="bi bi-geo-alt"></i>
+
+                                <span>
+                                    This event is currently configured for a physical location.
+                                </span>
+                            </div>
+
                             {% for error in form.is_online.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
+                                <div class="kucsa-field-error">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    <span>{{ error }}</span>
                                 </div>
-
                             {% endfor %}
 
                         </div>
@@ -467,34 +1392,29 @@
 
                         <!-- VENUE -->
 
-                        <div class="mb-3">
+                        <div class="kucsa-field">
 
                             <label
                                 for="{{ form.venue.id_for_label }}"
-                                class="form-label fw-semibold"
+                                class="kucsa-field-label"
                             >
-
                                 Venue
-                                <span class="text-danger">*</span>
-
+                                <span class="kucsa-required">*</span>
                             </label>
 
                             {{ form.venue }}
 
                             {% if form.venue.help_text %}
-
-                                <div class="form-text">
+                                <small class="kucsa-field-help">
                                     {{ form.venue.help_text }}
-                                </div>
-
+                                </small>
                             {% endif %}
 
                             {% for error in form.venue.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
+                                <div class="kucsa-field-error">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    <span>{{ error }}</span>
                                 </div>
-
                             {% endfor %}
 
                         </div>
@@ -502,40 +1422,37 @@
 
                         <!-- LOCATION DETAILS -->
 
-                        <div class="mb-3">
+                        <div class="kucsa-field">
 
                             <label
                                 for="{{ form.location_details.id_for_label }}"
-                                class="form-label fw-semibold"
+                                class="kucsa-field-label"
                             >
-
                                 Location Details
-
                             </label>
 
                             {{ form.location_details }}
 
                             {% if form.location_details.help_text %}
 
-                                <div class="form-text">
+                                <small class="kucsa-field-help">
                                     {{ form.location_details.help_text }}
-                                </div>
+                                </small>
 
                             {% else %}
 
-                                <div class="form-text">
+                                <small class="kucsa-field-help">
                                     Add room, building, floor, directions,
                                     or other useful location information.
-                                </div>
+                                </small>
 
                             {% endif %}
 
                             {% for error in form.location_details.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
+                                <div class="kucsa-field-error">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    <span>{{ error }}</span>
                                 </div>
-
                             {% endfor %}
 
                         </div>
@@ -543,106 +1460,96 @@
 
                         <!-- ONLINE LINK -->
 
-                        <div>
+                        <div class="kucsa-field">
 
                             <label
                                 for="{{ form.online_link.id_for_label }}"
-                                class="form-label fw-semibold"
+                                class="kucsa-field-label"
                             >
-
                                 Online Meeting Link
-
                             </label>
 
                             {{ form.online_link }}
 
                             {% if form.online_link.help_text %}
 
-                                <div class="form-text">
+                                <small class="kucsa-field-help">
                                     {{ form.online_link.help_text }}
-                                </div>
+                                </small>
 
                             {% else %}
 
-                                <div class="form-text">
-                                    Add the meeting URL when this is an
-                                    online event.
-                                </div>
+                                <small class="kucsa-field-help">
+                                    Add the meeting URL when this is an online event.
+                                </small>
 
                             {% endif %}
 
                             {% for error in form.online_link.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
+                                <div class="kucsa-field-error">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    <span>{{ error }}</span>
                                 </div>
-
                             {% endfor %}
 
                         </div>
 
                     </div>
 
-                </div>
+                </section>
 
 
                 <!-- =================================================
                      ADDITIONAL INFORMATION
-                ================================================= -->
+                ================================================== -->
 
-                <div class="card border-0 shadow-sm mb-4">
+                <section class="kucsa-event-section">
 
-                    <div class="card-header bg-white py-3">
+                    <header class="kucsa-event-section-header">
 
-                        <h5 class="mb-1 fw-bold">
+                        <div class="kucsa-event-section-icon kucsa-icon-warning">
+                            <i class="bi bi-card-text"></i>
+                        </div>
 
-                            <i class="bi bi-card-text me-1"></i>
+                        <div>
+                            <h2 class="kucsa-event-section-title">
+                                Additional Information
+                            </h2>
 
-                            Additional Information
+                            <p class="kucsa-event-section-description">
+                                Add information that will help members prepare.
+                            </p>
+                        </div>
 
-                        </h5>
-
-                        <small class="text-muted">
-
-                            Add information that will help members prepare
-                            for the event.
-
-                        </small>
-
-                    </div>
+                    </header>
 
 
-                    <div class="card-body">
+                    <div class="kucsa-event-section-body">
 
                         <!-- REQUIREMENTS -->
 
-                        <div class="mb-4">
+                        <div class="kucsa-field">
 
                             <label
                                 for="{{ form.requirements.id_for_label }}"
-                                class="form-label fw-semibold"
+                                class="kucsa-field-label"
                             >
-
                                 Requirements
-
                             </label>
 
                             {{ form.requirements }}
 
                             {% if form.requirements.help_text %}
-
-                                <div class="form-text">
+                                <small class="kucsa-field-help">
                                     {{ form.requirements.help_text }}
-                                </div>
-
+                                </small>
                             {% endif %}
 
                             {% for error in form.requirements.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
+                                <div class="kucsa-field-error">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    <span>{{ error }}</span>
                                 </div>
-
                             {% endfor %}
 
                         </div>
@@ -650,33 +1557,28 @@
 
                         <!-- TARGET AUDIENCE -->
 
-                        <div class="mb-4">
+                        <div class="kucsa-field">
 
                             <label
                                 for="{{ form.target_audience.id_for_label }}"
-                                class="form-label fw-semibold"
+                                class="kucsa-field-label"
                             >
-
                                 Target Audience
-
                             </label>
 
                             {{ form.target_audience }}
 
                             {% if form.target_audience.help_text %}
-
-                                <div class="form-text">
+                                <small class="kucsa-field-help">
                                     {{ form.target_audience.help_text }}
-                                </div>
-
+                                </small>
                             {% endif %}
 
                             {% for error in form.target_audience.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
+                                <div class="kucsa-field-error">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    <span>{{ error }}</span>
                                 </div>
-
                             {% endfor %}
 
                         </div>
@@ -684,32 +1586,30 @@
 
                         <!-- CERTIFICATE -->
 
-                        <div class="form-check mb-3">
+                        <div class="kucsa-option-box mb-3">
 
-                            {{ form.certificate_available }}
+                            <div class="form-check">
 
-                            <label
-                                class="form-check-label fw-semibold"
-                                for="{{ form.certificate_available.id_for_label }}"
-                            >
+                                {{ form.certificate_available }}
 
-                                Certificate Available
-
-                            </label>
-
-                            <div class="form-text">
-
-                                Indicate whether participants may receive
-                                certificates.
+                                <label
+                                    class="form-check-label kucsa-option-label"
+                                    for="{{ form.certificate_available.id_for_label }}"
+                                >
+                                    Certificate Available
+                                </label>
 
                             </div>
 
+                            <div class="kucsa-option-help">
+                                Indicate whether participants may receive certificates.
+                            </div>
+
                             {% for error in form.certificate_available.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
+                                <div class="kucsa-field-error">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    <span>{{ error }}</span>
                                 </div>
-
                             {% endfor %}
 
                         </div>
@@ -717,338 +1617,384 @@
 
                         <!-- FEATURED -->
 
-                        <div class="form-check">
+                        <div class="kucsa-option-box">
 
-                            {{ form.is_featured }}
+                            <div class="form-check">
 
-                            <label
-                                class="form-check-label fw-semibold"
-                                for="{{ form.is_featured.id_for_label }}"
-                            >
+                                {{ form.is_featured }}
 
-                                Feature This Event
-
-                            </label>
-
-                            <div class="form-text">
-
-                                Featured events receive greater visibility
-                                on the KUCSA events page.
+                                <label
+                                    class="form-check-label kucsa-option-label"
+                                    for="{{ form.is_featured.id_for_label }}"
+                                >
+                                    Feature This Event
+                                </label>
 
                             </div>
 
+                            <div class="kucsa-option-help">
+                                Featured events receive greater visibility
+                                on the KUCSA events page.
+                            </div>
+
                             {% for error in form.is_featured.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
+                                <div class="kucsa-field-error">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    <span>{{ error }}</span>
                                 </div>
-
                             {% endfor %}
 
                         </div>
 
                     </div>
 
-                </div>
+                </section>
 
             </div>
 
 
             <!-- =================================================
                  RIGHT COLUMN
-            ================================================= -->
+            ================================================== -->
 
             <div class="col-xl-4">
 
+                <aside class="kucsa-event-guidance">
 
-                <!-- =================================================
-                     REGISTRATION SETTINGS
-                ================================================= -->
 
-                <div class="card border-0 shadow-sm mb-4">
+                    <!-- =================================================
+                         REGISTRATION SETTINGS
+                    ================================================== -->
 
-                    <div class="card-header bg-white py-3">
+                    <section class="kucsa-event-section">
 
-                        <h5 class="mb-1 fw-bold">
+                        <header class="kucsa-event-section-header">
 
-                            <i class="bi bi-person-check me-1"></i>
+                            <div class="kucsa-event-section-icon kucsa-icon-primary">
+                                <i class="bi bi-person-check-fill"></i>
+                            </div>
 
-                            Registration Settings
+                            <div>
+                                <h2 class="kucsa-event-section-title">
+                                    Registration Settings
+                                </h2>
 
-                        </h5>
+                                <p class="kucsa-event-section-description">
+                                    Control member registration.
+                                </p>
+                            </div>
 
-                        <small class="text-muted">
+                        </header>
 
-                            Control how members register for the event.
 
-                        </small>
+                        <div class="kucsa-event-section-body">
 
-                    </div>
+                            <!-- CAPACITY -->
 
+                            <div class="kucsa-field">
 
-                    <div class="card-body">
+                                <label
+                                    for="{{ form.capacity.id_for_label }}"
+                                    class="kucsa-field-label"
+                                >
+                                    Capacity
+                                </label>
 
-                        <!-- CAPACITY -->
+                                {{ form.capacity }}
 
-                        <div class="mb-4">
+                                {% if form.capacity.help_text %}
 
-                            <label
-                                for="{{ form.capacity.id_for_label }}"
-                                class="form-label fw-semibold"
-                            >
+                                    <small class="kucsa-field-help">
+                                        {{ form.capacity.help_text }}
+                                    </small>
 
-                                Capacity
+                                {% else %}
 
-                            </label>
+                                    <small class="kucsa-field-help">
+                                        Leave blank for unlimited capacity.
+                                    </small>
 
-                            {{ form.capacity }}
+                                {% endif %}
 
-                            {% if form.capacity.help_text %}
-
-                                <div class="form-text">
-                                    {{ form.capacity.help_text }}
-                                </div>
-
-                            {% else %}
-
-                                <div class="form-text">
-                                    Leave blank for unlimited capacity.
-                                </div>
-
-                            {% endif %}
-
-                            {% for error in form.capacity.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
-
-
-                        <!-- REGISTRATION STATUS -->
-
-                        <div class="mb-4">
-
-                            <label
-                                for="{{ form.registration_status.id_for_label }}"
-                                class="form-label fw-semibold"
-                            >
-
-                                Registration Status
-
-                            </label>
-
-                            {{ form.registration_status }}
-
-                            {% if form.registration_status.help_text %}
-
-                                <div class="form-text">
-                                    {{ form.registration_status.help_text }}
-                                </div>
-
-                            {% endif %}
-
-                            {% for error in form.registration_status.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
-
-
-                        <!-- DEADLINE -->
-
-                        <div class="mb-4">
-
-                            <label
-                                for="{{ form.registration_deadline.id_for_label }}"
-                                class="form-label fw-semibold"
-                            >
-
-                                Registration Deadline
-
-                            </label>
-
-                            {{ form.registration_deadline }}
-
-                            {% if form.registration_deadline.help_text %}
-
-                                <div class="form-text">
-                                    {{ form.registration_deadline.help_text }}
-                                </div>
-
-                            {% endif %}
-
-                            {% for error in form.registration_deadline.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
-
-
-                        <!-- REQUIRE REGISTRATION -->
-
-                        <div class="form-check">
-
-                            {{ form.requires_registration }}
-
-                            <label
-                                class="form-check-label fw-semibold"
-                                for="{{ form.requires_registration.id_for_label }}"
-                            >
-
-                                Require Registration
-
-                            </label>
-
-                            <div class="form-text">
-
-                                If disabled, members can view the event
-                                without registering.
+                                {% for error in form.capacity.errors %}
+                                    <div class="kucsa-field-error">
+                                        <i class="bi bi-exclamation-circle"></i>
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
 
                             </div>
 
-                            {% for error in form.requires_registration.errors %}
 
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
-                                </div>
+                            <!-- REGISTRATION STATUS -->
 
-                            {% endfor %}
+                            <div class="kucsa-field">
 
-                        </div>
+                                <label
+                                    for="{{ form.registration_status.id_for_label }}"
+                                    class="kucsa-field-label"
+                                >
+                                    Registration Status
+                                </label>
 
-                    </div>
+                                {{ form.registration_status }}
 
-                </div>
+                                {% if form.registration_status.help_text %}
+                                    <small class="kucsa-field-help">
+                                        {{ form.registration_status.help_text }}
+                                    </small>
+                                {% endif %}
 
+                                {% for error in form.registration_status.errors %}
+                                    <div class="kucsa-field-error">
+                                        <i class="bi bi-exclamation-circle"></i>
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
 
-                <!-- =================================================
-                     EVENT STATUS
-                ================================================= -->
-
-                <div class="card border-0 shadow-sm mb-4">
-
-                    <div class="card-header bg-white py-3">
-
-                        <h5 class="mb-1 fw-bold">
-
-                            <i class="bi bi-activity me-1"></i>
-
-                            Event Status
-
-                        </h5>
-
-                        <small class="text-muted">
-
-                            Control the visibility and lifecycle of the
-                            event.
-
-                        </small>
-
-                    </div>
-
-
-                    <div class="card-body">
-
-                        <label
-                            for="{{ form.status.id_for_label }}"
-                            class="form-label fw-semibold"
-                        >
-
-                            Status
-
-                        </label>
-
-                        {{ form.status }}
-
-                        {% if form.status.help_text %}
-
-                            <div class="form-text">
-                                {{ form.status.help_text }}
                             </div>
 
-                        {% endif %}
 
-                        {% for error in form.status.errors %}
+                            <!-- DEADLINE -->
 
-                            <div class="text-danger small mt-1">
-                                {{ error }}
+                            <div class="kucsa-field">
+
+                                <label
+                                    for="{{ form.registration_deadline.id_for_label }}"
+                                    class="kucsa-field-label"
+                                >
+                                    Registration Deadline
+                                </label>
+
+                                {{ form.registration_deadline }}
+
+                                {% if form.registration_deadline.help_text %}
+                                    <small class="kucsa-field-help">
+                                        {{ form.registration_deadline.help_text }}
+                                    </small>
+                                {% endif %}
+
+                                {% for error in form.registration_deadline.errors %}
+                                    <div class="kucsa-field-error">
+                                        <i class="bi bi-exclamation-circle"></i>
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+
                             </div>
 
-                        {% endfor %}
 
+                            <!-- REQUIRE REGISTRATION -->
 
-                        <div class="alert alert-info mt-3 mb-0 small">
+                            <div class="kucsa-option-box">
 
-                            <div class="d-flex align-items-start">
+                                <div class="form-check">
 
-                                <i class="bi bi-info-circle me-2"></i>
+                                    {{ form.requires_registration }}
 
-                                <div>
-
-                                    <strong>
-                                        Draft events
-                                    </strong>
-
-                                    remain private until they are
-                                    published.
+                                    <label
+                                        class="form-check-label kucsa-option-label"
+                                        for="{{ form.requires_registration.id_for_label }}"
+                                    >
+                                        Require Registration
+                                    </label>
 
                                 </div>
+
+                                <div class="kucsa-option-help">
+                                    If disabled, members can view the event
+                                    without registering.
+                                </div>
+
+                                {% for error in form.requires_registration.errors %}
+                                    <div class="kucsa-field-error">
+                                        <i class="bi bi-exclamation-circle"></i>
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
 
                             </div>
 
                         </div>
 
-                    </div>
-
-                </div>
+                    </section>
 
 
-                <!-- =================================================
-                     FORM ACTIONS
-                ================================================= -->
+                    <!-- =================================================
+                         EVENT STATUS
+                    ================================================== -->
 
-                <div class="card border-0 shadow-sm">
+                    <section class="kucsa-event-section">
 
-                    <div class="card-body">
+                        <header class="kucsa-event-section-header">
+
+                            <div class="kucsa-event-section-icon kucsa-icon-dark">
+                                <i class="bi bi-activity"></i>
+                            </div>
+
+                            <div>
+                                <h2 class="kucsa-event-section-title">
+                                    Event Status
+                                </h2>
+
+                                <p class="kucsa-event-section-description">
+                                    Control event visibility and lifecycle.
+                                </p>
+                            </div>
+
+                        </header>
+
+
+                        <div class="kucsa-event-section-body">
+
+                            <div class="kucsa-field">
+
+                                <label
+                                    for="{{ form.status.id_for_label }}"
+                                    class="kucsa-field-label"
+                                >
+                                    Status
+                                </label>
+
+                                {{ form.status }}
+
+                                {% if form.status.help_text %}
+                                    <small class="kucsa-field-help">
+                                        {{ form.status.help_text }}
+                                    </small>
+                                {% endif %}
+
+                                {% for error in form.status.errors %}
+                                    <div class="kucsa-field-error">
+                                        <i class="bi bi-exclamation-circle"></i>
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+
+
+                            <div class="kucsa-time-note">
+
+                                <i class="bi bi-shield-check"></i>
+
+                                <span>
+                                    <strong>Draft events</strong> remain private
+                                    until they are published.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         CREATION GUIDANCE
+                    ================================================== -->
+
+                    <section class="kucsa-guidance-card">
+
+                        <header class="kucsa-guidance-header">
+
+                            <h2 class="kucsa-guidance-title">
+                                <i class="bi bi-lightbulb-fill"></i>
+                                Event Creation Tips
+                            </h2>
+
+                        </header>
+
+
+                        <div class="kucsa-guidance-body">
+
+                            <ul class="kucsa-guidance-list">
+
+                                <li>
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    <span>
+                                        Use a clear and recognizable event title.
+                                    </span>
+                                </li>
+
+                                <li>
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    <span>
+                                        Provide accurate start and end times.
+                                    </span>
+                                </li>
+
+                                <li>
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    <span>
+                                        Include useful venue or meeting details.
+                                    </span>
+                                </li>
+
+                                <li>
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    <span>
+                                        Set registration requirements carefully.
+                                    </span>
+                                </li>
+
+                                <li>
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    <span>
+                                        Review the event before publishing it.
+                                    </span>
+                                </li>
+
+                            </ul>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         FORM ACTIONS
+                    ================================================== -->
+
+                    <div class="kucsa-event-actions">
 
                         <button
                             type="submit"
-                            class="btn btn-primary w-100 mb-2"
+                            class="btn btn-primary w-100 kucsa-event-submit"
+                            id="createEventSubmit"
                         >
 
-                            <i class="bi bi-check-circle me-1"></i>
+                            <span class="kucsa-submit-content">
+                                <i class="bi bi-check-circle"></i>
+                                Create Event
+                            </span>
 
-                            Create Event
+                            <span
+                                class="kucsa-submit-spinner"
+                                aria-hidden="true"
+                            >
+                                <span
+                                    class="spinner-border spinner-border-sm"
+                                    role="status"
+                                ></span>
+
+                                Creating Event...
+                            </span>
 
                         </button>
 
 
                         <a
                             href="{% url 'events:list' %}"
-                            class="btn btn-outline-secondary w-100"
+                            class="btn btn-outline-secondary w-100 mt-2 kucsa-event-cancel"
                         >
-
-                            <i class="bi bi-x-circle me-1"></i>
-
+                            <i class="bi bi-x-circle"></i>
                             Cancel
-
                         </a>
 
                     </div>
 
-                </div>
+                </aside>
 
             </div>
 
@@ -1057,5 +2003,598 @@
     </form>
 
 </div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const page = document.querySelector(".kucsa-create-event");
+
+    if (!page) {
+        return;
+    }
+
+    const form = document.getElementById(
+        "kucsaCreateEventForm"
+    );
+
+    if (!form) {
+        return;
+    }
+
+
+    /* =========================================================
+       ADD BOOTSTRAP-FRIENDLY CLASSES TO DJANGO FORM WIDGETS
+    ========================================================== */
+
+    const controls = form.querySelectorAll(
+        "input:not([type='checkbox']):not([type='radio']):not([type='file']), " +
+        "select, textarea"
+    );
+
+    controls.forEach(function (control) {
+        control.classList.add("form-control");
+
+        if (control.tagName.toLowerCase() === "select") {
+            control.classList.remove("form-control");
+            control.classList.add("form-select");
+        }
+    });
+
+
+    /* =========================================================
+       MARK INVALID DJANGO FIELDS
+    ========================================================== */
+
+    const errorBlocks = page.querySelectorAll(
+        ".kucsa-field-error"
+    );
+
+    errorBlocks.forEach(function (errorBlock) {
+
+        const field =
+            errorBlock.parentElement.querySelector(
+                "input, select, textarea"
+            );
+
+        if (field) {
+            field.classList.add(
+                "kucsa-field-invalid"
+            );
+            field.setAttribute(
+                "aria-invalid",
+                "true"
+            );
+        }
+    });
+
+
+    /* =========================================================
+       IMAGE PREVIEW
+    ========================================================== */
+
+    const imageInput =
+        document.getElementById(
+            "{{ form.image.auto_id }}"
+        );
+
+    const imagePreview =
+        document.getElementById(
+            "eventImagePreview"
+        );
+
+    const imagePreviewImage =
+        document.getElementById(
+            "eventImagePreviewImage"
+        );
+
+    const imagePreviewCaption =
+        document.getElementById(
+            "eventImagePreviewCaption"
+        );
+
+
+    if (
+        imageInput &&
+        imagePreview &&
+        imagePreviewImage
+    ) {
+
+        imageInput.addEventListener(
+            "change",
+            function () {
+
+                const file =
+                    this.files &&
+                    this.files[0];
+
+                if (!file) {
+
+                    imagePreview.style.display =
+                        "none";
+
+                    imagePreviewImage.removeAttribute(
+                        "src"
+                    );
+
+                    return;
+                }
+
+
+                const allowedTypes = [
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp",
+                    "image/gif"
+                ];
+
+
+                if (
+                    !allowedTypes.includes(
+                        file.type
+                    )
+                ) {
+
+                    imagePreview.style.display =
+                        "none";
+
+                    this.value = "";
+
+                    alert(
+                        "Please select a valid image file (JPG, PNG, WEBP, or GIF)."
+                    );
+
+                    return;
+                }
+
+
+                const reader =
+                    new FileReader();
+
+                reader.onload = function (event) {
+
+                    imagePreviewImage.src =
+                        event.target.result;
+
+                    imagePreviewCaption.textContent =
+                        file.name +
+                        " • " +
+                        formatFileSize(
+                            file.size
+                        );
+
+                    imagePreview.style.display =
+                        "block";
+                };
+
+                reader.readAsDataURL(file);
+
+            }
+        );
+    }
+
+
+    function formatFileSize(bytes) {
+
+        if (bytes < 1024) {
+            return bytes + " B";
+        }
+
+        if (bytes < 1024 * 1024) {
+            return (
+                (bytes / 1024).toFixed(1) +
+                " KB"
+            );
+        }
+
+        return (
+            (bytes / (1024 * 1024)).toFixed(1) +
+            " MB"
+        );
+    }
+
+
+    /* =========================================================
+       DESCRIPTION CHARACTER COUNTER
+    ========================================================== */
+
+    const description =
+        document.getElementById(
+            "{{ form.description.auto_id }}"
+        );
+
+    const descriptionCounter =
+        document.getElementById(
+            "descriptionCounter"
+        );
+
+
+    function updateDescriptionCounter() {
+
+        if (
+            !description ||
+            !descriptionCounter
+        ) {
+            return;
+        }
+
+        const length =
+            description.value.length;
+
+        descriptionCounter.textContent =
+            length.toLocaleString() +
+            (
+                length === 1
+                    ? " character"
+                    : " characters"
+            );
+    }
+
+
+    if (description) {
+
+        description.addEventListener(
+            "input",
+            updateDescriptionCounter
+        );
+
+        updateDescriptionCounter();
+    }
+
+
+    /* =========================================================
+       ONLINE EVENT UI
+    ========================================================== */
+
+    const onlineCheckbox =
+        document.getElementById(
+            "{{ form.is_online.auto_id }}"
+        );
+
+    const onlineStatus =
+        document.getElementById(
+            "onlineStatus"
+        );
+
+
+    function updateOnlineStatus() {
+
+        if (
+            !onlineCheckbox ||
+            !onlineStatus
+        ) {
+            return;
+        }
+
+        const icon =
+            onlineStatus.querySelector("i");
+
+        const text =
+            onlineStatus.querySelector("span");
+
+
+        if (onlineCheckbox.checked) {
+
+            onlineStatus.classList.add(
+                "active"
+            );
+
+            if (icon) {
+                icon.className =
+                    "bi bi-camera-video-fill";
+            }
+
+            if (text) {
+                text.textContent =
+                    "This event is configured for online participation.";
+            }
+
+        } else {
+
+            onlineStatus.classList.remove(
+                "active"
+            );
+
+            if (icon) {
+                icon.className =
+                    "bi bi-geo-alt";
+            }
+
+            if (text) {
+                text.textContent =
+                    "This event is currently configured for a physical location.";
+            }
+        }
+    }
+
+
+    if (onlineCheckbox) {
+
+        onlineCheckbox.addEventListener(
+            "change",
+            updateOnlineStatus
+        );
+
+        updateOnlineStatus();
+    }
+
+
+    /* =========================================================
+       DATE / TIME VALIDATION
+    ========================================================== */
+
+    const startField =
+        document.getElementById(
+            "{{ form.start_datetime.auto_id }}"
+        );
+
+    const endField =
+        document.getElementById(
+            "{{ form.end_datetime.auto_id }}"
+        );
+
+    const timeValidation =
+        document.getElementById(
+            "timeValidation"
+        );
+
+
+    function validateEventTimes() {
+
+        if (
+            !startField ||
+            !endField ||
+            !timeValidation
+        ) {
+            return true;
+        }
+
+        if (
+            !startField.value ||
+            !endField.value
+        ) {
+
+            timeValidation.className =
+                "kucsa-time-validation";
+
+            return true;
+        }
+
+
+        const start =
+            new Date(
+                startField.value
+            );
+
+        const end =
+            new Date(
+                endField.value
+            );
+
+
+        if (
+            Number.isNaN(start.getTime()) ||
+            Number.isNaN(end.getTime())
+        ) {
+
+            timeValidation.className =
+                "kucsa-time-validation";
+
+            return true;
+        }
+
+
+        if (end <= start) {
+
+            timeValidation.className =
+                "kucsa-time-validation error";
+
+            timeValidation.innerHTML =
+                '<i class="bi bi-exclamation-triangle me-1"></i>' +
+                "The end time must be later than the start time.";
+
+            return false;
+        }
+
+
+        timeValidation.className =
+            "kucsa-time-validation success";
+
+        timeValidation.innerHTML =
+            '<i class="bi bi-check-circle me-1"></i>' +
+            "The event schedule looks valid.";
+
+        return true;
+    }
+
+
+    if (startField) {
+        startField.addEventListener(
+            "change",
+            validateEventTimes
+        );
+    }
+
+    if (endField) {
+        endField.addEventListener(
+            "change",
+            validateEventTimes
+        );
+    }
+
+
+    /* =========================================================
+       FORM SUBMISSION PROTECTION
+    ========================================================== */
+
+    let isSubmitting = false;
+
+    form.addEventListener(
+        "submit",
+        function (event) {
+
+            if (isSubmitting) {
+
+                event.preventDefault();
+
+                return;
+            }
+
+
+            if (!validateEventTimes()) {
+
+                event.preventDefault();
+
+                if (endField) {
+                    endField.focus();
+                }
+
+                return;
+            }
+
+
+            /*
+             * Allow Django/server-side validation
+             * to remain the final authority.
+             */
+
+            isSubmitting = true;
+
+            form.classList.add(
+                "is-submitting"
+            );
+
+
+            const submitButton =
+                document.getElementById(
+                    "createEventSubmit"
+                );
+
+            if (submitButton) {
+
+                submitButton.disabled =
+                    true;
+
+                submitButton.setAttribute(
+                    "aria-disabled",
+                    "true"
+                );
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       SCROLL TO FIRST INVALID FIELD
+    ========================================================== */
+
+    const firstInvalid =
+        form.querySelector(
+            ".kucsa-field-invalid"
+        );
+
+
+    if (firstInvalid) {
+
+        window.setTimeout(
+            function () {
+
+                firstInvalid.scrollIntoView({
+                    behavior:
+                        window.matchMedia(
+                            "(prefers-reduced-motion: reduce)"
+                        ).matches
+                            ? "auto"
+                            : "smooth",
+                    block: "center"
+                });
+
+                firstInvalid.focus({
+                    preventScroll: true
+                });
+
+            },
+            150
+        );
+    }
+
+
+    /* =========================================================
+       PREVENT ACCIDENTAL DOUBLE-SUBMISSION AFTER BFCACHE
+    ========================================================== */
+
+    window.addEventListener(
+        "pageshow",
+        function () {
+
+            isSubmitting = false;
+
+            form.classList.remove(
+                "is-submitting"
+            );
+
+            const submitButton =
+                document.getElementById(
+                    "createEventSubmit"
+                );
+
+            if (submitButton) {
+
+                submitButton.disabled =
+                    false;
+
+                submitButton.removeAttribute(
+                    "aria-disabled"
+                );
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       AUTO-COMPLETE / AUTOCAPITALIZATION
+    ========================================================== */
+
+    const titleField =
+        document.getElementById(
+            "{{ form.title.auto_id }}"
+        );
+
+    if (titleField) {
+
+        titleField.setAttribute(
+            "autocomplete",
+            "off"
+        );
+
+        titleField.setAttribute(
+            "autocapitalize",
+            "sentences"
+        );
+    }
+
+
+    /* =========================================================
+       KEYBOARD ACCESSIBILITY
+    ========================================================== */
+
+    form.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Enter" &&
+                event.target.tagName === "TEXTAREA"
+            ) {
+                return;
+            }
+
+        }
+    );
+
+});
+</script>
 
 {% endblock %}

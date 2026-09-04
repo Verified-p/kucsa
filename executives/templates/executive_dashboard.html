@@ -4,437 +4,1037 @@
 
 {% block content %}
 
-<div class="container-fluid py-4">
+<style>
+    /* =========================================================
+       KUCSA EXECUTIVE DASHBOARD
+       All styles are scoped to this page.
+    ========================================================== */
 
-    <!-- =====================================================
-         PAGE HEADER
-    ====================================================== -->
-    <div class="d-flex flex-column flex-xl-row
-                justify-content-between align-items-xl-center
-                gap-3 mb-4">
+    .kucsa-executive-dashboard {
+        --kucsa-primary: #0d6efd;
+        --kucsa-primary-dark: #0a58ca;
+        --kucsa-success: #198754;
+        --kucsa-info: #0dcaf0;
+        --kucsa-warning: #ffc107;
+        --kucsa-danger: #dc3545;
+        --kucsa-dark: #172033;
+        --kucsa-text: #263246;
+        --kucsa-muted: #6c757d;
+        --kucsa-border: #e7ebf1;
+        --kucsa-surface: #ffffff;
+        --kucsa-soft: #f6f8fb;
+        --kucsa-radius: 18px;
+        --kucsa-radius-sm: 13px;
+        --kucsa-shadow: 0 10px 30px rgba(23, 32, 51, 0.07);
+        --kucsa-shadow-hover: 0 18px 40px rgba(23, 32, 51, 0.12);
 
-        <div>
-            <h2 class="fw-bold mb-1">
-                <i class="bi bi-speedometer2 me-2"></i>
-                Executive Dashboard
-            </h2>
+        position: relative;
+        min-height: 100%;
+        padding: 1.5rem 0 2.5rem;
+        color: var(--kucsa-text);
+        background:
+            radial-gradient(
+                circle at 5% 0%,
+                rgba(13, 110, 253, 0.055),
+                transparent 27rem
+            ),
+            radial-gradient(
+                circle at 95% 12%,
+                rgba(13, 202, 240, 0.045),
+                transparent 24rem
+            );
+    }
 
-            <p class="text-muted mb-0">
-                Manage and monitor KUCSA executive leadership,
-                profiles, roles and executive status.
-            </p>
-        </div>
+    .kucsa-executive-dashboard *,
+    .kucsa-executive-dashboard *::before,
+    .kucsa-executive-dashboard *::after {
+        box-sizing: border-box;
+    }
 
-        <div class="d-flex flex-wrap gap-2">
+    /* =========================================================
+       PAGE HEADER
+    ========================================================== */
 
-            <a
-                href="{% url 'executives:board' %}"
-                class="btn btn-primary">
+    .kucsa-exec-header {
+        margin-bottom: 1.75rem;
+    }
 
-                <i class="bi bi-people me-1"></i>
-                Executive Board
+    .kucsa-exec-heading {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+    }
 
-            </a>
+    .kucsa-exec-heading-icon {
+        width: 54px;
+        height: 54px;
+        flex: 0 0 54px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 16px;
+        color: #fff;
+        font-size: 1.45rem;
+        background: linear-gradient(
+            135deg,
+            var(--kucsa-primary),
+            #4f8dfd
+        );
+        box-shadow: 0 10px 22px rgba(13, 110, 253, 0.2);
+    }
 
-            {% if user.role == "ADMIN" %}
+    .kucsa-exec-title {
+        margin: 0;
+        color: var(--kucsa-dark);
+        font-size: clamp(1.55rem, 2vw, 2rem);
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        line-height: 1.2;
+    }
 
-                <a
-                    href="{% url 'executives:assign_role' %}"
-                    class="btn btn-outline-primary">
+    .kucsa-exec-subtitle {
+        max-width: 760px;
+        margin: 0.45rem 0 0;
+        color: var(--kucsa-muted);
+        font-size: 0.95rem;
+        line-height: 1.65;
+    }
 
-                    <i class="bi bi-person-plus me-1"></i>
-                    Assign Role
+    .kucsa-exec-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+    }
 
-                </a>
+    .kucsa-executive-dashboard .kucsa-exec-actions .btn {
+        min-height: 44px;
+        padding: 0.65rem 1rem;
+        border-radius: 11px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
 
-            {% endif %}
+    /* =========================================================
+       STATISTICS
+    ========================================================== */
 
-        </div>
+    .kucsa-stat-card {
+        position: relative;
+        height: 100%;
+        overflow: hidden;
+        border: 1px solid var(--kucsa-border);
+        border-radius: var(--kucsa-radius);
+        background: var(--kucsa-surface);
+        box-shadow: var(--kucsa-shadow);
+        transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease,
+            border-color 0.25s ease;
+    }
 
-    </div>
+    .kucsa-stat-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(13, 110, 253, 0.16);
+        box-shadow: var(--kucsa-shadow-hover);
+    }
+
+    .kucsa-stat-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--kucsa-primary);
+    }
+
+    .kucsa-stat-card.success::before {
+        background: var(--kucsa-success);
+    }
+
+    .kucsa-stat-card.warning::before {
+        background: var(--kucsa-warning);
+    }
+
+    .kucsa-stat-card.info::before {
+        background: var(--kucsa-info);
+    }
+
+    .kucsa-stat-body {
+        position: relative;
+        padding: 1.35rem;
+        min-height: 155px;
+    }
+
+    .kucsa-stat-label {
+        margin: 0 0 0.35rem;
+        color: var(--kucsa-muted);
+        font-size: 0.79rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+    }
+
+    .kucsa-stat-value {
+        margin: 0;
+        color: var(--kucsa-dark);
+        font-size: 2rem;
+        font-weight: 800;
+        line-height: 1.1;
+    }
+
+    .kucsa-stat-description {
+        display: block;
+        margin-top: 0.8rem;
+        max-width: 210px;
+        color: var(--kucsa-muted);
+        font-size: 0.78rem;
+        line-height: 1.5;
+    }
+
+    .kucsa-stat-icon {
+        width: 52px;
+        height: 52px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+        color: var(--kucsa-primary);
+        background: rgba(13, 110, 253, 0.09);
+        font-size: 1.4rem;
+    }
+
+    .kucsa-stat-card.success .kucsa-stat-icon {
+        color: var(--kucsa-success);
+        background: rgba(25, 135, 84, 0.09);
+    }
+
+    .kucsa-stat-card.warning .kucsa-stat-icon {
+        color: #a77900;
+        background: rgba(255, 193, 7, 0.13);
+    }
+
+    .kucsa-stat-card.info .kucsa-stat-icon {
+        color: #087990;
+        background: rgba(13, 202, 240, 0.1);
+    }
+
+    .kucsa-stat-glow {
+        position: absolute;
+        right: -30px;
+        bottom: -35px;
+        width: 115px;
+        height: 115px;
+        border-radius: 50%;
+        background: rgba(13, 110, 253, 0.035);
+        pointer-events: none;
+    }
+
+    /* =========================================================
+       GENERAL CARDS
+    ========================================================== */
+
+    .kucsa-dashboard-card {
+        height: 100%;
+        overflow: hidden;
+        border: 1px solid var(--kucsa-border) !important;
+        border-radius: var(--kucsa-radius) !important;
+        background: var(--kucsa-surface);
+        box-shadow: var(--kucsa-shadow) !important;
+        transition:
+            box-shadow 0.25s ease,
+            transform 0.25s ease;
+    }
+
+    .kucsa-dashboard-card:hover {
+        box-shadow: var(--kucsa-shadow-hover) !important;
+    }
+
+    .kucsa-card-header {
+        padding: 1.15rem 1.35rem;
+        border-bottom: 1px solid var(--kucsa-border);
+        background: #fff;
+    }
+
+    .kucsa-card-title {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        margin: 0;
+        color: var(--kucsa-dark);
+        font-size: 1rem;
+        font-weight: 800;
+    }
+
+    .kucsa-card-title-icon {
+        color: var(--kucsa-primary);
+    }
+
+    /* =========================================================
+       PROFILE PANEL
+    ========================================================== */
+
+    .kucsa-profile-panel {
+        padding: 1.5rem;
+    }
+
+    .kucsa-profile-avatar {
+        position: relative;
+        width: 112px;
+        height: 112px;
+        margin: 0 auto 1rem;
+    }
+
+    .kucsa-profile-avatar img {
+        width: 112px;
+        height: 112px;
+        display: block;
+        object-fit: cover;
+        border: 4px solid #fff;
+        border-radius: 50%;
+        box-shadow: 0 8px 24px rgba(23, 32, 51, 0.12);
+        outline: 1px solid var(--kucsa-border);
+    }
+
+    .kucsa-profile-avatar .kucsa-avatar-fallback {
+        width: 112px;
+        height: 112px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        color: var(--kucsa-muted);
+        background: var(--kucsa-soft);
+        font-size: 4rem;
+    }
+
+    .kucsa-profile-name {
+        margin: 0;
+        color: var(--kucsa-dark);
+        font-size: 1.15rem;
+        font-weight: 800;
+        text-align: center;
+        word-break: break-word;
+    }
+
+    .kucsa-profile-role {
+        margin: 0.35rem 0 0.8rem;
+        color: var(--kucsa-primary);
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .kucsa-status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.45rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 800;
+    }
+
+    .kucsa-profile-details {
+        margin-top: 1.35rem;
+        padding: 0.2rem 1rem;
+        border: 1px solid var(--kucsa-border);
+        border-radius: 14px;
+        background: #fbfcfe;
+    }
+
+    .kucsa-profile-detail {
+        padding: 0.9rem 0;
+        border-bottom: 1px solid var(--kucsa-border);
+    }
+
+    .kucsa-profile-detail:last-child {
+        border-bottom: 0;
+    }
+
+    .kucsa-detail-label {
+        display: block;
+        margin-bottom: 0.25rem;
+        color: var(--kucsa-muted);
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.045em;
+        text-transform: uppercase;
+    }
+
+    .kucsa-detail-value {
+        display: block;
+        color: var(--kucsa-text);
+        font-size: 0.86rem;
+        font-weight: 650;
+        line-height: 1.5;
+        word-break: break-word;
+    }
+
+    .kucsa-profile-actions {
+        margin-top: 1.25rem;
+    }
+
+    .kucsa-profile-actions .btn {
+        min-height: 44px;
+        border-radius: 11px;
+        font-weight: 700;
+    }
+
+    /* =========================================================
+       EMPTY PROFILE
+    ========================================================== */
+
+    .kucsa-empty-state {
+        padding: 3rem 1.5rem;
+        text-align: center;
+    }
+
+    .kucsa-empty-icon {
+        width: 70px;
+        height: 70px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+        color: var(--kucsa-muted);
+        background: var(--kucsa-soft);
+        font-size: 2rem;
+    }
+
+    .kucsa-empty-state h5 {
+        margin-top: 1rem;
+        color: var(--kucsa-dark);
+        font-weight: 800;
+    }
+
+    .kucsa-empty-state p {
+        max-width: 380px;
+        margin: 0.5rem auto 0;
+        color: var(--kucsa-muted);
+        font-size: 0.88rem;
+        line-height: 1.6;
+    }
+
+    /* =========================================================
+       LEADERSHIP
+    ========================================================== */
+
+    .kucsa-leadership-body {
+        padding: 1.35rem;
+    }
+
+    .kucsa-current-board-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.45rem 0.7rem;
+        border-radius: 999px;
+        color: #0a58ca;
+        background: rgba(13, 110, 253, 0.08);
+        font-size: 0.7rem;
+        font-weight: 800;
+    }
+
+    .kucsa-leader-card {
+        position: relative;
+        height: 100%;
+        padding: 1.2rem;
+        overflow: hidden;
+        border: 1px solid var(--kucsa-border);
+        border-radius: 16px;
+        background: linear-gradient(
+            145deg,
+            #ffffff,
+            #f9fbfe
+        );
+        transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease,
+            border-color 0.25s ease;
+    }
+
+    .kucsa-leader-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(13, 110, 253, 0.2);
+        box-shadow: 0 12px 28px rgba(23, 32, 51, 0.08);
+    }
+
+    .kucsa-leader-card::after {
+        content: "";
+        position: absolute;
+        right: -35px;
+        bottom: -45px;
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        background: rgba(13, 110, 253, 0.04);
+        pointer-events: none;
+    }
+
+    .kucsa-leader-position {
+        margin: 0;
+        color: var(--kucsa-muted);
+        font-size: 0.68rem;
+        font-weight: 850;
+        letter-spacing: 0.08em;
+    }
+
+    .kucsa-leader-name {
+        margin: 0.4rem 0 0;
+        color: var(--kucsa-dark);
+        font-size: 1.05rem;
+        font-weight: 800;
+        line-height: 1.35;
+        word-break: break-word;
+    }
+
+    .kucsa-leader-icon {
+        width: 45px;
+        height: 45px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 45px;
+        border-radius: 13px;
+        color: var(--kucsa-primary);
+        background: rgba(13, 110, 253, 0.09);
+        font-size: 1.2rem;
+    }
+
+    .kucsa-leader-email {
+        margin: 0.8rem 0 0.7rem;
+        color: var(--kucsa-muted);
+        font-size: 0.79rem;
+        word-break: break-word;
+    }
+
+    .kucsa-leader-card .btn {
+        min-height: 38px;
+        border-radius: 9px;
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+
+    .kucsa-board-footer {
+        margin-top: 1.35rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--kucsa-border);
+    }
+
+    .kucsa-board-footer-title {
+        margin: 0 0 0.25rem;
+        color: var(--kucsa-dark);
+        font-size: 0.9rem;
+        font-weight: 800;
+    }
+
+    .kucsa-board-footer-text {
+        margin: 0;
+        color: var(--kucsa-muted);
+        font-size: 0.8rem;
+        line-height: 1.55;
+    }
+
+    .kucsa-board-footer .btn {
+        min-height: 42px;
+        border-radius: 10px;
+        font-weight: 700;
+    }
+
+    /* =========================================================
+       EXECUTIVE BOARD TABLE
+    ========================================================== */
+
+    .kucsa-board-table-wrap {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .kucsa-board-table {
+        min-width: 760px;
+        margin: 0;
+        vertical-align: middle;
+    }
+
+    .kucsa-board-table thead th {
+        padding: 0.9rem 1.1rem;
+        border-bottom: 1px solid var(--kucsa-border);
+        color: var(--kucsa-muted);
+        background: #f8f9fb;
+        font-size: 0.7rem;
+        font-weight: 850;
+        letter-spacing: 0.055em;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .kucsa-board-table tbody td {
+        padding: 1rem 1.1rem;
+        border-color: var(--kucsa-border);
+        color: var(--kucsa-text);
+        font-size: 0.84rem;
+    }
+
+    .kucsa-board-table tbody tr {
+        transition: background 0.2s ease;
+    }
+
+    .kucsa-board-table tbody tr:hover {
+        background: #fafcff;
+    }
+
+    .kucsa-executive-person {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        min-width: 230px;
+    }
+
+    .kucsa-board-avatar {
+        width: 44px;
+        height: 44px;
+        flex: 0 0 44px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        box-shadow: 0 3px 10px rgba(23, 32, 51, 0.1);
+        outline: 1px solid var(--kucsa-border);
+    }
+
+    .kucsa-board-avatar-fallback {
+        width: 44px;
+        height: 44px;
+        flex: 0 0 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        color: var(--kucsa-muted);
+        background: var(--kucsa-soft);
+        font-size: 1.55rem;
+    }
+
+    .kucsa-executive-name {
+        color: var(--kucsa-dark);
+        font-size: 0.84rem;
+        font-weight: 800;
+    }
+
+    .kucsa-executive-email {
+        max-width: 230px;
+        margin-top: 0.15rem;
+        color: var(--kucsa-muted);
+        font-size: 0.73rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .kucsa-role-text {
+        color: var(--kucsa-dark);
+        font-weight: 750;
+    }
+
+    .kucsa-table-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.4rem 0.65rem;
+        border-radius: 999px;
+        font-size: 0.68rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .kucsa-table-status.current {
+        color: #146c43;
+        background: rgba(25, 135, 84, 0.1);
+    }
+
+    .kucsa-table-status.upcoming {
+        color: #087990;
+        background: rgba(13, 202, 240, 0.11);
+    }
+
+    .kucsa-table-status.ended,
+    .kucsa-table-status.inactive {
+        color: #59636e;
+        background: rgba(108, 117, 125, 0.1);
+    }
+
+    /* =========================================================
+       ADMIN MANAGEMENT
+    ========================================================== */
+
+    .kucsa-admin-card {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(13, 110, 253, 0.14) !important;
+        border-radius: var(--kucsa-radius) !important;
+        background:
+            linear-gradient(
+                135deg,
+                rgba(13, 110, 253, 0.045),
+                rgba(255, 255, 255, 0.95)
+            );
+        box-shadow: var(--kucsa-shadow) !important;
+    }
+
+    .kucsa-admin-card::after {
+        content: "";
+        position: absolute;
+        width: 160px;
+        height: 160px;
+        right: -60px;
+        top: -80px;
+        border-radius: 50%;
+        background: rgba(13, 110, 253, 0.055);
+        pointer-events: none;
+    }
+
+    .kucsa-admin-icon {
+        width: 48px;
+        height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 48px;
+        border-radius: 14px;
+        color: var(--kucsa-primary);
+        background: rgba(13, 110, 253, 0.09);
+        font-size: 1.25rem;
+    }
+
+    .kucsa-admin-title {
+        margin: 0 0 0.25rem;
+        color: var(--kucsa-dark);
+        font-size: 0.95rem;
+        font-weight: 800;
+    }
+
+    .kucsa-admin-description {
+        margin: 0;
+        color: var(--kucsa-muted);
+        font-size: 0.8rem;
+        line-height: 1.55;
+    }
+
+    .kucsa-admin-card .btn {
+        min-height: 44px;
+        border-radius: 10px;
+        font-weight: 700;
+    }
+
+    /* =========================================================
+       BUTTONS / ACCESSIBILITY
+    ========================================================== */
+
+    .kucsa-executive-dashboard .btn {
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            background-color 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .kucsa-executive-dashboard .btn:hover {
+        transform: translateY(-1px);
+    }
+
+    .kucsa-executive-dashboard .btn:active {
+        transform: translateY(0);
+    }
+
+    .kucsa-executive-dashboard .btn:focus-visible,
+    .kucsa-executive-dashboard a:focus-visible {
+        outline: 3px solid rgba(13, 110, 253, 0.25);
+        outline-offset: 3px;
+    }
+
+    /* =========================================================
+       REVEAL ANIMATION
+    ========================================================== */
+
+    .kucsa-reveal {
+        opacity: 0;
+        transform: translateY(12px);
+        transition:
+            opacity 0.5s ease,
+            transform 0.5s ease;
+    }
+
+    .kucsa-reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================== */
+
+    @media (max-width: 1199.98px) {
+        .kucsa-executive-dashboard {
+            padding-top: 1.25rem;
+        }
+
+        .kucsa-profile-panel {
+            padding: 1.25rem;
+        }
+    }
+
+    @media (max-width: 991.98px) {
+        .kucsa-exec-heading {
+            gap: 0.8rem;
+        }
+
+        .kucsa-exec-heading-icon {
+            width: 48px;
+            height: 48px;
+            flex-basis: 48px;
+            border-radius: 14px;
+        }
+
+        .kucsa-stat-body {
+            min-height: 145px;
+        }
+
+        .kucsa-leadership-body {
+            padding: 1.15rem;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .kucsa-executive-dashboard {
+            padding: 1rem 0 2rem;
+        }
+
+        .kucsa-exec-header {
+            margin-bottom: 1.35rem;
+        }
+
+        .kucsa-exec-title {
+            font-size: 1.45rem;
+        }
+
+        .kucsa-exec-subtitle {
+            font-size: 0.86rem;
+        }
+
+        .kucsa-exec-actions {
+            width: 100%;
+        }
+
+        .kucsa-exec-actions .btn {
+            flex: 1 1 auto;
+        }
+
+        .kucsa-stat-body {
+            min-height: 135px;
+            padding: 1.15rem;
+        }
+
+        .kucsa-stat-value {
+            font-size: 1.75rem;
+        }
+
+        .kucsa-stat-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 13px;
+        }
+
+        .kucsa-card-header {
+            padding: 1rem;
+        }
+
+        .kucsa-profile-panel,
+        .kucsa-leadership-body {
+            padding: 1rem;
+        }
+
+        .kucsa-board-footer {
+            align-items: stretch !important;
+        }
+
+        .kucsa-board-footer .btn {
+            width: 100%;
+        }
+
+        .kucsa-admin-card .card-body {
+            padding: 1.1rem !important;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .kucsa-executive-dashboard {
+            padding-left: 0.2rem;
+            padding-right: 0.2rem;
+        }
+
+        .kucsa-exec-heading {
+            align-items: center;
+        }
+
+        .kucsa-exec-heading-icon {
+            width: 44px;
+            height: 44px;
+            flex-basis: 44px;
+            font-size: 1.15rem;
+        }
+
+        .kucsa-exec-title {
+            font-size: 1.3rem;
+        }
+
+        .kucsa-exec-subtitle {
+            font-size: 0.8rem;
+        }
+
+        .kucsa-exec-actions {
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+
+        .kucsa-exec-actions .btn {
+            width: 100%;
+        }
+
+        .kucsa-stat-label {
+            font-size: 0.7rem;
+        }
+
+        .kucsa-stat-description {
+            font-size: 0.73rem;
+        }
+
+        .kucsa-profile-avatar,
+        .kucsa-profile-avatar img,
+        .kucsa-profile-avatar .kucsa-avatar-fallback {
+            width: 96px;
+            height: 96px;
+        }
+
+        .kucsa-profile-avatar .kucsa-avatar-fallback {
+            font-size: 3.3rem;
+        }
+
+        .kucsa-profile-name {
+            font-size: 1.05rem;
+        }
+
+        .kucsa-leader-card {
+            padding: 1rem;
+        }
+
+        .kucsa-board-table {
+            min-width: 700px;
+        }
+
+        .kucsa-admin-card .d-flex {
+            align-items: flex-start !important;
+        }
+
+        .kucsa-admin-card .btn {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 359.98px) {
+        .kucsa-stat-body {
+            padding: 1rem;
+        }
+
+        .kucsa-stat-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 1.1rem;
+        }
+
+        .kucsa-stat-value {
+            font-size: 1.55rem;
+        }
+
+        .kucsa-profile-details {
+            padding-left: 0.8rem;
+            padding-right: 0.8rem;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .kucsa-executive-dashboard *,
+        .kucsa-executive-dashboard *::before,
+        .kucsa-executive-dashboard *::after {
+            scroll-behavior: auto !important;
+            transition-duration: 0.01ms !important;
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+        }
+
+        .kucsa-reveal {
+            opacity: 1;
+            transform: none;
+        }
+    }
+</style>
 
 
-    <!-- =====================================================
-         EXECUTIVE STATISTICS
-    ====================================================== -->
-    <div class="row g-4 mb-4">
+<div class="kucsa-executive-dashboard">
 
-        <!-- TOTAL -->
-        <div class="col-sm-6 col-xl-3">
+    <div class="container-fluid">
 
-            <div class="card shadow-sm border-0 h-100">
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+        <div class="kucsa-exec-header">
 
-                <div class="card-body">
+            <div class="d-flex flex-column flex-xl-row
+                        justify-content-between
+                        align-items-xl-center
+                        gap-3">
 
-                    <div class="d-flex
-                                justify-content-between
-                                align-items-start">
+                <div class="kucsa-exec-heading">
 
-                        <div>
-
-                            <p class="text-muted mb-1">
-                                Total Executives
-                            </p>
-
-                            <h3 class="fw-bold mb-0">
-                                {{ statistics.total|default:0 }}
-                            </h3>
-
-                        </div>
-
-                        <div class="text-primary fs-2">
-                            <i class="bi bi-people-fill"></i>
-                        </div>
-
+                    <div class="kucsa-exec-heading-icon">
+                        <i class="bi bi-speedometer2"></i>
                     </div>
 
-                    <small class="text-muted">
-                        Users currently holding executive roles
-                    </small>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- ACTIVE -->
-        <div class="col-sm-6 col-xl-3">
-
-            <div class="card shadow-sm border-0 h-100">
-
-                <div class="card-body">
-
-                    <div class="d-flex
-                                justify-content-between
-                                align-items-start">
-
-                        <div>
-
-                            <p class="text-muted mb-1">
-                                Active Executives
-                            </p>
-
-                            <h3 class="fw-bold mb-0">
-                                {{ statistics.active|default:0 }}
-                            </h3>
-
-                        </div>
-
-                        <div class="text-success fs-2">
-                            <i class="bi bi-person-check-fill"></i>
-                        </div>
-
-                    </div>
-
-                    <small class="text-muted">
-                        Currently active executive profiles
-                    </small>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- INACTIVE -->
-        <div class="col-sm-6 col-xl-3">
-
-            <div class="card shadow-sm border-0 h-100">
-
-                <div class="card-body">
-
-                    <div class="d-flex
-                                justify-content-between
-                                align-items-start">
-
-                        <div>
-
-                            <p class="text-muted mb-1">
-                                Inactive Executives
-                            </p>
-
-                            <h3 class="fw-bold mb-0">
-                                {{ statistics.inactive|default:0 }}
-                            </h3>
-
-                        </div>
-
-                        <div class="text-warning fs-2">
-                            <i class="bi bi-person-dash-fill"></i>
-                        </div>
-
-                    </div>
-
-                    <small class="text-muted">
-                        Executive profiles currently inactive
-                    </small>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- VERIFIED -->
-        <div class="col-sm-6 col-xl-3">
-
-            <div class="card shadow-sm border-0 h-100">
-
-                <div class="card-body">
-
-                    <div class="d-flex
-                                justify-content-between
-                                align-items-start">
-
-                        <div>
-
-                            <p class="text-muted mb-1">
-                                Verified
-                            </p>
-
-                            <h3 class="fw-bold mb-0">
-                                {{ statistics.verified|default:0 }}
-                            </h3>
-
-                        </div>
-
-                        <div class="text-info fs-2">
-                            <i class="bi bi-patch-check-fill"></i>
-                        </div>
-
-                    </div>
-
-                    <small class="text-muted">
-                        Verified executive accounts
-                    </small>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         MAIN DASHBOARD CONTENT
-    ====================================================== -->
-    <div class="row g-4">
-
-        <!-- =================================================
-             MY EXECUTIVE PROFILE
-        ================================================== -->
-        <div class="col-xl-4">
-
-            <div class="card shadow-sm border-0 h-100">
-
-                <div class="card-header bg-primary text-white">
-
-                    <h5 class="mb-0 fw-bold">
-                        <i class="bi bi-person-badge me-2"></i>
-                        My Executive Profile
-                    </h5>
-
-                </div>
-
-                <div class="card-body">
-
-                    {% if current_executive %}
-
-                        <!-- Profile image -->
-                        <div class="text-center mb-3">
-
-                            {% if current_executive.profile_picture %}
-
-                                <img
-                                    src="{{ current_executive.profile_picture.url }}"
-                                    class="rounded-circle border"
-                                    width="110"
-                                    height="110"
-                                    alt="{{ current_executive.full_name }}">
-
-                            {% else %}
-
-                                <i
-                                    class="bi bi-person-circle
-                                           display-1 text-muted">
-                                </i>
-
-                            {% endif %}
-
-                        </div>
-
-
-                        <!-- Name -->
-                        <h5 class="text-center fw-bold mb-1">
-
-                            {{ current_executive.full_name }}
-
-                        </h5>
-
-
-                        <!-- Role -->
-                        <p class="text-center text-primary
-                                  fw-semibold mb-2">
-
-                            {{ current_executive.role }}
-
+                    <div>
+                        <h2 class="kucsa-exec-title">
+                            Executive Dashboard
+                        </h2>
+
+                        <p class="kucsa-exec-subtitle">
+                            Manage and monitor KUCSA executive leadership,
+                            profiles, roles and executive status.
                         </p>
+                    </div>
+
+                </div>
 
 
-                        <!-- Status -->
-                        <div class="text-center mb-4">
+                <div class="kucsa-exec-actions">
 
-                            {% if current_executive.is_current %}
+                    <a
+                        href="{% url 'executives:board' %}"
+                        class="btn btn-primary">
 
-                                <span class="badge bg-success">
-                                    <i class="bi bi-check-circle me-1"></i>
-                                    Current Executive
-                                </span>
+                        <i class="bi bi-people me-1"></i>
+                        Executive Board
 
-                            {% elif current_executive.term_status == "Upcoming" %}
+                    </a>
 
-                                <span class="badge bg-info">
-                                    <i class="bi bi-clock me-1"></i>
-                                    Upcoming
-                                </span>
+                    {% if user.role == "ADMIN" %}
 
-                            {% elif current_executive.term_status == "Ended" %}
+                        <a
+                            href="{% url 'executives:assign_role' %}"
+                            class="btn btn-outline-primary">
 
-                                <span class="badge bg-secondary">
-                                    <i class="bi bi-calendar-x me-1"></i>
-                                    Term Ended
-                                </span>
+                            <i class="bi bi-person-plus me-1"></i>
+                            Assign Role
 
-                            {% else %}
-
-                                <span class="badge bg-secondary">
-                                    <i class="bi bi-dash-circle me-1"></i>
-                                    Inactive
-                                </span>
-
-                            {% endif %}
-
-                        </div>
-
-
-                        <!-- Executive details -->
-                        <div class="border rounded p-3">
-
-                            <div class="mb-3">
-
-                                <small class="text-muted d-block">
-                                    Committee
-                                </small>
-
-                                <span class="fw-semibold">
-                                    {{ current_executive.committee_display }}
-                                </span>
-
-                            </div>
-
-
-                            <div class="mb-3">
-
-                                <small class="text-muted d-block">
-                                    Registration Number
-                                </small>
-
-                                <span class="fw-semibold">
-                                    {{ current_executive.registration_number|default:"Not provided" }}
-                                </span>
-
-                            </div>
-
-
-                            <div class="mb-3">
-
-                                <small class="text-muted d-block">
-                                    Email
-                                </small>
-
-                                <span class="fw-semibold text-break">
-                                    {{ current_executive.email|default:"Not provided" }}
-                                </span>
-
-                            </div>
-
-
-                            <div class="mb-3">
-
-                                <small class="text-muted d-block">
-                                    Phone
-                                </small>
-
-                                <span class="fw-semibold">
-                                    {{ current_executive.phone_number|default:"Not provided" }}
-                                </span>
-
-                            </div>
-
-
-                            <div>
-
-                                <small class="text-muted d-block">
-                                    Executive Term
-                                </small>
-
-                                <span class="fw-semibold">
-                                    {{ current_executive.term_display }}
-                                </span>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- Profile actions -->
-                        <div class="d-grid gap-2 mt-4">
-
-                            <a
-                                href="{% url 'executives:profile' %}"
-                                class="btn btn-primary">
-
-                                <i class="bi bi-person me-1"></i>
-                                View My Profile
-
-                            </a>
-
-                            <a
-                                href="{% url 'executives:edit_profile' %}"
-                                class="btn btn-outline-secondary">
-
-                                <i class="bi bi-pencil me-1"></i>
-                                Edit My Profile
-
-                            </a>
-
-                        </div>
-
-                    {% else %}
-
-                        <div class="text-center py-5">
-
-                            <i
-                                class="bi bi-person-x
-                                       display-4 text-muted">
-                            </i>
-
-                            <h5 class="mt-3 fw-bold">
-                                No Executive Profile
-                            </h5>
-
-                            <p class="text-muted mb-0">
-                                Your account currently does not have
-                                an executive profile.
-                            </p>
-
-                        </div>
+                        </a>
 
                     {% endif %}
 
@@ -445,217 +1045,663 @@
         </div>
 
 
-        <!-- =================================================
-             KUCSA LEADERSHIP
-        ================================================== -->
-        <div class="col-xl-8">
+        <!-- =====================================================
+             EXECUTIVE STATISTICS
+        ====================================================== -->
+        <div class="row g-3 g-lg-4 mb-4">
 
-            <div class="card shadow-sm border-0 h-100">
+            <!-- TOTAL -->
+            <div class="col-6 col-xl-3 kucsa-reveal">
 
-                <div class="card-header">
+                <div class="kucsa-stat-card">
 
-                    <div class="d-flex
-                                justify-content-between
-                                align-items-center">
+                    <div class="kucsa-stat-body">
 
-                        <h5 class="mb-0 fw-bold">
+                        <div class="d-flex
+                                    justify-content-between
+                                    align-items-start
+                                    gap-2">
 
-                            <i class="bi bi-award me-2"></i>
-                            KUCSA Leadership
+                            <div>
 
-                        </h5>
+                                <p class="kucsa-stat-label">
+                                    Total Executives
+                                </p>
 
-                        <span class="badge bg-primary">
-                            Current Board
-                        </span>
+                                <h3
+                                    class="kucsa-stat-value kucsa-counter"
+                                    data-value="{{ statistics.total|default:0 }}">
+
+                                    {{ statistics.total|default:0 }}
+
+                                </h3>
+
+                                <small class="kucsa-stat-description">
+                                    Users currently holding executive roles
+                                </small>
+
+                            </div>
+
+                            <div class="kucsa-stat-icon">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+
+                        </div>
+
+                        <span class="kucsa-stat-glow"></span>
 
                     </div>
 
                 </div>
 
-
-                <div class="card-body">
-
-                    <!-- Top leadership -->
-                    <div class="row g-4">
-
-                        <!-- CHAIRPERSON -->
-                        <div class="col-md-6">
-
-                            <div class="border rounded p-4 h-100">
-
-                                <div class="d-flex
-                                            justify-content-between
-                                            align-items-start">
-
-                                    <div>
-
-                                        <small
-                                            class="text-muted
-                                                   fw-semibold">
-                                            CHAIRPERSON
-                                        </small>
-
-                                        <h5 class="fw-bold mt-2 mb-1">
-                                            {% if chairperson %}
-                                                {{ chairperson.full_name }}
-                                            {% else %}
-                                                Not Assigned
-                                            {% endif %}
-                                        </h5>
-
-                                    </div>
-
-                                    <i
-                                        class="bi bi-person-badge
-                                               fs-3 text-primary">
-                                    </i>
-
-                                </div>
+            </div>
 
 
-                                {% if chairperson %}
+            <!-- ACTIVE -->
+            <div class="col-6 col-xl-3 kucsa-reveal">
 
-                                    <p class="text-muted mb-2">
-                                        {{ chairperson.email }}
-                                    </p>
+                <div class="kucsa-stat-card success">
 
-                                    <p class="mb-3">
+                    <div class="kucsa-stat-body">
 
-                                        <span class="badge bg-success">
-                                            {{ chairperson.term_status }}
-                                        </span>
+                        <div class="d-flex
+                                    justify-content-between
+                                    align-items-start
+                                    gap-2">
 
-                                    </p>
+                            <div>
 
-                                    <a
-                                        href="{% url 'executives:detail' chairperson.pk %}"
-                                        class="btn btn-sm btn-outline-primary">
+                                <p class="kucsa-stat-label">
+                                    Active Executives
+                                </p>
 
-                                        <i class="bi bi-eye me-1"></i>
-                                        View Profile
+                                <h3
+                                    class="kucsa-stat-value kucsa-counter"
+                                    data-value="{{ statistics.active|default:0 }}">
 
-                                    </a>
+                                    {{ statistics.active|default:0 }}
 
-                                {% else %}
+                                </h3>
 
-                                    <p class="text-muted mt-2 mb-0">
-                                        No active chairperson is
-                                        currently assigned.
-                                    </p>
+                                <small class="kucsa-stat-description">
+                                    Currently active executive profiles
+                                </small>
 
-                                {% endif %}
+                            </div>
 
+                            <div class="kucsa-stat-icon">
+                                <i class="bi bi-person-check-fill"></i>
                             </div>
 
                         </div>
 
+                        <span class="kucsa-stat-glow"></span>
 
-                        <!-- VICE CHAIRPERSON -->
-                        <div class="col-md-6">
+                    </div>
 
-                            <div class="border rounded p-4 h-100">
+                </div>
 
-                                <div class="d-flex
-                                            justify-content-between
-                                            align-items-start">
-
-                                    <div>
-
-                                        <small
-                                            class="text-muted
-                                                   fw-semibold">
-                                            VICE CHAIRPERSON
-                                        </small>
-
-                                        <h5 class="fw-bold mt-2 mb-1">
-                                            {% if vice_chairperson %}
-                                                {{ vice_chairperson.full_name }}
-                                            {% else %}
-                                                Not Assigned
-                                            {% endif %}
-                                        </h5>
-
-                                    </div>
-
-                                    <i
-                                        class="bi bi-person-badge
-                                               fs-3 text-primary">
-                                    </i>
-
-                                </div>
+            </div>
 
 
-                                {% if vice_chairperson %}
+            <!-- INACTIVE -->
+            <div class="col-6 col-xl-3 kucsa-reveal">
 
-                                    <p class="text-muted mb-2">
-                                        {{ vice_chairperson.email }}
-                                    </p>
+                <div class="kucsa-stat-card warning">
 
-                                    <p class="mb-3">
+                    <div class="kucsa-stat-body">
 
-                                        <span class="badge bg-success">
-                                            {{ vice_chairperson.term_status }}
-                                        </span>
+                        <div class="d-flex
+                                    justify-content-between
+                                    align-items-start
+                                    gap-2">
 
-                                    </p>
+                            <div>
 
-                                    <a
-                                        href="{% url 'executives:detail' vice_chairperson.pk %}"
-                                        class="btn btn-sm btn-outline-primary">
+                                <p class="kucsa-stat-label">
+                                    Inactive Executives
+                                </p>
 
-                                        <i class="bi bi-eye me-1"></i>
-                                        View Profile
+                                <h3
+                                    class="kucsa-stat-value kucsa-counter"
+                                    data-value="{{ statistics.inactive|default:0 }}">
 
-                                    </a>
+                                    {{ statistics.inactive|default:0 }}
 
-                                {% else %}
+                                </h3>
 
-                                    <p class="text-muted mt-2 mb-0">
-                                        No active vice chairperson
-                                        is currently assigned.
-                                    </p>
-
-                                {% endif %}
+                                <small class="kucsa-stat-description">
+                                    Executive profiles currently inactive
+                                </small>
 
                             </div>
 
+                            <div class="kucsa-stat-icon">
+                                <i class="bi bi-person-dash-fill"></i>
+                            </div>
+
                         </div>
+
+                        <span class="kucsa-stat-glow"></span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- VERIFIED -->
+            <div class="col-6 col-xl-3 kucsa-reveal">
+
+                <div class="kucsa-stat-card info">
+
+                    <div class="kucsa-stat-body">
+
+                        <div class="d-flex
+                                    justify-content-between
+                                    align-items-start
+                                    gap-2">
+
+                            <div>
+
+                                <p class="kucsa-stat-label">
+                                    Verified
+                                </p>
+
+                                <h3
+                                    class="kucsa-stat-value kucsa-counter"
+                                    data-value="{{ statistics.verified|default:0 }}">
+
+                                    {{ statistics.verified|default:0 }}
+
+                                </h3>
+
+                                <small class="kucsa-stat-description">
+                                    Verified executive accounts
+                                </small>
+
+                            </div>
+
+                            <div class="kucsa-stat-icon">
+                                <i class="bi bi-patch-check-fill"></i>
+                            </div>
+
+                        </div>
+
+                        <span class="kucsa-stat-glow"></span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             MAIN DASHBOARD CONTENT
+        ====================================================== -->
+        <div class="row g-3 g-lg-4">
+
+            <!-- =================================================
+                 MY EXECUTIVE PROFILE
+            ================================================== -->
+            <div class="col-xl-4 kucsa-reveal">
+
+                <div class="kucsa-dashboard-card">
+
+                    <div class="kucsa-card-header">
+
+                        <h5 class="kucsa-card-title">
+
+                            <i class="bi bi-person-badge
+                                      kucsa-card-title-icon"></i>
+
+                            My Executive Profile
+
+                        </h5>
 
                     </div>
 
 
-                    <!-- Full board -->
-                    <div class="border-top mt-4 pt-4">
+                    <div class="kucsa-profile-panel">
 
-                        <div class="d-flex
-                                    flex-column flex-md-row
-                                    justify-content-between
-                                    align-items-md-center
-                                    gap-3">
+                        {% if current_executive %}
 
-                            <div>
+                            <!-- Profile image -->
+                            <div class="text-center">
 
-                                <h6 class="fw-bold mb-1">
-                                    Executive Board
-                                </h6>
+                                <div class="kucsa-profile-avatar">
 
-                                <p class="text-muted mb-0">
-                                    View all currently active
-                                    KUCSA executives and their
-                                    leadership positions.
+                                    {% if current_executive.profile_picture %}
+
+                                        <img
+                                            src="{{ current_executive.profile_picture.url }}"
+                                            alt="{{ current_executive.full_name }}">
+
+                                    {% else %}
+
+                                        <div class="kucsa-avatar-fallback">
+                                            <i class="bi bi-person-circle"></i>
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Name -->
+                            <h5 class="kucsa-profile-name">
+                                {{ current_executive.full_name }}
+                            </h5>
+
+
+                            <!-- Role -->
+                            <p class="kucsa-profile-role">
+                                {{ current_executive.role }}
+                            </p>
+
+
+                            <!-- Status -->
+                            <div class="text-center">
+
+                                {% if current_executive.is_current %}
+
+                                    <span
+                                        class="kucsa-status-badge text-success
+                                               bg-success-subtle">
+
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        Current Executive
+
+                                    </span>
+
+                                {% elif current_executive.term_status == "Upcoming" %}
+
+                                    <span
+                                        class="kucsa-status-badge text-info
+                                               bg-info-subtle">
+
+                                        <i class="bi bi-clock-fill"></i>
+                                        Upcoming
+
+                                    </span>
+
+                                {% elif current_executive.term_status == "Ended" %}
+
+                                    <span
+                                        class="kucsa-status-badge text-secondary
+                                               bg-secondary-subtle">
+
+                                        <i class="bi bi-calendar-x-fill"></i>
+                                        Term Ended
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span
+                                        class="kucsa-status-badge text-secondary
+                                               bg-secondary-subtle">
+
+                                        <i class="bi bi-dash-circle-fill"></i>
+                                        Inactive
+
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- Executive details -->
+                            <div class="kucsa-profile-details">
+
+                                <div class="kucsa-profile-detail">
+
+                                    <span class="kucsa-detail-label">
+                                        Committee
+                                    </span>
+
+                                    <span class="kucsa-detail-value">
+                                        {{ current_executive.committee_display }}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="kucsa-profile-detail">
+
+                                    <span class="kucsa-detail-label">
+                                        Registration Number
+                                    </span>
+
+                                    <span class="kucsa-detail-value">
+                                        {{ current_executive.registration_number|default:"Not provided" }}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="kucsa-profile-detail">
+
+                                    <span class="kucsa-detail-label">
+                                        Email
+                                    </span>
+
+                                    <span class="kucsa-detail-value">
+                                        {{ current_executive.email|default:"Not provided" }}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="kucsa-profile-detail">
+
+                                    <span class="kucsa-detail-label">
+                                        Phone
+                                    </span>
+
+                                    <span class="kucsa-detail-value">
+                                        {{ current_executive.phone_number|default:"Not provided" }}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="kucsa-profile-detail">
+
+                                    <span class="kucsa-detail-label">
+                                        Executive Term
+                                    </span>
+
+                                    <span class="kucsa-detail-value">
+                                        {{ current_executive.term_display }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Profile actions -->
+                            <div class="kucsa-profile-actions d-grid gap-2">
+
+                                <a
+                                    href="{% url 'executives:profile' %}"
+                                    class="btn btn-primary">
+
+                                    <i class="bi bi-person me-1"></i>
+                                    View My Profile
+
+                                </a>
+
+                                <a
+                                    href="{% url 'executives:edit_profile' %}"
+                                    class="btn btn-outline-secondary">
+
+                                    <i class="bi bi-pencil me-1"></i>
+                                    Edit My Profile
+
+                                </a>
+
+                            </div>
+
+                        {% else %}
+
+                            <div class="kucsa-empty-state">
+
+                                <div class="kucsa-empty-icon">
+                                    <i class="bi bi-person-x"></i>
+                                </div>
+
+                                <h5>
+                                    No Executive Profile
+                                </h5>
+
+                                <p>
+                                    Your account currently does not have
+                                    an executive profile.
                                 </p>
 
                             </div>
 
-                            <a
-                                href="{% url 'executives:list' %}"
-                                class="btn btn-primary">
+                        {% endif %}
 
-                                View All Executives
-                                <i class="bi bi-arrow-right ms-1"></i>
+                    </div>
 
-                            </a>
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 KUCSA LEADERSHIP
+            ================================================== -->
+            <div class="col-xl-8 kucsa-reveal">
+
+                <div class="kucsa-dashboard-card">
+
+                    <div class="kucsa-card-header">
+
+                        <div class="d-flex
+                                    justify-content-between
+                                    align-items-center
+                                    gap-3">
+
+                            <h5 class="kucsa-card-title">
+
+                                <i class="bi bi-award
+                                          kucsa-card-title-icon"></i>
+
+                                KUCSA Leadership
+
+                            </h5>
+
+                            <span class="kucsa-current-board-badge">
+
+                                <i class="bi bi-circle-fill"
+                                   style="font-size: .38rem;"></i>
+
+                                Current Board
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kucsa-leadership-body">
+
+                        <!-- Top leadership -->
+                        <div class="row g-3">
+
+                            <!-- CHAIRPERSON -->
+                            <div class="col-md-6">
+
+                                <div class="kucsa-leader-card">
+
+                                    <div class="d-flex
+                                                justify-content-between
+                                                align-items-start
+                                                gap-3">
+
+                                        <div>
+
+                                            <p class="kucsa-leader-position">
+                                                CHAIRPERSON
+                                            </p>
+
+                                            <h5 class="kucsa-leader-name">
+
+                                                {% if chairperson %}
+                                                    {{ chairperson.full_name }}
+                                                {% else %}
+                                                    Not Assigned
+                                                {% endif %}
+
+                                            </h5>
+
+                                        </div>
+
+                                        <div class="kucsa-leader-icon">
+                                            <i class="bi bi-person-badge"></i>
+                                        </div>
+
+                                    </div>
+
+
+                                    {% if chairperson %}
+
+                                        <p class="kucsa-leader-email">
+                                            {{ chairperson.email }}
+                                        </p>
+
+                                        <p class="mb-3">
+
+                                            <span class="badge bg-success-subtle
+                                                         text-success">
+                                                {{ chairperson.term_status }}
+                                            </span>
+
+                                        </p>
+
+                                        <a
+                                            href="{% url 'executives:detail' chairperson.pk %}"
+                                            class="btn btn-sm btn-outline-primary">
+
+                                            <i class="bi bi-eye me-1"></i>
+                                            View Profile
+
+                                        </a>
+
+                                    {% else %}
+
+                                        <p class="text-muted mt-3 mb-0 small">
+                                            No active chairperson is
+                                            currently assigned.
+                                        </p>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- VICE CHAIRPERSON -->
+                            <div class="col-md-6">
+
+                                <div class="kucsa-leader-card">
+
+                                    <div class="d-flex
+                                                justify-content-between
+                                                align-items-start
+                                                gap-3">
+
+                                        <div>
+
+                                            <p class="kucsa-leader-position">
+                                                VICE CHAIRPERSON
+                                            </p>
+
+                                            <h5 class="kucsa-leader-name">
+
+                                                {% if vice_chairperson %}
+                                                    {{ vice_chairperson.full_name }}
+                                                {% else %}
+                                                    Not Assigned
+                                                {% endif %}
+
+                                            </h5>
+
+                                        </div>
+
+                                        <div class="kucsa-leader-icon">
+                                            <i class="bi bi-person-badge"></i>
+                                        </div>
+
+                                    </div>
+
+
+                                    {% if vice_chairperson %}
+
+                                        <p class="kucsa-leader-email">
+                                            {{ vice_chairperson.email }}
+                                        </p>
+
+                                        <p class="mb-3">
+
+                                            <span class="badge bg-success-subtle
+                                                         text-success">
+                                                {{ vice_chairperson.term_status }}
+                                            </span>
+
+                                        </p>
+
+                                        <a
+                                            href="{% url 'executives:detail' vice_chairperson.pk %}"
+                                            class="btn btn-sm btn-outline-primary">
+
+                                            <i class="bi bi-eye me-1"></i>
+                                            View Profile
+
+                                        </a>
+
+                                    {% else %}
+
+                                        <p class="text-muted mt-3 mb-0 small">
+                                            No active vice chairperson
+                                            is currently assigned.
+                                        </p>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Full board -->
+                        <div class="kucsa-board-footer">
+
+                            <div class="d-flex
+                                        flex-column flex-md-row
+                                        justify-content-between
+                                        align-items-md-center
+                                        gap-3">
+
+                                <div>
+
+                                    <h6 class="kucsa-board-footer-title">
+                                        Executive Board
+                                    </h6>
+
+                                    <p class="kucsa-board-footer-text">
+                                        View all currently active
+                                        KUCSA executives and their
+                                        leadership positions.
+                                    </p>
+
+                                </div>
+
+                                <a
+                                    href="{% url 'executives:list' %}"
+                                    class="btn btn-primary">
+
+                                    View All Executives
+                                    <i class="bi bi-arrow-right ms-1"></i>
+
+                                </a>
+
+                            </div>
 
                         </div>
 
@@ -667,235 +1713,34 @@
 
         </div>
 
-    </div>
 
+        <!-- =====================================================
+             EXECUTIVE BOARD PREVIEW
+        ====================================================== -->
+        <div class="kucsa-dashboard-card mt-3 mt-lg-4 kucsa-reveal">
 
-    <!-- =====================================================
-         EXECUTIVE BOARD PREVIEW
-    ====================================================== -->
-    <div class="card shadow-sm border-0 mt-4">
-
-        <div class="card-header">
-
-            <div class="d-flex
-                        justify-content-between
-                        align-items-center">
-
-                <h5 class="mb-0 fw-bold">
-                    <i class="bi bi-people me-2"></i>
-                    Current Executive Board
-                </h5>
-
-                <a
-                    href="{% url 'executives:list' %}"
-                    class="btn btn-sm btn-outline-primary">
-
-                    View All
-
-                </a>
-
-            </div>
-
-        </div>
-
-
-        <div class="card-body p-0">
-
-            {% if executive_board %}
-
-                <div class="table-responsive">
-
-                    <table class="table table-hover
-                                  align-middle mb-0">
-
-                        <thead class="table-light">
-
-                            <tr>
-
-                                <th>Executive</th>
-                                <th>Role</th>
-                                <th>Committee</th>
-                                <th>Term</th>
-                                <th>Status</th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody>
-
-                            {% for executive in executive_board %}
-
-                                <tr>
-
-                                    <!-- Executive -->
-                                    <td>
-
-                                        <div class="d-flex
-                                                    align-items-center">
-
-                                            {% if executive.profile_picture %}
-
-                                                <img
-                                                    src="{{ executive.profile_picture.url }}"
-                                                    class="rounded-circle me-3"
-                                                    width="42"
-                                                    height="42"
-                                                    alt="{{ executive.full_name }}">
-
-                                            {% else %}
-
-                                                <i
-                                                    class="bi bi-person-circle
-                                                           fs-2 text-muted me-3">
-                                                </i>
-
-                                            {% endif %}
-
-                                            <div>
-
-                                                <div class="fw-bold">
-                                                    {{ executive.full_name }}
-                                                </div>
-
-                                                <small
-                                                    class="text-muted">
-                                                    {{ executive.email }}
-                                                </small>
-
-                                            </div>
-
-                                        </div>
-
-                                    </td>
-
-
-                                    <!-- Role -->
-                                    <td>
-
-                                        <span class="fw-semibold">
-                                            {{ executive.role }}
-                                        </span>
-
-                                    </td>
-
-
-                                    <!-- Committee -->
-                                    <td>
-                                        {{ executive.committee_display }}
-                                    </td>
-
-
-                                    <!-- Term -->
-                                    <td>
-                                        {{ executive.term_display }}
-                                    </td>
-
-
-                                    <!-- Status -->
-                                    <td>
-
-                                        {% if executive.is_current %}
-
-                                            <span class="badge bg-success">
-                                                Current
-                                            </span>
-
-                                        {% elif executive.term_status == "Upcoming" %}
-
-                                            <span class="badge bg-info">
-                                                Upcoming
-                                            </span>
-
-                                        {% elif executive.term_status == "Ended" %}
-
-                                            <span class="badge bg-secondary">
-                                                Ended
-                                            </span>
-
-                                        {% else %}
-
-                                            <span class="badge bg-secondary">
-                                                Inactive
-                                            </span>
-
-                                        {% endif %}
-
-                                    </td>
-
-                                </tr>
-
-                            {% endfor %}
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            {% else %}
-
-                <div class="text-center py-5">
-
-                    <i
-                        class="bi bi-people display-4
-                               text-muted">
-                    </i>
-
-                    <h5 class="mt-3">
-                        No Active Executives
-                    </h5>
-
-                    <p class="text-muted mb-0">
-                        There are currently no active executive
-                        profiles on the KUCSA board.
-                    </p>
-
-                </div>
-
-            {% endif %}
-
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         ADMIN QUICK ACTION
-    ====================================================== -->
-    {% if user.role == "ADMIN" %}
-
-        <div class="card shadow-sm border-0 mt-4">
-
-            <div class="card-body">
+            <div class="kucsa-card-header">
 
                 <div class="d-flex
-                            flex-column flex-md-row
                             justify-content-between
-                            align-items-md-center
+                            align-items-center
                             gap-3">
 
-                    <div>
+                    <h5 class="kucsa-card-title">
 
-                        <h6 class="fw-bold mb-1">
-                            <i class="bi bi-shield-check me-2"></i>
-                            Administrative Management
-                        </h6>
+                        <i class="bi bi-people
+                                  kucsa-card-title-icon"></i>
 
-                        <p class="text-muted mb-0">
-                            Assign official executive positions
-                            to eligible KUCSA users.
-                        </p>
+                        Current Executive Board
 
-                    </div>
+                    </h5>
 
                     <a
-                        href="{% url 'executives:assign_role' %}"
-                        class="btn btn-primary">
+                        href="{% url 'executives:list' %}"
+                        class="btn btn-sm btn-outline-primary">
 
-                        <i class="bi bi-person-plus me-1"></i>
-                        Assign Executive Role
+                        View All
+                        <i class="bi bi-arrow-right ms-1"></i>
 
                     </a>
 
@@ -903,10 +1748,486 @@
 
             </div>
 
+
+            <div class="card-body p-0">
+
+                {% if executive_board %}
+
+                    <div class="kucsa-board-table-wrap">
+
+                        <table class="table
+                                      table-hover
+                                      align-middle
+                                      kucsa-board-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Executive</th>
+                                    <th>Role</th>
+                                    <th>Committee</th>
+                                    <th>Term</th>
+                                    <th>Status</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for executive in executive_board %}
+
+                                    <tr>
+
+                                        <!-- Executive -->
+                                        <td>
+
+                                            <div class="kucsa-executive-person">
+
+                                                {% if executive.profile_picture %}
+
+                                                    <img
+                                                        src="{{ executive.profile_picture.url }}"
+                                                        class="kucsa-board-avatar"
+                                                        alt="{{ executive.full_name }}">
+
+                                                {% else %}
+
+                                                    <span class="kucsa-board-avatar-fallback">
+                                                        <i class="bi bi-person-circle"></i>
+                                                    </span>
+
+                                                {% endif %}
+
+                                                <div>
+
+                                                    <div class="kucsa-executive-name">
+                                                        {{ executive.full_name }}
+                                                    </div>
+
+                                                    <div class="kucsa-executive-email">
+                                                        {{ executive.email }}
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                        </td>
+
+
+                                        <!-- Role -->
+                                        <td>
+
+                                            <span class="kucsa-role-text">
+                                                {{ executive.role }}
+                                            </span>
+
+                                        </td>
+
+
+                                        <!-- Committee -->
+                                        <td>
+                                            {{ executive.committee_display }}
+                                        </td>
+
+
+                                        <!-- Term -->
+                                        <td>
+                                            {{ executive.term_display }}
+                                        </td>
+
+
+                                        <!-- Status -->
+                                        <td>
+
+                                            {% if executive.is_current %}
+
+                                                <span class="kucsa-table-status current">
+
+                                                    <i class="bi bi-check-circle-fill"></i>
+                                                    Current
+
+                                                </span>
+
+                                            {% elif executive.term_status == "Upcoming" %}
+
+                                                <span class="kucsa-table-status upcoming">
+
+                                                    <i class="bi bi-clock-fill"></i>
+                                                    Upcoming
+
+                                                </span>
+
+                                            {% elif executive.term_status == "Ended" %}
+
+                                                <span class="kucsa-table-status ended">
+
+                                                    <i class="bi bi-calendar-x-fill"></i>
+                                                    Ended
+
+                                                </span>
+
+                                            {% else %}
+
+                                                <span class="kucsa-table-status inactive">
+
+                                                    <i class="bi bi-dash-circle-fill"></i>
+                                                    Inactive
+
+                                                </span>
+
+                                            {% endif %}
+
+                                        </td>
+
+                                    </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                {% else %}
+
+                    <div class="kucsa-empty-state">
+
+                        <div class="kucsa-empty-icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+
+                        <h5>
+                            No Active Executives
+                        </h5>
+
+                        <p>
+                            There are currently no active executive
+                            profiles on the KUCSA board.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
         </div>
 
-    {% endif %}
+
+        <!-- =====================================================
+             ADMIN QUICK ACTION
+        ====================================================== -->
+        {% if user.role == "ADMIN" %}
+
+            <div class="kucsa-admin-card mt-3 mt-lg-4 kucsa-reveal">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex
+                                flex-column flex-md-row
+                                justify-content-between
+                                align-items-md-center
+                                gap-3">
+
+                        <div class="d-flex align-items-start gap-3">
+
+                            <div class="kucsa-admin-icon">
+
+                                <i class="bi bi-shield-check"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h6 class="kucsa-admin-title">
+                                    Administrative Management
+                                </h6>
+
+                                <p class="kucsa-admin-description">
+                                    Assign official executive positions
+                                    to eligible KUCSA users.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <a
+                            href="{% url 'executives:assign_role' %}"
+                            class="btn btn-primary">
+
+                            <i class="bi bi-person-plus me-1"></i>
+                            Assign Executive Role
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
 
 </div>
+
+
+<script>
+(function () {
+    "use strict";
+
+    const dashboard = document.querySelector(
+        ".kucsa-executive-dashboard"
+    );
+
+    if (!dashboard) return;
+
+    /* =========================================================
+       REVEAL DASHBOARD ELEMENTS
+    ========================================================== */
+
+    const revealItems = dashboard.querySelectorAll(
+        ".kucsa-reveal"
+    );
+
+    const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (prefersReducedMotion) {
+
+        revealItems.forEach(function (item) {
+            item.classList.add("is-visible");
+        });
+
+    } else if ("IntersectionObserver" in window) {
+
+        const observer = new IntersectionObserver(
+            function (entries, obs) {
+
+                entries.forEach(function (entry) {
+
+                    if (entry.isIntersecting) {
+
+                        entry.target.classList.add("is-visible");
+
+                        obs.unobserve(entry.target);
+                    }
+
+                });
+
+            },
+            {
+                threshold: 0.08,
+                rootMargin: "0px 0px -30px 0px"
+            }
+        );
+
+        revealItems.forEach(function (item) {
+            observer.observe(item);
+        });
+
+    } else {
+
+        revealItems.forEach(function (item) {
+            item.classList.add("is-visible");
+        });
+
+    }
+
+
+    /* =========================================================
+       STATISTIC COUNTERS
+    ========================================================== */
+
+    const counters = dashboard.querySelectorAll(
+        ".kucsa-counter"
+    );
+
+    function animateCounter(element) {
+
+        if (element.dataset.animated === "true") {
+            return;
+        }
+
+        element.dataset.animated = "true";
+
+        const target = Number(
+            element.dataset.value || element.textContent.trim() || 0
+        );
+
+        if (!Number.isFinite(target) || target <= 0) {
+            element.textContent = "0";
+            return;
+        }
+
+        if (prefersReducedMotion) {
+            element.textContent = target.toLocaleString();
+            return;
+        }
+
+        const duration = 850;
+        const startTime = performance.now();
+
+        function updateCounter(currentTime) {
+
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(
+                elapsed / duration,
+                1
+            );
+
+            const easedProgress =
+                1 - Math.pow(1 - progress, 3);
+
+            const currentValue = Math.floor(
+                target * easedProgress
+            );
+
+            element.textContent =
+                currentValue.toLocaleString();
+
+            if (progress < 1) {
+                requestAnimationFrame(updateCounter);
+            } else {
+                element.textContent =
+                    target.toLocaleString();
+            }
+        }
+
+        requestAnimationFrame(updateCounter);
+    }
+
+
+    if (prefersReducedMotion) {
+
+        counters.forEach(animateCounter);
+
+    } else if ("IntersectionObserver" in window) {
+
+        const counterObserver = new IntersectionObserver(
+            function (entries, obs) {
+
+                entries.forEach(function (entry) {
+
+                    if (entry.isIntersecting) {
+
+                        animateCounter(entry.target);
+
+                        obs.unobserve(entry.target);
+                    }
+
+                });
+
+            },
+            {
+                threshold: 0.5
+            }
+        );
+
+        counters.forEach(function (counter) {
+            counterObserver.observe(counter);
+        });
+
+    } else {
+
+        counters.forEach(animateCounter);
+
+    }
+
+
+    /* =========================================================
+       IMAGE ERROR FALLBACK
+    ========================================================== */
+
+    dashboard
+        .querySelectorAll("img")
+        .forEach(function (image) {
+
+            image.addEventListener(
+                "error",
+                function () {
+
+                    image.style.display = "none";
+
+                },
+                {
+                    once: true
+                }
+            );
+
+        });
+
+
+    /* =========================================================
+       PREVENT DOUBLE CLICK ON NAVIGATION BUTTONS
+    ========================================================== */
+
+    dashboard
+        .querySelectorAll("a.btn")
+        .forEach(function (link) {
+
+            link.addEventListener("click", function () {
+
+                if (
+                    link.dataset.navigationLocked === "true"
+                ) {
+                    return;
+                }
+
+                link.dataset.navigationLocked = "true";
+
+                const originalHTML = link.innerHTML;
+
+                if (
+                    !link.classList.contains("btn-outline-secondary")
+                    &&
+                    !link.classList.contains("btn-outline-primary")
+                ) {
+
+                    link.innerHTML =
+                        '<span class="spinner-border spinner-border-sm me-1" ' +
+                        'aria-hidden="true"></span> Loading...';
+
+                }
+
+                window.setTimeout(function () {
+
+                    link.dataset.navigationLocked = "false";
+                    link.innerHTML = originalHTML;
+
+                }, 5000);
+
+            });
+
+        });
+
+
+    /* =========================================================
+       RESTORE BUTTON STATE WHEN PAGE IS RETURNED FROM CACHE
+    ========================================================== */
+
+    window.addEventListener("pageshow", function () {
+
+        dashboard
+            .querySelectorAll("a.btn")
+            .forEach(function (link) {
+
+                link.dataset.navigationLocked = "false";
+
+            });
+
+    });
+
+})();
+</script>
 
 {% endblock %}

@@ -1,160 +1,832 @@
-
 {% extends "base.html" %}
 
 {% block title %}Payment Failed | KUCSA{% endblock %}
 
 {% block content %}
 
-<div class="container py-5">
+<style>
+    /* =========================================================
+       KUCSA PAYMENT FAILED PAGE
+       All styles are scoped to this page.
+    ========================================================= */
 
-    <div class="row justify-content-center">
+    .kucsa-payment-failed {
+        --kpf-danger: #dc3545;
+        --kpf-danger-dark: #b02a37;
+        --kpf-success: #198754;
+        --kpf-success-dark: #146c43;
+        --kpf-dark: #17212b;
+        --kpf-text: #263238;
+        --kpf-muted: #6b7785;
+        --kpf-border: #e7ebef;
+        --kpf-surface: #ffffff;
+        --kpf-soft: #f7f8fa;
+        --kpf-soft-red: #fff1f2;
+        --kpf-soft-green: #edf8f2;
+        --kpf-radius: 22px;
+        --kpf-radius-sm: 15px;
+        --kpf-shadow: 0 15px 45px rgba(23, 33, 43, .08);
+        --kpf-shadow-hover: 0 18px 45px rgba(23, 33, 43, .13);
 
-        <div class="col-12 col-md-7 col-lg-5">
+        color: var(--kpf-text);
+        padding: 34px 0 55px;
+    }
 
-            <!-- =====================================================
-                 FAILED PAYMENT CARD
-            ====================================================== -->
+    .kucsa-payment-failed *,
+    .kucsa-payment-failed *::before,
+    .kucsa-payment-failed *::after {
+        box-sizing: border-box;
+    }
 
-            <div class="card border-0 shadow-sm">
+    .kucsa-payment-failed a {
+        text-decoration: none;
+    }
 
-                <div class="card-body text-center p-5">
+    /* =========================================================
+       PAGE SHELL
+    ========================================================= */
 
-                    <!-- =================================================
-                         FAILURE ICON
-                    ================================================== -->
+    .kpf-shell {
+        width: min(100% - 32px, 650px);
+        margin: 0 auto;
+    }
 
-                    <div
-                        class="rounded-circle bg-danger bg-opacity-10
-                               d-inline-flex align-items-center
-                               justify-content-center mb-4"
-                        style="width: 90px; height: 90px;"
-                    >
+    /* =========================================================
+       TOP BRAND / CONTEXT
+    ========================================================= */
 
-                        <i
-                            class="bi bi-x-lg text-danger"
-                            style="font-size: 42px;"
-                        ></i>
+    .kpf-context {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        margin-bottom: 15px;
+        color: var(--kpf-muted);
+        font-size: .74rem;
+        font-weight: 750;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
 
-                    </div>
+    .kpf-context-icon {
+        width: 29px;
+        height: 29px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9px;
+        color: var(--kpf-danger);
+        background: var(--kpf-soft-red);
+        font-size: 13px;
+    }
+
+    /* =========================================================
+       MAIN CARD
+    ========================================================= */
+
+    .kpf-card {
+        overflow: hidden;
+        border: 1px solid var(--kpf-border);
+        border-radius: var(--kpf-radius);
+        background: var(--kpf-surface);
+        box-shadow: var(--kpf-shadow);
+    }
+
+    /* =========================================================
+       HERO
+    ========================================================= */
+
+    .kpf-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 38px 30px 31px;
+        text-align: center;
+        border-bottom: 1px solid var(--kpf-border);
+        background:
+            radial-gradient(
+                circle at 10% 20%,
+                rgba(220, 53, 69, .09),
+                transparent 28%
+            ),
+            radial-gradient(
+                circle at 90% 80%,
+                rgba(220, 53, 69, .055),
+                transparent 30%
+            ),
+            #fff;
+    }
+
+    .kpf-hero::before {
+        content: "";
+        position: absolute;
+        width: 210px;
+        height: 210px;
+        right: -105px;
+        top: -105px;
+        border-radius: 50%;
+        background: rgba(220, 53, 69, .035);
+        pointer-events: none;
+    }
+
+    .kpf-failure-icon {
+        position: relative;
+        z-index: 1;
+        width: 88px;
+        height: 88px;
+        margin: 0 auto 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 7px solid rgba(255, 255, 255, .9);
+        border-radius: 50%;
+        color: var(--kpf-danger);
+        background: var(--kpf-soft-red);
+        box-shadow:
+            0 10px 28px rgba(220, 53, 69, .1),
+            inset 0 0 0 1px rgba(220, 53, 69, .06);
+        font-size: 38px;
+        animation: kpfIconAppear .55s ease both;
+    }
+
+    .kpf-hero-title {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        color: var(--kpf-dark);
+        font-size: clamp(1.35rem, 4vw, 1.7rem);
+        line-height: 1.25;
+        font-weight: 850;
+        letter-spacing: -.025em;
+    }
+
+    .kpf-hero-description {
+        position: relative;
+        z-index: 1;
+        max-width: 480px;
+        margin: 8px auto 0;
+        color: var(--kpf-muted);
+        font-size: .9rem;
+        line-height: 1.65;
+    }
+
+    .kpf-failure-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 16px;
+        padding: 6px 11px;
+        border-radius: 999px;
+        color: var(--kpf-danger-dark);
+        background: var(--kpf-soft-red);
+        font-size: .72rem;
+        font-weight: 800;
+    }
+
+    /* =========================================================
+       BODY
+    ========================================================= */
+
+    .kpf-body {
+        padding: 29px;
+    }
+
+    /* =========================================================
+       SECTION HEADING
+    ========================================================= */
+
+    .kpf-section {
+        margin-bottom: 25px;
+    }
+
+    .kpf-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .kpf-section-heading {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .kpf-section-icon {
+        width: 34px;
+        height: 34px;
+        flex: 0 0 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        color: var(--kpf-danger);
+        background: var(--kpf-soft-red);
+        font-size: 15px;
+    }
+
+    .kpf-section-title {
+        margin: 0;
+        color: var(--kpf-dark);
+        font-size: .96rem;
+        font-weight: 800;
+    }
+
+    .kpf-section-subtitle {
+        margin: 2px 0 0;
+        color: var(--kpf-muted);
+        font-size: .75rem;
+    }
+
+    /* =========================================================
+       PAYMENT SUMMARY
+    ========================================================= */
+
+    .kpf-summary {
+        overflow: hidden;
+        border: 1px solid var(--kpf-border);
+        border-radius: var(--kpf-radius-sm);
+        background: #fff;
+    }
+
+    .kpf-summary-row {
+        min-height: 57px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 13px 16px;
+        border-bottom: 1px solid var(--kpf-border);
+    }
+
+    .kpf-summary-row:last-child {
+        border-bottom: 0;
+    }
+
+    .kpf-summary-label {
+        color: var(--kpf-muted);
+        font-size: .81rem;
+        font-weight: 600;
+    }
+
+    .kpf-summary-value {
+        color: var(--kpf-dark);
+        font-size: .85rem;
+        font-weight: 750;
+        text-align: right;
+        overflow-wrap: anywhere;
+    }
+
+    .kpf-amount {
+        color: var(--kpf-danger-dark);
+        font-size: 1.05rem;
+        font-weight: 850;
+    }
+
+    .kpf-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 30px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        color: var(--kpf-danger-dark);
+        background: var(--kpf-soft-red);
+        font-size: .72rem;
+        font-weight: 800;
+    }
+
+    /* =========================================================
+       FAILURE MESSAGE
+    ========================================================= */
+
+    .kpf-alert {
+        display: flex;
+        align-items: flex-start;
+        gap: 13px;
+        padding: 15px;
+        border: 1px solid rgba(220, 53, 69, .14);
+        border-radius: 15px;
+        background: var(--kpf-soft-red);
+        color: #842029;
+    }
+
+    .kpf-alert-icon {
+        width: 35px;
+        height: 35px;
+        flex: 0 0 35px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 1px;
+        border-radius: 10px;
+        background: rgba(220, 53, 69, .1);
+        font-size: 16px;
+    }
+
+    .kpf-alert-title {
+        margin: 0 0 4px;
+        font-size: .84rem;
+        font-weight: 800;
+    }
+
+    .kpf-alert-text {
+        margin: 0;
+        color: #7d3038;
+        font-size: .77rem;
+        line-height: 1.6;
+    }
+
+    /* =========================================================
+       WHAT TO DO
+    ========================================================= */
+
+    .kpf-help-list {
+        display: grid;
+        gap: 10px;
+    }
+
+    .kpf-help-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 14px;
+        border: 1px solid var(--kpf-border);
+        border-radius: 14px;
+        background: #fff;
+        transition:
+            transform .2s ease,
+            border-color .2s ease,
+            box-shadow .2s ease;
+    }
+
+    .kpf-help-item:hover {
+        transform: translateY(-1px);
+        border-color: rgba(25, 135, 84, .2);
+        box-shadow: 0 7px 20px rgba(23, 33, 43, .05);
+    }
+
+    .kpf-step {
+        width: 31px;
+        height: 31px;
+        flex: 0 0 31px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        color: #fff;
+        background: linear-gradient(
+            135deg,
+            var(--kpf-success),
+            var(--kpf-success-dark)
+        );
+        font-size: .75rem;
+        font-weight: 850;
+        box-shadow: 0 5px 12px rgba(25, 135, 84, .14);
+    }
+
+    .kpf-help-content {
+        min-width: 0;
+    }
+
+    .kpf-help-title {
+        margin: 0 0 3px;
+        color: var(--kpf-dark);
+        font-size: .82rem;
+        font-weight: 800;
+    }
+
+    .kpf-help-description {
+        margin: 0;
+        color: var(--kpf-muted);
+        font-size: .75rem;
+        line-height: 1.55;
+    }
+
+    /* =========================================================
+       ACTIONS
+    ========================================================= */
+
+    .kpf-actions {
+        display: grid;
+        gap: 10px;
+        margin-top: 25px;
+    }
+
+    .kpf-action {
+        position: relative;
+        min-height: 49px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        padding: 11px 17px;
+        border-radius: 12px;
+        font-size: .84rem;
+        font-weight: 800;
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease,
+            background-color .2s ease,
+            border-color .2s ease;
+    }
+
+    .kpf-action:hover {
+        transform: translateY(-1px);
+    }
+
+    .kpf-action-primary {
+        color: #fff;
+        background: linear-gradient(
+            135deg,
+            var(--kpf-success),
+            var(--kpf-success-dark)
+        );
+        box-shadow: 0 9px 20px rgba(25, 135, 84, .18);
+    }
+
+    .kpf-action-primary:hover {
+        color: #fff;
+        box-shadow: 0 13px 27px rgba(25, 135, 84, .24);
+    }
+
+    .kpf-action-secondary {
+        color: var(--kpf-text);
+        border: 1px solid var(--kpf-border);
+        background: #fff;
+    }
+
+    .kpf-action-secondary:hover {
+        color: var(--kpf-success-dark);
+        border-color: rgba(25, 135, 84, .25);
+        background: var(--kpf-soft-green);
+    }
+
+    .kpf-action-loading {
+        pointer-events: none;
+        opacity: .72;
+    }
+
+    .kpf-spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: kpfSpin .7s linear infinite;
+    }
+
+    /* =========================================================
+       SECURITY FOOTER
+    ========================================================= */
+
+    .kpf-security {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        margin-top: 16px;
+        color: var(--kpf-muted);
+        text-align: center;
+        font-size: .73rem;
+        line-height: 1.5;
+    }
+
+    .kpf-security i {
+        color: var(--kpf-success);
+        font-size: 14px;
+    }
+
+    /* =========================================================
+       REVEAL ANIMATION
+    ========================================================= */
+
+    .kpf-reveal {
+        opacity: 0;
+        transform: translateY(12px);
+        transition:
+            opacity .5s ease,
+            transform .5s ease;
+    }
+
+    .kpf-reveal.kpf-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* =========================================================
+       KEYFRAMES
+    ========================================================= */
+
+    @keyframes kpfIconAppear {
+        0% {
+            opacity: 0;
+            transform: scale(.82);
+        }
+
+        70% {
+            transform: scale(1.04);
+        }
+
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes kpfSpin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* =========================================================
+       TABLET
+    ========================================================= */
+
+    @media (max-width: 991.98px) {
+
+        .kucsa-payment-failed {
+            padding-top: 25px;
+        }
+
+        .kpf-shell {
+            width: min(100% - 28px, 620px);
+        }
+
+        .kpf-body {
+            padding: 26px;
+        }
+
+        .kpf-hero {
+            padding: 34px 25px 29px;
+        }
+    }
+
+    /* =========================================================
+       MOBILE
+    ========================================================= */
+
+    @media (max-width: 767.98px) {
+
+        .kucsa-payment-failed {
+            padding: 18px 0 40px;
+        }
+
+        .kpf-shell {
+            width: min(100% - 20px, 600px);
+        }
+
+        .kpf-card {
+            border-radius: 18px;
+        }
+
+        .kpf-hero {
+            padding: 30px 18px 25px;
+        }
+
+        .kpf-failure-icon {
+            width: 76px;
+            height: 76px;
+            font-size: 32px;
+        }
+
+        .kpf-hero-title {
+            font-size: 1.28rem;
+        }
+
+        .kpf-hero-description {
+            font-size: .83rem;
+        }
+
+        .kpf-body {
+            padding: 21px 16px;
+        }
+
+        .kpf-summary-row {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 5px;
+            padding: 13px 14px;
+        }
+
+        .kpf-summary-label,
+        .kpf-summary-value {
+            width: 100%;
+        }
+
+        .kpf-summary-value {
+            text-align: left;
+        }
+
+        .kpf-alert {
+            gap: 10px;
+            padding: 13px;
+        }
+
+        .kpf-alert-icon {
+            width: 32px;
+            height: 32px;
+            flex-basis: 32px;
+        }
+
+        .kpf-help-item {
+            padding: 13px;
+        }
+    }
+
+    /* =========================================================
+       SMALL MOBILE
+    ========================================================= */
+
+    @media (max-width: 575.98px) {
+
+        .kpf-shell {
+            width: calc(100% - 16px);
+        }
+
+        .kpf-context {
+            font-size: .68rem;
+            margin-bottom: 11px;
+        }
+
+        .kpf-context-icon {
+            width: 26px;
+            height: 26px;
+        }
+
+        .kpf-hero-title {
+            font-size: 1.2rem;
+        }
+
+        .kpf-hero-description {
+            font-size: .8rem;
+        }
+
+        .kpf-section-title {
+            font-size: .9rem;
+        }
+
+        .kpf-section-subtitle {
+            font-size: .71rem;
+        }
+
+        .kpf-help-title {
+            font-size: .79rem;
+        }
+
+        .kpf-help-description {
+            font-size: .72rem;
+        }
+
+        .kpf-action {
+            min-height: 47px;
+        }
+
+        .kpf-security {
+            padding: 0 8px;
+            font-size: .68rem;
+        }
+    }
+
+    /* =========================================================
+       VERY SMALL DEVICES
+    ========================================================= */
+
+    @media (max-width: 359.98px) {
+
+        .kpf-shell {
+            width: calc(100% - 12px);
+        }
+
+        .kpf-body {
+            padding: 18px 12px;
+        }
+
+        .kpf-hero {
+            padding-left: 13px;
+            padding-right: 13px;
+        }
+
+        .kpf-summary-row,
+        .kpf-help-item {
+            padding-left: 11px;
+            padding-right: 11px;
+        }
+
+        .kpf-failure-icon {
+            width: 70px;
+            height: 70px;
+            font-size: 29px;
+        }
+    }
+
+    /* =========================================================
+       ACCESSIBILITY
+    ========================================================= */
+
+    .kucsa-payment-failed a:focus-visible {
+        outline: 3px solid rgba(25, 135, 84, .22);
+        outline-offset: 3px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .kucsa-payment-failed *,
+        .kucsa-payment-failed *::before,
+        .kucsa-payment-failed *::after {
+            animation-duration: .01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: .01ms !important;
+            scroll-behavior: auto !important;
+        }
+
+        .kpf-reveal {
+            opacity: 1;
+            transform: none;
+        }
+    }
+</style>
 
 
-                    <!-- =================================================
-                         TITLE
-                    ================================================== -->
+<div class="kucsa-payment-failed">
 
-                    <h2 class="fw-bold mb-2">
-                        Payment Not Completed
-                    </h2>
+    <div class="kpf-shell">
 
-                    <p class="text-muted mb-4">
-                        Your KUCSA membership payment could not be
-                        completed or was cancelled.
-                    </p>
+        <!-- =====================================================
+             CONTEXT
+        ====================================================== -->
+
+        <div class="kpf-context kpf-reveal">
+
+            <span class="kpf-context-icon" aria-hidden="true">
+                <i class="bi bi-credit-card-2-front"></i>
+            </span>
+
+            <span>
+                KUCSA Membership Payment
+            </span>
+
+        </div>
 
 
-                    <!-- =================================================
-                         PAYMENT DETAILS
-                    ================================================== -->
+        <!-- =====================================================
+             MAIN CARD
+        ====================================================== -->
 
-                    <div class="bg-light rounded p-4 mb-4 text-start">
+        <main class="kpf-card kpf-reveal">
 
-                        <div
-                            class="d-flex justify-content-between
-                                   align-items-center mb-3"
-                        >
+            <!-- =================================================
+                 HERO
+            ================================================== -->
 
-                            <span class="text-muted">
-                                Amount
-                            </span>
+            <section class="kpf-hero">
 
-                            <strong>
-                                KES {{ payment.amount }}
-                            </strong>
+                <div class="kpf-failure-icon" aria-hidden="true">
+                    <i class="bi bi-x-lg"></i>
+                </div>
 
+                <h1 class="kpf-hero-title">
+                    Payment Not Completed
+                </h1>
+
+                <p class="kpf-hero-description">
+                    Your KUCSA membership payment could not be
+                    completed or was cancelled.
+                </p>
+
+                <span class="kpf-failure-badge">
+                    <i class="bi bi-exclamation-circle"></i>
+                    Payment unsuccessful
+                </span>
+
+            </section>
+
+
+            <!-- =================================================
+                 BODY
+            ================================================== -->
+
+            <div class="kpf-body">
+
+                <!-- =================================================
+                     PAYMENT DETAILS
+                ================================================== -->
+
+                <section class="kpf-section kpf-reveal">
+
+                    <div class="kpf-section-heading">
+
+                        <div class="kpf-section-icon" aria-hidden="true">
+                            <i class="bi bi-receipt"></i>
                         </div>
-
-
-                        <div
-                            class="d-flex justify-content-between
-                                   align-items-center mb-3"
-                        >
-
-                            <span class="text-muted">
-                                Payment Method
-                            </span>
-
-                            <strong>
-                                M-Pesa
-                            </strong>
-
-                        </div>
-
-
-                        {% if payment.phone_number %}
-
-                        <div
-                            class="d-flex justify-content-between
-                                   align-items-center mb-3"
-                        >
-
-                            <span class="text-muted">
-                                Phone
-                            </span>
-
-                            <strong>
-                                {{ payment.phone_number }}
-                            </strong>
-
-                        </div>
-
-                        {% endif %}
-
-
-                        <div
-                            class="d-flex justify-content-between
-                                   align-items-center"
-                        >
-
-                            <span class="text-muted">
-                                Status
-                            </span>
-
-                            <span class="badge bg-danger">
-                                {{ payment.get_status_display }}
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- =================================================
-                         FAILURE MESSAGE
-                    ================================================== -->
-
-                    <div
-                        class="alert alert-danger
-                               text-start d-flex align-items-start"
-                    >
-
-                        <i
-                            class="bi bi-exclamation-triangle-fill
-                                   me-3 mt-1"
-                            style="font-size: 20px;"
-                        ></i>
 
                         <div>
 
-                            <strong>
-                                Payment was not confirmed
-                            </strong>
+                            <h2 class="kpf-section-title">
+                                Payment Details
+                            </h2>
 
-                            <p class="small mb-0 mt-1">
-
-                                The M-Pesa transaction was either
-                                cancelled, declined, timed out, or
-                                could not be confirmed by Safaricom.
-
+                            <p class="kpf-section-subtitle">
+                                Information about this payment attempt.
                             </p>
 
                         </div>
@@ -162,39 +834,161 @@
                     </div>
 
 
-                    <!-- =================================================
-                         WHAT TO DO
-                    ================================================== -->
+                    <div class="kpf-summary">
 
-                    <div class="text-start mb-4">
+                        <!-- Amount -->
 
-                        <h6 class="fw-bold mb-3">
-                            What you can do
-                        </h6>
+                        <div class="kpf-summary-row">
+
+                            <span class="kpf-summary-label">
+                                Amount
+                            </span>
+
+                            <strong class="kpf-summary-value kpf-amount">
+                                KES {{ payment.amount }}
+                            </strong>
+
+                        </div>
 
 
-                        <div class="d-flex mb-3">
+                        <!-- Payment Method -->
 
-                            <div
-                                class="rounded-circle bg-success
-                                       text-white d-flex
-                                       align-items-center
-                                       justify-content-center
-                                       flex-shrink-0 me-3"
-                                style="width: 30px; height: 30px;"
-                            >
+                        <div class="kpf-summary-row">
+
+                            <span class="kpf-summary-label">
+                                Payment Method
+                            </span>
+
+                            <strong class="kpf-summary-value">
+                                M-Pesa
+                            </strong>
+
+                        </div>
+
+
+                        <!-- Phone -->
+
+                        {% if payment.phone_number %}
+
+                            <div class="kpf-summary-row">
+
+                                <span class="kpf-summary-label">
+                                    Phone Number
+                                </span>
+
+                                <strong class="kpf-summary-value">
+                                    {{ payment.phone_number }}
+                                </strong>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <!-- Status -->
+
+                        <div class="kpf-summary-row">
+
+                            <span class="kpf-summary-label">
+                                Status
+                            </span>
+
+                            <span class="kpf-summary-value">
+
+                                <span class="kpf-status">
+
+                                    <i class="bi bi-x-circle"></i>
+
+                                    {{ payment.get_status_display }}
+
+                                </span>
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     FAILURE MESSAGE
+                ================================================== -->
+
+                <section class="kpf-section kpf-reveal">
+
+                    <div class="kpf-alert">
+
+                        <div class="kpf-alert-icon" aria-hidden="true">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                        </div>
+
+                        <div>
+
+                            <p class="kpf-alert-title">
+                                Payment was not confirmed
+                            </p>
+
+                            <p class="kpf-alert-text">
+                                The M-Pesa transaction was either
+                                cancelled, declined, timed out, or
+                                could not be confirmed by Safaricom.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     WHAT TO DO
+                ================================================== -->
+
+                <section class="kpf-section kpf-reveal">
+
+                    <div class="kpf-section-heading">
+
+                        <div class="kpf-section-icon" aria-hidden="true">
+                            <i class="bi bi-lightbulb"></i>
+                        </div>
+
+                        <div>
+
+                            <h2 class="kpf-section-title">
+                                What You Can Do
+                            </h2>
+
+                            <p class="kpf-section-subtitle">
+                                Follow these steps before trying again.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kpf-help-list">
+
+                        <!-- Step 1 -->
+
+                        <div class="kpf-help-item">
+
+                            <div class="kpf-step">
                                 1
                             </div>
 
-                            <div>
+                            <div class="kpf-help-content">
 
-                                <strong>
+                                <p class="kpf-help-title">
                                     Check your M-Pesa balance
-                                </strong>
+                                </p>
 
-                                <p class="text-muted small mb-0">
-                                    Make sure you have sufficient
-                                    funds in your M-Pesa account.
+                                <p class="kpf-help-description">
+                                    Make sure you have sufficient funds
+                                    available in your M-Pesa account.
                                 </p>
 
                             </div>
@@ -202,28 +996,24 @@
                         </div>
 
 
-                        <div class="d-flex mb-3">
+                        <!-- Step 2 -->
 
-                            <div
-                                class="rounded-circle bg-success
-                                       text-white d-flex
-                                       align-items-center
-                                       justify-content-center
-                                       flex-shrink-0 me-3"
-                                style="width: 30px; height: 30px;"
-                            >
+                        <div class="kpf-help-item">
+
+                            <div class="kpf-step">
                                 2
                             </div>
 
-                            <div>
+                            <div class="kpf-help-content">
 
-                                <strong>
+                                <p class="kpf-help-title">
                                     Confirm your phone number
-                                </strong>
+                                </p>
 
-                                <p class="text-muted small mb-0">
-                                    Make sure you are using the
-                                    correct M-Pesa number.
+                                <p class="kpf-help-description">
+                                    Make sure you are using the correct
+                                    M-Pesa number and that the phone is
+                                    able to receive the payment prompt.
                                 </p>
 
                             </div>
@@ -231,28 +1021,23 @@
                         </div>
 
 
-                        <div class="d-flex">
+                        <!-- Step 3 -->
 
-                            <div
-                                class="rounded-circle bg-success
-                                       text-white d-flex
-                                       align-items-center
-                                       justify-content-center
-                                       flex-shrink-0 me-3"
-                                style="width: 30px; height: 30px;"
-                            >
+                        <div class="kpf-help-item">
+
+                            <div class="kpf-step">
                                 3
                             </div>
 
-                            <div>
+                            <div class="kpf-help-content">
 
-                                <strong>
+                                <p class="kpf-help-title">
                                     Try the payment again
-                                </strong>
+                                </p>
 
-                                <p class="text-muted small mb-0">
+                                <p class="kpf-help-description">
                                     Start a new M-Pesa payment request
-                                    to complete your membership.
+                                    to complete your KUCSA membership.
                                 </p>
 
                             </div>
@@ -261,35 +1046,41 @@
 
                     </div>
 
+                </section>
 
-                    <!-- =================================================
-                         TRY AGAIN
-                    ================================================== -->
+
+                <!-- =================================================
+                     ACTIONS
+                ================================================== -->
+
+                <div class="kpf-actions kpf-reveal">
 
                     <a
                         href="{% url 'payments:payment_create' %}"
-                        class="btn btn-success w-100 py-2"
+                        class="kpf-action kpf-action-primary"
+                        data-navigation
                     >
 
-                        <i class="bi bi-arrow-repeat me-2"></i>
+                        <i class="bi bi-arrow-repeat"></i>
 
-                        Try Payment Again
+                        <span>
+                            Try Payment Again
+                        </span>
 
                     </a>
 
 
-                    <!-- =================================================
-                         PAYMENT HISTORY
-                    ================================================== -->
-
                     <a
                         href="{% url 'payments:payment_list' %}"
-                        class="btn btn-outline-secondary w-100 py-2 mt-2"
+                        class="kpf-action kpf-action-secondary"
+                        data-navigation
                     >
 
-                        <i class="bi bi-receipt me-2"></i>
+                        <i class="bi bi-receipt"></i>
 
-                        View Payment History
+                        <span>
+                            View Payment History
+                        </span>
 
                     </a>
 
@@ -297,28 +1088,184 @@
 
             </div>
 
+        </main>
 
-            <!-- =====================================================
-                 SECURITY NOTE
-            ====================================================== -->
 
-            <div class="text-center mt-3">
+        <!-- =====================================================
+             SECURITY NOTE
+        ====================================================== -->
 
-                <small class="text-muted">
+        <div class="kpf-security kpf-reveal">
 
-                    <i class="bi bi-shield-check me-1"></i>
+            <i class="bi bi-shield-check"></i>
 
-                    Payment processing is handled securely through
-                    M-Pesa.
-
-                </small>
-
-            </div>
+            <span>
+                Payment processing is handled securely through M-Pesa.
+            </span>
 
         </div>
 
     </div>
 
 </div>
+
+
+<script>
+(function () {
+    "use strict";
+
+    const page = document.querySelector(".kucsa-payment-failed");
+
+    if (!page) {
+        return;
+    }
+
+
+    /* =========================================================
+       REDUCED MOTION
+    ========================================================= */
+
+    const reducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+
+    /* =========================================================
+       REVEAL ANIMATIONS
+    ========================================================= */
+
+    const revealItems = page.querySelectorAll(".kpf-reveal");
+
+    if (
+        reducedMotion ||
+        !("IntersectionObserver" in window)
+    ) {
+
+        revealItems.forEach(function (item) {
+            item.classList.add("kpf-visible");
+        });
+
+    } else {
+
+        const observer = new IntersectionObserver(
+            function (entries, obs) {
+
+                entries.forEach(function (entry) {
+
+                    if (!entry.isIntersecting) {
+                        return;
+                    }
+
+                    entry.target.classList.add("kpf-visible");
+
+                    obs.unobserve(entry.target);
+
+                });
+
+            },
+            {
+                threshold: 0.08,
+                rootMargin: "0px 0px -25px 0px"
+            }
+        );
+
+        revealItems.forEach(function (item) {
+            observer.observe(item);
+        });
+    }
+
+
+    /* =========================================================
+       NAVIGATION LOADING STATE
+    ========================================================= */
+
+    const navigationLinks = page.querySelectorAll(
+        "[data-navigation]"
+    );
+
+    navigationLinks.forEach(function (link) {
+
+        link.addEventListener("click", function () {
+
+            if (
+                link.dataset.loading === "true" ||
+                !link.href
+            ) {
+                return;
+            }
+
+            link.dataset.loading = "true";
+
+            const icon = link.querySelector("i");
+            const text = link.querySelector("span");
+
+            if (icon) {
+
+                icon.dataset.originalClass =
+                    icon.className;
+
+                icon.className = "kpf-spinner";
+
+            }
+
+            if (text) {
+
+                text.dataset.originalText =
+                    text.textContent;
+
+                text.textContent = "Opening...";
+
+            }
+
+            link.classList.add("kpf-action-loading");
+
+        });
+
+    });
+
+
+    /* =========================================================
+       RESET AFTER BFCACHE / BACK NAVIGATION
+    ========================================================= */
+
+    window.addEventListener("pageshow", function () {
+
+        navigationLinks.forEach(function (link) {
+
+            link.dataset.loading = "false";
+
+            link.classList.remove(
+                "kpf-action-loading"
+            );
+
+            const icon = link.querySelector("i");
+            const text = link.querySelector("span");
+
+            if (
+                icon &&
+                icon.dataset.originalClass
+            ) {
+
+                icon.className =
+                    icon.dataset.originalClass;
+
+            }
+
+            if (
+                text &&
+                text.dataset.originalText
+            ) {
+
+                text.textContent =
+                    text.dataset.originalText;
+
+            }
+
+        });
+
+    });
+
+})();
+</script>
 
 {% endblock %}

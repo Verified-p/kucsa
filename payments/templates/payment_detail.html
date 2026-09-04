@@ -1,269 +1,1219 @@
-
 {% extends "base.html" %}
 
 {% block title %}Payment Details | KUCSA{% endblock %}
 
 {% block content %}
 
-<div class="container py-4 py-md-5">
+<style>
+    /* =========================================================
+       KUCSA PAYMENT DETAIL
+       Scoped styles only
+    ========================================================= */
 
-    <div class="row justify-content-center">
+    .kucsa-payment-detail {
+        --kpd-primary: #198754;
+        --kpd-primary-dark: #146c43;
+        --kpd-success: #198754;
+        --kpd-warning: #f59f00;
+        --kpd-danger: #dc3545;
+        --kpd-secondary: #6c757d;
+        --kpd-dark: #17212b;
+        --kpd-text: #263238;
+        --kpd-muted: #6b7785;
+        --kpd-border: #e7ebef;
+        --kpd-surface: #ffffff;
+        --kpd-soft: #f6f8fa;
+        --kpd-soft-green: #edf8f2;
+        --kpd-soft-yellow: #fff8e6;
+        --kpd-soft-red: #fff1f2;
+        --kpd-soft-gray: #f3f5f7;
+        --kpd-radius: 20px;
+        --kpd-radius-sm: 14px;
+        --kpd-shadow: 0 12px 35px rgba(23, 33, 43, 0.08);
+        --kpd-shadow-hover: 0 18px 45px rgba(23, 33, 43, 0.12);
 
-        <div class="col-12 col-md-9 col-lg-7">
+        color: var(--kpd-text);
+        padding: 28px 0 55px;
+    }
+
+    .kucsa-payment-detail *,
+    .kucsa-payment-detail *::before,
+    .kucsa-payment-detail *::after {
+        box-sizing: border-box;
+    }
+
+    .kucsa-payment-detail a {
+        text-decoration: none;
+    }
+
+    /* =========================================================
+       PAGE SHELL
+    ========================================================= */
+
+    .kpd-shell {
+        width: min(100% - 32px, 920px);
+        margin: 0 auto;
+    }
+
+    .kpd-page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+
+    .kpd-heading {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-width: 0;
+    }
+
+    .kpd-heading-icon {
+        width: 48px;
+        height: 48px;
+        flex: 0 0 48px;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--kpd-primary);
+        background: var(--kpd-soft-green);
+        font-size: 21px;
+    }
+
+    .kpd-eyebrow {
+        margin: 0 0 3px;
+        color: var(--kpd-primary);
+        font-size: 11px;
+        line-height: 1.2;
+        font-weight: 800;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+    }
+
+    .kpd-page-title {
+        margin: 0;
+        color: var(--kpd-dark);
+        font-size: clamp(1.35rem, 2vw, 1.7rem);
+        line-height: 1.2;
+        font-weight: 800;
+        letter-spacing: -.02em;
+    }
+
+    .kpd-page-description {
+        margin: 5px 0 0;
+        color: var(--kpd-muted);
+        font-size: .92rem;
+        line-height: 1.55;
+    }
+
+    .kpd-history-btn {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 16px;
+        border: 1px solid var(--kpd-border);
+        border-radius: 12px;
+        background: var(--kpd-surface);
+        color: var(--kpd-text);
+        font-size: .88rem;
+        font-weight: 700;
+        white-space: nowrap;
+        transition:
+            transform .2s ease,
+            border-color .2s ease,
+            background-color .2s ease,
+            box-shadow .2s ease;
+    }
+
+    .kpd-history-btn:hover {
+        color: var(--kpd-primary-dark);
+        border-color: rgba(25, 135, 84, .28);
+        background: var(--kpd-soft-green);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px rgba(25, 135, 84, .08);
+    }
+
+    .kpd-history-btn:focus-visible,
+    .kpd-action:focus-visible,
+    .kpd-copy-btn:focus-visible,
+    .kpd-bottom-link:focus-visible {
+        outline: 3px solid rgba(25, 135, 84, .2);
+        outline-offset: 3px;
+    }
+
+    /* =========================================================
+       MAIN CARD
+    ========================================================= */
+
+    .kpd-card {
+        overflow: hidden;
+        border: 1px solid var(--kpd-border);
+        border-radius: var(--kpd-radius);
+        background: var(--kpd-surface);
+        box-shadow: var(--kpd-shadow);
+    }
+
+    /* =========================================================
+       STATUS HERO
+    ========================================================= */
+
+    .kpd-status-header {
+        position: relative;
+        overflow: hidden;
+        padding: 38px 28px 32px;
+        text-align: center;
+        border-bottom: 1px solid var(--kpd-border);
+        background:
+            radial-gradient(circle at 15% 20%, rgba(25, 135, 84, .08), transparent 28%),
+            radial-gradient(circle at 85% 80%, rgba(25, 135, 84, .06), transparent 30%),
+            #fff;
+    }
+
+    .kpd-status-header::after {
+        content: "";
+        position: absolute;
+        width: 220px;
+        height: 220px;
+        right: -110px;
+        top: -110px;
+        border-radius: 50%;
+        background: rgba(25, 135, 84, .035);
+        pointer-events: none;
+    }
+
+    .kpd-status-icon {
+        position: relative;
+        z-index: 1;
+        width: 82px;
+        height: 82px;
+        margin: 0 auto 17px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 38px;
+        border: 7px solid rgba(255,255,255,.85);
+        box-shadow:
+            0 8px 25px rgba(23, 33, 43, .08),
+            inset 0 0 0 1px rgba(23, 33, 43, .03);
+    }
+
+    .kpd-status-success .kpd-status-icon {
+        color: var(--kpd-success);
+        background: var(--kpd-soft-green);
+    }
+
+    .kpd-status-pending .kpd-status-icon {
+        color: var(--kpd-warning);
+        background: var(--kpd-soft-yellow);
+        animation: kpdPulse 2.2s ease-in-out infinite;
+    }
+
+    .kpd-status-failed .kpd-status-icon {
+        color: var(--kpd-danger);
+        background: var(--kpd-soft-red);
+    }
+
+    .kpd-status-cancelled .kpd-status-icon,
+    .kpd-status-default .kpd-status-icon {
+        color: var(--kpd-secondary);
+        background: var(--kpd-soft-gray);
+    }
+
+    .kpd-status-title {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        font-size: clamp(1.25rem, 2.5vw, 1.6rem);
+        font-weight: 800;
+        letter-spacing: -.02em;
+    }
+
+    .kpd-status-success .kpd-status-title {
+        color: var(--kpd-success);
+    }
+
+    .kpd-status-pending .kpd-status-title {
+        color: #bd7700;
+    }
+
+    .kpd-status-failed .kpd-status-title {
+        color: var(--kpd-danger);
+    }
+
+    .kpd-status-cancelled .kpd-status-title,
+    .kpd-status-default .kpd-status-title {
+        color: var(--kpd-dark);
+    }
+
+    .kpd-status-description {
+        position: relative;
+        z-index: 1;
+        max-width: 580px;
+        margin: 7px auto 0;
+        color: var(--kpd-muted);
+        font-size: .9rem;
+        line-height: 1.6;
+    }
+
+    /* =========================================================
+       CARD BODY
+    ========================================================= */
+
+    .kpd-body {
+        padding: 30px;
+    }
+
+    /* =========================================================
+       AMOUNT PANEL
+    ========================================================= */
+
+    .kpd-amount-panel {
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 30px;
+        padding: 25px 22px;
+        text-align: center;
+        border: 1px solid rgba(25, 135, 84, .13);
+        border-radius: 17px;
+        background:
+            linear-gradient(135deg, rgba(25,135,84,.08), rgba(25,135,84,.025));
+    }
+
+    .kpd-amount-panel::before {
+        content: "";
+        position: absolute;
+        width: 130px;
+        height: 130px;
+        top: -65px;
+        right: -35px;
+        border-radius: 50%;
+        background: rgba(25,135,84,.055);
+    }
+
+    .kpd-amount-label {
+        position: relative;
+        margin: 0 0 6px;
+        color: var(--kpd-muted);
+        font-size: .78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .07em;
+    }
+
+    .kpd-amount {
+        position: relative;
+        margin: 0;
+        color: var(--kpd-primary-dark);
+        font-size: clamp(2rem, 5vw, 2.65rem);
+        line-height: 1.05;
+        font-weight: 850;
+        letter-spacing: -.04em;
+    }
+
+    .kpd-amount-currency {
+        font-size: .52em;
+        vertical-align: middle;
+        margin-right: 3px;
+        font-weight: 750;
+    }
+
+    /* =========================================================
+       SECTION HEADINGS
+    ========================================================= */
+
+    .kpd-section {
+        margin-bottom: 27px;
+    }
+
+    .kpd-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .kpd-section-heading {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .kpd-section-heading-icon {
+        width: 34px;
+        height: 34px;
+        flex: 0 0 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        color: var(--kpd-primary);
+        background: var(--kpd-soft-green);
+        font-size: 15px;
+    }
+
+    .kpd-section-title {
+        margin: 0;
+        color: var(--kpd-dark);
+        font-size: .98rem;
+        font-weight: 800;
+    }
+
+    .kpd-section-subtitle {
+        margin: 2px 0 0;
+        color: var(--kpd-muted);
+        font-size: .76rem;
+    }
+
+    /* =========================================================
+       DETAIL LIST
+    ========================================================= */
+
+    .kpd-detail-list {
+        overflow: hidden;
+        border: 1px solid var(--kpd-border);
+        border-radius: var(--kpd-radius-sm);
+        background: #fff;
+    }
+
+    .kpd-detail-row {
+        min-height: 58px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 22px;
+        padding: 13px 17px;
+        border-bottom: 1px solid var(--kpd-border);
+    }
+
+    .kpd-detail-row:last-child {
+        border-bottom: 0;
+    }
+
+    .kpd-detail-label {
+        flex: 0 0 42%;
+        color: var(--kpd-muted);
+        font-size: .83rem;
+        font-weight: 600;
+    }
+
+    .kpd-detail-value {
+        min-width: 0;
+        flex: 1;
+        color: var(--kpd-dark);
+        font-size: .86rem;
+        font-weight: 700;
+        text-align: right;
+        overflow-wrap: anywhere;
+    }
+
+    .kpd-detail-value-muted {
+        color: var(--kpd-muted);
+        font-weight: 600;
+    }
+
+    .kpd-date-value {
+        line-height: 1.35;
+    }
+
+    .kpd-date-value small {
+        color: var(--kpd-muted);
+        font-size: .74rem;
+        font-weight: 600;
+    }
+
+    /* =========================================================
+       STATUS BADGES
+    ========================================================= */
+
+    .kpd-status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        min-height: 31px;
+        padding: 6px 11px;
+        border-radius: 999px;
+        font-size: .75rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .kpd-badge-success {
+        color: var(--kpd-success);
+        background: var(--kpd-soft-green);
+    }
+
+    .kpd-badge-pending {
+        color: #a96800;
+        background: var(--kpd-soft-yellow);
+    }
+
+    .kpd-badge-danger {
+        color: var(--kpd-danger);
+        background: var(--kpd-soft-red);
+    }
+
+    .kpd-badge-secondary {
+        color: var(--kpd-secondary);
+        background: var(--kpd-soft-gray);
+    }
+
+    /* =========================================================
+       M-PESA DATA
+    ========================================================= */
+
+    .kpd-receipt {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--kpd-success);
+    }
+
+    .kpd-reference {
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 7px;
+        max-width: 100%;
+    }
+
+    .kpd-reference-text {
+        max-width: 320px;
+        overflow-wrap: anywhere;
+        color: var(--kpd-dark);
+        font-size: .77rem;
+        font-weight: 650;
+    }
+
+    .kpd-copy-btn {
+        width: 31px;
+        height: 31px;
+        flex: 0 0 31px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border: 1px solid var(--kpd-border);
+        border-radius: 9px;
+        background: #fff;
+        color: var(--kpd-muted);
+        cursor: pointer;
+        transition:
+            color .2s ease,
+            border-color .2s ease,
+            background-color .2s ease,
+            transform .2s ease;
+    }
+
+    .kpd-copy-btn:hover {
+        color: var(--kpd-primary);
+        border-color: rgba(25,135,84,.28);
+        background: var(--kpd-soft-green);
+        transform: translateY(-1px);
+    }
+
+    .kpd-copy-btn.copied {
+        color: var(--kpd-success);
+        border-color: rgba(25,135,84,.28);
+        background: var(--kpd-soft-green);
+    }
+
+    /* =========================================================
+       ALERT / STATUS MESSAGE
+    ========================================================= */
+
+    .kpd-message {
+        display: flex;
+        align-items: flex-start;
+        gap: 13px;
+        margin-bottom: 20px;
+        padding: 15px 16px;
+        border: 1px solid transparent;
+        border-radius: 14px;
+    }
+
+    .kpd-message-icon {
+        width: 34px;
+        height: 34px;
+        flex: 0 0 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        margin-top: 1px;
+    }
+
+    .kpd-message-content {
+        min-width: 0;
+    }
+
+    .kpd-message-title {
+        margin: 0 0 3px;
+        font-size: .86rem;
+        font-weight: 800;
+    }
+
+    .kpd-message-text {
+        margin: 0;
+        font-size: .78rem;
+        line-height: 1.6;
+    }
+
+    .kpd-message-success {
+        color: #146c43;
+        background: var(--kpd-soft-green);
+        border-color: rgba(25,135,84,.13);
+    }
+
+    .kpd-message-success .kpd-message-icon {
+        background: rgba(25,135,84,.1);
+    }
+
+    .kpd-message-warning {
+        color: #865d00;
+        background: var(--kpd-soft-yellow);
+        border-color: rgba(245,159,0,.16);
+    }
+
+    .kpd-message-warning .kpd-message-icon {
+        background: rgba(245,159,0,.12);
+    }
+
+    .kpd-message-danger {
+        color: #a61e2b;
+        background: var(--kpd-soft-red);
+        border-color: rgba(220,53,69,.13);
+    }
+
+    .kpd-message-danger .kpd-message-icon {
+        background: rgba(220,53,69,.1);
+    }
+
+    /* =========================================================
+       ACTIONS
+    ========================================================= */
+
+    .kpd-actions {
+        display: grid;
+        gap: 10px;
+    }
+
+    .kpd-action {
+        position: relative;
+        min-height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 11px 17px;
+        border-radius: 12px;
+        border: 1px solid transparent;
+        font-size: .86rem;
+        font-weight: 750;
+        cursor: pointer;
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease,
+            background-color .2s ease,
+            border-color .2s ease;
+    }
+
+    .kpd-action:hover {
+        transform: translateY(-1px);
+    }
+
+    .kpd-action-success {
+        color: #fff;
+        background: linear-gradient(135deg, #198754, #157347);
+        box-shadow: 0 8px 18px rgba(25,135,84,.18);
+    }
+
+    .kpd-action-success:hover {
+        color: #fff;
+        box-shadow: 0 12px 25px rgba(25,135,84,.24);
+    }
+
+    .kpd-action-outline-success {
+        color: var(--kpd-primary-dark);
+        border-color: rgba(25,135,84,.25);
+        background: #fff;
+    }
+
+    .kpd-action-outline-success:hover {
+        color: var(--kpd-primary-dark);
+        background: var(--kpd-soft-green);
+    }
+
+    .kpd-action-warning {
+        color: #704d00;
+        background: linear-gradient(135deg, #ffc107, #f5b400);
+        box-shadow: 0 8px 18px rgba(245,159,0,.15);
+    }
+
+    .kpd-action-warning:hover {
+        color: #704d00;
+        box-shadow: 0 12px 25px rgba(245,159,0,.2);
+    }
+
+    .kpd-action-danger-outline {
+        color: var(--kpd-danger);
+        border-color: rgba(220,53,69,.22);
+        background: #fff;
+    }
+
+    .kpd-action-danger-outline:hover {
+        color: #b02a37;
+        background: var(--kpd-soft-red);
+    }
+
+    .kpd-action-loading {
+        pointer-events: none;
+        opacity: .72;
+    }
+
+    .kpd-spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: kpdSpin .7s linear infinite;
+    }
+
+    /* =========================================================
+       FOOTER
+    ========================================================= */
+
+    .kpd-card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 58px;
+        padding: 14px 22px;
+        border-top: 1px solid var(--kpd-border);
+        background: #fbfcfd;
+        color: var(--kpd-muted);
+        text-align: center;
+        font-size: .75rem;
+    }
+
+    .kpd-card-footer i {
+        color: var(--kpd-success);
+        font-size: 15px;
+    }
+
+    .kpd-bottom-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        margin-top: 15px;
+        color: var(--kpd-muted);
+        font-size: .8rem;
+        font-weight: 650;
+        transition: color .2s ease;
+    }
+
+    .kpd-bottom-link:hover {
+        color: var(--kpd-primary);
+    }
+
+    /* =========================================================
+       REVEAL ANIMATION
+    ========================================================= */
+
+    .kpd-reveal {
+        opacity: 0;
+        transform: translateY(10px);
+        transition:
+            opacity .5s ease,
+            transform .5s ease;
+    }
+
+    .kpd-reveal.kpd-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* =========================================================
+       ANIMATIONS
+    ========================================================= */
+
+    @keyframes kpdPulse {
+        0%, 100% {
+            transform: scale(1);
+            box-shadow: 0 8px 25px rgba(245,159,0,.08);
+        }
+        50% {
+            transform: scale(1.035);
+            box-shadow: 0 8px 30px rgba(245,159,0,.16);
+        }
+    }
+
+    @keyframes kpdSpin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* =========================================================
+       TABLET
+    ========================================================= */
+
+    @media (max-width: 991.98px) {
+
+        .kucsa-payment-detail {
+            padding-top: 24px;
+        }
+
+        .kpd-shell {
+            width: min(100% - 28px, 820px);
+        }
+
+        .kpd-body {
+            padding: 26px;
+        }
+
+        .kpd-status-header {
+            padding: 34px 24px 29px;
+        }
+    }
+
+    /* =========================================================
+       MOBILE
+    ========================================================= */
+
+    @media (max-width: 767.98px) {
+
+        .kucsa-payment-detail {
+            padding: 18px 0 40px;
+        }
+
+        .kpd-shell {
+            width: min(100% - 20px, 680px);
+        }
+
+        .kpd-page-header {
+            align-items: stretch;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .kpd-heading {
+            align-items: flex-start;
+        }
+
+        .kpd-history-btn {
+            width: 100%;
+        }
+
+        .kpd-card {
+            border-radius: 17px;
+        }
+
+        .kpd-status-header {
+            padding: 30px 18px 25px;
+        }
+
+        .kpd-status-icon {
+            width: 74px;
+            height: 74px;
+            font-size: 34px;
+        }
+
+        .kpd-body {
+            padding: 21px 16px;
+        }
+
+        .kpd-amount-panel {
+            padding: 22px 16px;
+            margin-bottom: 25px;
+        }
+
+        .kpd-section {
+            margin-bottom: 23px;
+        }
+
+        .kpd-detail-row {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 6px;
+            padding: 13px 14px;
+        }
+
+        .kpd-detail-label {
+            flex: none;
+            width: 100%;
+            font-size: .75rem;
+        }
+
+        .kpd-detail-value {
+            width: 100%;
+            text-align: left;
+            font-size: .84rem;
+        }
+
+        .kpd-reference {
+            justify-content: flex-start;
+            width: 100%;
+        }
+
+        .kpd-reference-text {
+            max-width: calc(100% - 40px);
+        }
+
+        .kpd-date-value {
+            text-align: left;
+        }
+
+        .kpd-status-badge {
+            font-size: .72rem;
+        }
+
+        .kpd-card-footer {
+            padding: 14px 16px;
+        }
+    }
+
+    /* =========================================================
+       SMALL MOBILE
+    ========================================================= */
+
+    @media (max-width: 575.98px) {
+
+        .kpd-shell {
+            width: calc(100% - 16px);
+        }
+
+        .kpd-heading-icon {
+            width: 43px;
+            height: 43px;
+            flex-basis: 43px;
+            border-radius: 12px;
+            font-size: 18px;
+        }
+
+        .kpd-page-title {
+            font-size: 1.25rem;
+        }
+
+        .kpd-page-description {
+            font-size: .82rem;
+        }
+
+        .kpd-status-title {
+            font-size: 1.2rem;
+        }
+
+        .kpd-status-description {
+            font-size: .82rem;
+        }
+
+        .kpd-amount {
+            font-size: 2rem;
+        }
+
+        .kpd-section-heading-icon {
+            width: 31px;
+            height: 31px;
+            flex-basis: 31px;
+        }
+
+        .kpd-section-title {
+            font-size: .91rem;
+        }
+
+        .kpd-message {
+            gap: 10px;
+            padding: 13px;
+        }
+
+        .kpd-message-icon {
+            width: 31px;
+            height: 31px;
+            flex-basis: 31px;
+        }
+
+        .kpd-action {
+            width: 100%;
+            min-height: 47px;
+        }
+    }
+
+    /* =========================================================
+       VERY SMALL DEVICES
+    ========================================================= */
+
+    @media (max-width: 359.98px) {
+
+        .kpd-shell {
+            width: calc(100% - 12px);
+        }
+
+        .kpd-body {
+            padding: 18px 12px;
+        }
+
+        .kpd-status-header {
+            padding-left: 13px;
+            padding-right: 13px;
+        }
+
+        .kpd-amount-panel {
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+
+        .kpd-detail-row {
+            padding: 12px;
+        }
+
+        .kpd-card-footer {
+            font-size: .69rem;
+        }
+    }
+
+    /* =========================================================
+       REDUCED MOTION
+    ========================================================= */
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .kucsa-payment-detail *,
+        .kucsa-payment-detail *::before,
+        .kucsa-payment-detail *::after {
+            scroll-behavior: auto !important;
+            animation-duration: .01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: .01ms !important;
+        }
+
+        .kpd-reveal {
+            opacity: 1;
+            transform: none;
+        }
+    }
+</style>
 
 
-            <!-- =====================================================
-                 PAGE HEADER
-            ====================================================== -->
+<div class="kucsa-payment-detail">
 
-            <div class="d-flex
-                        flex-column flex-sm-row
-                        justify-content-between
-                        align-items-sm-center
-                        gap-3 mb-4">
+    <div class="kpd-shell">
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <header class="kpd-page-header kpd-reveal">
+
+            <div class="kpd-heading">
+
+                <div class="kpd-heading-icon" aria-hidden="true">
+                    <i class="bi bi-receipt-cutoff"></i>
+                </div>
 
                 <div>
+                    <p class="kpd-eyebrow">
+                        KUCSA Payments
+                    </p>
 
-                    <h3 class="fw-bold mb-1">
+                    <h1 class="kpd-page-title">
                         Payment Details
-                    </h3>
+                    </h1>
 
-                    <p class="text-muted mb-0">
-                        View the details of your KUCSA payment.
+                    <p class="kpd-page-description">
+                        View the details and verification status of your KUCSA payment.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <a
+                href="{% url 'payments:payment_list' %}"
+                class="kpd-history-btn"
+                data-navigation
+            >
+                <i class="bi bi-arrow-left"></i>
+                <span>Payment History</span>
+            </a>
+
+        </header>
+
+
+        <!-- =====================================================
+             PAYMENT CARD
+        ====================================================== -->
+
+        <article class="kpd-card kpd-reveal">
+
+            <!-- =================================================
+                 STATUS HEADER
+            ================================================== -->
+
+            {% if payment.status == "COMPLETED" %}
+
+                <div class="kpd-status-header kpd-status-success">
+
+                    <div class="kpd-status-icon" aria-hidden="true">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+
+                    <h2 class="kpd-status-title">
+                        Payment Successful
+                    </h2>
+
+                    <p class="kpd-status-description">
+                        Your payment has been successfully verified.
                     </p>
 
                 </div>
 
 
-                <a
-                    href="{% url 'payments:payment_list' %}"
-                    class="btn btn-outline-secondary"
-                >
+            {% elif payment.status == "PENDING" %}
 
-                    <i class="bi bi-arrow-left me-2"></i>
+                <div class="kpd-status-header kpd-status-pending">
 
-                    Payment History
+                    <div class="kpd-status-icon" aria-hidden="true">
+                        <i class="bi bi-hourglass-split"></i>
+                    </div>
 
-                </a>
+                    <h2 class="kpd-status-title">
+                        Payment Pending
+                    </h2>
 
-            </div>
+                    <p class="kpd-status-description">
+                        Waiting for M-Pesa payment confirmation.
+                    </p>
+
+                </div>
 
 
-            <!-- =====================================================
-                 PAYMENT CARD
-            ====================================================== -->
+            {% elif payment.status == "FAILED" %}
 
-            <div class="card border-0 shadow-sm">
+                <div class="kpd-status-header kpd-status-failed">
+
+                    <div class="kpd-status-icon" aria-hidden="true">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </div>
+
+                    <h2 class="kpd-status-title">
+                        Payment Failed
+                    </h2>
+
+                    <p class="kpd-status-description">
+                        This M-Pesa payment was not completed.
+                    </p>
+
+                </div>
+
+
+            {% elif payment.status == "CANCELLED" %}
+
+                <div class="kpd-status-header kpd-status-cancelled">
+
+                    <div class="kpd-status-icon" aria-hidden="true">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </div>
+
+                    <h2 class="kpd-status-title">
+                        Payment Cancelled
+                    </h2>
+
+                    <p class="kpd-status-description">
+                        This M-Pesa payment was cancelled.
+                    </p>
+
+                </div>
+
+
+            {% else %}
+
+                <div class="kpd-status-header kpd-status-default">
+
+                    <div class="kpd-status-icon" aria-hidden="true">
+                        <i class="bi bi-receipt"></i>
+                    </div>
+
+                    <h2 class="kpd-status-title">
+                        Payment Information
+                    </h2>
+
+                    <p class="kpd-status-description">
+                        Details of your KUCSA payment.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- =================================================
+                 PAYMENT BODY
+            ================================================== -->
+
+            <div class="kpd-body">
 
                 <!-- =================================================
-                     STATUS HEADER
+                     AMOUNT
                 ================================================== -->
 
-                <div class="card-header bg-white border-0 text-center py-4">
+                <div class="kpd-amount-panel kpd-reveal">
 
-                    {% if payment.status == "COMPLETED" %}
+                    <p class="kpd-amount-label">
+                        Amount Paid
+                    </p>
 
-                        <div
-                            class="rounded-circle
-                                   bg-success bg-opacity-10
-                                   d-inline-flex
-                                   align-items-center
-                                   justify-content-center mb-3"
-                            style="width: 78px; height: 78px;"
-                        >
-
-                            <i
-                                class="bi bi-check-circle-fill text-success"
-                                style="font-size: 38px;"
-                            ></i>
-
-                        </div>
-
-
-                        <h4 class="fw-bold text-success mb-1">
-                            Payment Successful
-                        </h4>
-
-
-                        <p class="text-muted mb-0">
-                            Your payment has been successfully verified.
-                        </p>
-
-
-                    {% elif payment.status == "PENDING" %}
-
-                        <div
-                            class="rounded-circle
-                                   bg-warning bg-opacity-10
-                                   d-inline-flex
-                                   align-items-center
-                                   justify-content-center mb-3"
-                            style="width: 78px; height: 78px;"
-                        >
-
-                            <i
-                                class="bi bi-hourglass-split text-warning"
-                                style="font-size: 38px;"
-                            ></i>
-
-                        </div>
-
-
-                        <h4 class="fw-bold text-warning mb-1">
-                            Payment Pending
-                        </h4>
-
-
-                        <p class="text-muted mb-0">
-                            Waiting for M-Pesa payment confirmation.
-                        </p>
-
-
-                    {% elif payment.status == "FAILED" %}
-
-                        <div
-                            class="rounded-circle
-                                   bg-danger bg-opacity-10
-                                   d-inline-flex
-                                   align-items-center
-                                   justify-content-center mb-3"
-                            style="width: 78px; height: 78px;"
-                        >
-
-                            <i
-                                class="bi bi-x-circle-fill text-danger"
-                                style="font-size: 38px;"
-                            ></i>
-
-                        </div>
-
-
-                        <h4 class="fw-bold text-danger mb-1">
-                            Payment Failed
-                        </h4>
-
-
-                        <p class="text-muted mb-0">
-                            This M-Pesa payment was not completed.
-                        </p>
-
-
-                    {% elif payment.status == "CANCELLED" %}
-
-                        <div
-                            class="rounded-circle
-                                   bg-secondary bg-opacity-10
-                                   d-inline-flex
-                                   align-items-center
-                                   justify-content-center mb-3"
-                            style="width: 78px; height: 78px;"
-                        >
-
-                            <i
-                                class="bi bi-x-circle-fill text-secondary"
-                                style="font-size: 38px;"
-                            ></i>
-
-                        </div>
-
-
-                        <h4 class="fw-bold text-secondary mb-1">
-                            Payment Cancelled
-                        </h4>
-
-
-                        <p class="text-muted mb-0">
-                            This M-Pesa payment was cancelled.
-                        </p>
-
-
-                    {% else %}
-
-                        <div
-                            class="rounded-circle
-                                   bg-secondary bg-opacity-10
-                                   d-inline-flex
-                                   align-items-center
-                                   justify-content-center mb-3"
-                            style="width: 78px; height: 78px;"
-                        >
-
-                            <i
-                                class="bi bi-receipt text-secondary"
-                                style="font-size: 38px;"
-                            ></i>
-
-                        </div>
-
-
-                        <h4 class="fw-bold mb-1">
-                            Payment Information
-                        </h4>
-
-
-                        <p class="text-muted mb-0">
-                            Details of your KUCSA payment.
-                        </p>
-
-                    {% endif %}
+                    <p class="kpd-amount">
+                        <span class="kpd-amount-currency">KES</span>
+                        {{ payment.amount }}
+                    </p>
 
                 </div>
 
 
                 <!-- =================================================
-                     PAYMENT INFORMATION
+                     TRANSACTION INFORMATION
                 ================================================== -->
 
-                <div class="card-body p-4">
+                <section class="kpd-section kpd-reveal">
 
+                    <div class="kpd-section-heading">
 
-                    <!-- =================================================
-                         AMOUNT
-                    ================================================== -->
+                        <div class="kpd-section-heading-icon" aria-hidden="true">
+                            <i class="bi bi-credit-card-2-front"></i>
+                        </div>
 
-                    <div
-                        class="bg-light rounded-3
-                               p-4 mb-4 text-center"
-                    >
+                        <div>
+                            <h3 class="kpd-section-title">
+                                Transaction Information
+                            </h3>
 
-                        <small class="text-muted d-block mb-1">
-                            Amount
-                        </small>
-
-                        <h2 class="fw-bold text-success mb-0">
-                            KES {{ payment.amount }}
-                        </h2>
+                            <p class="kpd-section-subtitle">
+                                Basic details associated with this payment.
+                            </p>
+                        </div>
 
                     </div>
 
 
-                    <!-- =================================================
-                         TRANSACTION DETAILS
-                    ================================================== -->
-
-                    <h6 class="fw-bold mb-3">
-                        Transaction Information
-                    </h6>
-
-
-                    <div class="border rounded-3 overflow-hidden mb-4">
-
+                    <div class="kpd-detail-list">
 
                         <!-- Payment ID -->
 
-                        <div
-                            class="d-flex
-                                   justify-content-between
-                                   align-items-center
-                                   px-3 py-3
-                                   border-bottom"
-                        >
+                        <div class="kpd-detail-row">
 
-                            <span class="text-muted">
+                            <span class="kpd-detail-label">
                                 Payment ID
                             </span>
 
-                            <strong>
+                            <strong class="kpd-detail-value">
                                 #{{ payment.id }}
                             </strong>
 
@@ -272,19 +1222,13 @@
 
                         <!-- Payment Method -->
 
-                        <div
-                            class="d-flex
-                                   justify-content-between
-                                   align-items-center
-                                   px-3 py-3
-                                   border-bottom"
-                        >
+                        <div class="kpd-detail-row">
 
-                            <span class="text-muted">
+                            <span class="kpd-detail-label">
                                 Payment Method
                             </span>
 
-                            <strong>
+                            <strong class="kpd-detail-value">
                                 {{ payment.get_method_display|default:"M-Pesa" }}
                             </strong>
 
@@ -293,19 +1237,13 @@
 
                         <!-- Phone Number -->
 
-                        <div
-                            class="d-flex
-                                   justify-content-between
-                                   align-items-center
-                                   px-3 py-3
-                                   border-bottom"
-                        >
+                        <div class="kpd-detail-row">
 
-                            <span class="text-muted">
+                            <span class="kpd-detail-label">
                                 Phone Number
                             </span>
 
-                            <strong>
+                            <strong class="kpd-detail-value">
                                 {{ payment.phone_number }}
                             </strong>
 
@@ -314,103 +1252,47 @@
 
                         <!-- Status -->
 
-                        <div
-                            class="d-flex
-                                   justify-content-between
-                                   align-items-center
-                                   px-3 py-3
-                                   border-bottom"
-                        >
+                        <div class="kpd-detail-row">
 
-                            <span class="text-muted">
+                            <span class="kpd-detail-label">
                                 Status
                             </span>
 
-
-                            <div>
+                            <div class="kpd-detail-value">
 
                                 {% if payment.status == "COMPLETED" %}
 
-                                    <span
-                                        class="badge
-                                               bg-success
-                                               bg-opacity-10
-                                               text-success
-                                               px-3 py-2"
-                                    >
-
-                                        <i
-                                            class="bi bi-check-circle me-1"
-                                        ></i>
-
+                                    <span class="kpd-status-badge kpd-badge-success">
+                                        <i class="bi bi-check-circle"></i>
                                         Completed
-
                                     </span>
-
 
                                 {% elif payment.status == "PENDING" %}
 
-                                    <span
-                                        class="badge
-                                               bg-warning
-                                               bg-opacity-10
-                                               text-warning
-                                               px-3 py-2"
-                                    >
-
-                                        <i
-                                            class="bi bi-hourglass-split me-1"
-                                        ></i>
-
+                                    <span class="kpd-status-badge kpd-badge-pending">
+                                        <i class="bi bi-hourglass-split"></i>
                                         Pending
-
                                     </span>
-
 
                                 {% elif payment.status == "FAILED" %}
 
-                                    <span
-                                        class="badge
-                                               bg-danger
-                                               bg-opacity-10
-                                               text-danger
-                                               px-3 py-2"
-                                    >
-
-                                        <i
-                                            class="bi bi-x-circle me-1"
-                                        ></i>
-
+                                    <span class="kpd-status-badge kpd-badge-danger">
+                                        <i class="bi bi-x-circle"></i>
                                         Failed
-
                                     </span>
-
 
                                 {% elif payment.status == "CANCELLED" %}
 
-                                    <span
-                                        class="badge
-                                               bg-secondary
-                                               bg-opacity-10
-                                               text-secondary
-                                               px-3 py-2"
-                                    >
-
-                                        <i
-                                            class="bi bi-x-circle me-1"
-                                        ></i>
-
+                                    <span class="kpd-status-badge kpd-badge-secondary">
+                                        <i class="bi bi-x-circle"></i>
                                         Cancelled
-
                                     </span>
-
 
                                 {% else %}
 
-                                    <span class="badge bg-secondary">
-
+                                    <span class="kpd-status-badge kpd-badge-secondary">
+                                        <i class="bi bi-info-circle"></i>
                                         {{ payment.get_status_display }}
-
                                     </span>
 
                                 {% endif %}
@@ -422,25 +1304,19 @@
 
                         <!-- Created At -->
 
-                        <div
-                            class="d-flex
-                                   justify-content-between
-                                   align-items-center
-                                   px-3 py-3
-                                   border-bottom"
-                        >
+                        <div class="kpd-detail-row">
 
-                            <span class="text-muted">
+                            <span class="kpd-detail-label">
                                 Payment Initiated
                             </span>
 
-                            <strong class="text-end">
+                            <strong class="kpd-detail-value kpd-date-value">
 
                                 {{ payment.created_at|date:"d M Y" }}
 
                                 <br>
 
-                                <small class="text-muted">
+                                <small>
                                     {{ payment.created_at|date:"H:i" }}
                                 </small>
 
@@ -453,24 +1329,19 @@
 
                         {% if payment.updated_at %}
 
-                            <div
-                                class="d-flex
-                                       justify-content-between
-                                       align-items-center
-                                       px-3 py-3"
-                            >
+                            <div class="kpd-detail-row">
 
-                                <span class="text-muted">
+                                <span class="kpd-detail-label">
                                     Last Updated
                                 </span>
 
-                                <strong class="text-end">
+                                <strong class="kpd-detail-value kpd-date-value">
 
                                     {{ payment.updated_at|date:"d M Y" }}
 
                                     <br>
 
-                                    <small class="text-muted">
+                                    <small>
                                         {{ payment.updated_at|date:"H:i" }}
                                     </small>
 
@@ -482,43 +1353,71 @@
 
                     </div>
 
-
-                    <!-- =================================================
-                         M-PESA INFORMATION
-                    ================================================== -->
-
-                    <h6 class="fw-bold mb-3">
-                        M-Pesa Information
-                    </h6>
+                </section>
 
 
-                    <div class="border rounded-3 overflow-hidden mb-4">
+                <!-- =================================================
+                     M-PESA INFORMATION
+                ================================================== -->
 
+                <section class="kpd-section kpd-reveal">
+
+                    <div class="kpd-section-heading">
+
+                        <div class="kpd-section-heading-icon" aria-hidden="true">
+                            <i class="bi bi-phone"></i>
+                        </div>
+
+                        <div>
+                            <h3 class="kpd-section-title">
+                                M-Pesa Information
+                            </h3>
+
+                            <p class="kpd-section-subtitle">
+                                Safaricom transaction references and confirmation details.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="kpd-detail-list">
 
                         <!-- Receipt -->
 
-                        <div
-                            class="d-flex
-                                   justify-content-between
-                                   align-items-center
-                                   px-3 py-3
-                                   border-bottom"
-                        >
+                        <div class="kpd-detail-row">
 
-                            <span class="text-muted">
+                            <span class="kpd-detail-label">
                                 M-Pesa Receipt
                             </span>
 
-
                             {% if payment.mpesa_receipt_number %}
 
-                                <strong class="text-success">
-                                    {{ payment.mpesa_receipt_number }}
-                                </strong>
+                                <div class="kpd-detail-value">
+
+                                    <span class="kpd-receipt">
+
+                                        <strong>
+                                            {{ payment.mpesa_receipt_number }}
+                                        </strong>
+
+                                        <button
+                                            type="button"
+                                            class="kpd-copy-btn"
+                                            data-copy="{{ payment.mpesa_receipt_number }}"
+                                            aria-label="Copy M-Pesa receipt number"
+                                            title="Copy receipt number"
+                                        >
+                                            <i class="bi bi-copy"></i>
+                                        </button>
+
+                                    </span>
+
+                                </div>
 
                             {% else %}
 
-                                <span class="text-muted">
+                                <span class="kpd-detail-value kpd-detail-value-muted">
                                     Not available
                                 </span>
 
@@ -531,26 +1430,33 @@
 
                         {% if payment.merchant_request_id %}
 
-                            <div
-                                class="d-flex
-                                       justify-content-between
-                                       align-items-center
-                                       px-3 py-3
-                                       border-bottom"
-                            >
+                            <div class="kpd-detail-row">
 
-                                <span class="text-muted">
+                                <span class="kpd-detail-label">
                                     Merchant Request ID
                                 </span>
 
-                                <span
-                                    class="text-end small
-                                           text-break"
-                                >
+                                <div class="kpd-detail-value">
 
-                                    {{ payment.merchant_request_id }}
+                                    <span class="kpd-reference">
 
-                                </span>
+                                        <span class="kpd-reference-text">
+                                            {{ payment.merchant_request_id }}
+                                        </span>
+
+                                        <button
+                                            type="button"
+                                            class="kpd-copy-btn"
+                                            data-copy="{{ payment.merchant_request_id }}"
+                                            aria-label="Copy merchant request ID"
+                                            title="Copy merchant request ID"
+                                        >
+                                            <i class="bi bi-copy"></i>
+                                        </button>
+
+                                    </span>
+
+                                </div>
 
                             </div>
 
@@ -561,26 +1467,33 @@
 
                         {% if payment.checkout_request_id %}
 
-                            <div
-                                class="d-flex
-                                       justify-content-between
-                                       align-items-center
-                                       px-3 py-3
-                                       border-bottom"
-                            >
+                            <div class="kpd-detail-row">
 
-                                <span class="text-muted">
+                                <span class="kpd-detail-label">
                                     Checkout Request ID
                                 </span>
 
-                                <span
-                                    class="text-end small
-                                           text-break"
-                                >
+                                <div class="kpd-detail-value">
 
-                                    {{ payment.checkout_request_id }}
+                                    <span class="kpd-reference">
 
-                                </span>
+                                        <span class="kpd-reference-text">
+                                            {{ payment.checkout_request_id }}
+                                        </span>
+
+                                        <button
+                                            type="button"
+                                            class="kpd-copy-btn"
+                                            data-copy="{{ payment.checkout_request_id }}"
+                                            aria-label="Copy checkout request ID"
+                                            title="Copy checkout request ID"
+                                        >
+                                            <i class="bi bi-copy"></i>
+                                        </button>
+
+                                    </span>
+
+                                </div>
 
                             </div>
 
@@ -591,24 +1504,19 @@
 
                         {% if payment.transaction_date %}
 
-                            <div
-                                class="d-flex
-                                       justify-content-between
-                                       align-items-center
-                                       px-3 py-3"
-                            >
+                            <div class="kpd-detail-row">
 
-                                <span class="text-muted">
+                                <span class="kpd-detail-label">
                                     Transaction Date
                                 </span>
 
-                                <strong class="text-end">
+                                <strong class="kpd-detail-value kpd-date-value">
 
                                     {{ payment.transaction_date|date:"d M Y" }}
 
                                     <br>
 
-                                    <small class="text-muted">
+                                    <small>
                                         {{ payment.transaction_date|date:"H:i:s" }}
                                     </small>
 
@@ -620,35 +1528,32 @@
 
                     </div>
 
+                </section>
 
-                    <!-- =================================================
-                         COMPLETED PAYMENT
-                    ================================================== -->
 
-                    {% if payment.status == "COMPLETED" %}
+                <!-- =================================================
+                     COMPLETED PAYMENT
+                ================================================== -->
 
-                        <div
-                            class="alert alert-success
-                                   d-flex align-items-start mb-4"
-                        >
+                {% if payment.status == "COMPLETED" %}
 
-                            <i
-                                class="bi bi-check-circle-fill
-                                       me-3 mt-1"
-                            ></i>
+                    <section class="kpd-reveal">
 
-                            <div>
+                        <div class="kpd-message kpd-message-success">
 
-                                <strong>
+                            <div class="kpd-message-icon" aria-hidden="true">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </div>
+
+                            <div class="kpd-message-content">
+
+                                <p class="kpd-message-title">
                                     Payment Verified
-                                </strong>
+                                </p>
 
-                                <p class="small mb-0 mt-1">
-
-                                    Your M-Pesa payment has been
-                                    successfully verified. Your KUCSA
-                                    membership should now be active.
-
+                                <p class="kpd-message-text">
+                                    Your M-Pesa payment has been successfully verified.
+                                    Your KUCSA membership should now be active.
                                 </p>
 
                             </div>
@@ -656,67 +1561,66 @@
                         </div>
 
 
-                        <div class="d-grid gap-2">
+                        <div class="kpd-actions">
 
                             <a
                                 href="{% url 'payments:payment_success' payment.id %}"
-                                class="btn btn-success"
+                                class="kpd-action kpd-action-success"
+                                data-navigation
                             >
 
-                                <i
-                                    class="bi bi-check-circle me-2"
-                                ></i>
+                                <i class="bi bi-check-circle"></i>
 
-                                View Payment Confirmation
+                                <span>
+                                    View Payment Confirmation
+                                </span>
 
                             </a>
 
 
                             <a
                                 href="{% url 'dashboard:dashboard' %}"
-                                class="btn btn-outline-success"
+                                class="kpd-action kpd-action-outline-success"
+                                data-navigation
                             >
 
-                                <i
-                                    class="bi bi-grid-fill me-2"
-                                ></i>
+                                <i class="bi bi-grid-fill"></i>
 
-                                Go to Dashboard
+                                <span>
+                                    Go to Dashboard
+                                </span>
 
                             </a>
 
                         </div>
 
+                    </section>
 
-                    <!-- =================================================
-                         PENDING PAYMENT
-                    ================================================== -->
 
-                    {% elif payment.status == "PENDING" %}
+                <!-- =================================================
+                     PENDING PAYMENT
+                ================================================== -->
 
-                        <div
-                            class="alert alert-warning
-                                   d-flex align-items-start mb-4"
-                        >
+                {% elif payment.status == "PENDING" %}
 
-                            <i
-                                class="bi bi-hourglass-split
-                                       me-3 mt-1"
-                            ></i>
+                    <section class="kpd-reveal">
 
-                            <div>
+                        <div class="kpd-message kpd-message-warning">
 
-                                <strong>
+                            <div class="kpd-message-icon" aria-hidden="true">
+                                <i class="bi bi-hourglass-split"></i>
+                            </div>
+
+                            <div class="kpd-message-content">
+
+                                <p class="kpd-message-title">
                                     Payment Still Pending
-                                </strong>
+                                </p>
 
-                                <p class="small mb-0 mt-1">
-
-                                    Please complete the M-Pesa request
-                                    on your phone. We will automatically
-                                    verify the transaction once Safaricom
-                                    sends the confirmation.
-
+                                <p class="kpd-message-text">
+                                    Please complete the M-Pesa request on your phone.
+                                    We will automatically verify the transaction once
+                                    Safaricom sends the confirmation.
                                 </p>
 
                             </div>
@@ -724,52 +1628,50 @@
                         </div>
 
 
-                        <div class="d-grid gap-2">
+                        <div class="kpd-actions">
 
                             <a
                                 href="{% url 'payments:payment_pending' payment.id %}"
-                                class="btn btn-warning"
+                                class="kpd-action kpd-action-warning"
+                                data-navigation
                             >
 
-                                <i
-                                    class="bi bi-arrow-repeat me-2"
-                                ></i>
+                                <i class="bi bi-arrow-repeat"></i>
 
-                                Continue Waiting
+                                <span>
+                                    Continue Waiting
+                                </span>
 
                             </a>
 
                         </div>
 
+                    </section>
 
-                    <!-- =================================================
-                         FAILED / CANCELLED
-                    ================================================== -->
 
-                    {% elif payment.status == "FAILED" or payment.status == "CANCELLED" %}
+                <!-- =================================================
+                     FAILED / CANCELLED
+                ================================================== -->
 
-                        <div
-                            class="alert alert-danger
-                                   d-flex align-items-start mb-4"
-                        >
+                {% elif payment.status == "FAILED" or payment.status == "CANCELLED" %}
 
-                            <i
-                                class="bi bi-exclamation-circle-fill
-                                       me-3 mt-1"
-                            ></i>
+                    <section class="kpd-reveal">
 
-                            <div>
+                        <div class="kpd-message kpd-message-danger">
 
-                                <strong>
+                            <div class="kpd-message-icon" aria-hidden="true">
+                                <i class="bi bi-exclamation-circle-fill"></i>
+                            </div>
+
+                            <div class="kpd-message-content">
+
+                                <p class="kpd-message-title">
                                     Payment Not Completed
-                                </strong>
+                                </p>
 
-                                <p class="small mb-0 mt-1">
-
-                                    This payment was not successfully
-                                    completed. You can return to the
-                                    payment page and try again.
-
+                                <p class="kpd-message-text">
+                                    This payment was not successfully completed.
+                                    You can return to the payment page and try again.
                                 </p>
 
                             </div>
@@ -777,87 +1679,322 @@
                         </div>
 
 
-                        <div class="d-grid gap-2">
+                        <div class="kpd-actions">
 
                             <a
                                 href="{% url 'payments:payment_failed' payment.id %}"
-                                class="btn btn-outline-danger"
+                                class="kpd-action kpd-action-danger-outline"
+                                data-navigation
                             >
 
-                                <i
-                                    class="bi bi-exclamation-circle me-2"
-                                ></i>
+                                <i class="bi bi-exclamation-circle"></i>
 
-                                View Payment Result
+                                <span>
+                                    View Payment Result
+                                </span>
 
                             </a>
 
 
                             <a
                                 href="{% url 'payments:payment_create' %}"
-                                class="btn btn-success"
+                                class="kpd-action kpd-action-success"
+                                data-navigation
                             >
 
-                                <i
-                                    class="bi bi-phone-fill me-2"
-                                ></i>
+                                <i class="bi bi-phone-fill"></i>
 
-                                Try Again with M-Pesa
+                                <span>
+                                    Try Again with M-Pesa
+                                </span>
 
                             </a>
 
                         </div>
 
-                    {% endif %}
+                    </section>
 
-
-                </div>
-
-
-                <!-- =================================================
-                     CARD FOOTER
-                ================================================== -->
-
-                <div class="card-footer bg-white border-0 text-center py-3">
-
-                    <small class="text-muted">
-
-                        <i
-                            class="bi bi-shield-check text-success me-1"
-                        ></i>
-
-                        Payment securely processed through M-Pesa.
-
-                    </small>
-
-                </div>
+                {% endif %}
 
             </div>
 
 
-            <!-- =====================================================
-                 BACK TO PAYMENT HISTORY
-            ====================================================== -->
+            <!-- =================================================
+                 CARD FOOTER
+            ================================================== -->
 
-            <div class="text-center mt-3">
+            <footer class="kpd-card-footer">
 
-                <a
-                    href="{% url 'payments:payment_list' %}"
-                    class="text-decoration-none text-muted"
-                >
+                <i class="bi bi-shield-check"></i>
 
-                    <i class="bi bi-arrow-left me-1"></i>
+                <span>
+                    Payment securely processed through M-Pesa.
+                </span>
 
+            </footer>
+
+        </article>
+
+
+        <!-- =====================================================
+             BACK TO PAYMENT HISTORY
+        ====================================================== -->
+
+        <div class="text-center">
+
+            <a
+                href="{% url 'payments:payment_list' %}"
+                class="kpd-bottom-link"
+                data-navigation
+            >
+
+                <i class="bi bi-arrow-left"></i>
+
+                <span>
                     Back to Payment History
+                </span>
 
-                </a>
-
-            </div>
+            </a>
 
         </div>
 
     </div>
 
 </div>
+
+
+<script>
+(function () {
+    "use strict";
+
+    const page = document.querySelector(".kucsa-payment-detail");
+
+    if (!page) {
+        return;
+    }
+
+    /* =========================================================
+       REDUCED MOTION
+    ========================================================= */
+
+    const reducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+
+    /* =========================================================
+       REVEAL ELEMENTS
+    ========================================================= */
+
+    const revealItems = page.querySelectorAll(".kpd-reveal");
+
+    if (reducedMotion || !("IntersectionObserver" in window)) {
+
+        revealItems.forEach(function (item) {
+            item.classList.add("kpd-visible");
+        });
+
+    } else {
+
+        const observer = new IntersectionObserver(
+            function (entries, obs) {
+
+                entries.forEach(function (entry) {
+
+                    if (!entry.isIntersecting) {
+                        return;
+                    }
+
+                    entry.target.classList.add("kpd-visible");
+                    obs.unobserve(entry.target);
+
+                });
+
+            },
+            {
+                threshold: 0.08,
+                rootMargin: "0px 0px -30px 0px"
+            }
+        );
+
+        revealItems.forEach(function (item) {
+            observer.observe(item);
+        });
+    }
+
+
+    /* =========================================================
+       COPY PAYMENT REFERENCES
+    ========================================================= */
+
+    const copyButtons = page.querySelectorAll("[data-copy]");
+
+    copyButtons.forEach(function (button) {
+
+        button.addEventListener("click", async function () {
+
+            const value = button.getAttribute("data-copy");
+
+            if (!value) {
+                return;
+            }
+
+            try {
+
+                if (navigator.clipboard) {
+
+                    await navigator.clipboard.writeText(value);
+
+                } else {
+
+                    const temporaryInput = document.createElement("input");
+
+                    temporaryInput.value = value;
+                    temporaryInput.setAttribute("readonly", "");
+                    temporaryInput.style.position = "fixed";
+                    temporaryInput.style.opacity = "0";
+
+                    document.body.appendChild(temporaryInput);
+
+                    temporaryInput.select();
+                    document.execCommand("copy");
+
+                    temporaryInput.remove();
+                }
+
+                const icon = button.querySelector("i");
+
+                button.classList.add("copied");
+
+                if (icon) {
+                    icon.className = "bi bi-check-lg";
+                }
+
+                button.setAttribute("aria-label", "Copied");
+
+                window.setTimeout(function () {
+
+                    button.classList.remove("copied");
+
+                    if (icon) {
+                        icon.className = "bi bi-copy";
+                    }
+
+                    button.setAttribute(
+                        "aria-label",
+                        "Copy payment reference"
+                    );
+
+                }, 1800);
+
+            } catch (error) {
+
+                console.warn(
+                    "Unable to copy payment reference.",
+                    error
+                );
+
+            }
+
+        });
+
+    });
+
+
+    /* =========================================================
+       NAVIGATION LOADING STATES
+    ========================================================= */
+
+    const navigationLinks = page.querySelectorAll(
+        "a[data-navigation]"
+    );
+
+    navigationLinks.forEach(function (link) {
+
+        link.addEventListener("click", function () {
+
+            if (
+                link.dataset.loading === "true" ||
+                !link.href
+            ) {
+                return;
+            }
+
+            link.dataset.loading = "true";
+
+            const icon = link.querySelector("i");
+            const text = link.querySelector("span");
+
+            if (icon) {
+                icon.dataset.originalClass = icon.className;
+                icon.className = "kpd-spinner";
+            }
+
+            if (text) {
+                text.dataset.originalText = text.textContent;
+                text.textContent = "Opening...";
+            }
+
+            link.classList.add("kpd-action-loading");
+
+        });
+
+    });
+
+
+    /* =========================================================
+       PREVENT ACCIDENTAL DOUBLE NAVIGATION
+    ========================================================= */
+
+    window.addEventListener("pageshow", function () {
+
+        navigationLinks.forEach(function (link) {
+
+            link.dataset.loading = "false";
+            link.classList.remove("kpd-action-loading");
+
+            const icon = link.querySelector("i");
+            const text = link.querySelector("span");
+
+            if (
+                icon &&
+                icon.dataset.originalClass
+            ) {
+                icon.className = icon.dataset.originalClass;
+            }
+
+            if (
+                text &&
+                text.dataset.originalText
+            ) {
+                text.textContent = text.dataset.originalText;
+            }
+
+        });
+
+    });
+
+
+    /* =========================================================
+       KEYBOARD SUPPORT FOR COPY BUTTONS
+    ========================================================= */
+
+    copyButtons.forEach(function (button) {
+
+        button.addEventListener("keydown", function (event) {
+
+            if (event.key === "Enter" || event.key === " ") {
+
+                event.preventDefault();
+                button.click();
+
+            }
+
+        });
+
+    });
+
+})();
+</script>
 
 {% endblock %}

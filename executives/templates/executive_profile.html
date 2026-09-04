@@ -6,559 +6,1273 @@
 
 {% block content %}
 
-<div class="container-fluid py-4">
+<div class="kucsa-executive-profile">
 
-    <!-- =====================================================
-         PAGE HEADER
-    ====================================================== -->
+    <style>
+        /* =========================================================
+           KUCSA EXECUTIVE PROFILE
+           Scoped styling — does not modify global site styles
+        ========================================================= */
 
-    <div class="d-flex flex-column flex-lg-row
-                justify-content-between align-items-lg-center
-                gap-3 mb-4">
+        .kucsa-executive-profile {
+            --kep-primary: #0d6efd;
+            --kep-primary-dark: #0a58ca;
+            --kep-primary-soft: rgba(13, 110, 253, .09);
+            --kep-success: #198754;
+            --kep-success-soft: rgba(25, 135, 84, .10);
+            --kep-warning: #f59f00;
+            --kep-warning-soft: rgba(245, 159, 0, .11);
+            --kep-danger: #dc3545;
+            --kep-danger-soft: rgba(220, 53, 69, .09);
+            --kep-info: #0dcaf0;
+            --kep-dark: #172033;
+            --kep-text: #273449;
+            --kep-muted: #6c7789;
+            --kep-border: #e8edf4;
+            --kep-surface: #ffffff;
+            --kep-page: #f6f8fc;
+            --kep-radius: 18px;
+            --kep-radius-sm: 12px;
+            --kep-shadow: 0 10px 35px rgba(20, 36, 66, .07);
+            --kep-shadow-hover: 0 18px 45px rgba(20, 36, 66, .12);
 
-        <div>
+            color: var(--kep-text);
+            background: var(--kep-page);
+            min-height: 100%;
+            padding: 28px 0 50px;
+        }
 
-            <div class="d-flex align-items-center gap-2 mb-1">
+        .kucsa-executive-profile *,
+        .kucsa-executive-profile *::before,
+        .kucsa-executive-profile *::after {
+            box-sizing: border-box;
+        }
+
+        .kucsa-executive-profile .kep-container {
+            width: min(1440px, calc(100% - 40px));
+            margin: 0 auto;
+        }
+
+        /* =========================================================
+           PAGE HEADER
+        ========================================================= */
+
+        .kucsa-executive-profile .kep-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        .kucsa-executive-profile .kep-header-left {
+            min-width: 0;
+        }
+
+        .kucsa-executive-profile .kep-breadcrumb {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 9px;
+            margin-bottom: 12px;
+            color: var(--kep-muted);
+            font-size: .84rem;
+            font-weight: 600;
+        }
+
+        .kucsa-executive-profile .kep-breadcrumb a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 9px;
+            color: var(--kep-muted);
+            background: #fff;
+            border: 1px solid var(--kep-border);
+            text-decoration: none;
+            transition: .2s ease;
+        }
+
+        .kucsa-executive-profile .kep-breadcrumb a:hover {
+            color: var(--kep-primary);
+            border-color: rgba(13, 110, 253, .25);
+            background: var(--kep-primary-soft);
+        }
+
+        .kucsa-executive-profile .kep-page-title {
+            margin: 0 0 7px;
+            color: var(--kep-dark);
+            font-size: clamp(1.55rem, 2vw, 2.1rem);
+            font-weight: 800;
+            letter-spacing: -.035em;
+        }
+
+        .kucsa-executive-profile .kep-page-description {
+            margin: 0;
+            max-width: 720px;
+            color: var(--kep-muted);
+            line-height: 1.65;
+            font-size: .95rem;
+        }
+
+        .kucsa-executive-profile .kep-header-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .kucsa-executive-profile .kep-btn {
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 10px 16px;
+            border-radius: 11px;
+            font-size: .88rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform .2s ease, box-shadow .2s ease,
+                        background-color .2s ease, border-color .2s ease;
+        }
+
+        .kucsa-executive-profile .kep-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .kucsa-executive-profile .kep-btn-primary {
+            color: #fff;
+            background: var(--kep-primary);
+            border: 1px solid var(--kep-primary);
+            box-shadow: 0 7px 18px rgba(13, 110, 253, .18);
+        }
+
+        .kucsa-executive-profile .kep-btn-primary:hover {
+            color: #fff;
+            background: var(--kep-primary-dark);
+            border-color: var(--kep-primary-dark);
+        }
+
+        .kucsa-executive-profile .kep-btn-outline {
+            color: var(--kep-text);
+            background: #fff;
+            border: 1px solid var(--kep-border);
+        }
+
+        .kucsa-executive-profile .kep-btn-outline:hover {
+            color: var(--kep-primary);
+            border-color: rgba(13, 110, 253, .3);
+            background: var(--kep-primary-soft);
+        }
+
+        /* =========================================================
+           CONFIRMATION PANELS
+        ========================================================= */
+
+        .kucsa-executive-profile .kep-confirm {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 19px;
+            margin-bottom: 22px;
+            border-radius: var(--kep-radius);
+            border: 1px solid transparent;
+            box-shadow: 0 6px 24px rgba(20, 36, 66, .05);
+        }
+
+        .kucsa-executive-profile .kep-confirm-icon {
+            width: 43px;
+            height: 43px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 43px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+        }
+
+        .kucsa-executive-profile .kep-confirm-danger {
+            background: var(--kep-danger-soft);
+            border-color: rgba(220, 53, 69, .15);
+        }
+
+        .kucsa-executive-profile .kep-confirm-danger .kep-confirm-icon {
+            color: var(--kep-danger);
+            background: rgba(220, 53, 69, .12);
+        }
+
+        .kucsa-executive-profile .kep-confirm-success {
+            background: var(--kep-success-soft);
+            border-color: rgba(25, 135, 84, .15);
+        }
+
+        .kucsa-executive-profile .kep-confirm-success .kep-confirm-icon {
+            color: var(--kep-success);
+            background: rgba(25, 135, 84, .12);
+        }
+
+        .kucsa-executive-profile .kep-confirm-warning {
+            background: var(--kep-warning-soft);
+            border-color: rgba(245, 159, 0, .18);
+        }
+
+        .kucsa-executive-profile .kep-confirm-warning .kep-confirm-icon {
+            color: #9a6500;
+            background: rgba(245, 159, 0, .15);
+        }
+
+        .kucsa-executive-profile .kep-confirm-content {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .kucsa-executive-profile .kep-confirm-title {
+            margin: 0 0 6px;
+            color: var(--kep-dark);
+            font-size: .98rem;
+            font-weight: 800;
+        }
+
+        .kucsa-executive-profile .kep-confirm-text {
+            margin: 0 0 14px;
+            color: var(--kep-muted);
+            font-size: .9rem;
+            line-height: 1.65;
+        }
+
+        .kucsa-executive-profile .kep-confirm-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .kucsa-executive-profile .kep-action-btn {
+            min-height: 40px;
+            padding: 8px 13px;
+            border-radius: 9px;
+            border: 1px solid transparent;
+            font-size: .82rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .2s ease;
+        }
+
+        .kucsa-executive-profile .kep-action-danger {
+            color: #fff;
+            background: var(--kep-danger);
+        }
+
+        .kucsa-executive-profile .kep-action-success {
+            color: #fff;
+            background: var(--kep-success);
+        }
+
+        .kucsa-executive-profile .kep-action-warning {
+            color: #392800;
+            background: #ffc107;
+        }
+
+        .kucsa-executive-profile .kep-action-cancel {
+            color: var(--kep-text);
+            background: #fff;
+            border-color: var(--kep-border);
+            text-decoration: none;
+        }
+
+        .kucsa-executive-profile .kep-action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(20, 36, 66, .09);
+        }
+
+        /* =========================================================
+           MAIN GRID
+        ========================================================= */
+
+        .kucsa-executive-profile .kep-main-grid {
+            display: grid;
+            grid-template-columns: minmax(280px, 370px) minmax(0, 1fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        .kucsa-executive-profile .kep-left-column,
+        .kucsa-executive-profile .kep-right-column {
+            min-width: 0;
+        }
+
+        /* =========================================================
+           CARDS
+        ========================================================= */
+
+        .kucsa-executive-profile .kep-card {
+            background: var(--kep-surface);
+            border: 1px solid var(--kep-border);
+            border-radius: var(--kep-radius);
+            box-shadow: var(--kep-shadow);
+            overflow: hidden;
+            transition: box-shadow .25s ease, transform .25s ease;
+        }
+
+        .kucsa-executive-profile .kep-card:hover {
+            box-shadow: var(--kep-shadow-hover);
+        }
+
+        .kucsa-executive-profile .kep-card + .kep-card {
+            margin-top: 20px;
+        }
+
+        .kucsa-executive-profile .kep-card-header {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            min-height: 67px;
+            padding: 16px 21px;
+            border-bottom: 1px solid var(--kep-border);
+            background: linear-gradient(
+                180deg,
+                #fff 0%,
+                #fbfcfe 100%
+            );
+        }
+
+        .kucsa-executive-profile .kep-card-header-icon {
+            width: 37px;
+            height: 37px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 37px;
+            border-radius: 10px;
+            color: var(--kep-primary);
+            background: var(--kep-primary-soft);
+            font-size: 1rem;
+        }
+
+        .kucsa-executive-profile .kep-card-title {
+            margin: 0;
+            color: var(--kep-dark);
+            font-size: .98rem;
+            font-weight: 800;
+        }
+
+        .kucsa-executive-profile .kep-card-body {
+            padding: 22px;
+        }
+
+        /* =========================================================
+           PROFILE HERO
+        ========================================================= */
+
+        .kucsa-executive-profile .kep-profile-card {
+            position: relative;
+        }
+
+        .kucsa-executive-profile .kep-profile-cover {
+            height: 92px;
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 15% 25%, rgba(255,255,255,.22), transparent 26%),
+                radial-gradient(circle at 88% 75%, rgba(255,255,255,.18), transparent 30%),
+                linear-gradient(135deg, #0d6efd, #174ea6);
+        }
+
+        .kucsa-executive-profile .kep-profile-cover::after {
+            content: "";
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            right: -55px;
+            top: -75px;
+            border: 1px solid rgba(255,255,255,.18);
+            border-radius: 50%;
+        }
+
+        .kucsa-executive-profile .kep-profile-body {
+            padding: 0 23px 23px;
+            text-align: center;
+        }
+
+        .kucsa-executive-profile .kep-avatar-wrap {
+            position: relative;
+            width: 126px;
+            height: 126px;
+            margin: -63px auto 15px;
+            z-index: 2;
+        }
+
+        .kucsa-executive-profile .kep-avatar,
+        .kucsa-executive-profile .kep-avatar-fallback {
+            width: 126px;
+            height: 126px;
+            border-radius: 50%;
+            border: 5px solid #fff;
+            box-shadow: 0 10px 28px rgba(20, 36, 66, .16);
+        }
+
+        .kucsa-executive-profile .kep-avatar {
+            display: block;
+            object-fit: cover;
+        }
+
+        .kucsa-executive-profile .kep-avatar-fallback {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--kep-primary);
+            background: #edf4ff;
+            font-size: 4.1rem;
+        }
+
+        .kucsa-executive-profile .kep-profile-name {
+            margin: 0 0 5px;
+            color: var(--kep-dark);
+            font-size: 1.32rem;
+            font-weight: 800;
+            line-height: 1.3;
+            word-break: break-word;
+        }
+
+        .kucsa-executive-profile .kep-profile-role {
+            margin: 0 0 13px;
+            color: var(--kep-primary);
+            font-size: .9rem;
+            font-weight: 800;
+        }
+
+        .kucsa-executive-profile .kep-status-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+
+        .kucsa-executive-profile .kep-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            min-height: 28px;
+            padding: 5px 10px;
+            border-radius: 999px;
+            font-size: .73rem;
+            font-weight: 800;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .kucsa-executive-profile .kep-badge-success {
+            color: #12663f;
+            background: #e7f7ef;
+        }
+
+        .kucsa-executive-profile .kep-badge-secondary {
+            color: #566173;
+            background: #edf0f4;
+        }
+
+        .kucsa-executive-profile .kep-badge-primary {
+            color: #0b5ed7;
+            background: #e8f1ff;
+        }
+
+        .kucsa-executive-profile .kep-badge-info {
+            color: #087990;
+            background: #e3f8fc;
+        }
+
+        .kucsa-executive-profile .kep-badge-dark {
+            color: #fff;
+            background: #273449;
+        }
+
+        .kucsa-executive-profile .kep-badge-warning {
+            color: #765500;
+            background: #fff3cd;
+        }
+
+        .kucsa-executive-profile .kep-divider {
+            height: 1px;
+            margin: 22px 0;
+            background: var(--kep-border);
+        }
+
+        /* =========================================================
+           PERSONAL INFORMATION
+        ========================================================= */
+
+        .kucsa-executive-profile .kep-info-list {
+            display: flex;
+            flex-direction: column;
+            gap: 17px;
+            text-align: left;
+        }
+
+        .kucsa-executive-profile .kep-info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 11px;
+        }
+
+        .kucsa-executive-profile .kep-info-icon {
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 34px;
+            border-radius: 9px;
+            color: var(--kep-primary);
+            background: var(--kep-primary-soft);
+            font-size: .86rem;
+        }
+
+        .kucsa-executive-profile .kep-info-content {
+            min-width: 0;
+        }
+
+        .kucsa-executive-profile .kep-info-label {
+            display: block;
+            margin-bottom: 3px;
+            color: var(--kep-muted);
+            font-size: .72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .045em;
+        }
+
+        .kucsa-executive-profile .kep-info-value {
+            color: var(--kep-text);
+            font-size: .87rem;
+            font-weight: 700;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+
+        .kucsa-executive-profile .kep-info-value a {
+            color: var(--kep-primary);
+            text-decoration: none;
+        }
+
+        .kucsa-executive-profile .kep-info-value a:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================================================
+           ADMIN CARD
+        ========================================================= */
+
+        .kucsa-executive-profile .kep-admin-card {
+            border-color: rgba(13, 110, 253, .12);
+        }
+
+        .kucsa-executive-profile .kep-admin-body {
+            padding: 18px;
+        }
+
+        .kucsa-executive-profile .kep-admin-description {
+            margin: 0 0 15px;
+            color: var(--kep-muted);
+            font-size: .82rem;
+            line-height: 1.6;
+        }
+
+        .kucsa-executive-profile .kep-admin-actions {
+            display: grid;
+            gap: 9px;
+        }
+
+        .kucsa-executive-profile .kep-admin-btn {
+            width: 100%;
+            min-height: 43px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            border-radius: 10px;
+            font-size: .82rem;
+            font-weight: 800;
+            text-decoration: none;
+            transition: .2s ease;
+        }
+
+        .kucsa-executive-profile .kep-admin-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .kucsa-executive-profile .kep-admin-warning {
+            color: #684900;
+            background: #fff3cd;
+            border: 1px solid #ffe69c;
+        }
+
+        .kucsa-executive-profile .kep-admin-success {
+            color: #12663f;
+            background: #e7f7ef;
+            border: 1px solid #b7e4ca;
+        }
+
+        .kucsa-executive-profile .kep-admin-danger {
+            color: var(--kep-danger);
+            background: #fff;
+            border: 1px solid rgba(220, 53, 69, .28);
+        }
+
+        .kucsa-executive-profile .kep-admin-warning:hover {
+            background: #ffecb5;
+            color: #684900;
+        }
+
+        .kucsa-executive-profile .kep-admin-success:hover {
+            background: #d8f2e5;
+            color: #12663f;
+        }
+
+        .kucsa-executive-profile .kep-admin-danger:hover {
+            color: #fff;
+            background: var(--kep-danger);
+            border-color: var(--kep-danger);
+        }
+
+        /* =========================================================
+           ACCOUNT STATUS
+        ========================================================= */
+
+        .kucsa-executive-profile .kep-account-list {
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+        }
+
+        .kucsa-executive-profile .kep-account-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 12px 13px;
+            border: 1px solid var(--kep-border);
+            border-radius: 11px;
+            background: #fbfcfe;
+        }
+
+        .kucsa-executive-profile .kep-account-label {
+            color: var(--kep-muted);
+            font-size: .82rem;
+            font-weight: 700;
+        }
+
+        /* =========================================================
+           INFORMATION GRID
+        ========================================================= */
+
+        .kucsa-executive-profile .kep-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1px;
+            overflow: hidden;
+            border: 1px solid var(--kep-border);
+            border-radius: 13px;
+            background: var(--kep-border);
+        }
+
+        .kucsa-executive-profile .kep-detail-item {
+            min-width: 0;
+            padding: 17px;
+            background: #fff;
+        }
+
+        .kucsa-executive-profile .kep-detail-label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--kep-muted);
+            font-size: .73rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .045em;
+        }
+
+        .kucsa-executive-profile .kep-detail-value {
+            margin: 0;
+            color: var(--kep-dark);
+            font-size: .91rem;
+            font-weight: 750;
+            line-height: 1.55;
+            overflow-wrap: anywhere;
+        }
+
+        /* =========================================================
+           TERM CARD
+        ========================================================= */
+
+        .kucsa-executive-profile .kep-term-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .kucsa-executive-profile .kep-term-item {
+            padding: 17px;
+            border: 1px solid var(--kep-border);
+            border-radius: 13px;
+            background: #fbfcfe;
+        }
+
+        .kucsa-executive-profile .kep-term-label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--kep-muted);
+            font-size: .72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        .kucsa-executive-profile .kep-term-value {
+            margin: 0;
+            color: var(--kep-dark);
+            font-size: .88rem;
+            font-weight: 800;
+        }
+
+        .kucsa-executive-profile .kep-term-summary {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 17px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            color: var(--kep-muted);
+            background: #f7f9fc;
+            font-size: .8rem;
+            line-height: 1.5;
+        }
+
+        /* =========================================================
+           CONTENT SECTIONS
+        ========================================================= */
+
+        .kucsa-executive-profile .kep-prose {
+            color: var(--kep-text);
+            font-size: .9rem;
+            line-height: 1.85;
+            overflow-wrap: anywhere;
+        }
+
+        .kucsa-executive-profile .kep-empty-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 14px;
+            border-radius: 11px;
+            color: var(--kep-muted);
+            background: #f8f9fb;
+            border: 1px dashed var(--kep-border);
+            font-size: .85rem;
+            line-height: 1.6;
+        }
+
+        .kucsa-executive-profile .kep-empty-content i {
+            margin-top: 2px;
+            color: var(--kep-primary);
+        }
+
+        /* =========================================================
+           METADATA
+        ========================================================= */
+
+        .kucsa-executive-profile .kep-metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .kucsa-executive-profile .kep-metadata-item {
+            padding: 15px;
+            border-radius: 12px;
+            background: #f8fafd;
+            border: 1px solid var(--kep-border);
+        }
+
+        .kucsa-executive-profile .kep-metadata-label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--kep-muted);
+            font-size: .72rem;
+            font-weight: 700;
+        }
+
+        .kucsa-executive-profile .kep-metadata-value {
+            color: var(--kep-dark);
+            font-size: .82rem;
+            font-weight: 800;
+        }
+
+        /* =========================================================
+           QUICK BACK BUTTON
+        ========================================================= */
+
+        .kucsa-executive-profile .kep-mobile-back {
+            display: none;
+            margin-bottom: 18px;
+        }
+
+        /* =========================================================
+           ANIMATION
+        ========================================================= */
+
+        .kucsa-executive-profile .kep-reveal {
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity .45s ease, transform .45s ease;
+        }
+
+        .kucsa-executive-profile .kep-reveal.kep-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* =========================================================
+           ACCESSIBILITY
+        ========================================================= */
+
+        .kucsa-executive-profile a:focus-visible,
+        .kucsa-executive-profile button:focus-visible {
+            outline: 3px solid rgba(13, 110, 253, .25);
+            outline-offset: 2px;
+        }
+
+        /* =========================================================
+           LARGE TABLETS
+        ========================================================= */
+
+        @media (max-width: 1199.98px) {
+
+            .kucsa-executive-profile .kep-main-grid {
+                grid-template-columns: minmax(270px, 330px) minmax(0, 1fr);
+                gap: 20px;
+            }
+
+            .kucsa-executive-profile .kep-container {
+                width: min(100% - 32px, 1200px);
+            }
+        }
+
+        /* =========================================================
+           TABLETS
+        ========================================================= */
+
+        @media (max-width: 991.98px) {
+
+            .kucsa-executive-profile {
+                padding-top: 22px;
+            }
+
+            .kucsa-executive-profile .kep-header {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 17px;
+            }
+
+            .kucsa-executive-profile .kep-header-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .kucsa-executive-profile .kep-main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .kucsa-executive-profile .kep-left-column {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+                gap: 20px;
+                align-items: start;
+            }
+
+            .kucsa-executive-profile .kep-left-column > .kep-card {
+                margin-top: 0;
+            }
+
+            .kucsa-executive-profile .kep-profile-card {
+                grid-column: 1 / -1;
+            }
+
+            .kucsa-executive-profile .kep-profile-body {
+                padding-bottom: 24px;
+            }
+
+            .kucsa-executive-profile .kep-admin-card,
+            .kucsa-executive-profile .kep-account-card {
+                min-height: 100%;
+            }
+        }
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
+        @media (max-width: 767.98px) {
+
+            .kucsa-executive-profile {
+                padding: 17px 0 35px;
+            }
+
+            .kucsa-executive-profile .kep-container {
+                width: calc(100% - 24px);
+            }
+
+            .kucsa-executive-profile .kep-header {
+                margin-bottom: 20px;
+            }
+
+            .kucsa-executive-profile .kep-breadcrumb {
+                margin-bottom: 9px;
+            }
+
+            .kucsa-executive-profile .kep-page-title {
+                font-size: 1.45rem;
+            }
+
+            .kucsa-executive-profile .kep-page-description {
+                font-size: .86rem;
+            }
+
+            .kucsa-executive-profile .kep-header-actions {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                width: 100%;
+            }
+
+            .kucsa-executive-profile .kep-header-actions .kep-btn {
+                width: 100%;
+            }
+
+            .kucsa-executive-profile .kep-left-column {
+                display: block;
+            }
+
+            .kucsa-executive-profile .kep-left-column > .kep-card {
+                margin-top: 18px;
+            }
+
+            .kucsa-executive-profile .kep-left-column > .kep-profile-card {
+                margin-top: 0;
+            }
+
+            .kucsa-executive-profile .kep-card {
+                border-radius: 15px;
+            }
+
+            .kucsa-executive-profile .kep-card-header {
+                min-height: 61px;
+                padding: 14px 17px;
+            }
+
+            .kucsa-executive-profile .kep-card-body {
+                padding: 17px;
+            }
+
+            .kucsa-executive-profile .kep-profile-cover {
+                height: 78px;
+            }
+
+            .kucsa-executive-profile .kep-avatar-wrap,
+            .kucsa-executive-profile .kep-avatar,
+            .kucsa-executive-profile .kep-avatar-fallback {
+                width: 112px;
+                height: 112px;
+            }
+
+            .kucsa-executive-profile .kep-avatar-wrap {
+                margin-top: -56px;
+                margin-bottom: 13px;
+            }
+
+            .kucsa-executive-profile .kep-avatar-fallback {
+                font-size: 3.55rem;
+            }
+
+            .kucsa-executive-profile .kep-profile-body {
+                padding: 0 17px 20px;
+            }
+
+            .kucsa-executive-profile .kep-profile-name {
+                font-size: 1.15rem;
+            }
+
+            .kucsa-executive-profile .kep-detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .kucsa-executive-profile .kep-term-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .kucsa-executive-profile .kep-metadata-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .kucsa-executive-profile .kep-confirm {
+                padding: 15px;
+                gap: 11px;
+                border-radius: 14px;
+            }
+
+            .kucsa-executive-profile .kep-confirm-icon {
+                width: 38px;
+                height: 38px;
+                flex-basis: 38px;
+            }
+
+            .kucsa-executive-profile .kep-confirm-text {
+                font-size: .84rem;
+            }
+
+            .kucsa-executive-profile .kep-confirm-actions {
+                width: 100%;
+            }
+
+            .kucsa-executive-profile .kep-confirm-actions form {
+                width: 100%;
+            }
+
+            .kucsa-executive-profile .kep-confirm-actions .kep-action-btn,
+            .kucsa-executive-profile .kep-confirm-actions .kep-action-cancel {
+                width: 100%;
+            }
+
+            .kucsa-executive-profile .kep-confirm-actions form .kep-action-btn {
+                width: 100%;
+            }
+        }
+
+        /* =========================================================
+           SMALL PHONES
+        ========================================================= */
+
+        @media (max-width: 575.98px) {
+
+            .kucsa-executive-profile .kep-container {
+                width: calc(100% - 18px);
+            }
+
+            .kucsa-executive-profile .kep-header-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .kucsa-executive-profile .kep-btn {
+                min-height: 43px;
+            }
+
+            .kucsa-executive-profile .kep-account-row {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .kucsa-executive-profile .kep-detail-item {
+                padding: 14px;
+            }
+
+            .kucsa-executive-profile .kep-term-item {
+                padding: 14px;
+            }
+
+            .kucsa-executive-profile .kep-info-item {
+                gap: 9px;
+            }
+
+            .kucsa-executive-profile .kep-info-value {
+                font-size: .84rem;
+            }
+        }
+
+        /* =========================================================
+           VERY SMALL PHONES
+        ========================================================= */
+
+        @media (max-width: 359.98px) {
+
+            .kucsa-executive-profile .kep-container {
+                width: calc(100% - 12px);
+            }
+
+            .kucsa-executive-profile .kep-card-body {
+                padding: 14px;
+            }
+
+            .kucsa-executive-profile .kep-card-header {
+                padding: 13px 14px;
+            }
+
+            .kucsa-executive-profile .kep-profile-body {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+
+            .kucsa-executive-profile .kep-status-row {
+                flex-direction: column;
+            }
+
+            .kucsa-executive-profile .kep-badge {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* =========================================================
+           REDUCED MOTION
+        ========================================================= */
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .kucsa-executive-profile *,
+            .kucsa-executive-profile *::before,
+            .kucsa-executive-profile *::after {
+                scroll-behavior: auto !important;
+                transition-duration: .01ms !important;
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+            }
+
+            .kucsa-executive-profile .kep-reveal {
+                opacity: 1;
+                transform: none;
+            }
+        }
+    </style>
+
+
+    <div class="kep-container">
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <header class="kep-header kep-reveal">
+
+            <div class="kep-header-left">
+
+                <nav class="kep-breadcrumb" aria-label="Breadcrumb">
+
+                    <a
+                        href="{% url 'executives:list' %}"
+                        aria-label="Back to Executive Board"
+                        title="Back to Executive Board">
+
+                        <i class="bi bi-people" aria-hidden="true"></i>
+
+                    </a>
+
+                    <span aria-hidden="true">/</span>
+
+                    <span>Executive Profile</span>
+
+                </nav>
+
+                <h1 class="kep-page-title">
+                    Executive Profile
+                </h1>
+
+                <p class="kep-page-description">
+                    View KUCSA leadership information, executive responsibilities,
+                    contact details, and leadership term information.
+                </p>
+
+            </div>
+
+
+            <div class="kep-header-actions">
+
+                {% if is_owner and can_edit %}
+
+                    <a
+                        href="{% url 'executives:edit_profile' %}"
+                        class="kep-btn kep-btn-primary">
+
+                        <i class="bi bi-pencil" aria-hidden="true"></i>
+                        <span>Edit Profile</span>
+
+                    </a>
+
+                {% endif %}
+
 
                 <a
                     href="{% url 'executives:list' %}"
-                    class="text-decoration-none text-muted">
+                    class="kep-btn kep-btn-outline">
 
-                    <i class="bi bi-people"></i>
-
-                </a>
-
-                <span class="text-muted">/</span>
-
-                <span class="text-muted">
-                    Executive Profile
-                </span>
-
-            </div>
-
-            <h2 class="fw-bold mb-1">
-                Executive Profile
-            </h2>
-
-            <p class="text-muted mb-0">
-                KUCSA executive information, leadership role,
-                responsibilities and term details.
-            </p>
-
-        </div>
-
-
-        <div class="d-flex flex-wrap gap-2">
-
-            <!-- Edit Own Profile -->
-
-            {% if is_owner and can_edit %}
-
-                <a
-                    href="{% url 'executives:edit_profile' %}"
-                    class="btn btn-primary">
-
-                    <i class="bi bi-pencil me-1"></i>
-                    Edit Profile
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                    <span>Back to Executives</span>
 
                 </a>
 
-            {% endif %}
-
-
-            <!-- Back to Executive List -->
-
-            <a
-                href="{% url 'executives:list' %}"
-                class="btn btn-outline-secondary">
-
-                <i class="bi bi-arrow-left me-1"></i>
-                Back to Executives
-
-            </a>
-
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         CONFIRMATION MESSAGES
-    ====================================================== -->
-
-    {% if confirm_remove_role %}
-
-        <div class="alert alert-danger
-                    d-flex align-items-start gap-3
-                    shadow-sm border-0 mb-4">
-
-            <i class="bi bi-exclamation-triangle-fill fs-4"></i>
-
-            <div>
-
-                <h6 class="fw-bold mb-1">
-                    Remove Executive Role
-                </h6>
-
-                <p class="mb-3">
-
-                    You are about to remove the official KUCSA
-                    executive role from
-                    <strong>
-                        {{ executive.full_name }}
-                    </strong>.
-
-                    The user will become a student and the
-                    executive profile will be deactivated.
-
-                </p>
-
-                <div class="d-flex flex-wrap gap-2">
-
-                    <form
-                        method="post"
-                        action="{% url 'executives:remove_role' executive.pk %}">
-
-                        {% csrf_token %}
-
-                        <button
-                            type="submit"
-                            class="btn btn-danger">
-
-                            <i class="bi bi-person-x me-1"></i>
-                            Confirm Removal
-
-                        </button>
-
-                    </form>
-
-                    <a
-                        href="{% url 'executives:profile_detail' executive.pk %}"
-                        class="btn btn-outline-secondary">
-
-                        Cancel
-
-                    </a>
-
-                </div>
-
             </div>
 
-        </div>
-
-    {% endif %}
+        </header>
 
 
-    {% if confirm_activate %}
+        <!-- =====================================================
+             CONFIRMATION: REMOVE ROLE
+        ====================================================== -->
 
-        <div class="alert alert-success
-                    d-flex align-items-start gap-3
-                    shadow-sm border-0 mb-4">
+        {% if confirm_remove_role %}
 
-            <i class="bi bi-person-check-fill fs-4"></i>
+            <section
+                class="kep-confirm kep-confirm-danger kep-reveal"
+                role="alert">
 
-            <div>
-
-                <h6 class="fw-bold mb-1">
-                    Activate Executive
-                </h6>
-
-                <p class="mb-3">
-
-                    Are you sure you want to activate
-                    <strong>
-                        {{ executive.full_name }}
-                    </strong>
-                    as an active KUCSA executive?
-
-                </p>
-
-                <div class="d-flex flex-wrap gap-2">
-
-                    <form
-                        method="post"
-                        action="{% url 'executives:activate' executive.pk %}">
-
-                        {% csrf_token %}
-
-                        <button
-                            type="submit"
-                            class="btn btn-success">
-
-                            <i class="bi bi-check-circle me-1"></i>
-                            Confirm Activation
-
-                        </button>
-
-                    </form>
-
-                    <a
-                        href="{% url 'executives:profile_detail' executive.pk %}"
-                        class="btn btn-outline-secondary">
-
-                        Cancel
-
-                    </a>
-
+                <div class="kep-confirm-icon">
+                    <i
+                        class="bi bi-exclamation-triangle-fill"
+                        aria-hidden="true"></i>
                 </div>
 
-            </div>
+                <div class="kep-confirm-content">
 
-        </div>
+                    <h2 class="kep-confirm-title">
+                        Remove Executive Role
+                    </h2>
 
-    {% endif %}
+                    <p class="kep-confirm-text">
 
-
-    {% if confirm_deactivate %}
-
-        <div class="alert alert-warning
-                    d-flex align-items-start gap-3
-                    shadow-sm border-0 mb-4">
-
-            <i class="bi bi-exclamation-triangle-fill fs-4"></i>
-
-            <div>
-
-                <h6 class="fw-bold mb-1">
-                    Deactivate Executive
-                </h6>
-
-                <p class="mb-3">
-
-                    Are you sure you want to deactivate
-                    <strong>
-                        {{ executive.full_name }}
-                    </strong>?
-
-                    The executive will remain in the system,
-                    but their executive profile will no longer
-                    be administratively active.
-
-                </p>
-
-                <div class="d-flex flex-wrap gap-2">
-
-                    <form
-                        method="post"
-                        action="{% url 'executives:deactivate' executive.pk %}">
-
-                        {% csrf_token %}
-
-                        <button
-                            type="submit"
-                            class="btn btn-warning">
-
-                            <i class="bi bi-person-dash me-1"></i>
-                            Confirm Deactivation
-
-                        </button>
-
-                    </form>
-
-                    <a
-                        href="{% url 'executives:profile_detail' executive.pk %}"
-                        class="btn btn-outline-secondary">
-
-                        Cancel
-
-                    </a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    {% endif %}
-
-
-    <!-- =====================================================
-         PROFILE CONTENT
-    ====================================================== -->
-
-    <div class="row g-4">
-
-        <!-- =================================================
-             LEFT COLUMN
-        ================================================== -->
-
-        <div class="col-xl-4">
-
-            <!-- =============================================
-                 PROFILE CARD
-            ============================================== -->
-
-            <div class="card shadow-sm border-0">
-
-                <div class="card-body text-center p-4">
-
-                    <!-- Profile Picture -->
-
-                    {% if executive.profile_picture %}
-
-                        <img
-                            src="{{ executive.profile_picture.url }}"
-                            class="rounded-circle mb-3 object-fit-cover"
-                            width="140"
-                            height="140"
-                            alt="{{ executive.full_name }} profile picture">
-
-                    {% else %}
-
-                        <div class="mb-3">
-
-                            <i
-                                class="bi bi-person-circle
-                                       display-1 text-muted">
-                            </i>
-
-                        </div>
-
-                    {% endif %}
-
-
-                    <!-- Name -->
-
-                    <h4 class="fw-bold mb-1">
-
-                        {{ executive.full_name|default:executive.user.username }}
-
-                    </h4>
-
-
-                    <!-- Role -->
-
-                    <p class="text-primary fw-semibold mb-2">
-
-                        {{ executive.role }}
+                        You are about to remove the official KUCSA executive
+                        role from
+                        <strong>{{ executive.full_name }}</strong>.
+                        The user will become a student and the executive
+                        profile will be deactivated.
 
                     </p>
 
+                    <div class="kep-confirm-actions">
 
-                    <!-- Executive Status -->
+                        <form
+                            method="post"
+                            action="{% url 'executives:remove_role' executive.pk %}">
 
-                    {% if executive.is_active %}
+                            {% csrf_token %}
 
-                        <span class="badge bg-success">
+                            <button
+                                type="submit"
+                                class="kep-action-btn kep-action-danger"
+                                data-confirm-action>
 
-                            <i class="bi bi-check-circle me-1"></i>
+                                <i class="bi bi-person-x" aria-hidden="true"></i>
+                                Confirm Removal
 
-                            Active Executive
+                            </button>
 
-                        </span>
-
-                    {% else %}
-
-                        <span class="badge bg-secondary">
-
-                            <i class="bi bi-dash-circle me-1"></i>
-
-                            Inactive Executive
-
-                        </span>
-
-                    {% endif %}
-
-
-                    <!-- Term Status -->
-
-                    <div class="mt-2">
-
-                        {% if executive.term_status == "Current" %}
-
-                            <span class="badge bg-primary">
-
-                                <i class="bi bi-calendar-check me-1"></i>
-                                Current Term
-
-                            </span>
-
-                        {% elif executive.term_status == "Upcoming" %}
-
-                            <span class="badge bg-info text-dark">
-
-                                <i class="bi bi-calendar-event me-1"></i>
-                                Upcoming Term
-
-                            </span>
-
-                        {% elif executive.term_status == "Ended" %}
-
-                            <span class="badge bg-dark">
-
-                                <i class="bi bi-calendar-x me-1"></i>
-                                Term Ended
-
-                            </span>
-
-                        {% else %}
-
-                            <span class="badge bg-secondary">
-
-                                <i class="bi bi-pause-circle me-1"></i>
-                                Inactive
-
-                            </span>
-
-                        {% endif %}
-
-                    </div>
-
-
-                    <hr class="my-4">
-
-
-                    <!-- Personal Information -->
-
-                    <div class="text-start">
-
-                        <div class="mb-3">
-
-                            <small class="text-muted d-block">
-                                Registration Number
-                            </small>
-
-                            <span class="fw-semibold">
-
-                                {{ executive.registration_number|default:"Not provided" }}
-
-                            </span>
-
-                        </div>
-
-
-                        <div class="mb-3">
-
-                            <small class="text-muted d-block">
-                                Email Address
-                            </small>
-
-                            {% if executive.email %}
-
-                                <a
-                                    href="mailto:{{ executive.email }}"
-                                    class="fw-semibold text-decoration-none">
-
-                                    {{ executive.email }}
-
-                                </a>
-
-                            {% else %}
-
-                                <span class="fw-semibold">
-                                    Not provided
-                                </span>
-
-                            {% endif %}
-
-                        </div>
-
-
-                        <div class="mb-3">
-
-                            <small class="text-muted d-block">
-                                Phone Number
-                            </small>
-
-                            {% if executive.phone_number %}
-
-                                <a
-                                    href="tel:{{ executive.phone_number }}"
-                                    class="fw-semibold text-decoration-none">
-
-                                    {{ executive.phone_number }}
-
-                                </a>
-
-                            {% else %}
-
-                                <span class="fw-semibold">
-                                    Not provided
-                                </span>
-
-                            {% endif %}
-
-                        </div>
-
-
-                        <div class="mb-0">
-
-                            <small class="text-muted d-block">
-                                Committee
-                            </small>
-
-                            <span class="fw-semibold">
-
-                                {{ executive.committee_display }}
-
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- =============================================
-                 ADMINISTRATIVE ACTIONS
-            ============================================== -->
-
-            {% if is_admin %}
-
-                <div class="card shadow-sm border-0 mt-4">
-
-                    <div class="card-header bg-transparent">
-
-                        <h6 class="mb-0 fw-bold">
-
-                            <i class="bi bi-shield-lock me-2"></i>
-                            Administrative Actions
-
-                        </h6>
-
-                    </div>
-
-
-                    <div class="card-body">
-
-                        <!-- Activate / Deactivate -->
-
-                        {% if executive.is_active %}
-
-                            <a
-                                href="{% url 'executives:deactivate' executive.pk %}"
-                                class="btn btn-warning w-100 mb-2">
-
-                                <i class="bi bi-person-dash me-1"></i>
-                                Deactivate Executive
-
-                            </a>
-
-                        {% else %}
-
-                            <a
-                                href="{% url 'executives:activate' executive.pk %}"
-                                class="btn btn-success w-100 mb-2">
-
-                                <i class="bi bi-person-check me-1"></i>
-                                Activate Executive
-
-                            </a>
-
-                        {% endif %}
-
-
-                        <!-- Remove Role -->
+                        </form>
 
                         <a
-                            href="{% url 'executives:remove_role' executive.pk %}"
-                            class="btn btn-outline-danger w-100">
+                            href="{% url 'executives:profile_detail' executive.pk %}"
+                            class="kep-action-btn kep-action-cancel">
 
-                            <i class="bi bi-person-x me-1"></i>
-                            Remove Executive Role
+                            Cancel
 
                         </a>
 
@@ -566,470 +1280,385 @@
 
                 </div>
 
-            {% endif %}
+            </section>
+
+        {% endif %}
 
 
-            <!-- =============================================
-                 ACCOUNT VERIFICATION
-            ============================================== -->
+        <!-- =====================================================
+             CONFIRMATION: ACTIVATE
+        ====================================================== -->
 
-            <div class="card shadow-sm border-0 mt-4">
+        {% if confirm_activate %}
 
-                <div class="card-header bg-transparent">
+            <section
+                class="kep-confirm kep-confirm-success kep-reveal"
+                role="alert">
 
-                    <h6 class="mb-0 fw-bold">
-
-                        <i class="bi bi-shield-check me-2"></i>
-                        Account Status
-
-                    </h6>
-
+                <div class="kep-confirm-icon">
+                    <i
+                        class="bi bi-person-check-fill"
+                        aria-hidden="true"></i>
                 </div>
 
+                <div class="kep-confirm-content">
 
-                <div class="card-body">
+                    <h2 class="kep-confirm-title">
+                        Activate Executive
+                    </h2>
 
-                    <div class="d-flex justify-content-between
-                                align-items-center mb-3">
+                    <p class="kep-confirm-text">
 
-                        <span class="text-muted">
-                            Account
-                        </span>
+                        Are you sure you want to activate
+                        <strong>{{ executive.full_name }}</strong>
+                        as an active KUCSA executive?
 
-                        {% if executive.user.is_active %}
+                    </p>
 
-                            <span class="badge bg-success">
-                                Active
-                            </span>
+                    <div class="kep-confirm-actions">
 
-                        {% else %}
+                        <form
+                            method="post"
+                            action="{% url 'executives:activate' executive.pk %}">
 
-                            <span class="badge bg-secondary">
-                                Inactive
-                            </span>
+                            {% csrf_token %}
 
-                        {% endif %}
+                            <button
+                                type="submit"
+                                class="kep-action-btn kep-action-success"
+                                data-confirm-action>
 
-                    </div>
+                                <i class="bi bi-check-circle" aria-hidden="true"></i>
+                                Confirm Activation
 
+                            </button>
 
-                    <div class="d-flex justify-content-between
-                                align-items-center">
+                        </form>
 
-                        <span class="text-muted">
-                            Verification
-                        </span>
+                        <a
+                            href="{% url 'executives:profile_detail' executive.pk %}"
+                            class="kep-action-btn kep-action-cancel">
 
-                        {% if executive.user.is_verified %}
+                            Cancel
 
-                            <span class="badge bg-success">
-
-                                <i class="bi bi-patch-check me-1"></i>
-                                Verified
-
-                            </span>
-
-                        {% else %}
-
-                            <span class="badge bg-warning text-dark">
-
-                                <i class="bi bi-exclamation-circle me-1"></i>
-                                Not Verified
-
-                            </span>
-
-                        {% endif %}
+                        </a>
 
                     </div>
 
                 </div>
 
-            </div>
+            </section>
 
-        </div>
+        {% endif %}
 
 
-        <!-- =================================================
-             RIGHT COLUMN
-        ================================================== -->
+        <!-- =====================================================
+             CONFIRMATION: DEACTIVATE
+        ====================================================== -->
 
-        <div class="col-xl-8">
+        {% if confirm_deactivate %}
 
-            <!-- =============================================
-                 EXECUTIVE INFORMATION
-            ============================================== -->
+            <section
+                class="kep-confirm kep-confirm-warning kep-reveal"
+                role="alert">
 
-            <div class="card shadow-sm border-0 mb-4">
+                <div class="kep-confirm-icon">
+                    <i
+                        class="bi bi-exclamation-triangle-fill"
+                        aria-hidden="true"></i>
+                </div>
 
-                <div class="card-header bg-transparent">
+                <div class="kep-confirm-content">
 
-                    <h5 class="mb-0 fw-bold">
+                    <h2 class="kep-confirm-title">
+                        Deactivate Executive
+                    </h2>
 
-                        <i class="bi bi-building me-2"></i>
-                        Executive Information
+                    <p class="kep-confirm-text">
 
-                    </h5>
+                        Are you sure you want to deactivate
+                        <strong>{{ executive.full_name }}</strong>?
+                        The executive will remain in the system, but their
+                        executive profile will no longer be administratively active.
+
+                    </p>
+
+                    <div class="kep-confirm-actions">
+
+                        <form
+                            method="post"
+                            action="{% url 'executives:deactivate' executive.pk %}">
+
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="kep-action-btn kep-action-warning"
+                                data-confirm-action>
+
+                                <i class="bi bi-person-dash" aria-hidden="true"></i>
+                                Confirm Deactivation
+
+                            </button>
+
+                        </form>
+
+                        <a
+                            href="{% url 'executives:profile_detail' executive.pk %}"
+                            class="kep-action-btn kep-action-cancel">
+
+                            Cancel
+
+                        </a>
+
+                    </div>
 
                 </div>
 
+            </section>
 
-                <div class="card-body">
+        {% endif %}
 
-                    <div class="row g-4">
 
-                        <!-- Role -->
+        <!-- =====================================================
+             MAIN PROFILE GRID
+        ====================================================== -->
 
-                        <div class="col-md-6">
+        <main class="kep-main-grid">
 
-                            <small class="text-muted d-block mb-1">
-                                Executive Role
-                            </small>
+            <!-- =================================================
+                 LEFT COLUMN
+            ================================================== -->
 
-                            <p class="fw-semibold mb-0">
+            <aside class="kep-left-column">
 
-                                {{ executive.role }}
 
-                            </p>
+                <!-- =============================================
+                     PROFILE CARD
+                ============================================== -->
+
+                <section class="kep-card kep-profile-card kep-reveal">
+
+                    <div class="kep-profile-cover"></div>
+
+                    <div class="kep-profile-body">
+
+                        <!-- Profile Picture -->
+
+                        <div class="kep-avatar-wrap">
+
+                            {% if executive.profile_picture %}
+
+                                <img
+                                    src="{{ executive.profile_picture.url }}"
+                                    class="kep-avatar"
+                                    alt="{{ executive.full_name|default:executive.user.username }} profile picture"
+                                    loading="eager">
+
+                            {% else %}
+
+                                <div
+                                    class="kep-avatar-fallback"
+                                    aria-label="No profile picture">
+
+                                    <i
+                                        class="bi bi-person"
+                                        aria-hidden="true">
+                                    </i>
+
+                                </div>
+
+                            {% endif %}
 
                         </div>
 
 
-                        <!-- Committee -->
+                        <h2 class="kep-profile-name">
+                            {{ executive.full_name|default:executive.user.username }}
+                        </h2>
 
-                        <div class="col-md-6">
-
-                            <small class="text-muted d-block mb-1">
-                                Committee
-                            </small>
-
-                            <p class="fw-semibold mb-0">
-
-                                {{ executive.committee_display }}
-
-                            </p>
-
-                        </div>
-
-
-                        <!-- Office -->
-
-                        <div class="col-md-6">
-
-                            <small class="text-muted d-block mb-1">
-                                Office Location
-                            </small>
-
-                            <p class="fw-semibold mb-0">
-
-                                {{ executive.office_location|default:"Not specified" }}
-
-                            </p>
-
-                        </div>
+                        <p class="kep-profile-role">
+                            {{ executive.role }}
+                        </p>
 
 
                         <!-- Status -->
 
-                        <div class="col-md-6">
+                        <div class="kep-status-row">
 
-                            <small class="text-muted d-block mb-1">
-                                Executive Status
-                            </small>
+                            {% if executive.is_active %}
 
-                            <p class="fw-semibold mb-0">
+                                <span class="kep-badge kep-badge-success">
 
-                                {{ executive.status_display }}
+                                    <i class="bi bi-check-circle" aria-hidden="true"></i>
+                                    Active Executive
 
-                            </p>
+                                </span>
 
-                        </div>
+                            {% else %}
 
-                    </div>
+                                <span class="kep-badge kep-badge-secondary">
 
-                </div>
+                                    <i class="bi bi-dash-circle" aria-hidden="true"></i>
+                                    Inactive Executive
 
-            </div>
+                                </span>
 
-
-            <!-- =============================================
-                 TERM INFORMATION
-            ============================================== -->
-
-            <div class="card shadow-sm border-0 mb-4">
-
-                <div class="card-header bg-transparent">
-
-                    <h5 class="mb-0 fw-bold">
-
-                        <i class="bi bi-calendar-range me-2"></i>
-                        Leadership Term
-
-                    </h5>
-
-                </div>
+                            {% endif %}
 
 
-                <div class="card-body">
+                            {% if executive.term_status == "Current" %}
 
-                    <div class="row g-4">
+                                <span class="kep-badge kep-badge-primary">
 
-                        <!-- Start -->
+                                    <i class="bi bi-calendar-check" aria-hidden="true"></i>
+                                    Current Term
 
-                        <div class="col-md-4">
+                                </span>
 
-                            <small class="text-muted d-block mb-1">
-                                Term Start
-                            </small>
+                            {% elif executive.term_status == "Upcoming" %}
 
-                            <p class="fw-semibold mb-0">
+                                <span class="kep-badge kep-badge-info">
 
-                                {% if executive.term_start %}
+                                    <i class="bi bi-calendar-event" aria-hidden="true"></i>
+                                    Upcoming Term
 
-                                    {{ executive.term_start|date:"d M Y" }}
+                                </span>
 
-                                {% else %}
+                            {% elif executive.term_status == "Ended" %}
 
-                                    Not specified
+                                <span class="kep-badge kep-badge-dark">
 
-                                {% endif %}
+                                    <i class="bi bi-calendar-x" aria-hidden="true"></i>
+                                    Term Ended
 
-                            </p>
+                                </span>
+
+                            {% else %}
+
+                                <span class="kep-badge kep-badge-secondary">
+
+                                    <i class="bi bi-pause-circle" aria-hidden="true"></i>
+                                    Inactive
+
+                                </span>
+
+                            {% endif %}
 
                         </div>
 
 
-                        <!-- End -->
+                        <div class="kep-divider"></div>
 
-                        <div class="col-md-4">
 
-                            <small class="text-muted d-block mb-1">
-                                Term End
-                            </small>
+                        <!-- Personal Information -->
 
-                            <p class="fw-semibold mb-0">
+                        <div class="kep-info-list">
 
-                                {% if executive.term_end %}
+                            <div class="kep-info-item">
 
-                                    {{ executive.term_end|date:"d M Y" }}
+                                <div class="kep-info-icon">
+                                    <i class="bi bi-person-vcard" aria-hidden="true"></i>
+                                </div>
 
-                                {% else %}
+                                <div class="kep-info-content">
 
-                                    Present
+                                    <span class="kep-info-label">
+                                        Registration Number
+                                    </span>
 
-                                {% endif %}
+                                    <div class="kep-info-value">
+                                        {{ executive.registration_number|default:"Not provided" }}
+                                    </div>
 
-                            </p>
-
-                        </div>
-
-
-                        <!-- Status -->
-
-                        <div class="col-md-4">
-
-                            <small class="text-muted d-block mb-1">
-                                Term Status
-                            </small>
-
-                            <p class="fw-semibold mb-0">
-
-                                {{ executive.term_status }}
-
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    {% if executive.term_display %}
-
-                        <hr>
-
-                        <div class="small text-muted">
-
-                            <i class="bi bi-calendar3 me-1"></i>
-
-                            {{ executive.term_display }}
-
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-            </div>
-
-
-            <!-- =============================================
-                 BIOGRAPHY
-            ============================================== -->
-
-            <div class="card shadow-sm border-0 mb-4">
-
-                <div class="card-header bg-transparent">
-
-                    <h5 class="mb-0 fw-bold">
-
-                        <i class="bi bi-person-lines-fill me-2"></i>
-                        Biography
-
-                    </h5>
-
-                </div>
-
-
-                <div class="card-body">
-
-                    {% if executive.biography %}
-
-                        <div class="lh-lg">
-
-                            {{ executive.biography|linebreaksbr }}
-
-                        </div>
-
-                    {% else %}
-
-                        <div class="text-muted">
-
-                            <i class="bi bi-info-circle me-1"></i>
-
-                            No biography has been provided.
-
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-            </div>
-
-
-            <!-- =============================================
-                 RESPONSIBILITIES
-            ============================================== -->
-
-            <div class="card shadow-sm border-0 mb-4">
-
-                <div class="card-header bg-transparent">
-
-                    <h5 class="mb-0 fw-bold">
-
-                        <i class="bi bi-list-check me-2"></i>
-                        Responsibilities
-
-                    </h5>
-
-                </div>
-
-
-                <div class="card-body">
-
-                    {% if executive.responsibilities %}
-
-                        <div class="lh-lg">
-
-                            {{ executive.responsibilities|linebreaksbr }}
-
-                        </div>
-
-                    {% else %}
-
-                        <div class="text-muted">
-
-                            <i class="bi bi-info-circle me-1"></i>
-
-                            No responsibilities have been provided.
-
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-            </div>
-
-
-            <!-- =============================================
-                 VISION
-            ============================================== -->
-
-            <div class="card shadow-sm border-0 mb-4">
-
-                <div class="card-header bg-transparent">
-
-                    <h5 class="mb-0 fw-bold">
-
-                        <i class="bi bi-eye me-2"></i>
-                        Vision for KUCSA
-
-                    </h5>
-
-                </div>
-
-
-                <div class="card-body">
-
-                    {% if executive.vision %}
-
-                        <div class="lh-lg">
-
-                            {{ executive.vision|linebreaksbr }}
-
-                        </div>
-
-                    {% else %}
-
-                        <div class="text-muted">
-
-                            <i class="bi bi-info-circle me-1"></i>
-
-                            No vision statement has been provided.
-
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-            </div>
-
-
-            <!-- =============================================
-                 PROFILE METADATA
-            ============================================== -->
-
-            <div class="card shadow-sm border-0">
-
-                <div class="card-body">
-
-                    <div class="row g-3 small">
-
-                        <div class="col-md-6">
-
-                            <span class="text-muted">
-                                Profile Created
-                            </span>
-
-                            <div class="fw-semibold">
-
-                                {{ executive.created_at|date:"d M Y, H:i" }}
+                                </div>
 
                             </div>
 
-                        </div>
+
+                            <div class="kep-info-item">
+
+                                <div class="kep-info-icon">
+                                    <i class="bi bi-envelope" aria-hidden="true"></i>
+                                </div>
+
+                                <div class="kep-info-content">
+
+                                    <span class="kep-info-label">
+                                        Email Address
+                                    </span>
+
+                                    <div class="kep-info-value">
+
+                                        {% if executive.email %}
+
+                                            <a href="mailto:{{ executive.email }}">
+                                                {{ executive.email }}
+                                            </a>
+
+                                        {% else %}
+
+                                            Not provided
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
 
 
-                        <div class="col-md-6">
+                            <div class="kep-info-item">
 
-                            <span class="text-muted">
-                                Last Updated
-                            </span>
+                                <div class="kep-info-icon">
+                                    <i class="bi bi-telephone" aria-hidden="true"></i>
+                                </div>
 
-                            <div class="fw-semibold">
+                                <div class="kep-info-content">
 
-                                {{ executive.updated_at|date:"d M Y, H:i" }}
+                                    <span class="kep-info-label">
+                                        Phone Number
+                                    </span>
+
+                                    <div class="kep-info-value">
+
+                                        {% if executive.phone_number %}
+
+                                            <a href="tel:{{ executive.phone_number }}">
+                                                {{ executive.phone_number }}
+                                            </a>
+
+                                        {% else %}
+
+                                            Not provided
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="kep-info-item">
+
+                                <div class="kep-info-icon">
+                                    <i class="bi bi-diagram-3" aria-hidden="true"></i>
+                                </div>
+
+                                <div class="kep-info-content">
+
+                                    <span class="kep-info-label">
+                                        Committee
+                                    </span>
+
+                                    <div class="kep-info-value">
+                                        {{ executive.committee_display }}
+                                    </div>
+
+                                </div>
 
                             </div>
 
@@ -1037,13 +1666,693 @@
 
                     </div>
 
-                </div>
+                </section>
 
-            </div>
 
-        </div>
+                <!-- =============================================
+                     ADMINISTRATIVE ACTIONS
+                ============================================== -->
+
+                {% if is_admin %}
+
+                    <section class="kep-card kep-admin-card kep-reveal">
+
+                        <div class="kep-card-header">
+
+                            <div class="kep-card-header-icon">
+                                <i class="bi bi-shield-lock" aria-hidden="true"></i>
+                            </div>
+
+                            <h2 class="kep-card-title">
+                                Administrative Actions
+                            </h2>
+
+                        </div>
+
+                        <div class="kep-admin-body">
+
+                            <p class="kep-admin-description">
+                                These controls affect the executive's
+                                official KUCSA leadership status.
+                            </p>
+
+                            <div class="kep-admin-actions">
+
+                                {% if executive.is_active %}
+
+                                    <a
+                                        href="{% url 'executives:deactivate' executive.pk %}"
+                                        class="kep-admin-btn kep-admin-warning">
+
+                                        <i class="bi bi-person-dash" aria-hidden="true"></i>
+                                        Deactivate Executive
+
+                                    </a>
+
+                                {% else %}
+
+                                    <a
+                                        href="{% url 'executives:activate' executive.pk %}"
+                                        class="kep-admin-btn kep-admin-success">
+
+                                        <i class="bi bi-person-check" aria-hidden="true"></i>
+                                        Activate Executive
+
+                                    </a>
+
+                                {% endif %}
+
+
+                                <a
+                                    href="{% url 'executives:remove_role' executive.pk %}"
+                                    class="kep-admin-btn kep-admin-danger">
+
+                                    <i class="bi bi-person-x" aria-hidden="true"></i>
+                                    Remove Executive Role
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                {% endif %}
+
+
+                <!-- =============================================
+                     ACCOUNT STATUS
+                ============================================== -->
+
+                <section class="kep-card kep-account-card kep-reveal">
+
+                    <div class="kep-card-header">
+
+                        <div class="kep-card-header-icon">
+                            <i class="bi bi-shield-check" aria-hidden="true"></i>
+                        </div>
+
+                        <h2 class="kep-card-title">
+                            Account Status
+                        </h2>
+
+                    </div>
+
+                    <div class="kep-card-body">
+
+                        <div class="kep-account-list">
+
+                            <div class="kep-account-row">
+
+                                <span class="kep-account-label">
+                                    Account
+                                </span>
+
+                                {% if executive.user.is_active %}
+
+                                    <span class="kep-badge kep-badge-success">
+                                        <i class="bi bi-check-circle" aria-hidden="true"></i>
+                                        Active
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="kep-badge kep-badge-secondary">
+                                        <i class="bi bi-dash-circle" aria-hidden="true"></i>
+                                        Inactive
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="kep-account-row">
+
+                                <span class="kep-account-label">
+                                    Verification
+                                </span>
+
+                                {% if executive.user.is_verified %}
+
+                                    <span class="kep-badge kep-badge-success">
+                                        <i class="bi bi-patch-check" aria-hidden="true"></i>
+                                        Verified
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="kep-badge kep-badge-warning">
+                                        <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+                                        Not Verified
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </aside>
+
+
+            <!-- =================================================
+                 RIGHT COLUMN
+            ================================================== -->
+
+            <section class="kep-right-column">
+
+
+                <!-- =============================================
+                     EXECUTIVE INFORMATION
+                ============================================== -->
+
+                <section class="kep-card kep-reveal">
+
+                    <div class="kep-card-header">
+
+                        <div class="kep-card-header-icon">
+                            <i class="bi bi-building" aria-hidden="true"></i>
+                        </div>
+
+                        <h2 class="kep-card-title">
+                            Executive Information
+                        </h2>
+
+                    </div>
+
+                    <div class="kep-card-body">
+
+                        <div class="kep-detail-grid">
+
+                            <div class="kep-detail-item">
+
+                                <span class="kep-detail-label">
+                                    Executive Role
+                                </span>
+
+                                <p class="kep-detail-value">
+                                    {{ executive.role }}
+                                </p>
+
+                            </div>
+
+
+                            <div class="kep-detail-item">
+
+                                <span class="kep-detail-label">
+                                    Committee
+                                </span>
+
+                                <p class="kep-detail-value">
+                                    {{ executive.committee_display }}
+                                </p>
+
+                            </div>
+
+
+                            <div class="kep-detail-item">
+
+                                <span class="kep-detail-label">
+                                    Office Location
+                                </span>
+
+                                <p class="kep-detail-value">
+                                    {{ executive.office_location|default:"Not specified" }}
+                                </p>
+
+                            </div>
+
+
+                            <div class="kep-detail-item">
+
+                                <span class="kep-detail-label">
+                                    Executive Status
+                                </span>
+
+                                <p class="kep-detail-value">
+                                    {{ executive.status_display }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     LEADERSHIP TERM
+                ============================================== -->
+
+                <section class="kep-card kep-reveal">
+
+                    <div class="kep-card-header">
+
+                        <div class="kep-card-header-icon">
+                            <i class="bi bi-calendar-range" aria-hidden="true"></i>
+                        </div>
+
+                        <h2 class="kep-card-title">
+                            Leadership Term
+                        </h2>
+
+                    </div>
+
+                    <div class="kep-card-body">
+
+                        <div class="kep-term-grid">
+
+                            <div class="kep-term-item">
+
+                                <span class="kep-term-label">
+                                    Term Start
+                                </span>
+
+                                <p class="kep-term-value">
+
+                                    {% if executive.term_start %}
+
+                                        {{ executive.term_start|date:"d M Y" }}
+
+                                    {% else %}
+
+                                        Not specified
+
+                                    {% endif %}
+
+                                </p>
+
+                            </div>
+
+
+                            <div class="kep-term-item">
+
+                                <span class="kep-term-label">
+                                    Term End
+                                </span>
+
+                                <p class="kep-term-value">
+
+                                    {% if executive.term_end %}
+
+                                        {{ executive.term_end|date:"d M Y" }}
+
+                                    {% else %}
+
+                                        Present
+
+                                    {% endif %}
+
+                                </p>
+
+                            </div>
+
+
+                            <div class="kep-term-item">
+
+                                <span class="kep-term-label">
+                                    Term Status
+                                </span>
+
+                                <p class="kep-term-value">
+                                    {{ executive.term_status }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        {% if executive.term_display %}
+
+                            <div class="kep-term-summary">
+
+                                <i class="bi bi-calendar3" aria-hidden="true"></i>
+
+                                <span>
+                                    {{ executive.term_display }}
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     BIOGRAPHY
+                ============================================== -->
+
+                <section class="kep-card kep-reveal">
+
+                    <div class="kep-card-header">
+
+                        <div class="kep-card-header-icon">
+                            <i class="bi bi-person-lines-fill" aria-hidden="true"></i>
+                        </div>
+
+                        <h2 class="kep-card-title">
+                            Biography
+                        </h2>
+
+                    </div>
+
+                    <div class="kep-card-body">
+
+                        {% if executive.biography %}
+
+                            <div class="kep-prose">
+                                {{ executive.biography|linebreaksbr }}
+                            </div>
+
+                        {% else %}
+
+                            <div class="kep-empty-content">
+
+                                <i class="bi bi-info-circle" aria-hidden="true"></i>
+
+                                <span>
+                                    No biography has been provided.
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     RESPONSIBILITIES
+                ============================================== -->
+
+                <section class="kep-card kep-reveal">
+
+                    <div class="kep-card-header">
+
+                        <div class="kep-card-header-icon">
+                            <i class="bi bi-list-check" aria-hidden="true"></i>
+                        </div>
+
+                        <h2 class="kep-card-title">
+                            Responsibilities
+                        </h2>
+
+                    </div>
+
+                    <div class="kep-card-body">
+
+                        {% if executive.responsibilities %}
+
+                            <div class="kep-prose">
+                                {{ executive.responsibilities|linebreaksbr }}
+                            </div>
+
+                        {% else %}
+
+                            <div class="kep-empty-content">
+
+                                <i class="bi bi-info-circle" aria-hidden="true"></i>
+
+                                <span>
+                                    No responsibilities have been provided.
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     VISION
+                ============================================== -->
+
+                <section class="kep-card kep-reveal">
+
+                    <div class="kep-card-header">
+
+                        <div class="kep-card-header-icon">
+                            <i class="bi bi-eye" aria-hidden="true"></i>
+                        </div>
+
+                        <h2 class="kep-card-title">
+                            Vision for KUCSA
+                        </h2>
+
+                    </div>
+
+                    <div class="kep-card-body">
+
+                        {% if executive.vision %}
+
+                            <div class="kep-prose">
+                                {{ executive.vision|linebreaksbr }}
+                            </div>
+
+                        {% else %}
+
+                            <div class="kep-empty-content">
+
+                                <i class="bi bi-info-circle" aria-hidden="true"></i>
+
+                                <span>
+                                    No vision statement has been provided.
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     PROFILE METADATA
+                ============================================== -->
+
+                <section class="kep-card kep-reveal">
+
+                    <div class="kep-card-body">
+
+                        <div class="kep-metadata-grid">
+
+                            <div class="kep-metadata-item">
+
+                                <span class="kep-metadata-label">
+                                    Profile Created
+                                </span>
+
+                                <div class="kep-metadata-value">
+                                    {{ executive.created_at|date:"d M Y, H:i" }}
+                                </div>
+
+                            </div>
+
+
+                            <div class="kep-metadata-item">
+
+                                <span class="kep-metadata-label">
+                                    Last Updated
+                                </span>
+
+                                <div class="kep-metadata-value">
+                                    {{ executive.updated_at|date:"d M Y, H:i" }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </section>
+
+        </main>
 
     </div>
+
+
+    <!-- =========================================================
+         INLINE JAVASCRIPT
+    ========================================================== -->
+
+    <script>
+        (function () {
+            "use strict";
+
+            const page = document.querySelector(".kucsa-executive-profile");
+
+            if (!page) {
+                return;
+            }
+
+            /* -----------------------------------------------------
+               Reveal content smoothly as it enters the viewport
+            ----------------------------------------------------- */
+
+            const revealItems = page.querySelectorAll(".kep-reveal");
+
+            const reduceMotion = window.matchMedia(
+                "(prefers-reduced-motion: reduce)"
+            ).matches;
+
+            if (!reduceMotion && "IntersectionObserver" in window) {
+
+                const observer = new IntersectionObserver(
+                    function (entries, obs) {
+
+                        entries.forEach(function (entry) {
+
+                            if (entry.isIntersecting) {
+
+                                entry.target.classList.add("kep-visible");
+
+                                obs.unobserve(entry.target);
+                            }
+
+                        });
+
+                    },
+                    {
+                        threshold: 0.08,
+                        rootMargin: "0px 0px -30px 0px"
+                    }
+                );
+
+                revealItems.forEach(function (item) {
+                    observer.observe(item);
+                });
+
+            } else {
+
+                revealItems.forEach(function (item) {
+                    item.classList.add("kep-visible");
+                });
+
+            }
+
+
+            /* -----------------------------------------------------
+               Prevent accidental double submissions
+            ----------------------------------------------------- */
+
+            const confirmForms = page.querySelectorAll(
+                ".kep-confirm form"
+            );
+
+            confirmForms.forEach(function (form) {
+
+                form.addEventListener("submit", function () {
+
+                    const button = form.querySelector(
+                        "[data-confirm-action]"
+                    );
+
+                    if (!button) {
+                        return;
+                    }
+
+                    if (button.dataset.submitted === "true") {
+                        return;
+                    }
+
+                    button.dataset.submitted = "true";
+                    button.disabled = true;
+
+                    const originalHTML = button.innerHTML;
+
+                    button.innerHTML =
+                        '<span class="spinner-border spinner-border-sm" ' +
+                        'role="status" aria-hidden="true"></span> ' +
+                        'Processing...';
+
+                    window.setTimeout(function () {
+
+                        if (button) {
+                            button.innerHTML = originalHTML;
+                        }
+
+                    }, 7000);
+
+                });
+
+            });
+
+
+            /* -----------------------------------------------------
+               Confirmation keyboard protection
+            ----------------------------------------------------- */
+
+            const adminLinks = page.querySelectorAll(
+                ".kep-admin-danger, .kep-admin-warning"
+            );
+
+            adminLinks.forEach(function (link) {
+
+                link.addEventListener("click", function (event) {
+
+                    const text = (link.textContent || "").trim();
+
+                    if (
+                        text.includes("Remove Executive Role") &&
+                        !window.location.search.includes("confirm")
+                    ) {
+                        /*
+                         * The Django backend already handles the
+                         * confirmation state. No custom confirmation
+                         * is forced here to preserve that workflow.
+                         */
+                    }
+
+                });
+
+            });
+
+
+            /* -----------------------------------------------------
+               Back/forward cache safety
+            ----------------------------------------------------- */
+
+            window.addEventListener("pageshow", function () {
+
+                page.querySelectorAll("button[disabled]").forEach(
+                    function (button) {
+
+                        if (
+                            button.dataset.submitted === "true" &&
+                            !document.body.contains(button)
+                        ) {
+                            button.disabled = false;
+                        }
+
+                    }
+                );
+
+            });
+
+        })();
+    </script>
 
 </div>
 

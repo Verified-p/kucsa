@@ -6,268 +6,1307 @@
 
 {% block content %}
 
-<div class="container-fluid py-4">
+<div class="kucsa-member-edit-page">
 
-    <!-- =====================================================
-         PAGE HEADER
-    ====================================================== -->
-    <div class="d-flex flex-column flex-lg-row
-                justify-content-between
-                align-items-lg-center
-                gap-3
-                mb-4">
+    <style>
+        /* =========================================================
+           KUCSA MEMBER PROFILE EDITOR
+           Scoped to this page only
+        ========================================================= */
 
-        <div>
+        .kucsa-member-edit-page {
+            --kme-primary: #0d6efd;
+            --kme-primary-dark: #0a58ca;
+            --kme-primary-soft: rgba(13, 110, 253, .08);
 
-            <h2 class="fw-bold mb-1">
+            --kme-success: #198754;
+            --kme-success-soft: rgba(25, 135, 84, .09);
 
-                <i class="bi bi-pencil-square me-2"></i>
+            --kme-warning: #f59f00;
+            --kme-warning-soft: rgba(245, 159, 0, .10);
 
-                {{ page_title|default:"Edit Member Profile" }}
+            --kme-danger: #dc3545;
+            --kme-danger-soft: rgba(220, 53, 69, .08);
 
-            </h2>
+            --kme-dark: #172033;
+            --kme-text: #2b3648;
+            --kme-muted: #6c7789;
 
-            <p class="text-muted mb-0">
+            --kme-page: #f6f8fc;
+            --kme-surface: #ffffff;
+            --kme-border: #e7ecf3;
 
-                Update your KUCSA personal information,
-                membership profile and technical information.
+            --kme-radius: 18px;
+            --kme-radius-sm: 12px;
 
-            </p>
+            --kme-shadow:
+                0 10px 35px rgba(20, 36, 66, .065);
 
-        </div>
+            --kme-shadow-hover:
+                0 18px 45px rgba(20, 36, 66, .105);
 
-        <div>
+            min-height: 100%;
+            padding: 28px 0 55px;
+            color: var(--kme-text);
+            background: var(--kme-page);
+        }
+
+        .kucsa-member-edit-page *,
+        .kucsa-member-edit-page *::before,
+        .kucsa-member-edit-page *::after {
+            box-sizing: border-box;
+        }
+
+        .kucsa-member-edit-page .kme-container {
+            width: min(1440px, calc(100% - 40px));
+            margin: 0 auto;
+        }
+
+        /* =========================================================
+           HEADER
+        ========================================================= */
+
+        .kucsa-member-edit-page .kme-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 25px;
+            margin-bottom: 27px;
+        }
+
+        .kucsa-member-edit-page .kme-header-main {
+            min-width: 0;
+        }
+
+        .kucsa-member-edit-page .kme-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 8px;
+            color: var(--kme-primary);
+            font-size: .74rem;
+            font-weight: 800;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .kucsa-member-edit-page .kme-title {
+            margin: 0 0 7px;
+            color: var(--kme-dark);
+            font-size: clamp(1.55rem, 2vw, 2.05rem);
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: -.035em;
+        }
+
+        .kucsa-member-edit-page .kme-description {
+            max-width: 780px;
+            margin: 0;
+            color: var(--kme-muted);
+            font-size: .93rem;
+            line-height: 1.65;
+        }
+
+        .kucsa-member-edit-page .kme-back-btn {
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 10px 16px;
+            flex-shrink: 0;
+            color: var(--kme-text);
+            background: #fff;
+            border: 1px solid var(--kme-border);
+            border-radius: 11px;
+            font-size: .86rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: .2s ease;
+        }
+
+        .kucsa-member-edit-page .kme-back-btn:hover {
+            color: var(--kme-primary);
+            background: var(--kme-primary-soft);
+            border-color: rgba(13, 110, 253, .25);
+            transform: translateY(-1px);
+        }
+
+        /* =========================================================
+           ERROR SUMMARY
+        ========================================================= */
+
+        .kucsa-member-edit-page .kme-error-summary {
+            display: flex;
+            align-items: flex-start;
+            gap: 13px;
+            padding: 16px 18px;
+            margin-bottom: 20px;
+            color: #842029;
+            background: #fff1f2;
+            border: 1px solid #f5c2c7;
+            border-radius: 14px;
+        }
+
+        .kucsa-member-edit-page .kme-error-summary-icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 36px;
+            border-radius: 10px;
+            background: rgba(220, 53, 69, .1);
+        }
+
+        .kucsa-member-edit-page .kme-error-summary strong {
+            display: block;
+            margin-bottom: 3px;
+            font-size: .86rem;
+        }
+
+        .kucsa-member-edit-page .kme-error-summary-text {
+            margin: 0;
+            font-size: .82rem;
+            line-height: 1.55;
+        }
+
+        /* =========================================================
+           FORM GRID
+        ========================================================= */
+
+        .kucsa-member-edit-page .kme-form-grid {
+            display: grid;
+            grid-template-columns: repeat(12, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .kucsa-member-edit-page .kme-full {
+            grid-column: span 12;
+        }
+
+        .kucsa-member-edit-page .kme-large {
+            grid-column: span 8;
+        }
+
+        .kucsa-member-edit-page .kme-small {
+            grid-column: span 4;
+        }
+
+        .kucsa-member-edit-page .kme-third {
+            grid-column: span 4;
+        }
+
+        /* =========================================================
+           CARD
+        ========================================================= */
+
+        .kucsa-member-edit-page .kme-card {
+            height: 100%;
+            overflow: hidden;
+            background: var(--kme-surface);
+            border: 1px solid var(--kme-border);
+            border-radius: var(--kme-radius);
+            box-shadow: var(--kme-shadow);
+            transition: box-shadow .25s ease, transform .25s ease;
+        }
+
+        .kucsa-member-edit-page .kme-card:hover {
+            box-shadow: var(--kme-shadow-hover);
+        }
+
+        .kucsa-member-edit-page .kme-card-header {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            min-height: 66px;
+            padding: 15px 21px;
+            background: linear-gradient(180deg, #fff, #fbfcfe);
+            border-bottom: 1px solid var(--kme-border);
+        }
+
+        .kucsa-member-edit-page .kme-card-icon {
+            width: 37px;
+            height: 37px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 37px;
+            border-radius: 10px;
+            color: var(--kme-primary);
+            background: var(--kme-primary-soft);
+            font-size: 1rem;
+        }
+
+        .kucsa-member-edit-page .kme-card-title {
+            margin: 0;
+            color: var(--kme-dark);
+            font-size: .98rem;
+            font-weight: 800;
+        }
+
+        .kucsa-member-edit-page .kme-card-subtitle {
+            margin: 2px 0 0;
+            color: var(--kme-muted);
+            font-size: .74rem;
+        }
+
+        .kucsa-member-edit-page .kme-card-body {
+            padding: 23px;
+        }
+
+        /* =========================================================
+           PERSONAL INFORMATION
+        ========================================================= */
+
+        .kucsa-member-edit-page .kme-personal-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .kucsa-member-edit-page .kme-field {
+            min-width: 0;
+        }
+
+        .kucsa-member-edit-page .kme-field-full {
+            grid-column: 1 / -1;
+        }
+
+        .kucsa-member-edit-page .kme-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 7px;
+            color: var(--kme-dark);
+            font-size: .8rem;
+            font-weight: 750;
+        }
+
+        .kucsa-member-edit-page .kme-required {
+            color: var(--kme-danger);
+        }
+
+        /* =========================================================
+           FORM CONTROLS
+        ========================================================= */
+
+        .kucsa-member-edit-page input:not([type="checkbox"]):not([type="radio"]),
+        .kucsa-member-edit-page select,
+        .kucsa-member-edit-page textarea {
+            width: 100%;
+            min-height: 45px;
+            padding: 10px 13px;
+            color: var(--kme-text);
+            background: #fff;
+            border: 1px solid #dce2ea;
+            border-radius: 10px;
+            outline: none;
+            font-size: .87rem;
+            line-height: 1.5;
+            transition:
+                border-color .2s ease,
+                box-shadow .2s ease,
+                background-color .2s ease;
+        }
+
+        .kucsa-member-edit-page textarea {
+            min-height: 125px;
+            resize: vertical;
+        }
+
+        .kucsa-member-edit-page input::placeholder,
+        .kucsa-member-edit-page textarea::placeholder {
+            color: #a2aab7;
+        }
+
+        .kucsa-member-edit-page input:not([type="checkbox"]):not([type="radio"]):focus,
+        .kucsa-member-edit-page select:focus,
+        .kucsa-member-edit-page textarea:focus {
+            border-color: rgba(13, 110, 253, .65);
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, .09);
+        }
+
+        .kucsa-member-edit-page input[type="file"] {
+            min-height: 46px;
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .kucsa-member-edit-page input[type="file"]::file-selector-button {
+            margin-right: 10px;
+            padding: 7px 11px;
+            color: #fff;
+            background: var(--kme-primary);
+            border: 0;
+            border-radius: 7px;
+            font-size: .78rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .kucsa-member-edit-page .kme-help {
+            margin-top: 6px;
+            color: var(--kme-muted);
+            font-size: .74rem;
+            line-height: 1.55;
+        }
+
+        .kucsa-member-edit-page .kme-error {
+            display: flex;
+            align-items: flex-start;
+            gap: 5px;
+            margin-top: 6px;
+            color: var(--kme-danger);
+            font-size: .75rem;
+            line-height: 1.45;
+        }
+
+        /* =========================================================
+           PROFILE PICTURE
+        ========================================================= */
+
+        .kucsa-member-edit-page .kme-picture-area {
+            display: grid;
+            grid-template-columns: 105px minmax(0, 1fr);
+            gap: 17px;
+            align-items: center;
+        }
+
+        .kucsa-member-edit-page .kme-picture-preview {
+            width: 105px;
+            height: 105px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+            color: var(--kme-primary);
+            background: #edf4ff;
+            border: 1px solid #dbe8ff;
+            border-radius: 50%;
+            font-size: 2.7rem;
+        }
+
+        .kucsa-member-edit-page .kme-picture-preview img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        .kucsa-member-edit-page .kme-picture-caption {
+            margin: 0 0 8px;
+            color: var(--kme-dark);
+            font-size: .84rem;
+            font-weight: 750;
+        }
+
+        .kucsa-member-edit-page .kme-picture-note {
+            margin: 7px 0 0;
+            color: var(--kme-muted);
+            font-size: .73rem;
+            line-height: 1.5;
+        }
+
+        /* =========================================================
+           BIO
+        ========================================================= */
+
+        .kucsa-member-edit-page .kme-bio-wrapper {
+            position: relative;
+        }
+
+        .kucsa-member-edit-page .kme-character-count {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 5px;
+            color: var(--kme-muted);
+            font-size: .7rem;
+        }
+
+        /* =========================================================
+           PROFILE SUMMARY
+        ========================================================= */
+
+        .kucsa-member-edit-page .kme-member-summary {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .kucsa-member-edit-page .kme-member-name {
+            margin-bottom: 18px;
+            padding: 15px;
+            border-radius: 13px;
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(13, 110, 253, .08),
+                    rgba(13, 110, 253, .025)
+                );
+            border: 1px solid rgba(13, 110, 253, .10);
+        }
+
+        .kucsa-member-edit-page .kme-member-name-label {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--kme-muted);
+            font-size: .7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+        }
+
+        .kucsa-member-edit-page .kme-member-name-value {
+            color: var(--kme-dark);
+            font-size: 1rem;
+            font-weight: 800;
+            overflow-wrap: anywhere;
+        }
+
+        .kucsa-member-edit-page .kme-summary-list {
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+        }
+
+        .kucsa-member-edit-page .kme-summary-item {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 15px;
+            padding-bottom: 13px;
+            border-bottom: 1px solid var(--kme-border);
+        }
+
+        .kucsa-member-edit-page .kme-summary-item:last-child {
+            padding-bottom: 0;
+            border-bottom: 0;
+        }
+
+        .kucsa-member-edit-page .kme-summary-label {
+            color: var(--kme-muted);
+            font-size: .74rem;
+        }
+
+        .kucsa-member-edit-page .kme-summary-value {
+            color: var(--kme-dark);
+            font-size: .79rem;
+            font-weight: 750;
+            text-align: right;
+            overflow-wrap: anywhere;
+        }
+
+        /* =========================================================
+           STATUS BADGES
+        ========================================================= */
+
+        .kucsa-member-edit-page .kme-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            min-height: 27px;
+            padding: 5px 9px;
+            border-radius: 999px;
+            font-size: .7rem;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .kucsa-member-edit-page .kme-status-active {
+            color: #12663f;
+            background: #e7f7ef;
+        }
+
+        .kucsa-member-edit-page .kme-status-pending {
+            color: #765500;
+            background: #fff3cd;
+        }
+
+        .kucsa-member-edit-page .kme-status-suspended {
+            color: #842029;
+            background: #fce8eb;
+        }
+
+        .kucsa-member-edit-page .kme-status-expired,
+        .kucsa-member-edit-page .kme-status-default {
+            color: #566173;
+            background: #edf0f4;
+        }
+
+        /* =========================================================
+           INFORMATION NOTICE
+        ========================================================= */
+
+        .kucsa-member-edit-page .kme-notice {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 19px;
+            padding: 13px 14px;
+            color: #275b78;
+            background: #eef8ff;
+            border: 1px solid #cce9f8;
+            border-radius: 11px;
+            font-size: .75rem;
+            line-height: 1.6;
+        }
+
+        .kucsa-member-edit-page .kme-notice i {
+            margin-top: 2px;
+            color: #1684b8;
+        }
+
+        /* =========================================================
+           MINI CARDS
+        ========================================================= */
+
+        .kucsa-member-edit-page .kme-mini-card .kme-card-header {
+            min-height: 58px;
+            padding: 13px 17px;
+        }
+
+        .kucsa-member-edit-page .kme-mini-card .kme-card-body {
+            padding: 18px;
+        }
+
+        .kucsa-member-edit-page .kme-example {
+            margin-top: 8px;
+            padding: 10px 11px;
+            color: #596579;
+            background: #f7f9fc;
+            border: 1px solid var(--kme-border);
+            border-radius: 9px;
+            font-size: .72rem;
+            line-height: 1.5;
+        }
+
+        /* =========================================================
+           PROFESSIONAL LINKS
+        ========================================================= */
+
+        .kucsa-member-edit-page .kme-link-field {
+            position: relative;
+        }
+
+        .kucsa-member-edit-page .kme-link-prefix {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            z-index: 2;
+            transform: translateY(-50%);
+            color: var(--kme-muted);
+            pointer-events: none;
+        }
+
+        .kucsa-member-edit-page .kme-link-field input {
+            padding-left: 38px;
+        }
+
+        /* =========================================================
+           ACTION CARD
+        ========================================================= */
+
+        .kucsa-member-edit-page .kme-action-card {
+            position: sticky;
+            bottom: 12px;
+            z-index: 10;
+        }
+
+        .kucsa-member-edit-page .kme-action-body {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 17px 21px;
+        }
+
+        .kucsa-member-edit-page .kme-action-note {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--kme-muted);
+            font-size: .75rem;
+            line-height: 1.5;
+        }
+
+        .kucsa-member-edit-page .kme-action-note i {
+            color: var(--kme-success);
+        }
+
+        .kucsa-member-edit-page .kme-action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            flex-shrink: 0;
+        }
+
+        .kucsa-member-edit-page .kme-btn {
+            min-height: 43px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 9px 16px;
+            border-radius: 10px;
+            font-size: .82rem;
+            font-weight: 750;
+            text-decoration: none;
+            cursor: pointer;
+            transition: .2s ease;
+        }
+
+        .kucsa-member-edit-page .kme-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .kucsa-member-edit-page .kme-btn-cancel {
+            color: var(--kme-text);
+            background: #fff;
+            border: 1px solid var(--kme-border);
+        }
+
+        .kucsa-member-edit-page .kme-btn-cancel:hover {
+            color: var(--kme-danger);
+            border-color: rgba(220, 53, 69, .25);
+            background: var(--kme-danger-soft);
+        }
+
+        .kucsa-member-edit-page .kme-btn-save {
+            color: #fff;
+            background: var(--kme-primary);
+            border: 1px solid var(--kme-primary);
+            box-shadow: 0 7px 18px rgba(13, 110, 253, .18);
+        }
+
+        .kucsa-member-edit-page .kme-btn-save:hover {
+            color: #fff;
+            background: var(--kme-primary-dark);
+            border-color: var(--kme-primary-dark);
+        }
+
+        .kucsa-member-edit-page .kme-btn-save:disabled {
+            opacity: .75;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* =========================================================
+           REVEAL ANIMATION
+        ========================================================= */
+
+        .kucsa-member-edit-page .kme-reveal {
+            opacity: 0;
+            transform: translateY(12px);
+            transition:
+                opacity .45s ease,
+                transform .45s ease;
+        }
+
+        .kucsa-member-edit-page .kme-reveal.kme-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* =========================================================
+           ACCESSIBILITY
+        ========================================================= */
+
+        .kucsa-member-edit-page a:focus-visible,
+        .kucsa-member-edit-page button:focus-visible,
+        .kucsa-member-edit-page input:focus-visible,
+        .kucsa-member-edit-page select:focus-visible,
+        .kucsa-member-edit-page textarea:focus-visible {
+            outline: 3px solid rgba(13, 110, 253, .2);
+            outline-offset: 2px;
+        }
+
+        /* =========================================================
+           LARGE TABLETS
+        ========================================================= */
+
+        @media (max-width: 1199.98px) {
+
+            .kucsa-member-edit-page .kme-container {
+                width: min(100% - 32px, 1200px);
+            }
+
+            .kucsa-member-edit-page .kme-form-grid {
+                gap: 17px;
+            }
+
+        }
+
+        /* =========================================================
+           TABLETS
+        ========================================================= */
+
+        @media (max-width: 991.98px) {
+
+            .kucsa-member-edit-page {
+                padding-top: 22px;
+            }
+
+            .kucsa-member-edit-page .kme-header {
+                align-items: flex-start;
+                flex-direction: column;
+                margin-bottom: 21px;
+            }
+
+            .kucsa-member-edit-page .kme-back-btn {
+                width: auto;
+            }
+
+            .kucsa-member-edit-page .kme-large,
+            .kucsa-member-edit-page .kme-small {
+                grid-column: span 12;
+            }
+
+            .kucsa-member-edit-page .kme-third {
+                grid-column: span 6;
+            }
+
+            .kucsa-member-edit-page .kme-action-card {
+                position: static;
+            }
+
+        }
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
+        @media (max-width: 767.98px) {
+
+            .kucsa-member-edit-page {
+                padding: 17px 0 35px;
+            }
+
+            .kucsa-member-edit-page .kme-container {
+                width: calc(100% - 24px);
+            }
+
+            .kucsa-member-edit-page .kme-title {
+                font-size: 1.42rem;
+            }
+
+            .kucsa-member-edit-page .kme-description {
+                font-size: .84rem;
+            }
+
+            .kucsa-member-edit-page .kme-form-grid {
+                display: block;
+            }
+
+            .kucsa-member-edit-page .kme-form-grid > * {
+                margin-bottom: 17px;
+            }
+
+            .kucsa-member-edit-page .kme-form-grid > *:last-child {
+                margin-bottom: 0;
+            }
+
+            .kucsa-member-edit-page .kme-card {
+                border-radius: 15px;
+            }
+
+            .kucsa-member-edit-page .kme-card-header {
+                min-height: 60px;
+                padding: 13px 16px;
+            }
+
+            .kucsa-member-edit-page .kme-card-body {
+                padding: 17px;
+            }
+
+            .kucsa-member-edit-page .kme-personal-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .kucsa-member-edit-page .kme-field-full {
+                grid-column: auto;
+            }
+
+            .kucsa-member-edit-page .kme-picture-area {
+                grid-template-columns: 82px minmax(0, 1fr);
+                gap: 13px;
+            }
+
+            .kucsa-member-edit-page .kme-picture-preview {
+                width: 82px;
+                height: 82px;
+                font-size: 2.1rem;
+            }
+
+            .kucsa-member-edit-page .kme-summary-item {
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .kucsa-member-edit-page .kme-summary-value {
+                text-align: left;
+            }
+
+            .kucsa-member-edit-page .kme-action-body {
+                align-items: stretch;
+                flex-direction: column;
+                padding: 16px;
+                gap: 14px;
+            }
+
+            .kucsa-member-edit-page .kme-action-buttons {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                width: 100%;
+            }
+
+            .kucsa-member-edit-page .kme-btn {
+                width: 100%;
+            }
+
+        }
+
+        /* =========================================================
+           SMALL PHONES
+        ========================================================= */
+
+        @media (max-width: 575.98px) {
+
+            .kucsa-member-edit-page .kme-container {
+                width: calc(100% - 16px);
+            }
+
+            .kucsa-member-edit-page .kme-back-btn {
+                width: 100%;
+            }
+
+            .kucsa-member-edit-page .kme-picture-area {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .kucsa-member-edit-page .kme-picture-preview {
+                margin: 0 auto;
+            }
+
+            .kucsa-member-edit-page .kme-picture-caption {
+                margin-top: 4px;
+            }
+
+            .kucsa-member-edit-page .kme-third {
+                grid-column: span 12;
+            }
+
+            .kucsa-member-edit-page .kme-action-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .kucsa-member-edit-page .kme-notice {
+                font-size: .72rem;
+            }
+
+        }
+
+        /* =========================================================
+           VERY SMALL DEVICES
+        ========================================================= */
+
+        @media (max-width: 359.98px) {
+
+            .kucsa-member-edit-page .kme-container {
+                width: calc(100% - 10px);
+            }
+
+            .kucsa-member-edit-page .kme-card-body {
+                padding: 14px;
+            }
+
+            .kucsa-member-edit-page .kme-card-header {
+                padding: 12px 14px;
+            }
+
+            .kucsa-member-edit-page .kme-title {
+                font-size: 1.28rem;
+            }
+
+            .kucsa-member-edit-page input:not([type="checkbox"]):not([type="radio"]),
+            .kucsa-member-edit-page select,
+            .kucsa-member-edit-page textarea {
+                font-size: .82rem;
+            }
+
+        }
+
+        /* =========================================================
+           REDUCED MOTION
+        ========================================================= */
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .kucsa-member-edit-page *,
+            .kucsa-member-edit-page *::before,
+            .kucsa-member-edit-page *::after {
+                scroll-behavior: auto !important;
+                transition-duration: .01ms !important;
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+            }
+
+            .kucsa-member-edit-page .kme-reveal {
+                opacity: 1;
+                transform: none;
+            }
+
+        }
+    </style>
+
+
+    <div class="kme-container">
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <header class="kme-header kme-reveal">
+
+            <div class="kme-header-main">
+
+                <div class="kme-eyebrow">
+                    <i class="bi bi-person-gear" aria-hidden="true"></i>
+                    KUCSA Member Profile
+                </div>
+
+                <h1 class="kme-title">
+                    {{ page_title|default:"Edit Member Profile" }}
+                </h1>
+
+                <p class="kme-description">
+                    Keep your KUCSA profile accurate and up to date.
+                    Update your personal details, academic information,
+                    technical interests, skills and professional links.
+                </p>
+
+            </div>
+
 
             <a
                 href="{% url 'members:profile' %}"
-                class="btn btn-outline-secondary">
+                class="kme-back-btn">
 
-                <i class="bi bi-arrow-left me-1"></i>
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>
                 Back to Profile
 
             </a>
 
-        </div>
-
-    </div>
+        </header>
 
 
-    <!-- =====================================================
-         GENERAL NON-FIELD ERRORS
-    ====================================================== -->
+        <!-- =====================================================
+             ERROR SUMMARY
+        ====================================================== -->
 
-    {% if user_form.non_field_errors %}
+        {% if user_form.non_field_errors %}
 
-        <div class="alert alert-danger">
+            <div class="kme-error-summary kme-reveal" role="alert">
 
-            <i class="bi bi-exclamation-triangle me-2"></i>
+                <div class="kme-error-summary-icon">
 
-            {{ user_form.non_field_errors }}
+                    <i
+                        class="bi bi-exclamation-triangle-fill"
+                        aria-hidden="true">
+                    </i>
 
-        </div>
+                </div>
 
-    {% endif %}
+                <div>
 
+                    <strong>
+                        We could not update your personal information.
+                    </strong>
 
-    {% if profile_form.non_field_errors %}
+                    <p class="kme-error-summary-text">
+                        Please review the highlighted fields below
+                        and correct the reported issues.
+                    </p>
 
-        <div class="alert alert-danger">
-
-            <i class="bi bi-exclamation-triangle me-2"></i>
-
-            {{ profile_form.non_field_errors }}
-
-        </div>
-
-    {% endif %}
-
-
-    <!-- =====================================================
-         PROFILE FORM
-    ====================================================== -->
-
-    <form
-        method="post"
-        enctype="multipart/form-data"
-        novalidate>
-
-        {% csrf_token %}
-
-
-        <div class="row g-4">
-
-            <!-- =================================================
-                 PERSONAL INFORMATION
-            ================================================== -->
-
-            <div class="col-12">
-
-                <div class="card shadow-sm border-0">
-
-                    <div class="card-header bg-primary text-white">
-
-                        <h5 class="mb-0">
-
-                            <i class="bi bi-person me-2"></i>
-
-                            Personal Information
-
-                        </h5>
-
+                    <div class="mt-2">
+                        {{ user_form.non_field_errors }}
                     </div>
 
+                </div>
 
-                    <div class="card-body p-4">
+            </div>
 
-                        <div class="row g-3">
+        {% endif %}
 
-                            <!-- First Name -->
-                            <div class="col-md-6">
 
-                                <label
-                                    for="{{ user_form.first_name.id_for_label }}"
-                                    class="form-label fw-semibold">
+        {% if profile_form.non_field_errors %}
 
-                                    First Name
+            <div class="kme-error-summary kme-reveal" role="alert">
 
-                                </label>
+                <div class="kme-error-summary-icon">
 
-                                {{ user_form.first_name }}
+                    <i
+                        class="bi bi-exclamation-triangle-fill"
+                        aria-hidden="true">
+                    </i>
 
-                                {% for error in user_form.first_name.errors %}
+                </div>
 
-                                    <div class="text-danger small mt-1">
+                <div>
 
-                                        <i class="bi bi-exclamation-circle me-1"></i>
-                                        {{ error }}
+                    <strong>
+                        We could not update your KUCSA profile.
+                    </strong>
 
-                                    </div>
+                    <p class="kme-error-summary-text">
+                        Please review the highlighted fields below
+                        and correct the reported issues.
+                    </p>
 
-                                {% endfor %}
+                    <div class="mt-2">
+                        {{ profile_form.non_field_errors }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             PROFILE FORM
+        ====================================================== -->
+
+        <form
+            method="post"
+            enctype="multipart/form-data"
+            novalidate
+            id="kucsaMemberEditForm">
+
+            {% csrf_token %}
+
+
+            <div class="kme-form-grid">
+
+
+                <!-- =================================================
+                     PERSONAL INFORMATION
+                ================================================== -->
+
+                <section class="kme-full kme-reveal">
+
+                    <div class="kme-card">
+
+                        <div class="kme-card-header">
+
+                            <div class="kme-card-icon">
+                                <i class="bi bi-person" aria-hidden="true"></i>
+                            </div>
+
+                            <div>
+
+                                <h2 class="kme-card-title">
+                                    Personal Information
+                                </h2>
+
+                                <p class="kme-card-subtitle">
+                                    Your basic contact and identity information.
+                                </p>
 
                             </div>
 
-
-                            <!-- Last Name -->
-                            <div class="col-md-6">
-
-                                <label
-                                    for="{{ user_form.last_name.id_for_label }}"
-                                    class="form-label fw-semibold">
-
-                                    Last Name
-
-                                </label>
-
-                                {{ user_form.last_name }}
-
-                                {% for error in user_form.last_name.errors %}
-
-                                    <div class="text-danger small mt-1">
-
-                                        <i class="bi bi-exclamation-circle me-1"></i>
-                                        {{ error }}
-
-                                    </div>
-
-                                {% endfor %}
-
-                            </div>
+                        </div>
 
 
-                            <!-- Email -->
-                            <div class="col-md-6">
+                        <div class="kme-card-body">
 
-                                <label
-                                    for="{{ user_form.email.id_for_label }}"
-                                    class="form-label fw-semibold">
-
-                                    Email Address
-
-                                </label>
-
-                                {{ user_form.email }}
-
-                                {% if user_form.email.help_text %}
-
-                                    <div class="form-text">
-                                        {{ user_form.email.help_text }}
-                                    </div>
-
-                                {% endif %}
-
-                                {% for error in user_form.email.errors %}
-
-                                    <div class="text-danger small mt-1">
-
-                                        <i class="bi bi-exclamation-circle me-1"></i>
-                                        {{ error }}
-
-                                    </div>
-
-                                {% endfor %}
-
-                            </div>
+                            <div class="kme-personal-grid">
 
 
-                            <!-- Phone -->
-                            <div class="col-md-6">
+                                <!-- First Name -->
 
-                                <label
-                                    for="{{ user_form.phone_number.id_for_label }}"
-                                    class="form-label fw-semibold">
+                                <div class="kme-field">
 
-                                    Phone Number
+                                    <label
+                                        for="{{ user_form.first_name.id_for_label }}"
+                                        class="kme-label">
 
-                                </label>
+                                        First Name
 
-                                {{ user_form.phone_number }}
+                                    </label>
 
-                                {% for error in user_form.phone_number.errors %}
+                                    {{ user_form.first_name }}
 
-                                    <div class="text-danger small mt-1">
+                                    {% for error in user_form.first_name.errors %}
 
-                                        <i class="bi bi-exclamation-circle me-1"></i>
-                                        {{ error }}
+                                        <div class="kme-error">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                            {{ error }}
+                                        </div>
 
-                                    </div>
-
-                                {% endfor %}
-
-                            </div>
-
-
-                            <!-- Profile Picture -->
-                            <div class="col-12">
-
-                                <label
-                                    for="{{ user_form.profile_picture.id_for_label }}"
-                                    class="form-label fw-semibold">
-
-                                    Profile Picture
-
-                                </label>
-
-                                {{ user_form.profile_picture }}
-
-                                <div class="form-text">
-
-                                    Upload a clear profile picture.
-                                    Accepted image formats depend on
-                                    your server configuration.
+                                    {% endfor %}
 
                                 </div>
 
-                                {% for error in user_form.profile_picture.errors %}
 
-                                    <div class="text-danger small mt-1">
+                                <!-- Last Name -->
 
-                                        <i class="bi bi-exclamation-circle me-1"></i>
-                                        {{ error }}
+                                <div class="kme-field">
+
+                                    <label
+                                        for="{{ user_form.last_name.id_for_label }}"
+                                        class="kme-label">
+
+                                        Last Name
+
+                                    </label>
+
+                                    {{ user_form.last_name }}
+
+                                    {% for error in user_form.last_name.errors %}
+
+                                        <div class="kme-error">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                            {{ error }}
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+
+                                <!-- Email -->
+
+                                <div class="kme-field">
+
+                                    <label
+                                        for="{{ user_form.email.id_for_label }}"
+                                        class="kme-label">
+
+                                        Email Address
+
+                                    </label>
+
+                                    {{ user_form.email }}
+
+                                    {% if user_form.email.help_text %}
+
+                                        <div class="kme-help">
+                                            {{ user_form.email.help_text }}
+                                        </div>
+
+                                    {% endif %}
+
+                                    {% for error in user_form.email.errors %}
+
+                                        <div class="kme-error">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                            {{ error }}
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+
+                                <!-- Phone -->
+
+                                <div class="kme-field">
+
+                                    <label
+                                        for="{{ user_form.phone_number.id_for_label }}"
+                                        class="kme-label">
+
+                                        Phone Number
+
+                                    </label>
+
+                                    {{ user_form.phone_number }}
+
+                                    {% for error in user_form.phone_number.errors %}
+
+                                        <div class="kme-error">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                            {{ error }}
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+
+                                <!-- Profile Picture -->
+
+                                <div class="kme-field kme-field-full">
+
+                                    <label
+                                        for="{{ user_form.profile_picture.id_for_label }}"
+                                        class="kme-label">
+
+                                        Profile Picture
+
+                                    </label>
+
+
+                                    <div class="kme-picture-area">
+
+                                        <div
+                                            class="kme-picture-preview"
+                                            id="kmePicturePreview">
+
+                                            {% if user_form.instance.profile_picture %}
+
+                                                <img
+                                                    src="{{ user_form.instance.profile_picture.url }}"
+                                                    alt="Current profile picture"
+                                                    id="kmePreviewImage">
+
+                                            {% else %}
+
+                                                <i
+                                                    class="bi bi-person"
+                                                    aria-hidden="true"
+                                                    id="kmePreviewIcon">
+                                                </i>
+
+                                            {% endif %}
+
+                                        </div>
+
+
+                                        <div>
+
+                                            {{ user_form.profile_picture }}
+
+                                            <p class="kme-picture-caption">
+                                                Keep your profile recognizable
+                                            </p>
+
+                                            <p class="kme-picture-note">
+                                                Upload a clear profile picture.
+                                                Accepted image formats depend on
+                                                your server configuration.
+                                            </p>
+
+                                        </div>
 
                                     </div>
 
-                                {% endfor %}
+
+                                    {% for error in user_form.profile_picture.errors %}
+
+                                        <div class="kme-error">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                            {{ error }}
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
 
                             </div>
 
@@ -275,59 +1314,391 @@
 
                     </div>
 
-                </div>
-
-            </div>
+                </section>
 
 
-            <!-- =================================================
-                 KUCSA PROFILE
-            ================================================== -->
+                <!-- =================================================
+                     KUCSA PROFILE
+                ================================================== -->
 
-            <div class="col-lg-8">
+                <section class="kme-large kme-reveal">
 
-                <div class="card shadow-sm border-0 h-100">
+                    <div class="kme-card">
 
-                    <div class="card-header">
+                        <div class="kme-card-header">
 
-                        <h5 class="mb-0 fw-bold">
+                            <div class="kme-card-icon">
+                                <i class="bi bi-person-vcard" aria-hidden="true"></i>
+                            </div>
 
-                            <i class="bi bi-person-vcard me-2"></i>
+                            <div>
 
-                            KUCSA Profile
+                                <h2 class="kme-card-title">
+                                    KUCSA Profile
+                                </h2>
 
-                        </h5>
+                                <p class="kme-card-subtitle">
+                                    Tell the community more about you.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="kme-card-body">
+
+                            <!-- Biography -->
+
+                            <div class="kme-field mb-4">
+
+                                <label
+                                    for="{{ profile_form.bio.id_for_label }}"
+                                    class="kme-label">
+
+                                    Biography
+
+                                </label>
+
+                                <div class="kme-bio-wrapper">
+
+                                    {{ profile_form.bio }}
+
+                                    <div
+                                        class="kme-character-count"
+                                        id="kmeBioCounter">
+                                        0 characters
+                                    </div>
+
+                                </div>
+
+                                {% if profile_form.bio.help_text %}
+
+                                    <div class="kme-help">
+                                        {{ profile_form.bio.help_text }}
+                                    </div>
+
+                                {% endif %}
+
+                                {% for error in profile_form.bio.errors %}
+
+                                    <div class="kme-error">
+                                        <i class="bi bi-exclamation-circle"></i>
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <div class="kme-personal-grid">
+
+
+                                <!-- Course -->
+
+                                <div class="kme-field">
+
+                                    <label
+                                        for="{{ profile_form.course.id_for_label }}"
+                                        class="kme-label">
+
+                                        Course
+
+                                    </label>
+
+                                    {{ profile_form.course }}
+
+                                    {% for error in profile_form.course.errors %}
+
+                                        <div class="kme-error">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                            {{ error }}
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+
+                                <!-- Year -->
+
+                                <div class="kme-field">
+
+                                    <label
+                                        for="{{ profile_form.year_of_study.id_for_label }}"
+                                        class="kme-label">
+
+                                        Year of Study
+
+                                    </label>
+
+                                    {{ profile_form.year_of_study }}
+
+                                    {% for error in profile_form.year_of_study.errors %}
+
+                                        <div class="kme-error">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                            {{ error }}
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+
+                                <!-- Technical Level -->
+
+                                <div class="kme-field kme-field-full">
+
+                                    <label
+                                        for="{{ profile_form.technical_level.id_for_label }}"
+                                        class="kme-label">
+
+                                        Technical Level
+
+                                    </label>
+
+                                    {{ profile_form.technical_level }}
+
+                                    {% for error in profile_form.technical_level.errors %}
+
+                                        <div class="kme-error">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                            {{ error }}
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
 
                     </div>
 
+                </section>
 
-                    <div class="card-body p-4">
 
-                        <!-- Bio -->
-                        <div class="mb-4">
+                <!-- =================================================
+                     MEMBERSHIP INFORMATION
+                ================================================== -->
 
-                            <label
-                                for="{{ profile_form.bio.id_for_label }}"
-                                class="form-label fw-semibold">
+                <section class="kme-small kme-reveal">
 
-                                Biography
+                    <div class="kme-card">
 
-                            </label>
+                        <div class="kme-card-header">
 
-                            {{ profile_form.bio }}
+                            <div class="kme-card-icon">
+                                <i class="bi bi-person-badge" aria-hidden="true"></i>
+                            </div>
 
-                            {% if profile_form.bio.help_text %}
+                            <div>
 
-                                <div class="form-text">
-                                    {{ profile_form.bio.help_text }}
+                                <h2 class="kme-card-title">
+                                    Membership Information
+                                </h2>
+
+                                <p class="kme-card-subtitle">
+                                    Managed by KUCSA.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="kme-card-body">
+
+                            {% if member %}
+
+                                <div class="kme-member-summary">
+
+
+                                    <div class="kme-member-name">
+
+                                        <span class="kme-member-name-label">
+                                            Member
+                                        </span>
+
+                                        <div class="kme-member-name-value">
+
+                                            {{ member.full_name|default:member.user.username }}
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="kme-summary-list">
+
+
+                                        <div class="kme-summary-item">
+
+                                            <span class="kme-summary-label">
+                                                Registration Number
+                                            </span>
+
+                                            <span class="kme-summary-value">
+
+                                                {{ member.user.registration_number|default:"Not specified" }}
+
+                                            </span>
+
+                                        </div>
+
+
+                                        <div class="kme-summary-item">
+
+                                            <span class="kme-summary-label">
+                                                Membership Number
+                                            </span>
+
+                                            <span class="kme-summary-value">
+
+                                                {{ member.membership_number|default:"Not assigned" }}
+
+                                            </span>
+
+                                        </div>
+
+
+                                        <div class="kme-summary-item">
+
+                                            <span class="kme-summary-label">
+                                                Membership Status
+                                            </span>
+
+                                            <span class="kme-summary-value">
+
+                                                {% if member.membership_status == "ACTIVE" %}
+
+                                                    <span class="kme-status kme-status-active">
+                                                        <i class="bi bi-check-circle"></i>
+                                                        Active
+                                                    </span>
+
+                                                {% elif member.membership_status == "PENDING" %}
+
+                                                    <span class="kme-status kme-status-pending">
+                                                        <i class="bi bi-clock"></i>
+                                                        Pending
+                                                    </span>
+
+                                                {% elif member.membership_status == "SUSPENDED" %}
+
+                                                    <span class="kme-status kme-status-suspended">
+                                                        <i class="bi bi-slash-circle"></i>
+                                                        Suspended
+                                                    </span>
+
+                                                {% elif member.membership_status == "EXPIRED" %}
+
+                                                    <span class="kme-status kme-status-expired">
+                                                        <i class="bi bi-calendar-x"></i>
+                                                        Expired
+                                                    </span>
+
+                                                {% else %}
+
+                                                    <span class="kme-status kme-status-default">
+                                                        {{ member.get_membership_status_display }}
+                                                    </span>
+
+                                                {% endif %}
+
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="kme-notice">
+
+                                        <i
+                                            class="bi bi-shield-lock-fill"
+                                            aria-hidden="true">
+                                        </i>
+
+                                        <span>
+                                            Membership number, membership status,
+                                            joined date and expiry date are managed
+                                            by the KUCSA membership and payment
+                                            workflow and cannot be changed here.
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            {% else %}
+
+                                <div class="kme-notice">
+
+                                    <i class="bi bi-info-circle"></i>
+
+                                    <span>
+                                        Membership information is currently
+                                        unavailable.
+                                    </span>
+
                                 </div>
 
                             {% endif %}
 
-                            {% for error in profile_form.bio.errors %}
+                        </div>
 
-                                <div class="text-danger small mt-1">
-                                    <i class="bi bi-exclamation-circle me-1"></i>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     TECHNICAL DOMAINS
+                ================================================== -->
+
+                <section class="kme-third kme-reveal">
+
+                    <div class="kme-card kme-mini-card">
+
+                        <div class="kme-card-header">
+
+                            <div class="kme-card-icon">
+                                <i class="bi bi-code-slash" aria-hidden="true"></i>
+                            </div>
+
+                            <div>
+
+                                <h2 class="kme-card-title">
+                                    Technical Domains
+                                </h2>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="kme-card-body">
+
+                            {{ profile_form.technical_domains }}
+
+                            <div class="kme-help">
+                                Separate multiple domains with commas.
+                            </div>
+
+                            <div class="kme-example">
+                                <strong>Example:</strong>
+                                Web Development, Cybersecurity,
+                                Artificial Intelligence
+                            </div>
+
+                            {% for error in profile_form.technical_domains.errors %}
+
+                                <div class="kme-error">
+                                    <i class="bi bi-exclamation-circle"></i>
                                     {{ error }}
                                 </div>
 
@@ -335,529 +1706,310 @@
 
                         </div>
 
-
-                        <div class="row g-3">
-
-                            <!-- Course -->
-                            <div class="col-md-8">
-
-                                <label
-                                    for="{{ profile_form.course.id_for_label }}"
-                                    class="form-label fw-semibold">
-
-                                    Course
-
-                                </label>
-
-                                {{ profile_form.course }}
-
-                                {% for error in profile_form.course.errors %}
-
-                                    <div class="text-danger small mt-1">
-                                        {{ error }}
-                                    </div>
-
-                                {% endfor %}
-
-                            </div>
-
-
-                            <!-- Year -->
-                            <div class="col-md-4">
-
-                                <label
-                                    for="{{ profile_form.year_of_study.id_for_label }}"
-                                    class="form-label fw-semibold">
-
-                                    Year of Study
-
-                                </label>
-
-                                {{ profile_form.year_of_study }}
-
-                                {% for error in profile_form.year_of_study.errors %}
-
-                                    <div class="text-danger small mt-1">
-                                        {{ error }}
-                                    </div>
-
-                                {% endfor %}
-
-                            </div>
-
-
-                            <!-- Technical Level -->
-                            <div class="col-12">
-
-                                <label
-                                    for="{{ profile_form.technical_level.id_for_label }}"
-                                    class="form-label fw-semibold">
-
-                                    Technical Level
-
-                                </label>
-
-                                {{ profile_form.technical_level }}
-
-                                {% for error in profile_form.technical_level.errors %}
-
-                                    <div class="text-danger small mt-1">
-                                        {{ error }}
-                                    </div>
-
-                                {% endfor %}
-
-                            </div>
-
-                        </div>
-
                     </div>
 
-                </div>
-
-            </div>
+                </section>
 
 
-            <!-- =================================================
-                 PROFILE SUMMARY
-            ================================================== -->
+                <!-- =================================================
+                     SKILLS
+                ================================================== -->
 
-            <div class="col-lg-4">
+                <section class="kme-third kme-reveal">
 
-                <div class="card shadow-sm border-0 h-100">
+                    <div class="kme-card kme-mini-card">
 
-                    <div class="card-header">
+                        <div class="kme-card-header">
 
-                        <h5 class="mb-0 fw-bold">
-
-                            <i class="bi bi-person-badge me-2"></i>
-
-                            Membership Information
-
-                        </h5>
-
-                    </div>
-
-
-                    <div class="card-body">
-
-                        {% if member %}
-
-                            <div class="mb-3">
-
-                                <small class="text-muted d-block">
-                                    Name
-                                </small>
-
-                                <strong>
-                                    {{ member.full_name|default:member.user.username }}
-                                </strong>
-
+                            <div class="kme-card-icon">
+                                <i class="bi bi-tools" aria-hidden="true"></i>
                             </div>
-
-
-                            <div class="mb-3">
-
-                                <small class="text-muted d-block">
-                                    Registration Number
-                                </small>
-
-                                <strong>
-                                    {{ member.user.registration_number|default:"Not specified" }}
-                                </strong>
-
-                            </div>
-
-
-                            <div class="mb-3">
-
-                                <small class="text-muted d-block">
-                                    Membership Number
-                                </small>
-
-                                <strong>
-                                    {{ member.membership_number|default:"Not assigned" }}
-                                </strong>
-
-                            </div>
-
-
-                            <div class="mb-3">
-
-                                <small class="text-muted d-block">
-                                    Membership Status
-                                </small>
-
-                                {% if member.membership_status == "ACTIVE" %}
-
-                                    <span class="badge bg-success">
-                                        <i class="bi bi-check-circle me-1"></i>
-                                        Active
-                                    </span>
-
-                                {% elif member.membership_status == "PENDING" %}
-
-                                    <span class="badge bg-warning text-dark">
-                                        <i class="bi bi-clock me-1"></i>
-                                        Pending
-                                    </span>
-
-                                {% elif member.membership_status == "SUSPENDED" %}
-
-                                    <span class="badge bg-danger">
-                                        <i class="bi bi-slash-circle me-1"></i>
-                                        Suspended
-                                    </span>
-
-                                {% elif member.membership_status == "EXPIRED" %}
-
-                                    <span class="badge bg-secondary">
-                                        <i class="bi bi-calendar-x me-1"></i>
-                                        Expired
-                                    </span>
-
-                                {% else %}
-
-                                    <span class="badge bg-secondary">
-                                        {{ member.get_membership_status_display }}
-                                    </span>
-
-                                {% endif %}
-
-                            </div>
-
-
-                            <div class="alert alert-info small mb-0">
-
-                                <i class="bi bi-info-circle me-1"></i>
-
-                                Membership number, membership status,
-                                joined date and expiry date are controlled
-                                by the KUCSA membership and payment
-                                workflow and cannot be changed here.
-
-                            </div>
-
-                        {% endif %}
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- =================================================
-                 TECHNICAL DOMAINS
-            ================================================== -->
-
-            <div class="col-md-4">
-
-                <div class="card shadow-sm border-0 h-100">
-
-                    <div class="card-header">
-
-                        <h6 class="mb-0 fw-bold">
-
-                            <i class="bi bi-code-slash me-2"></i>
-
-                            Technical Domains
-
-                        </h6>
-
-                    </div>
-
-                    <div class="card-body">
-
-                        {{ profile_form.technical_domains }}
-
-                        <div class="form-text">
-
-                            Separate multiple domains with commas.
-
-                            <br>
-
-                            Example:
-                            Web Development, Cybersecurity,
-                            Artificial Intelligence
-
-                        </div>
-
-                        {% for error in profile_form.technical_domains.errors %}
-
-                            <div class="text-danger small mt-1">
-                                {{ error }}
-                            </div>
-
-                        {% endfor %}
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- =================================================
-                 SKILLS
-            ================================================== -->
-
-            <div class="col-md-4">
-
-                <div class="card shadow-sm border-0 h-100">
-
-                    <div class="card-header">
-
-                        <h6 class="mb-0 fw-bold">
-
-                            <i class="bi bi-tools me-2"></i>
-
-                            Skills
-
-                        </h6>
-
-                    </div>
-
-                    <div class="card-body">
-
-                        {{ profile_form.skills }}
-
-                        <div class="form-text">
-
-                            Separate multiple skills with commas.
-
-                            <br>
-
-                            Example:
-                            Python, Django, JavaScript, Git
-
-                        </div>
-
-                        {% for error in profile_form.skills.errors %}
-
-                            <div class="text-danger small mt-1">
-                                {{ error }}
-                            </div>
-
-                        {% endfor %}
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- =================================================
-                 INTERESTS
-            ================================================== -->
-
-            <div class="col-md-4">
-
-                <div class="card shadow-sm border-0 h-100">
-
-                    <div class="card-header">
-
-                        <h6 class="mb-0 fw-bold">
-
-                            <i class="bi bi-lightbulb me-2"></i>
-
-                            Interests
-
-                        </h6>
-
-                    </div>
-
-                    <div class="card-body">
-
-                        {{ profile_form.interests }}
-
-                        <div class="form-text">
-
-                            Separate multiple interests with commas.
-
-                            <br>
-
-                            Example:
-                            AI, Cloud Computing, Networking
-
-                        </div>
-
-                        {% for error in profile_form.interests.errors %}
-
-                            <div class="text-danger small mt-1">
-                                {{ error }}
-                            </div>
-
-                        {% endfor %}
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- =================================================
-                 PROFESSIONAL LINKS
-            ================================================== -->
-
-            <div class="col-12">
-
-                <div class="card shadow-sm border-0">
-
-                    <div class="card-header">
-
-                        <h5 class="mb-0 fw-bold">
-
-                            <i class="bi bi-link-45deg me-2"></i>
-
-                            Professional Links
-
-                        </h5>
-
-                    </div>
-
-
-                    <div class="card-body p-4">
-
-                        <div class="row g-3">
-
-                            <!-- GitHub -->
-                            <div class="col-md-4">
-
-                                <label
-                                    for="{{ profile_form.github_url.id_for_label }}"
-                                    class="form-label fw-semibold">
-
-                                    <i class="bi bi-github me-1"></i>
-                                    GitHub
-
-                                </label>
-
-                                {{ profile_form.github_url }}
-
-                                <div class="form-text">
-                                    Example:
-                                    https://github.com/username
-                                </div>
-
-                                {% for error in profile_form.github_url.errors %}
-
-                                    <div class="text-danger small mt-1">
-                                        {{ error }}
-                                    </div>
-
-                                {% endfor %}
-
-                            </div>
-
-
-                            <!-- LinkedIn -->
-                            <div class="col-md-4">
-
-                                <label
-                                    for="{{ profile_form.linkedin_url.id_for_label }}"
-                                    class="form-label fw-semibold">
-
-                                    <i class="bi bi-linkedin me-1"></i>
-                                    LinkedIn
-
-                                </label>
-
-                                {{ profile_form.linkedin_url }}
-
-                                <div class="form-text">
-                                    Example:
-                                    https://linkedin.com/in/username
-                                </div>
-
-                                {% for error in profile_form.linkedin_url.errors %}
-
-                                    <div class="text-danger small mt-1">
-                                        {{ error }}
-                                    </div>
-
-                                {% endfor %}
-
-                            </div>
-
-
-                            <!-- Portfolio -->
-                            <div class="col-md-4">
-
-                                <label
-                                    for="{{ profile_form.portfolio_url.id_for_label }}"
-                                    class="form-label fw-semibold">
-
-                                    <i class="bi bi-globe me-1"></i>
-                                    Portfolio
-
-                                </label>
-
-                                {{ profile_form.portfolio_url }}
-
-                                <div class="form-text">
-                                    Example:
-                                    https://example.com
-                                </div>
-
-                                {% for error in profile_form.portfolio_url.errors %}
-
-                                    <div class="text-danger small mt-1">
-                                        {{ error }}
-                                    </div>
-
-                                {% endfor %}
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- =================================================
-                 FORM ACTIONS
-            ================================================== -->
-
-            <div class="col-12">
-
-                <div class="card shadow-sm border-0">
-
-                    <div class="card-body">
-
-                        <div class="d-flex flex-column flex-sm-row
-                                    justify-content-between
-                                    align-items-sm-center
-                                    gap-3">
 
                             <div>
 
-                                <small class="text-muted">
+                                <h2 class="kme-card-title">
+                                    Skills
+                                </h2>
 
-                                    <i class="bi bi-shield-check me-1"></i>
+                            </div>
 
-                                    Your membership/payment information
-                                    is protected from profile editing.
+                        </div>
 
-                                </small>
+
+                        <div class="kme-card-body">
+
+                            {{ profile_form.skills }}
+
+                            <div class="kme-help">
+                                Separate multiple skills with commas.
+                            </div>
+
+                            <div class="kme-example">
+                                <strong>Example:</strong>
+                                Python, Django, JavaScript, Git
+                            </div>
+
+                            {% for error in profile_form.skills.errors %}
+
+                                <div class="kme-error">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     INTERESTS
+                ================================================== -->
+
+                <section class="kme-third kme-reveal">
+
+                    <div class="kme-card kme-mini-card">
+
+                        <div class="kme-card-header">
+
+                            <div class="kme-card-icon">
+                                <i class="bi bi-lightbulb" aria-hidden="true"></i>
+                            </div>
+
+                            <div>
+
+                                <h2 class="kme-card-title">
+                                    Interests
+                                </h2>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="kme-card-body">
+
+                            {{ profile_form.interests }}
+
+                            <div class="kme-help">
+                                Separate multiple interests with commas.
+                            </div>
+
+                            <div class="kme-example">
+                                <strong>Example:</strong>
+                                AI, Cloud Computing, Networking
+                            </div>
+
+                            {% for error in profile_form.interests.errors %}
+
+                                <div class="kme-error">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     PROFESSIONAL LINKS
+                ================================================== -->
+
+                <section class="kme-full kme-reveal">
+
+                    <div class="kme-card">
+
+                        <div class="kme-card-header">
+
+                            <div class="kme-card-icon">
+                                <i class="bi bi-link-45deg" aria-hidden="true"></i>
+                            </div>
+
+                            <div>
+
+                                <h2 class="kme-card-title">
+                                    Professional Links
+                                </h2>
+
+                                <p class="kme-card-subtitle">
+                                    Help other members discover your work.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="kme-card-body">
+
+                            <div class="kme-personal-grid">
+
+
+                                <!-- GitHub -->
+
+                                <div class="kme-field">
+
+                                    <label
+                                        for="{{ profile_form.github_url.id_for_label }}"
+                                        class="kme-label">
+
+                                        <i class="bi bi-github"></i>
+                                        GitHub
+
+                                    </label>
+
+                                    <div class="kme-link-field">
+
+                                        <span class="kme-link-prefix">
+                                            <i class="bi bi-link-45deg"></i>
+                                        </span>
+
+                                        {{ profile_form.github_url }}
+
+                                    </div>
+
+                                    <div class="kme-help">
+                                        Example: https://github.com/username
+                                    </div>
+
+                                    {% for error in profile_form.github_url.errors %}
+
+                                        <div class="kme-error">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                            {{ error }}
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+
+                                <!-- LinkedIn -->
+
+                                <div class="kme-field">
+
+                                    <label
+                                        for="{{ profile_form.linkedin_url.id_for_label }}"
+                                        class="kme-label">
+
+                                        <i class="bi bi-linkedin"></i>
+                                        LinkedIn
+
+                                    </label>
+
+                                    <div class="kme-link-field">
+
+                                        <span class="kme-link-prefix">
+                                            <i class="bi bi-link-45deg"></i>
+                                        </span>
+
+                                        {{ profile_form.linkedin_url }}
+
+                                    </div>
+
+                                    <div class="kme-help">
+                                        Example: https://linkedin.com/in/username
+                                    </div>
+
+                                    {% for error in profile_form.linkedin_url.errors %}
+
+                                        <div class="kme-error">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                            {{ error }}
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+
+                                <!-- Portfolio -->
+
+                                <div class="kme-field">
+
+                                    <label
+                                        for="{{ profile_form.portfolio_url.id_for_label }}"
+                                        class="kme-label">
+
+                                        <i class="bi bi-globe"></i>
+                                        Portfolio
+
+                                    </label>
+
+                                    <div class="kme-link-field">
+
+                                        <span class="kme-link-prefix">
+                                            <i class="bi bi-link-45deg"></i>
+                                        </span>
+
+                                        {{ profile_form.portfolio_url }}
+
+                                    </div>
+
+                                    <div class="kme-help">
+                                        Example: https://example.com
+                                    </div>
+
+                                    {% for error in profile_form.portfolio_url.errors %}
+
+                                        <div class="kme-error">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                            {{ error }}
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     ACTIONS
+                ================================================== -->
+
+                <section class="kme-full kme-reveal">
+
+                    <div class="kme-card kme-action-card">
+
+                        <div class="kme-action-body">
+
+                            <div class="kme-action-note">
+
+                                <i
+                                    class="bi bi-shield-check"
+                                    aria-hidden="true">
+                                </i>
+
+                                <span>
+                                    Membership and payment information
+                                    remains protected.
+                                </span>
 
                             </div>
 
 
-                            <div class="d-flex gap-2">
+                            <div class="kme-action-buttons">
 
                                 <a
                                     href="{% url 'members:profile' %}"
-                                    class="btn btn-outline-secondary">
+                                    class="kme-btn kme-btn-cancel">
 
-                                    <i class="bi bi-x-circle me-1"></i>
-
+                                    <i class="bi bi-x-circle"></i>
                                     Cancel
 
                                 </a>
@@ -865,11 +2017,17 @@
 
                                 <button
                                     type="submit"
-                                    class="btn btn-primary">
+                                    class="kme-btn kme-btn-save"
+                                    id="kmeSaveButton">
 
-                                    <i class="bi bi-check-circle me-1"></i>
+                                    <i
+                                        class="bi bi-check-circle"
+                                        id="kmeSaveIcon">
+                                    </i>
 
-                                    Save Changes
+                                    <span id="kmeSaveText">
+                                        Save Changes
+                                    </span>
 
                                 </button>
 
@@ -879,13 +2037,458 @@
 
                     </div>
 
-                </div>
+                </section>
 
             </div>
 
-        </div>
+        </form>
 
-    </form>
+    </div>
+
+
+    <!-- =========================================================
+         INLINE JAVASCRIPT
+    ========================================================== -->
+
+    <script>
+        (function () {
+
+            "use strict";
+
+            const page = document.querySelector(
+                ".kucsa-member-edit-page"
+            );
+
+            if (!page) {
+                return;
+            }
+
+
+            /* =====================================================
+               REDUCED MOTION
+            ====================================================== */
+
+            const reduceMotion = window.matchMedia(
+                "(prefers-reduced-motion: reduce)"
+            ).matches;
+
+
+            /* =====================================================
+               REVEAL ANIMATION
+            ====================================================== */
+
+            const revealItems = page.querySelectorAll(".kme-reveal");
+
+            if (
+                !reduceMotion &&
+                "IntersectionObserver" in window
+            ) {
+
+                const observer = new IntersectionObserver(
+                    function (entries, obs) {
+
+                        entries.forEach(function (entry) {
+
+                            if (entry.isIntersecting) {
+
+                                entry.target.classList.add(
+                                    "kme-visible"
+                                );
+
+                                obs.unobserve(entry.target);
+
+                            }
+
+                        });
+
+                    },
+                    {
+                        threshold: 0.06,
+                        rootMargin: "0px 0px -25px 0px"
+                    }
+                );
+
+                revealItems.forEach(function (item) {
+                    observer.observe(item);
+                });
+
+            } else {
+
+                revealItems.forEach(function (item) {
+                    item.classList.add("kme-visible");
+                });
+
+            }
+
+
+            /* =====================================================
+               FORM CONTROL ENHANCEMENT
+            ====================================================== */
+
+            const controls = page.querySelectorAll(
+                "input:not([type='hidden']), select, textarea"
+            );
+
+            controls.forEach(function (control) {
+
+                control.setAttribute(
+                    "data-kme-enhanced",
+                    "true"
+                );
+
+                if (control.type === "email") {
+
+                    control.setAttribute(
+                        "autocomplete",
+                        "email"
+                    );
+
+                    control.setAttribute(
+                        "inputmode",
+                        "email"
+                    );
+
+                }
+
+                if (
+                    control.name &&
+                    control.name.includes("phone")
+                ) {
+
+                    control.setAttribute(
+                        "autocomplete",
+                        "tel"
+                    );
+
+                    control.setAttribute(
+                        "inputmode",
+                        "tel"
+                    );
+
+                }
+
+            });
+
+
+            /* =====================================================
+               PROFILE PICTURE PREVIEW
+            ====================================================== */
+
+            const pictureInput = page.querySelector(
+                'input[type="file"]'
+            );
+
+            const picturePreview = page.querySelector(
+                "#kmePicturePreview"
+            );
+
+            if (pictureInput && picturePreview) {
+
+                pictureInput.addEventListener(
+                    "change",
+                    function () {
+
+                        const file = this.files &&
+                            this.files.length
+                            ? this.files[0]
+                            : null;
+
+                        if (!file) {
+                            return;
+                        }
+
+                        if (!file.type.startsWith("image/")) {
+
+                            alert(
+                                "Please select a valid image file."
+                            );
+
+                            this.value = "";
+
+                            return;
+                        }
+
+                        const reader = new FileReader();
+
+                        reader.onload = function (event) {
+
+                            picturePreview.innerHTML = "";
+
+                            const image =
+                                document.createElement("img");
+
+                            image.src = event.target.result;
+                            image.alt = "Selected profile picture";
+                            image.loading = "eager";
+
+                            picturePreview.appendChild(image);
+
+                        };
+
+                        reader.readAsDataURL(file);
+
+                    }
+                );
+
+            }
+
+
+            /* =====================================================
+               BIO CHARACTER COUNTER
+            ====================================================== */
+
+            const bio = page.querySelector(
+                "#id_bio"
+            );
+
+            const bioCounter = page.querySelector(
+                "#kmeBioCounter"
+            );
+
+            function updateBioCounter() {
+
+                if (!bio || !bioCounter) {
+                    return;
+                }
+
+                const length = bio.value.length;
+
+                bioCounter.textContent =
+                    length === 1
+                        ? "1 character"
+                        : length + " characters";
+
+            }
+
+            if (bio && bioCounter) {
+
+                updateBioCounter();
+
+                bio.addEventListener(
+                    "input",
+                    updateBioCounter
+                );
+
+            }
+
+
+            /* =====================================================
+               URL FIELD NORMALIZATION
+               ====================================================== */
+
+            const urlFields = page.querySelectorAll(
+                'input[type="url"]'
+            );
+
+            urlFields.forEach(function (field) {
+
+                field.addEventListener(
+                    "blur",
+                    function () {
+
+                        const value = field.value.trim();
+
+                        if (
+                            value &&
+                            !/^https?:\/\//i.test(value)
+                        ) {
+
+                            field.value =
+                                "https://" + value;
+
+                        }
+
+                    }
+                );
+
+            });
+
+
+            /* =====================================================
+               FORM DIRTY STATE
+            ====================================================== */
+
+            const form = page.querySelector(
+                "#kucsaMemberEditForm"
+            );
+
+            let formChanged = false;
+
+            if (form) {
+
+                form.addEventListener(
+                    "input",
+                    function () {
+                        formChanged = true;
+                    }
+                );
+
+                form.addEventListener(
+                    "change",
+                    function () {
+                        formChanged = true;
+                    }
+                );
+
+            }
+
+
+            /* =====================================================
+               SAVE BUTTON / DOUBLE SUBMISSION PROTECTION
+            ====================================================== */
+
+            const saveButton = page.querySelector(
+                "#kmeSaveButton"
+            );
+
+            const saveText = page.querySelector(
+                "#kmeSaveText"
+            );
+
+            const saveIcon = page.querySelector(
+                "#kmeSaveIcon"
+            );
+
+            if (form && saveButton) {
+
+                form.addEventListener(
+                    "submit",
+                    function () {
+
+                        if (
+                            saveButton.dataset.submitted ===
+                            "true"
+                        ) {
+                            return;
+                        }
+
+                        saveButton.dataset.submitted =
+                            "true";
+
+                        saveButton.disabled = true;
+
+                        if (saveIcon) {
+
+                            saveIcon.className =
+                                "spinner-border spinner-border-sm";
+
+                        }
+
+                        if (saveText) {
+
+                            saveText.textContent =
+                                "Saving Changes...";
+
+                        }
+
+                    }
+                );
+
+            }
+
+
+            /* =====================================================
+               PREVENT UNNECESSARY NAVIGATION WARNING
+            ====================================================== */
+
+            const navigationLinks = page.querySelectorAll(
+                'a[href]'
+            );
+
+            navigationLinks.forEach(function (link) {
+
+                link.addEventListener(
+                    "click",
+                    function () {
+
+                        formChanged = false;
+
+                    }
+                );
+
+            });
+
+
+            /* =====================================================
+               FOCUS FIRST INVALID FIELD
+            ====================================================== */
+
+            const firstError = page.querySelector(
+                ".kme-error"
+            );
+
+            if (firstError) {
+
+                const parent = firstError.closest(
+                    ".kme-field"
+                );
+
+                if (parent) {
+
+                    const invalidControl =
+                        parent.querySelector(
+                            "input, select, textarea"
+                        );
+
+                    if (invalidControl) {
+
+                        window.setTimeout(
+                            function () {
+
+                                invalidControl.scrollIntoView({
+                                    behavior:
+                                        reduceMotion
+                                            ? "auto"
+                                            : "smooth",
+                                    block: "center"
+                                });
+
+                            },
+                            150
+                        );
+
+                    }
+
+                }
+
+            }
+
+
+            /* =====================================================
+               PAGE CACHE RESET
+            ====================================================== */
+
+            window.addEventListener(
+                "pageshow",
+                function () {
+
+                    if (saveButton) {
+
+                        saveButton.disabled = false;
+
+                        delete saveButton.dataset.submitted;
+
+                    }
+
+                    if (saveText) {
+
+                        saveText.textContent =
+                            "Save Changes";
+
+                    }
+
+                    if (saveIcon) {
+
+                        saveIcon.className =
+                            "bi bi-check-circle";
+
+                    }
+
+                }
+            );
+
+        })();
+    </script>
 
 </div>
 

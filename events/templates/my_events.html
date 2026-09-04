@@ -4,144 +4,1016 @@
 
 {% block content %}
 
-<div class="container-fluid py-4">
+<div class="kucsa-my-events-page">
 
-    <!-- =========================================================
-         PAGE HEADER
-    ========================================================== -->
+    <style>
+        /* =========================================================
+           KUCSA — MY EVENTS
+           Scoped styling only
+           ========================================================= */
 
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        .kucsa-my-events-page {
+            --k-primary: #0d6efd;
+            --k-primary-dark: #0a58ca;
+            --k-success: #198754;
+            --k-warning: #ffc107;
+            --k-danger: #dc3545;
+            --k-info: #0dcaf0;
+            --k-dark: #172033;
+            --k-text: #273043;
+            --k-muted: #6c757d;
+            --k-border: #e7eaf0;
+            --k-surface: #ffffff;
+            --k-soft: #f6f8fb;
+            --k-soft-blue: #f1f6ff;
+            --k-radius: 18px;
+            --k-radius-sm: 13px;
+            --k-shadow: 0 10px 32px rgba(23, 32, 51, .065);
+            --k-shadow-hover: 0 17px 40px rgba(23, 32, 51, .12);
 
-        <div>
+            min-height: 100%;
+            padding: 28px 0 50px;
+            background:
+                radial-gradient(
+                    circle at 5% 0%,
+                    rgba(13, 110, 253, .07),
+                    transparent 27%
+                ),
+                radial-gradient(
+                    circle at 96% 15%,
+                    rgba(25, 135, 84, .045),
+                    transparent 24%
+                ),
+                #f6f8fb;
+            color: var(--k-text);
+        }
 
-            <h2 class="fw-bold mb-1">
+        .kucsa-my-events-page *,
+        .kucsa-my-events-page *::before,
+        .kucsa-my-events-page *::after {
+            box-sizing: border-box;
+        }
 
-                <i class="bi bi-calendar-check me-2"></i>
+        /* =========================================================
+           PAGE HEADER
+           ========================================================= */
 
-                My Events
+        .kucsa-events-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 22px;
+            margin-bottom: 28px;
+        }
 
-            </h2>
+        .kucsa-events-heading {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            min-width: 0;
+        }
 
-            <p class="text-muted mb-0">
+        .kucsa-events-heading-icon {
+            width: 54px;
+            height: 54px;
+            min-width: 54px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #0d6efd, #4f8dfd);
+            color: #fff;
+            font-size: 1.35rem;
+            box-shadow: 0 10px 24px rgba(13, 110, 253, .2);
+        }
 
-                Manage and view the KUCSA events you have registered for.
+        .kucsa-events-heading h2 {
+            margin: 0;
+            color: var(--k-dark);
+            font-size: clamp(1.55rem, 2.5vw, 2.05rem);
+            font-weight: 800;
+            letter-spacing: -.03em;
+            line-height: 1.2;
+        }
 
-            </p>
+        .kucsa-events-heading p {
+            margin: 6px 0 0;
+            color: var(--k-muted);
+            font-size: .92rem;
+            line-height: 1.6;
+        }
 
-        </div>
+        .kucsa-browse-btn {
+            min-height: 46px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 10px 17px;
+            border-radius: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+            box-shadow: 0 7px 18px rgba(13, 110, 253, .13);
+            transition:
+                transform .2s ease,
+                box-shadow .2s ease;
+        }
+
+        .kucsa-browse-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 11px 24px rgba(13, 110, 253, .2);
+        }
+
+        /* =========================================================
+           SECTION WRAPPER
+           ========================================================= */
+
+        .kucsa-events-section {
+            background: var(--k-surface);
+            border: 1px solid rgba(231, 234, 240, .92);
+            border-radius: var(--k-radius);
+            box-shadow: var(--k-shadow);
+            overflow: hidden;
+            margin-bottom: 22px;
+        }
+
+        .kucsa-section-header {
+            min-height: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 15px 22px;
+            border-bottom: 1px solid var(--k-border);
+            background: rgba(255, 255, 255, .96);
+        }
+
+        .kucsa-section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .kucsa-section-title-icon {
+            width: 37px;
+            height: 37px;
+            min-width: 37px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: rgba(13, 110, 253, .09);
+            color: var(--k-primary);
+        }
+
+        .kucsa-section-title h5 {
+            margin: 0;
+            color: var(--k-dark);
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        .kucsa-section-count {
+            min-width: 28px;
+            height: 26px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 9px;
+            border-radius: 999px;
+            background: var(--k-soft-blue);
+            color: var(--k-primary);
+            font-size: .75rem;
+            font-weight: 800;
+        }
+
+        .kucsa-section-count.muted {
+            background: #f1f3f5;
+            color: var(--k-muted);
+        }
+
+        .kucsa-section-body {
+            padding: 22px;
+        }
+
+        /* =========================================================
+           UPCOMING EVENT CARDS
+           ========================================================= */
+
+        .kucsa-upcoming-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .kucsa-event-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: #fff;
+            border: 1px solid var(--k-border);
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(23, 32, 51, .045);
+            transition:
+                transform .25s ease,
+                box-shadow .25s ease,
+                border-color .25s ease;
+        }
+
+        .kucsa-event-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(13, 110, 253, .22);
+            box-shadow: var(--k-shadow-hover);
+        }
+
+        /* =========================================================
+           EVENT IMAGE
+           ========================================================= */
+
+        .kucsa-event-image {
+            position: relative;
+            height: 190px;
+            overflow: hidden;
+            background:
+                radial-gradient(
+                    circle at 20% 20%,
+                    rgba(13, 110, 253, .35),
+                    transparent 32%
+                ),
+                linear-gradient(135deg, #172033, #263552);
+        }
+
+        .kucsa-event-image img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            transition: transform .45s ease;
+        }
+
+        .kucsa-event-card:hover .kucsa-event-image img {
+            transform: scale(1.045);
+        }
+
+        .kucsa-event-image::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                180deg,
+                rgba(0, 0, 0, .02),
+                rgba(0, 0, 0, .3)
+            );
+            pointer-events: none;
+        }
+
+        .kucsa-event-placeholder {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, .9);
+        }
+
+        .kucsa-event-placeholder-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .kucsa-event-placeholder-content i {
+            display: block;
+            font-size: 3rem;
+            opacity: .75;
+        }
+
+        .kucsa-event-placeholder-content span {
+            display: block;
+            margin-top: 6px;
+            font-size: .78rem;
+            font-weight: 700;
+            opacity: .8;
+        }
+
+        .kucsa-image-status {
+            position: absolute;
+            z-index: 4;
+            top: 12px;
+            left: 12px;
+        }
+
+        .kucsa-status-badge {
+            min-height: 28px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 999px;
+            font-size: .72rem;
+            font-weight: 800;
+            line-height: 1;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .kucsa-status-registered {
+            background: rgba(25, 135, 84, .94);
+            color: #fff;
+        }
+
+        .kucsa-status-attended {
+            background: rgba(25, 135, 84, .94);
+            color: #fff;
+        }
+
+        .kucsa-status-absent {
+            background: rgba(255, 193, 7, .95);
+            color: #1f1a00;
+        }
+
+        .kucsa-status-cancelled {
+            background: rgba(108, 117, 125, .94);
+            color: #fff;
+        }
+
+        .kucsa-status-default {
+            background: rgba(23, 32, 51, .92);
+            color: #fff;
+        }
+
+        /* =========================================================
+           EVENT CARD BODY
+           ========================================================= */
+
+        .kucsa-event-card-body {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            padding: 18px;
+        }
+
+        .kucsa-event-type {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 6px;
+            color: var(--k-muted);
+            font-size: .74rem;
+            font-weight: 650;
+        }
+
+        .kucsa-event-type i {
+            color: var(--k-primary);
+        }
+
+        .kucsa-event-title {
+            margin: 0 0 15px;
+            color: var(--k-dark);
+            font-size: 1.03rem;
+            font-weight: 800;
+            line-height: 1.4;
+            letter-spacing: -.01em;
+        }
+
+        /* =========================================================
+           EVENT META
+           ========================================================= */
+
+        .kucsa-event-meta {
+            display: grid;
+            gap: 9px;
+            margin-bottom: 14px;
+        }
+
+        .kucsa-event-meta-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            color: var(--k-muted);
+            font-size: .8rem;
+            line-height: 1.45;
+        }
+
+        .kucsa-event-meta-item i {
+            width: 17px;
+            min-width: 17px;
+            margin-top: 2px;
+            color: var(--k-primary);
+            text-align: center;
+        }
+
+        .kucsa-event-meta-item span {
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+        /* =========================================================
+           ONLINE NOTICE
+           ========================================================= */
+
+        .kucsa-online-notice {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            margin-bottom: 14px;
+            padding: 10px 11px;
+            border: 1px solid #b6effb;
+            border-radius: 11px;
+            background: #f1fcfe;
+            color: #055160;
+            font-size: .76rem;
+            line-height: 1.45;
+        }
+
+        .kucsa-online-notice i {
+            margin-top: 1px;
+            color: #087990;
+        }
+
+        /* =========================================================
+           CARD ACTIONS
+           ========================================================= */
+
+        .kucsa-event-actions {
+            margin-top: auto;
+            display: grid;
+            gap: 8px;
+        }
+
+        .kucsa-event-actions .btn {
+            min-height: 42px;
+            border-radius: 11px;
+            font-size: .82rem;
+            font-weight: 700;
+            transition:
+                transform .2s ease,
+                box-shadow .2s ease;
+        }
+
+        .kucsa-event-actions .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .kucsa-join-btn {
+            box-shadow: 0 6px 15px rgba(13, 202, 240, .12);
+        }
+
+        /* =========================================================
+           EMPTY STATE
+           ========================================================= */
+
+        .kucsa-empty-state {
+            padding: 52px 20px;
+            text-align: center;
+        }
+
+        .kucsa-empty-icon {
+            width: 72px;
+            height: 72px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 22px;
+            background: #f2f4f7;
+            color: #8a94a6;
+            font-size: 2rem;
+        }
+
+        .kucsa-empty-state h5 {
+            margin: 17px 0 7px;
+            color: var(--k-dark);
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        .kucsa-empty-state p {
+            max-width: 460px;
+            margin: 0 auto 21px;
+            color: var(--k-muted);
+            font-size: .86rem;
+            line-height: 1.65;
+        }
+
+        .kucsa-empty-state .btn {
+            min-height: 43px;
+            border-radius: 11px;
+            font-weight: 700;
+        }
+
+        /* =========================================================
+           TABLE / RECORDS
+           ========================================================= */
+
+        .kucsa-records-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .kucsa-records-table {
+            width: 100%;
+            min-width: 760px;
+            margin: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .kucsa-records-table thead th {
+            padding: 13px 15px;
+            border-bottom: 1px solid var(--k-border);
+            background: #f8f9fb;
+            color: var(--k-muted);
+            font-size: .71rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .055em;
+            white-space: nowrap;
+        }
+
+        .kucsa-records-table tbody td {
+            padding: 15px;
+            border-bottom: 1px solid #eef0f4;
+            color: var(--k-text);
+            font-size: .82rem;
+            vertical-align: middle;
+        }
+
+        .kucsa-records-table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .kucsa-records-table tbody tr {
+            transition: background-color .18s ease;
+        }
+
+        .kucsa-records-table tbody tr:hover {
+            background: #fafcff;
+        }
+
+        .kucsa-record-event {
+            min-width: 180px;
+        }
+
+        .kucsa-record-event-title {
+            color: var(--k-dark);
+            font-weight: 750;
+            line-height: 1.4;
+        }
+
+        .kucsa-record-event-type {
+            display: block;
+            margin-top: 3px;
+            color: var(--k-muted);
+            font-size: .73rem;
+        }
+
+        .kucsa-record-icon {
+            color: var(--k-primary);
+        }
+
+        .kucsa-records-table .btn {
+            min-height: 38px;
+            border-radius: 10px;
+            font-size: .77rem;
+            font-weight: 700;
+        }
+
+        /* =========================================================
+           MOBILE RECORD CARDS
+           ========================================================= */
+
+        .kucsa-mobile-records {
+            display: none;
+        }
+
+        .kucsa-mobile-record {
+            padding: 15px;
+            border: 1px solid var(--k-border);
+            border-radius: 14px;
+            background: #fff;
+        }
+
+        .kucsa-mobile-record + .kucsa-mobile-record {
+            margin-top: 10px;
+        }
+
+        .kucsa-mobile-record-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 13px;
+        }
+
+        .kucsa-mobile-record-title {
+            min-width: 0;
+        }
+
+        .kucsa-mobile-record-title strong {
+            display: block;
+            color: var(--k-dark);
+            font-size: .87rem;
+            line-height: 1.4;
+        }
+
+        .kucsa-mobile-record-title small {
+            display: block;
+            margin-top: 3px;
+            color: var(--k-muted);
+            font-size: .72rem;
+        }
+
+        .kucsa-mobile-record-details {
+            display: grid;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .kucsa-mobile-detail {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            color: var(--k-muted);
+            font-size: .77rem;
+        }
+
+        .kucsa-mobile-detail i {
+            width: 16px;
+            min-width: 16px;
+            color: var(--k-primary);
+            text-align: center;
+        }
+
+        .kucsa-mobile-record .btn {
+            width: 100%;
+            min-height: 42px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: .78rem;
+        }
+
+        /* =========================================================
+           ACCESSIBILITY
+           ========================================================= */
+
+        .kucsa-my-events-page a:focus-visible,
+        .kucsa-my-events-page button:focus-visible {
+            outline: 3px solid rgba(13, 110, 253, .25);
+            outline-offset: 2px;
+        }
+
+        /* =========================================================
+           LARGE TABLET
+           ========================================================= */
+
+        @media (max-width: 1199.98px) {
+            .kucsa-upcoming-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .kucsa-my-events-page {
+                padding-top: 24px;
+            }
+        }
+
+        /* =========================================================
+           TABLET
+           ========================================================= */
+
+        @media (max-width: 991.98px) {
+            .kucsa-events-header {
+                align-items: flex-start;
+            }
+
+            .kucsa-upcoming-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 16px;
+            }
+
+            .kucsa-event-image {
+                height: 180px;
+            }
+
+            .kucsa-section-body {
+                padding: 18px;
+            }
+        }
+
+        /* =========================================================
+           MOBILE
+           ========================================================= */
+
+        @media (max-width: 767.98px) {
+            .kucsa-my-events-page {
+                padding: 18px 0 35px;
+            }
+
+            .kucsa-events-header {
+                flex-direction: column;
+                gap: 15px;
+                margin-bottom: 20px;
+            }
+
+            .kucsa-events-heading {
+                width: 100%;
+            }
+
+            .kucsa-browse-btn {
+                width: 100%;
+            }
+
+            .kucsa-events-heading-icon {
+                width: 47px;
+                height: 47px;
+                min-width: 47px;
+                border-radius: 14px;
+            }
+
+            .kucsa-upcoming-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .kucsa-event-image {
+                height: 210px;
+            }
+
+            .kucsa-event-card-body {
+                padding: 17px;
+            }
+
+            .kucsa-section-header {
+                padding: 13px 16px;
+            }
+
+            .kucsa-section-body {
+                padding: 15px;
+            }
+
+            .kucsa-records-wrapper {
+                display: none;
+            }
+
+            .kucsa-mobile-records {
+                display: block;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .kucsa-events-heading {
+                gap: 10px;
+            }
+
+            .kucsa-events-heading h2 {
+                font-size: 1.4rem;
+            }
+
+            .kucsa-events-heading p {
+                font-size: .83rem;
+            }
+
+            .kucsa-events-heading-icon {
+                width: 43px;
+                height: 43px;
+                min-width: 43px;
+                font-size: 1.1rem;
+            }
+
+            .kucsa-section-title h5 {
+                font-size: .92rem;
+            }
+
+            .kucsa-section-title-icon {
+                width: 34px;
+                height: 34px;
+                min-width: 34px;
+            }
+
+            .kucsa-event-image {
+                height: 195px;
+            }
+
+            .kucsa-event-title {
+                font-size: .98rem;
+            }
+
+            .kucsa-empty-state {
+                padding: 42px 14px;
+            }
+
+            .kucsa-empty-icon {
+                width: 64px;
+                height: 64px;
+                font-size: 1.75rem;
+            }
+        }
+
+        @media (max-width: 359.98px) {
+            .kucsa-my-events-page {
+                padding-top: 14px;
+            }
+
+            .kucsa-events-heading-icon {
+                width: 39px;
+                height: 39px;
+                min-width: 39px;
+                border-radius: 11px;
+            }
+
+            .kucsa-events-heading h2 {
+                font-size: 1.25rem;
+            }
+
+            .kucsa-event-image {
+                height: 180px;
+            }
+
+            .kucsa-event-card-body {
+                padding: 14px;
+            }
+
+            .kucsa-section-header {
+                padding: 12px 13px;
+            }
+
+            .kucsa-section-body {
+                padding: 12px;
+            }
+
+            .kucsa-mobile-record {
+                padding: 13px;
+            }
+        }
+
+        /* =========================================================
+           REDUCED MOTION
+           ========================================================= */
+
+        @media (prefers-reduced-motion: reduce) {
+            .kucsa-my-events-page *,
+            .kucsa-my-events-page *::before,
+            .kucsa-my-events-page *::after {
+                scroll-behavior: auto !important;
+                transition-duration: .01ms !important;
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+            }
+        }
+
+        /* =========================================================
+           JS REVEAL
+           ========================================================= */
+
+        .kucsa-event-card.kucsa-reveal {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+
+        .kucsa-event-card.kucsa-reveal.kucsa-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .kucsa-event-card.kucsa-reveal {
+                opacity: 1;
+                transform: none;
+            }
+        }
+    </style>
 
 
-        <div class="d-flex gap-2 mt-3 mt-md-0">
+    <div class="container-fluid">
+
+        <!-- =====================================================
+             PAGE HEADER
+             ===================================================== -->
+
+        <div class="kucsa-events-header">
+
+            <div class="kucsa-events-heading">
+
+                <div
+                    class="kucsa-events-heading-icon"
+                    aria-hidden="true">
+
+                    <i class="bi bi-calendar-check"></i>
+
+                </div>
+
+                <div>
+
+                    <h2>My Events</h2>
+
+                    <p>
+                        Manage and view the KUCSA events you have registered for.
+                    </p>
+
+                </div>
+
+            </div>
+
 
             <a
                 href="{% url 'events:list' %}"
-                class="btn btn-primary"
-            >
+                class="btn btn-primary kucsa-browse-btn">
 
-                <i class="bi bi-calendar-event me-1"></i>
+                <i
+                    class="bi bi-calendar-event"
+                    aria-hidden="true">
+                </i>
 
-                Browse Events
+                <span>Browse Events</span>
 
             </a>
 
         </div>
 
-    </div>
 
+        <!-- =====================================================
+             UPCOMING EVENTS
+             ===================================================== -->
 
-    <!-- =========================================================
-         UPCOMING EVENTS
-    ========================================================== -->
+        <section class="kucsa-events-section">
 
-    <div class="card border-0 shadow-sm mb-4">
+            <div class="kucsa-section-header">
 
-        <div class="card-header bg-white py-3">
+                <div class="kucsa-section-title">
 
-            <div class="d-flex justify-content-between align-items-center">
+                    <span
+                        class="kucsa-section-title-icon"
+                        aria-hidden="true">
 
-                <h5 class="mb-0 fw-bold">
-
-                    <i class="bi bi-calendar2-week me-2"></i>
-
-                    Upcoming Events
-
-                    <span class="badge bg-primary ms-2">
-
-                        {{ upcoming_events|length }}
+                        <i class="bi bi-calendar2-week"></i>
 
                     </span>
 
-                </h5>
+                    <h5>Upcoming Events</h5>
+
+                    <span class="kucsa-section-count">
+                        {{ upcoming_events|length }}
+                    </span>
+
+                </div>
 
             </div>
 
-        </div>
 
+            <div class="kucsa-section-body">
 
-        <div class="card-body">
+                {% if upcoming_events %}
 
-            {% if upcoming_events %}
+                    <div class="kucsa-upcoming-grid">
 
-                <div class="row g-4">
+                        {% for registration in upcoming_events %}
 
-                    {% for registration in upcoming_events %}
+                            <article class="kucsa-event-card kucsa-reveal">
 
-                        <div class="col-xl-4 col-lg-6 col-md-6">
+                                <!-- EVENT IMAGE -->
 
-                            <div class="card h-100 border shadow-sm overflow-hidden">
+                                <div class="kucsa-event-image">
 
-                                <!-- =================================================
-                                     EVENT IMAGE
-                                ================================================== -->
+                                    {% if registration.event.image %}
 
-                                {% if registration.event.image %}
+                                        <img
+                                            src="{{ registration.event.image.url }}"
+                                            alt="{{ registration.event.title }}"
+                                            loading="lazy">
 
-                                    <img
-                                        src="{{ registration.event.image.url }}"
-                                        class="card-img-top"
-                                        style="height: 180px; object-fit: cover;"
-                                        alt="{{ registration.event.title }}"
-                                    >
+                                    {% else %}
 
-                                {% else %}
+                                        <div class="kucsa-event-placeholder">
 
-                                    <div
-                                        class="bg-light d-flex align-items-center justify-content-center"
-                                        style="height: 180px;"
-                                    >
+                                            <div class="kucsa-event-placeholder-content">
 
-                                        <div class="text-center text-muted">
+                                                <i
+                                                    class="bi bi-calendar-event"
+                                                    aria-hidden="true">
+                                                </i>
 
-                                            <i class="bi bi-calendar-event display-5"></i>
+                                                <span>KUCSA Event</span>
 
-                                            <div class="small mt-2">
-                                                KUCSA Event
                                             </div>
 
                                         </div>
 
-                                    </div>
-
-                                {% endif %}
+                                    {% endif %}
 
 
-                                <!-- =================================================
-                                     CARD BODY
-                                ================================================== -->
+                                    <!-- REGISTRATION STATUS -->
 
-                                <div class="card-body d-flex flex-column">
-
-                                    <!-- =================================================
-                                         REGISTRATION STATUS
-                                    ================================================== -->
-
-                                    <div class="mb-2">
+                                    <div class="kucsa-image-status">
 
                                         {% if registration.status == "REGISTERED" %}
 
-                                            <span class="badge bg-success">
+                                            <span class="kucsa-status-badge kucsa-status-registered">
 
-                                                <i class="bi bi-check-circle me-1"></i>
+                                                <i
+                                                    class="bi bi-check-circle"
+                                                    aria-hidden="true">
+                                                </i>
 
                                                 Registered
 
@@ -149,9 +1021,12 @@
 
                                         {% elif registration.status == "ATTENDED" %}
 
-                                            <span class="badge bg-success">
+                                            <span class="kucsa-status-badge kucsa-status-attended">
 
-                                                <i class="bi bi-patch-check me-1"></i>
+                                                <i
+                                                    class="bi bi-patch-check"
+                                                    aria-hidden="true">
+                                                </i>
 
                                                 Attended
 
@@ -159,9 +1034,12 @@
 
                                         {% elif registration.status == "ABSENT" %}
 
-                                            <span class="badge bg-warning text-dark">
+                                            <span class="kucsa-status-badge kucsa-status-absent">
 
-                                                <i class="bi bi-person-x me-1"></i>
+                                                <i
+                                                    class="bi bi-person-x"
+                                                    aria-hidden="true">
+                                                </i>
 
                                                 Absent
 
@@ -169,9 +1047,12 @@
 
                                         {% elif registration.status == "CANCELLED" %}
 
-                                            <span class="badge bg-secondary">
+                                            <span class="kucsa-status-badge kucsa-status-cancelled">
 
-                                                <i class="bi bi-x-circle me-1"></i>
+                                                <i
+                                                    class="bi bi-x-circle"
+                                                    aria-hidden="true">
+                                                </i>
 
                                                 Cancelled
 
@@ -179,7 +1060,7 @@
 
                                         {% else %}
 
-                                            <span class="badge bg-secondary">
+                                            <span class="kucsa-status-badge kucsa-status-default">
 
                                                 {{ registration.get_status_display }}
 
@@ -189,82 +1070,108 @@
 
                                     </div>
 
-
-                                    <!-- =================================================
-                                         EVENT TYPE
-                                    ================================================== -->
-
-                                    <small class="text-muted mb-1">
-
-                                        <i class="bi bi-tag me-1"></i>
-
-                                        {{ registration.event.get_event_type_display }}
-
-                                    </small>
+                                </div>
 
 
-                                    <!-- =================================================
-                                         EVENT TITLE
-                                    ================================================== -->
+                                <!-- CARD BODY -->
 
-                                    <h5 class="fw-bold mb-3">
+                                <div class="kucsa-event-card-body">
+
+                                    <!-- EVENT TYPE -->
+
+                                    <div class="kucsa-event-type">
+
+                                        <i
+                                            class="bi bi-tag"
+                                            aria-hidden="true">
+                                        </i>
+
+                                        <span>
+                                            {{ registration.event.get_event_type_display }}
+                                        </span>
+
+                                    </div>
+
+
+                                    <!-- EVENT TITLE -->
+
+                                    <h3 class="kucsa-event-title">
 
                                         {{ registration.event.title }}
 
-                                    </h5>
+                                    </h3>
 
 
-                                    <!-- =================================================
-                                         EVENT INFORMATION
-                                    ================================================== -->
+                                    <!-- EVENT INFORMATION -->
 
-                                    <div class="small text-muted mb-3">
+                                    <div class="kucsa-event-meta">
 
                                         <!-- DATE -->
 
-                                        <div class="mb-2">
+                                        <div class="kucsa-event-meta-item">
 
-                                            <i class="bi bi-calendar3 me-2"></i>
+                                            <i
+                                                class="bi bi-calendar3"
+                                                aria-hidden="true">
+                                            </i>
 
-                                            {{ registration.event.start_datetime|date:"D, d M Y" }}
+                                            <span>
+                                                {{ registration.event.start_datetime|date:"D, d M Y" }}
+                                            </span>
 
                                         </div>
 
 
                                         <!-- TIME -->
 
-                                        <div class="mb-2">
+                                        <div class="kucsa-event-meta-item">
 
-                                            <i class="bi bi-clock me-2"></i>
+                                            <i
+                                                class="bi bi-clock"
+                                                aria-hidden="true">
+                                            </i>
 
-                                            {{ registration.event.start_datetime|date:"g:i A" }}
+                                            <span>
 
-                                            {% if registration.event.end_datetime %}
+                                                {{ registration.event.start_datetime|date:"g:i A" }}
 
-                                                –
+                                                {% if registration.event.end_datetime %}
 
-                                                {{ registration.event.end_datetime|date:"g:i A" }}
+                                                    –
+                                                    {{ registration.event.end_datetime|date:"g:i A" }}
 
-                                            {% endif %}
+                                                {% endif %}
+
+                                            </span>
 
                                         </div>
 
 
                                         <!-- LOCATION -->
 
-                                        <div>
+                                        <div class="kucsa-event-meta-item">
 
                                             {% if registration.event.is_online %}
 
-                                                <i class="bi bi-camera-video me-2"></i>
+                                                <i
+                                                    class="bi bi-camera-video"
+                                                    aria-hidden="true">
+                                                </i>
 
-                                                Online Event
+                                                <span>
+                                                    Online Event
+                                                </span>
 
                                             {% else %}
 
-                                                <i class="bi bi-geo-alt me-2"></i>
+                                                <i
+                                                    class="bi bi-geo-alt"
+                                                    aria-hidden="true">
+                                                </i>
 
-                                                {{ registration.event.venue }}
+                                                <span>
+                                                    {{ registration.event.venue }}
+                                                </span>
 
                                             {% endif %}
 
@@ -273,28 +1180,29 @@
                                     </div>
 
 
-                                    <!-- =================================================
-                                         ONLINE EVENT NOTICE
-                                    ================================================== -->
+                                    <!-- ONLINE NOTICE -->
 
                                     {% if registration.event.is_online %}
 
-                                        <div class="alert alert-info py-2 px-3 small mb-3">
+                                        <div class="kucsa-online-notice">
 
-                                            <i class="bi bi-camera-video me-1"></i>
+                                            <i
+                                                class="bi bi-camera-video"
+                                                aria-hidden="true">
+                                            </i>
 
-                                            This is an online event.
+                                            <span>
+                                                This is an online event.
+                                            </span>
 
                                         </div>
 
                                     {% endif %}
 
 
-                                    <!-- =================================================
-                                         ACTIONS
-                                    ================================================== -->
+                                    <!-- ACTIONS -->
 
-                                    <div class="mt-auto">
+                                    <div class="kucsa-event-actions">
 
                                         {% if registration.event.is_online and registration.event.online_link %}
 
@@ -302,10 +1210,12 @@
                                                 href="{{ registration.event.online_link }}"
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                class="btn btn-sm btn-outline-info w-100 mb-2"
-                                            >
+                                                class="btn btn-outline-info kucsa-join-btn">
 
-                                                <i class="bi bi-camera-video me-1"></i>
+                                                <i
+                                                    class="bi bi-camera-video me-1"
+                                                    aria-hidden="true">
+                                                </i>
 
                                                 Join Online Event
 
@@ -316,10 +1226,12 @@
 
                                         <a
                                             href="{% url 'events:detail' registration.event.pk %}"
-                                            class="btn btn-sm btn-primary w-100"
-                                        >
+                                            class="btn btn-primary">
 
-                                            <i class="bi bi-eye me-1"></i>
+                                            <i
+                                                class="bi bi-eye me-1"
+                                                aria-hidden="true">
+                                            </i>
 
                                             View Event
 
@@ -329,444 +1241,895 @@
 
                                 </div>
 
-                            </div>
+                            </article>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <!-- EMPTY UPCOMING STATE -->
+
+                    <div class="kucsa-empty-state">
+
+                        <div class="kucsa-empty-icon" aria-hidden="true">
+
+                            <i class="bi bi-calendar-x"></i>
 
                         </div>
 
-                    {% endfor %}
+                        <h5>No Upcoming Events</h5>
+
+                        <p>
+
+                            You have not registered for any upcoming
+                            KUCSA events.
+
+                        </p>
+
+                        <a
+                            href="{% url 'events:list' %}"
+                            class="btn btn-primary">
+
+                            <i
+                                class="bi bi-calendar-plus me-1"
+                                aria-hidden="true">
+                            </i>
+
+                            Browse Events
+
+                        </a>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             PAST EVENTS
+             ===================================================== -->
+
+        <section class="kucsa-events-section">
+
+            <div class="kucsa-section-header">
+
+                <div class="kucsa-section-title">
+
+                    <span
+                        class="kucsa-section-title-icon"
+                        aria-hidden="true">
+
+                        <i class="bi bi-clock-history"></i>
+
+                    </span>
+
+                    <h5>Past Events</h5>
+
+                    <span class="kucsa-section-count muted">
+                        {{ past_events|length }}
+                    </span>
 
                 </div>
 
-            {% else %}
-
-                <!-- =================================================
-                     EMPTY UPCOMING STATE
-                ================================================== -->
-
-                <div class="text-center py-5">
-
-                    <i class="bi bi-calendar-x display-4 text-muted"></i>
-
-                    <h5 class="fw-bold mt-3">
-                        No Upcoming Events
-                    </h5>
-
-                    <p class="text-muted mb-4">
-
-                        You have not registered for any upcoming
-                        KUCSA events.
-
-                    </p>
-
-                    <a
-                        href="{% url 'events:list' %}"
-                        class="btn btn-primary"
-                    >
-
-                        <i class="bi bi-calendar-plus me-1"></i>
-
-                        Browse Events
-
-                    </a>
-
-                </div>
-
-            {% endif %}
-
-        </div>
-
-    </div>
+            </div>
 
 
-    <!-- =========================================================
-         PAST EVENTS
-    ========================================================== -->
+            <div class="kucsa-section-body">
 
-    <div class="card border-0 shadow-sm mb-4">
+                {% if past_events %}
 
-        <div class="card-header bg-white py-3">
+                    <!-- DESKTOP / TABLET TABLE -->
 
-            <h5 class="mb-0 fw-bold">
+                    <div class="kucsa-records-wrapper">
 
-                <i class="bi bi-clock-history me-2"></i>
+                        <table class="kucsa-records-table">
 
-                Past Events
-
-                <span class="badge bg-secondary ms-2">
-
-                    {{ past_events|length }}
-
-                </span>
-
-            </h5>
-
-        </div>
-
-
-        <div class="card-body">
-
-            {% if past_events %}
-
-                <div class="table-responsive">
-
-                    <table class="table table-hover align-middle mb-0">
-
-                        <thead class="table-light">
-
-                            <tr>
-
-                                <th>Event</th>
-
-                                <th>Date</th>
-
-                                <th>Location</th>
-
-                                <th>Registration Status</th>
-
-                                <th class="text-end">Action</th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody>
-
-                            {% for registration in past_events %}
+                            <thead>
 
                                 <tr>
 
-                                    <!-- EVENT -->
+                                    <th>Event</th>
 
-                                    <td>
+                                    <th>Date</th>
 
-                                        <div class="fw-semibold">
+                                    <th>Location</th>
 
+                                    <th>Registration Status</th>
+
+                                    <th class="text-end">Action</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for registration in past_events %}
+
+                                    <tr>
+
+                                        <!-- EVENT -->
+
+                                        <td>
+
+                                            <div class="kucsa-record-event">
+
+                                                <div class="kucsa-record-event-title">
+
+                                                    {{ registration.event.title }}
+
+                                                </div>
+
+                                                <small class="kucsa-record-event-type">
+
+                                                    {{ registration.event.get_event_type_display }}
+
+                                                </small>
+
+                                            </div>
+
+                                        </td>
+
+
+                                        <!-- DATE -->
+
+                                        <td>
+
+                                            <span class="text-nowrap">
+
+                                                <i
+                                                    class="bi bi-calendar3 kucsa-record-icon me-1"
+                                                    aria-hidden="true">
+                                                </i>
+
+                                                {{ registration.event.start_datetime|date:"d M Y" }}
+
+                                            </span>
+
+                                        </td>
+
+
+                                        <!-- LOCATION -->
+
+                                        <td>
+
+                                            {% if registration.event.is_online %}
+
+                                                <span class="text-nowrap">
+
+                                                    <i
+                                                        class="bi bi-camera-video kucsa-record-icon me-1"
+                                                        aria-hidden="true">
+                                                    </i>
+
+                                                    Online
+
+                                                </span>
+
+                                            {% else %}
+
+                                                <span class="text-nowrap">
+
+                                                    <i
+                                                        class="bi bi-geo-alt kucsa-record-icon me-1"
+                                                        aria-hidden="true">
+                                                    </i>
+
+                                                    {{ registration.event.venue }}
+
+                                                </span>
+
+                                            {% endif %}
+
+                                        </td>
+
+
+                                        <!-- STATUS -->
+
+                                        <td>
+
+                                            {% if registration.status == "ATTENDED" %}
+
+                                                <span class="kucsa-status-badge kucsa-status-attended">
+
+                                                    <i
+                                                        class="bi bi-patch-check"
+                                                        aria-hidden="true">
+                                                    </i>
+
+                                                    Attended
+
+                                                </span>
+
+                                            {% elif registration.status == "ABSENT" %}
+
+                                                <span class="kucsa-status-badge kucsa-status-absent">
+
+                                                    <i
+                                                        class="bi bi-person-x"
+                                                        aria-hidden="true">
+                                                    </i>
+
+                                                    Absent
+
+                                                </span>
+
+                                            {% elif registration.status == "CANCELLED" %}
+
+                                                <span class="kucsa-status-badge kucsa-status-cancelled">
+
+                                                    <i
+                                                        class="bi bi-x-circle"
+                                                        aria-hidden="true">
+                                                    </i>
+
+                                                    Cancelled
+
+                                                </span>
+
+                                            {% else %}
+
+                                                <span class="kucsa-status-badge kucsa-status-default">
+
+                                                    {{ registration.get_status_display }}
+
+                                                </span>
+
+                                            {% endif %}
+
+                                        </td>
+
+
+                                        <!-- ACTION -->
+
+                                        <td class="text-end">
+
+                                            <a
+                                                href="{% url 'events:detail' registration.event.pk %}"
+                                                class="btn btn-sm btn-outline-primary">
+
+                                                <i
+                                                    class="bi bi-eye me-1"
+                                                    aria-hidden="true">
+                                                </i>
+
+                                                View
+
+                                            </a>
+
+                                        </td>
+
+                                    </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <!-- MOBILE RECORDS -->
+
+                    <div class="kucsa-mobile-records">
+
+                        {% for registration in past_events %}
+
+                            <div class="kucsa-mobile-record">
+
+                                <div class="kucsa-mobile-record-top">
+
+                                    <div class="kucsa-mobile-record-title">
+
+                                        <strong>
                                             {{ registration.event.title }}
+                                        </strong>
 
-                                        </div>
-
-                                        <small class="text-muted">
-
+                                        <small>
                                             {{ registration.event.get_event_type_display }}
-
                                         </small>
 
-                                    </td>
+                                    </div>
 
 
-                                    <!-- DATE -->
+                                    {% if registration.status == "ATTENDED" %}
 
-                                    <td>
-
-                                        <span class="text-nowrap">
-
-                                            <i class="bi bi-calendar3 me-1"></i>
-
-                                            {{ registration.event.start_datetime|date:"d M Y" }}
-
+                                        <span class="kucsa-status-badge kucsa-status-attended">
+                                            Attended
                                         </span>
 
-                                    </td>
+                                    {% elif registration.status == "ABSENT" %}
+
+                                        <span class="kucsa-status-badge kucsa-status-absent">
+                                            Absent
+                                        </span>
+
+                                    {% elif registration.status == "CANCELLED" %}
+
+                                        <span class="kucsa-status-badge kucsa-status-cancelled">
+                                            Cancelled
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="kucsa-status-badge kucsa-status-default">
+                                            {{ registration.get_status_display }}
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
 
 
-                                    <!-- LOCATION -->
+                                <div class="kucsa-mobile-record-details">
 
-                                    <td>
+                                    <div class="kucsa-mobile-detail">
+
+                                        <i
+                                            class="bi bi-calendar3"
+                                            aria-hidden="true">
+                                        </i>
+
+                                        <span>
+                                            {{ registration.event.start_datetime|date:"d M Y" }}
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="kucsa-mobile-detail">
 
                                         {% if registration.event.is_online %}
 
-                                            <span class="text-nowrap">
+                                            <i
+                                                class="bi bi-camera-video"
+                                                aria-hidden="true">
+                                            </i>
 
-                                                <i class="bi bi-camera-video me-1"></i>
-
-                                                Online
-
-                                            </span>
+                                            <span>Online Event</span>
 
                                         {% else %}
 
-                                            <span class="text-nowrap">
+                                            <i
+                                                class="bi bi-geo-alt"
+                                                aria-hidden="true">
+                                            </i>
 
-                                                <i class="bi bi-geo-alt me-1"></i>
-
+                                            <span>
                                                 {{ registration.event.venue }}
-
                                             </span>
 
                                         {% endif %}
 
-                                    </td>
+                                    </div>
+
+                                </div>
 
 
-                                    <!-- STATUS -->
+                                <a
+                                    href="{% url 'events:detail' registration.event.pk %}"
+                                    class="btn btn-outline-primary">
 
-                                    <td>
+                                    <i
+                                        class="bi bi-eye me-1"
+                                        aria-hidden="true">
+                                    </i>
 
-                                        {% if registration.status == "ATTENDED" %}
+                                    View Event
 
-                                            <span class="badge bg-success">
+                                </a>
 
-                                                <i class="bi bi-patch-check me-1"></i>
+                            </div>
 
-                                                Attended
+                        {% endfor %}
 
-                                            </span>
+                    </div>
 
-                                        {% elif registration.status == "ABSENT" %}
+                {% else %}
 
-                                            <span class="badge bg-warning text-dark">
+                    <!-- EMPTY PAST STATE -->
 
-                                                <i class="bi bi-person-x me-1"></i>
+                    <div class="kucsa-empty-state">
 
-                                                Absent
+                        <div class="kucsa-empty-icon" aria-hidden="true">
 
-                                            </span>
+                            <i class="bi bi-clock"></i>
 
-                                        {% elif registration.status == "CANCELLED" %}
+                        </div>
 
-                                            <span class="badge bg-secondary">
+                        <h5>No Past Events</h5>
 
-                                                <i class="bi bi-x-circle me-1"></i>
+                        <p>
+                            You have not attended or completed any
+                            registered events yet.
+                        </p>
 
-                                                Cancelled
+                    </div>
 
-                                            </span>
+                {% endif %}
 
-                                        {% else %}
+            </div>
 
-                                            <span class="badge bg-primary">
-
-                                                {{ registration.get_status_display }}
-
-                                            </span>
-
-                                        {% endif %}
-
-                                    </td>
+        </section>
 
 
-                                    <!-- ACTION -->
+        <!-- =====================================================
+             CANCELLED REGISTRATIONS
+             ===================================================== -->
 
-                                    <td class="text-end">
+        <section class="kucsa-events-section">
 
-                                        <a
-                                            href="{% url 'events:detail' registration.event.pk %}"
-                                            class="btn btn-sm btn-outline-primary"
-                                        >
+            <div class="kucsa-section-header">
 
-                                            <i class="bi bi-eye me-1"></i>
+                <div class="kucsa-section-title">
 
-                                            View
+                    <span
+                        class="kucsa-section-title-icon"
+                        aria-hidden="true">
 
-                                        </a>
+                        <i class="bi bi-x-circle"></i>
 
-                                    </td>
+                    </span>
+
+                    <h5>Cancelled Registrations</h5>
+
+                    <span class="kucsa-section-count muted">
+                        {{ cancelled_events|length }}
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="kucsa-section-body">
+
+                {% if cancelled_events %}
+
+                    <!-- DESKTOP / TABLET TABLE -->
+
+                    <div class="kucsa-records-wrapper">
+
+                        <table class="kucsa-records-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Event</th>
+
+                                    <th>Event Date</th>
+
+                                    <th>Cancelled On</th>
+
+                                    <th class="text-end">Action</th>
 
                                 </tr>
 
-                            {% endfor %}
+                            </thead>
 
-                        </tbody>
 
-                    </table>
+                            <tbody>
 
-                </div>
+                                {% for registration in cancelled_events %}
 
-            {% else %}
+                                    <tr>
 
-                <!-- EMPTY PAST STATE -->
+                                        <!-- EVENT -->
 
-                <div class="text-center py-5">
+                                        <td>
 
-                    <i class="bi bi-clock display-4 text-muted"></i>
+                                            <div class="kucsa-record-event">
 
-                    <h5 class="fw-bold mt-3">
-                        No Past Events
-                    </h5>
+                                                <div class="kucsa-record-event-title">
 
-                    <p class="text-muted mb-0">
+                                                    {{ registration.event.title }}
 
-                        You have not attended or completed any
-                        registered events yet.
+                                                </div>
 
-                    </p>
+                                                <small class="kucsa-record-event-type">
 
-                </div>
+                                                    {{ registration.event.get_event_type_display }}
 
-            {% endif %}
+                                                </small>
 
-        </div>
+                                            </div>
+
+                                        </td>
+
+
+                                        <!-- EVENT DATE -->
+
+                                        <td>
+
+                                            <span class="text-nowrap">
+
+                                                <i
+                                                    class="bi bi-calendar3 kucsa-record-icon me-1"
+                                                    aria-hidden="true">
+                                                </i>
+
+                                                {{ registration.event.start_datetime|date:"d M Y" }}
+
+                                            </span>
+
+                                        </td>
+
+
+                                        <!-- CANCELLED DATE -->
+
+                                        <td>
+
+                                            {% if registration.cancelled_at %}
+
+                                                <span class="text-nowrap">
+
+                                                    {{ registration.cancelled_at|date:"d M Y, g:i A" }}
+
+                                                </span>
+
+                                            {% else %}
+
+                                                <span class="text-muted">
+                                                    —
+                                                </span>
+
+                                            {% endif %}
+
+                                        </td>
+
+
+                                        <!-- ACTION -->
+
+                                        <td class="text-end">
+
+                                            <a
+                                                href="{% url 'events:detail' registration.event.pk %}"
+                                                class="btn btn-sm btn-outline-primary">
+
+                                                <i
+                                                    class="bi bi-eye me-1"
+                                                    aria-hidden="true">
+                                                </i>
+
+                                                View Event
+
+                                            </a>
+
+                                        </td>
+
+                                    </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <!-- MOBILE RECORDS -->
+
+                    <div class="kucsa-mobile-records">
+
+                        {% for registration in cancelled_events %}
+
+                            <div class="kucsa-mobile-record">
+
+                                <div class="kucsa-mobile-record-top">
+
+                                    <div class="kucsa-mobile-record-title">
+
+                                        <strong>
+                                            {{ registration.event.title }}
+                                        </strong>
+
+                                        <small>
+                                            {{ registration.event.get_event_type_display }}
+                                        </small>
+
+                                    </div>
+
+
+                                    <span class="kucsa-status-badge kucsa-status-cancelled">
+
+                                        <i
+                                            class="bi bi-x-circle"
+                                            aria-hidden="true">
+                                        </i>
+
+                                        Cancelled
+
+                                    </span>
+
+                                </div>
+
+
+                                <div class="kucsa-mobile-record-details">
+
+                                    <div class="kucsa-mobile-detail">
+
+                                        <i
+                                            class="bi bi-calendar3"
+                                            aria-hidden="true">
+                                        </i>
+
+                                        <span>
+                                            {{ registration.event.start_datetime|date:"d M Y" }}
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="kucsa-mobile-detail">
+
+                                        <i
+                                            class="bi bi-clock-history"
+                                            aria-hidden="true">
+                                        </i>
+
+                                        {% if registration.cancelled_at %}
+
+                                            <span>
+                                                Cancelled on
+                                                {{ registration.cancelled_at|date:"d M Y, g:i A" }}
+                                            </span>
+
+                                        {% else %}
+
+                                            <span>
+                                                Cancellation date unavailable
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+
+                                <a
+                                    href="{% url 'events:detail' registration.event.pk %}"
+                                    class="btn btn-outline-primary">
+
+                                    <i
+                                        class="bi bi-eye me-1"
+                                        aria-hidden="true">
+                                    </i>
+
+                                    View Event
+
+                                </a>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <!-- EMPTY CANCELLED STATE -->
+
+                    <div class="kucsa-empty-state">
+
+                        <div
+                            class="kucsa-empty-icon"
+                            style="
+                                color: #198754;
+                                background: rgba(25, 135, 84, .08);
+                            "
+                            aria-hidden="true">
+
+                            <i class="bi bi-check-circle"></i>
+
+                        </div>
+
+                        <h5>No Cancelled Registrations</h5>
+
+                        <p>
+                            You currently have no cancelled event
+                            registrations.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
 
     </div>
 
 
     <!-- =========================================================
-         CANCELLED REGISTRATIONS
-    ========================================================== -->
+         INLINE JAVASCRIPT
+         ========================================================= -->
 
-    <div class="card border-0 shadow-sm">
+    <script>
+        (function () {
+            "use strict";
 
-        <div class="card-header bg-white py-3">
+            const page = document.querySelector(
+                ".kucsa-my-events-page"
+            );
 
-            <h5 class="mb-0 fw-bold">
+            if (!page) return;
 
-                <i class="bi bi-x-circle me-2"></i>
 
-                Cancelled Registrations
+            /* =====================================================
+               ACCESSIBILITY / MOTION
+               ===================================================== */
 
-                <span class="badge bg-secondary ms-2">
+            const reducedMotion = window.matchMedia(
+                "(prefers-reduced-motion: reduce)"
+            ).matches;
 
-                    {{ cancelled_events|length }}
 
-                </span>
+            /* =====================================================
+               EVENT CARD REVEAL
+               ===================================================== */
 
-            </h5>
+            const cards = page.querySelectorAll(
+                ".kucsa-event-card.kucsa-reveal"
+            );
 
-        </div>
+            if (!reducedMotion && "IntersectionObserver" in window) {
 
+                const observer = new IntersectionObserver(
+                    function (entries, observerInstance) {
 
-        <div class="card-body">
+                        entries.forEach(function (entry) {
 
-            {% if cancelled_events %}
+                            if (!entry.isIntersecting) return;
 
-                <div class="table-responsive">
+                            entry.target.classList.add(
+                                "kucsa-visible"
+                            );
 
-                    <table class="table table-hover align-middle mb-0">
+                            observerInstance.unobserve(
+                                entry.target
+                            );
 
-                        <thead class="table-light">
+                        });
 
-                            <tr>
+                    },
+                    {
+                        threshold: 0.08,
+                        rootMargin: "0px 0px -25px 0px"
+                    }
+                );
 
-                                <th>Event</th>
 
-                                <th>Event Date</th>
+                cards.forEach(function (card, index) {
 
-                                <th>Cancelled On</th>
+                    card.style.transitionDelay =
+                        Math.min(index * 45, 180) + "ms";
 
-                                <th class="text-end">Action</th>
+                    observer.observe(card);
 
-                            </tr>
+                });
 
-                        </thead>
+            } else {
 
+                cards.forEach(function (card) {
+                    card.classList.add("kucsa-visible");
+                });
 
-                        <tbody>
+            }
 
-                            {% for registration in cancelled_events %}
 
-                                <tr>
+            /* =====================================================
+               ONLINE EVENT LINK FEEDBACK
+               ===================================================== */
 
-                                    <!-- EVENT -->
+            const onlineLinks = page.querySelectorAll(
+                'a[target="_blank"]'
+            );
 
-                                    <td>
+            onlineLinks.forEach(function (link) {
 
-                                        <div class="fw-semibold">
+                link.addEventListener("click", function () {
 
-                                            {{ registration.event.title }}
+                    link.setAttribute(
+                        "aria-label",
+                        "Join online event in a new tab"
+                    );
 
-                                        </div>
+                });
 
-                                        <small class="text-muted">
+            });
 
-                                            {{ registration.event.get_event_type_display }}
 
-                                        </small>
+            /* =====================================================
+               KEYBOARD ACCESSIBILITY
+               ===================================================== */
 
-                                    </td>
+            page.querySelectorAll(
+                ".kucsa-event-card"
+            ).forEach(function (card) {
 
+                card.addEventListener("keydown", function (event) {
 
-                                    <!-- EVENT DATE -->
+                    if (
+                        event.key !== "Enter" &&
+                        event.key !== " "
+                    ) {
+                        return;
+                    }
 
-                                    <td>
+                    const primaryLink = card.querySelector(
+                        ".kucsa-event-actions .btn-primary"
+                    );
 
-                                        <span class="text-nowrap">
+                    if (!primaryLink) return;
 
-                                            <i class="bi bi-calendar3 me-1"></i>
+                    if (
+                        document.activeElement !== card &&
+                        document.activeElement !== primaryLink
+                    ) {
+                        return;
+                    }
 
-                                            {{ registration.event.start_datetime|date:"d M Y" }}
+                    if (event.key === " ") {
+                        event.preventDefault();
+                    }
 
-                                        </span>
+                    if (event.target === card) {
+                        primaryLink.click();
+                    }
 
-                                    </td>
+                });
 
+            });
 
-                                    <!-- CANCELLED DATE -->
 
-                                    <td>
+            /* =====================================================
+               BACK/FORWARD CACHE SAFETY
+               ===================================================== */
 
-                                        {% if registration.cancelled_at %}
+            window.addEventListener(
+                "pageshow",
+                function () {
 
-                                            <span class="text-nowrap">
+                    page.querySelectorAll(
+                        ".kucsa-event-card"
+                    ).forEach(function (card) {
 
-                                                {{ registration.cancelled_at|date:"d M Y, g:i A" }}
+                        card.classList.remove(
+                            "kucsa-visible"
+                        );
 
-                                            </span>
+                    });
 
-                                        {% else %}
+                    if (reducedMotion) {
 
-                                            <span class="text-muted">
-                                                —
-                                            </span>
+                        page.querySelectorAll(
+                            ".kucsa-event-card"
+                        ).forEach(function (card) {
 
-                                        {% endif %}
+                            card.classList.add(
+                                "kucsa-visible"
+                            );
 
-                                    </td>
+                        });
 
+                    }
 
-                                    <!-- ACTION -->
+                }
+            );
 
-                                    <td class="text-end">
-
-                                        <a
-                                            href="{% url 'events:detail' registration.event.pk %}"
-                                            class="btn btn-sm btn-outline-primary"
-                                        >
-
-                                            <i class="bi bi-eye me-1"></i>
-
-                                            View Event
-
-                                        </a>
-
-                                    </td>
-
-                                </tr>
-
-                            {% endfor %}
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            {% else %}
-
-                <!-- EMPTY CANCELLED STATE -->
-
-                <div class="text-center py-5">
-
-                    <i class="bi bi-check-circle display-4 text-success"></i>
-
-                    <h5 class="fw-bold mt-3">
-                        No Cancelled Registrations
-                    </h5>
-
-                    <p class="text-muted mb-0">
-
-                        You currently have no cancelled event
-                        registrations.
-
-                    </p>
-
-                </div>
-
-            {% endif %}
-
-        </div>
-
-    </div>
+        })();
+    </script>
 
 </div>
 

@@ -1,222 +1,1408 @@
 {% extends "base.html" %}
-
 {% load static %}
 
 {% block title %}KUCSA Events{% endblock %}
 
 {% block content %}
 
-<div class="container-fluid py-4">
+<div class="kucsa-events-page">
 
-    <!-- =========================================================
-         PAGE HEADER
-    ========================================================== -->
+    <style>
+        /* =========================================================
+           KUCSA EVENTS — DESIGN SYSTEM
+        ========================================================== */
 
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        .kucsa-events-page {
+            --ke-primary: #0d6efd;
+            --ke-primary-dark: #0a58ca;
+            --ke-primary-soft: rgba(13, 110, 253, 0.10);
 
-        <div>
+            --ke-success: #198754;
+            --ke-warning: #f59f00;
+            --ke-danger: #dc3545;
+            --ke-info: #0dcaf0;
 
-            <div class="d-flex align-items-center gap-2 mb-1">
+            --ke-dark: #172033;
+            --ke-text: #253047;
+            --ke-muted: #6b7280;
+            --ke-border: #e7ebf1;
+            --ke-surface: #ffffff;
+            --ke-bg: #f5f7fb;
 
-                <h2 class="fw-bold mb-0">
-                    <i class="bi bi-calendar-event me-2"></i>
+            --ke-radius-sm: 10px;
+            --ke-radius-md: 16px;
+            --ke-radius-lg: 22px;
+
+            --ke-shadow-sm: 0 4px 16px rgba(16, 24, 40, 0.05);
+            --ke-shadow-md: 0 12px 35px rgba(16, 24, 40, 0.08);
+            --ke-shadow-lg: 0 20px 55px rgba(16, 24, 40, 0.12);
+
+            width: 100%;
+            min-width: 0;
+            color: var(--ke-text);
+            background:
+                radial-gradient(circle at 0% 0%, rgba(13, 110, 253, 0.055), transparent 28%),
+                radial-gradient(circle at 100% 10%, rgba(25, 135, 84, 0.045), transparent 25%),
+                var(--ke-bg);
+            padding: 1.25rem 0 2rem;
+        }
+
+        .kucsa-events-page *,
+        .kucsa-events-page *::before,
+        .kucsa-events-page *::after {
+            box-sizing: border-box;
+        }
+
+        .kucsa-events-page a {
+            text-decoration: none;
+        }
+
+        .kucsa-events-page button,
+        .kucsa-events-page input,
+        .kucsa-events-page select {
+            font: inherit;
+        }
+
+        /* =========================================================
+           PAGE SHELL
+        ========================================================== */
+
+        .kucsa-events-shell {
+            width: min(100%, 1700px);
+            margin: 0 auto;
+            padding: 0 1.25rem;
+        }
+
+        /* =========================================================
+           PAGE HERO
+        ========================================================== */
+
+        .kucsa-events-hero {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+            padding: 1.5rem 1.6rem;
+            margin-bottom: 1.35rem;
+            border: 1px solid rgba(255,255,255,.55);
+            border-radius: var(--ke-radius-lg);
+            background:
+                radial-gradient(circle at 90% 20%, rgba(255,255,255,.15), transparent 25%),
+                linear-gradient(135deg, #0b3d91 0%, #0d6efd 58%, #3d8bfd 100%);
+            color: #fff;
+            box-shadow: var(--ke-shadow-md);
+        }
+
+        .kucsa-events-hero::before {
+            content: "";
+            position: absolute;
+            width: 210px;
+            height: 210px;
+            right: -90px;
+            top: -100px;
+            border: 35px solid rgba(255,255,255,.08);
+            border-radius: 50%;
+        }
+
+        .kucsa-events-hero::after {
+            content: "";
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            right: 19%;
+            bottom: -90px;
+            background: rgba(255,255,255,.06);
+            border-radius: 50%;
+        }
+
+        .kucsa-events-hero-content {
+            position: relative;
+            z-index: 2;
+            min-width: 0;
+        }
+
+        .kucsa-events-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: .45rem;
+            margin-bottom: .5rem;
+            padding: .32rem .7rem;
+            border: 1px solid rgba(255,255,255,.20);
+            border-radius: 999px;
+            background: rgba(255,255,255,.10);
+            color: rgba(255,255,255,.90);
+            font-size: .76rem;
+            font-weight: 700;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+        }
+
+        .kucsa-events-hero-title {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: .65rem;
+            margin: 0 0 .45rem;
+            color: #fff;
+            font-size: clamp(1.55rem, 2.5vw, 2.25rem);
+            line-height: 1.15;
+            font-weight: 800;
+            letter-spacing: -.025em;
+        }
+
+        .kucsa-events-hero-title i {
+            font-size: .85em;
+        }
+
+        .kucsa-events-hero-description {
+            max-width: 720px;
+            margin: 0;
+            color: rgba(255,255,255,.82);
+            font-size: .94rem;
+            line-height: 1.65;
+        }
+
+        .kucsa-management-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            padding: .32rem .65rem;
+            border-radius: 999px;
+            background: rgba(255,255,255,.14);
+            border: 1px solid rgba(255,255,255,.20);
+            color: #fff;
+            font-size: .72rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .kucsa-events-hero-action {
+            position: relative;
+            z-index: 2;
+            flex: 0 0 auto;
+        }
+
+        .kucsa-create-event-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .45rem;
+            min-height: 46px;
+            padding: .7rem 1rem;
+            border: 1px solid rgba(255,255,255,.55);
+            border-radius: 12px;
+            background: #fff;
+            color: var(--ke-primary-dark);
+            font-size: .88rem;
+            font-weight: 700;
+            box-shadow: 0 8px 22px rgba(0,0,0,.12);
+            transition:
+                transform .2s ease,
+                box-shadow .2s ease,
+                background .2s ease;
+        }
+
+        .kucsa-create-event-btn:hover {
+            color: var(--ke-primary-dark);
+            background: #f8fbff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(0,0,0,.17);
+        }
+
+        /* =========================================================
+           INFO ALERT
+        ========================================================== */
+
+        .kucsa-events-info {
+            display: flex;
+            align-items: flex-start;
+            gap: .8rem;
+            margin-bottom: 1.25rem;
+            padding: 1rem 1.1rem;
+            border: 1px solid rgba(13, 202, 240, .20);
+            border-radius: var(--ke-radius-md);
+            background: linear-gradient(135deg, rgba(13,202,240,.09), rgba(13,110,253,.05));
+            box-shadow: var(--ke-shadow-sm);
+        }
+
+        .kucsa-events-info-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 38px;
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            background: rgba(13,110,253,.10);
+            color: var(--ke-primary);
+        }
+
+        .kucsa-events-info strong {
+            display: block;
+            margin-bottom: .15rem;
+            color: var(--ke-text);
+            font-size: .9rem;
+        }
+
+        .kucsa-events-info p {
+            margin: 0;
+            color: var(--ke-muted);
+            font-size: .82rem;
+            line-height: 1.55;
+        }
+
+        /* =========================================================
+           FILTER CARD
+        ========================================================== */
+
+        .kucsa-filter-card {
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--ke-border);
+            border-radius: var(--ke-radius-lg);
+            background: var(--ke-surface);
+            box-shadow: var(--ke-shadow-sm);
+            overflow: hidden;
+        }
+
+        .kucsa-filter-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--ke-border);
+            background: linear-gradient(180deg, #fff, #fafbfc);
+        }
+
+        .kucsa-filter-heading {
+            display: flex;
+            align-items: center;
+            gap: .65rem;
+            margin: 0;
+            color: var(--ke-text);
+            font-size: .94rem;
+            font-weight: 800;
+        }
+
+        .kucsa-filter-heading-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: var(--ke-primary-soft);
+            color: var(--ke-primary);
+        }
+
+        .kucsa-filter-body {
+            padding: 1.2rem 1.25rem;
+        }
+
+        .kucsa-filter-label {
+            display: block;
+            margin-bottom: .42rem;
+            color: var(--ke-text);
+            font-size: .78rem;
+            font-weight: 750;
+        }
+
+        .kucsa-events-page .form-control,
+        .kucsa-events-page .form-select {
+            min-height: 43px;
+            border: 1px solid #dce2ea;
+            border-radius: 11px;
+            background-color: #fff;
+            color: var(--ke-text);
+            font-size: .84rem;
+            transition:
+                border-color .2s ease,
+                box-shadow .2s ease,
+                background-color .2s ease;
+        }
+
+        .kucsa-events-page .form-control::placeholder {
+            color: #a0a8b5;
+        }
+
+        .kucsa-events-page .form-control:focus,
+        .kucsa-events-page .form-select:focus {
+            border-color: var(--ke-primary);
+            box-shadow: 0 0 0 4px rgba(13,110,253,.10);
+            outline: none;
+        }
+
+        .kucsa-search-group {
+            display: flex;
+            align-items: stretch;
+        }
+
+        .kucsa-search-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 43px;
+            border: 1px solid #dce2ea;
+            border-right: 0;
+            border-radius: 11px 0 0 11px;
+            background: #f8fafc;
+            color: var(--ke-muted);
+        }
+
+        .kucsa-search-group .form-control {
+            border-radius: 0 11px 11px 0;
+        }
+
+        .kucsa-filter-check {
+            display: flex;
+            align-items: center;
+            min-height: 43px;
+            padding: .6rem .8rem;
+            border: 1px solid #dce2ea;
+            border-radius: 11px;
+            background: #fafbfc;
+            transition: border-color .2s ease, background .2s ease;
+        }
+
+        .kucsa-filter-check:has(input:checked) {
+            border-color: rgba(13,110,253,.35);
+            background: rgba(13,110,253,.055);
+        }
+
+        .kucsa-filter-check .form-check-input {
+            margin-top: 0;
+            margin-right: .55rem;
+        }
+
+        .kucsa-filter-check .form-check-label {
+            color: var(--ke-text);
+            font-size: .82rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .kucsa-filter-submit {
+            min-height: 43px;
+            border-radius: 11px;
+            font-size: .84rem;
+            font-weight: 700;
+            box-shadow: 0 5px 15px rgba(13,110,253,.15);
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .kucsa-filter-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(13,110,253,.20);
+        }
+
+        /* =========================================================
+           FILTER SUMMARY
+        ========================================================== */
+
+        .kucsa-filter-summary {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: .5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--ke-border);
+        }
+
+        .kucsa-filter-summary-label {
+            color: var(--ke-muted);
+            font-size: .75rem;
+            font-weight: 600;
+            margin-right: .15rem;
+        }
+
+        .kucsa-filter-chip {
+            display: inline-flex;
+            align-items: center;
+            max-width: 100%;
+            padding: .34rem .65rem;
+            border: 1px solid #dde3eb;
+            border-radius: 999px;
+            background: #f8fafc;
+            color: var(--ke-text);
+            font-size: .72rem;
+            font-weight: 600;
+        }
+
+        .kucsa-clear-filter {
+            margin-left: auto;
+            border-radius: 9px;
+            font-size: .75rem;
+            font-weight: 650;
+        }
+
+        /* =========================================================
+           RESULTS HEADER
+        ========================================================== */
+
+        .kucsa-results-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .kucsa-results-title {
+            margin: 0 0 .2rem;
+            color: var(--ke-text);
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: -.015em;
+        }
+
+        .kucsa-results-description {
+            margin: 0;
+            color: var(--ke-muted);
+            font-size: .78rem;
+        }
+
+        .kucsa-management-view {
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            padding: .38rem .7rem;
+            border: 1px solid rgba(13,110,253,.15);
+            border-radius: 999px;
+            background: rgba(13,110,253,.07);
+            color: var(--ke-primary-dark);
+            font-size: .72rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        /* =========================================================
+           EVENT CARD
+        ========================================================== */
+
+        .kucsa-event-card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-width: 0;
+            border: 1px solid var(--ke-border);
+            border-radius: var(--ke-radius-lg);
+            background: var(--ke-surface);
+            box-shadow: var(--ke-shadow-sm);
+            overflow: hidden;
+            transition:
+                transform .25s ease,
+                box-shadow .25s ease,
+                border-color .25s ease;
+        }
+
+        .kucsa-event-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(13,110,253,.18);
+            box-shadow: var(--ke-shadow-lg);
+        }
+
+        /* =========================================================
+           EVENT IMAGE
+        ========================================================== */
+
+        .kucsa-event-image-wrap {
+            position: relative;
+            height: 220px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #172033, #27344d);
+        }
+
+        .kucsa-event-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform .45s ease;
+        }
+
+        .kucsa-event-card:hover .kucsa-event-image {
+            transform: scale(1.045);
+        }
+
+        .kucsa-event-image-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(0,0,0,.05) 30%,
+                rgba(0,0,0,.48) 100%
+            );
+            pointer-events: none;
+        }
+
+        .kucsa-event-fallback {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,.90);
+            background:
+                radial-gradient(circle at 20% 20%, rgba(13,110,253,.40), transparent 30%),
+                linear-gradient(135deg, #111827, #263653);
+        }
+
+        .kucsa-event-fallback i {
+            font-size: 3rem;
+            margin-bottom: .5rem;
+            opacity: .9;
+        }
+
+        .kucsa-event-fallback span {
+            font-size: .76rem;
+            font-weight: 700;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            opacity: .75;
+        }
+
+        .kucsa-event-featured-overlay {
+            position: absolute;
+            left: .8rem;
+            top: .8rem;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            gap: .3rem;
+            padding: .38rem .62rem;
+            border-radius: 999px;
+            background: rgba(255,193,7,.94);
+            color: #352600;
+            font-size: .7rem;
+            font-weight: 800;
+            box-shadow: 0 5px 14px rgba(0,0,0,.14);
+        }
+
+        /* =========================================================
+           EVENT BODY
+        ========================================================== */
+
+        .kucsa-event-body {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            padding: 1.15rem;
+            min-width: 0;
+        }
+
+        .kucsa-event-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .4rem;
+            margin-bottom: .7rem;
+        }
+
+        .kucsa-event-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .28rem;
+            max-width: 100%;
+            padding: .32rem .55rem;
+            border-radius: 7px;
+            font-size: .67rem;
+            font-weight: 750;
+            line-height: 1.2;
+        }
+
+        .kucsa-badge-primary {
+            background: rgba(13,110,253,.10);
+            color: var(--ke-primary-dark);
+        }
+
+        .kucsa-badge-success {
+            background: rgba(25,135,84,.10);
+            color: #14733f;
+        }
+
+        .kucsa-badge-info {
+            background: rgba(13,202,240,.13);
+            color: #087990;
+        }
+
+        .kucsa-badge-secondary {
+            background: #eef0f3;
+            color: #5f6671;
+        }
+
+        .kucsa-badge-danger {
+            background: rgba(220,53,69,.10);
+            color: #b42335;
+        }
+
+        .kucsa-badge-warning {
+            background: rgba(255,193,7,.18);
+            color: #805f00;
+        }
+
+        .kucsa-badge-dark {
+            background: #e9edf2;
+            color: #303844;
+        }
+
+        .kucsa-event-title {
+            display: -webkit-box;
+            margin: 0 0 .55rem;
+            color: var(--ke-text);
+            font-size: 1.03rem;
+            font-weight: 800;
+            line-height: 1.35;
+            letter-spacing: -.015em;
+            overflow: hidden;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+        }
+
+        .kucsa-event-description {
+            display: -webkit-box;
+            margin: 0 0 1rem;
+            color: var(--ke-muted);
+            font-size: .79rem;
+            line-height: 1.65;
+            overflow: hidden;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+        }
+
+        /* =========================================================
+           EVENT META
+        ========================================================== */
+
+        .kucsa-event-meta {
+            display: flex;
+            flex-direction: column;
+            gap: .55rem;
+            margin-bottom: .85rem;
+        }
+
+        .kucsa-event-meta-row {
+            display: flex;
+            align-items: flex-start;
+            gap: .55rem;
+            min-width: 0;
+            color: var(--ke-muted);
+            font-size: .75rem;
+            line-height: 1.45;
+        }
+
+        .kucsa-event-meta-row i {
+            flex: 0 0 17px;
+            width: 17px;
+            margin-top: .05rem;
+            color: #7b8492;
+            text-align: center;
+        }
+
+        .kucsa-event-meta-row strong {
+            color: var(--ke-text);
+            font-weight: 700;
+        }
+
+        .kucsa-event-meta-row span {
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .kucsa-target-audience {
+            display: flex;
+            align-items: flex-start;
+            gap: .5rem;
+            margin-bottom: .85rem;
+            padding: .62rem .7rem;
+            border: 1px solid rgba(13,110,253,.10);
+            border-radius: 10px;
+            background: rgba(13,110,253,.045);
+            color: var(--ke-muted);
+            font-size: .74rem;
+            line-height: 1.5;
+        }
+
+        .kucsa-target-audience i {
+            color: var(--ke-primary);
+            margin-top: .08rem;
+        }
+
+        .kucsa-target-audience strong {
+            color: var(--ke-text);
+        }
+
+        /* =========================================================
+           REGISTRATION
+        ========================================================== */
+
+        .kucsa-registration-box {
+            margin-bottom: .85rem;
+            padding: .75rem;
+            border: 1px solid var(--ke-border);
+            border-radius: 12px;
+            background: #fafbfc;
+        }
+
+        .kucsa-registration-head {
+            display: flex;
+            justify-content: space-between;
+            gap: .5rem;
+            margin-bottom: .4rem;
+            color: var(--ke-muted);
+            font-size: .7rem;
+        }
+
+        .kucsa-registration-head strong {
+            color: var(--ke-text);
+            font-weight: 750;
+        }
+
+        .kucsa-capacity-progress {
+            height: 7px !important;
+            overflow: hidden;
+            border-radius: 999px;
+            background: #e9edf2;
+        }
+
+        .kucsa-capacity-progress .progress-bar {
+            border-radius: inherit;
+            transition: width 1s cubic-bezier(.2,.7,.2,1);
+        }
+
+        .kucsa-registration-note {
+            margin-top: .4rem;
+            color: var(--ke-muted);
+            font-size: .69rem;
+            line-height: 1.4;
+        }
+
+        .kucsa-registration-note.is-open {
+            color: #14733f;
+            font-weight: 650;
+        }
+
+        .kucsa-registration-note.is-full {
+            color: #b42335;
+            font-weight: 650;
+        }
+
+        .kucsa-registration-note.is-closed {
+            color: #7b8492;
+        }
+
+        .kucsa-simple-meta {
+            display: flex;
+            align-items: center;
+            gap: .35rem;
+            margin-bottom: .85rem;
+            color: var(--ke-muted);
+            font-size: .72rem;
+        }
+
+        .kucsa-simple-meta i {
+            color: #7b8492;
+        }
+
+        .kucsa-certificate {
+            display: flex;
+            align-items: center;
+            gap: .45rem;
+            margin-bottom: .85rem;
+            color: #14733f;
+            font-size: .72rem;
+            font-weight: 650;
+        }
+
+        .kucsa-organizer {
+            display: flex;
+            align-items: flex-start;
+            gap: .45rem;
+            margin-bottom: .85rem;
+            color: var(--ke-muted);
+            font-size: .72rem;
+            line-height: 1.45;
+        }
+
+        .kucsa-organizer i {
+            color: #7b8492;
+        }
+
+        .kucsa-organizer strong {
+            color: var(--ke-text);
+        }
+
+        /* =========================================================
+           MANAGEMENT SUMMARY
+        ========================================================== */
+
+        .kucsa-management-summary {
+            margin-bottom: .9rem;
+            padding-top: .85rem;
+            border-top: 1px solid var(--ke-border);
+        }
+
+        .kucsa-summary-stat {
+            padding: .55rem .3rem;
+            text-align: center;
+            border-radius: 9px;
+            transition: background .2s ease;
+        }
+
+        .kucsa-summary-stat:hover {
+            background: #f8fafc;
+        }
+
+        .kucsa-summary-label {
+            color: var(--ke-muted);
+            font-size: .64rem;
+            font-weight: 600;
+        }
+
+        .kucsa-summary-value {
+            margin-top: .15rem;
+            color: var(--ke-text);
+            font-size: .95rem;
+            font-weight: 800;
+        }
+
+        .kucsa-summary-value.success {
+            color: var(--ke-success);
+        }
+
+        /* =========================================================
+           CARD ACTIONS
+        ========================================================== */
+
+        .kucsa-event-actions {
+            margin-top: auto;
+            padding-top: .3rem;
+        }
+
+        .kucsa-event-actions .btn {
+            min-height: 40px;
+            border-radius: 10px;
+            font-size: .76rem;
+            font-weight: 700;
+            transition:
+                transform .2s ease,
+                box-shadow .2s ease,
+                background .2s ease;
+        }
+
+        .kucsa-event-actions .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .kucsa-event-actions .btn-outline-primary:hover {
+            box-shadow: 0 6px 15px rgba(13,110,253,.12);
+        }
+
+        /* =========================================================
+           EMPTY STATE
+        ========================================================== */
+
+        .kucsa-empty-state {
+            padding: 4rem 1.5rem;
+            border: 1px solid var(--ke-border);
+            border-radius: var(--ke-radius-lg);
+            background: var(--ke-surface);
+            box-shadow: var(--ke-shadow-sm);
+            text-align: center;
+        }
+
+        .kucsa-empty-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 82px;
+            height: 82px;
+            margin: 0 auto 1rem;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #eef4ff, #f5f8fd);
+            color: #7894c3;
+            font-size: 2.5rem;
+        }
+
+        .kucsa-empty-title {
+            margin: 0 0 .45rem;
+            color: var(--ke-text);
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+
+        .kucsa-empty-text {
+            max-width: 540px;
+            margin: 0 auto 1.25rem;
+            color: var(--ke-muted);
+            font-size: .82rem;
+            line-height: 1.65;
+        }
+
+        .kucsa-empty-actions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: .55rem;
+        }
+
+        .kucsa-empty-actions .btn {
+            min-height: 40px;
+            border-radius: 10px;
+            font-size: .78rem;
+            font-weight: 700;
+        }
+
+        /* =========================================================
+           LOADING STATE
+        ========================================================== */
+
+        .kucsa-events-loading {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(15, 23, 42, .20);
+            backdrop-filter: blur(4px);
+        }
+
+        .kucsa-events-loading.is-visible {
+            display: flex;
+        }
+
+        .kucsa-loading-box {
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+            padding: .8rem 1rem;
+            border: 1px solid rgba(255,255,255,.5);
+            border-radius: 12px;
+            background: rgba(255,255,255,.96);
+            color: var(--ke-text);
+            box-shadow: var(--ke-shadow-lg);
+            font-size: .8rem;
+            font-weight: 700;
+        }
+
+        /* =========================================================
+           ACCESSIBILITY
+        ========================================================== */
+
+        .kucsa-events-page a:focus-visible,
+        .kucsa-events-page button:focus-visible,
+        .kucsa-events-page input:focus-visible,
+        .kucsa-events-page select:focus-visible {
+            outline: 3px solid rgba(13,110,253,.30);
+            outline-offset: 2px;
+        }
+
+        /* =========================================================
+           RESPONSIVE — LARGE TABLET / LAPTOP
+        ========================================================== */
+
+        @media (max-width: 1199.98px) {
+
+            .kucsa-events-shell {
+                padding: 0 1rem;
+            }
+
+            .kucsa-events-hero {
+                padding: 1.35rem;
+            }
+
+            .kucsa-event-image-wrap {
+                height: 210px;
+            }
+        }
+
+        /* =========================================================
+           RESPONSIVE — TABLET
+        ========================================================== */
+
+        @media (max-width: 991.98px) {
+
+            .kucsa-events-page {
+                padding-top: 1rem;
+            }
+
+            .kucsa-events-hero {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .kucsa-events-hero-action {
+                width: 100%;
+            }
+
+            .kucsa-create-event-btn {
+                width: 100%;
+            }
+
+            .kucsa-filter-body {
+                padding: 1rem;
+            }
+
+            .kucsa-event-image-wrap {
+                height: 215px;
+            }
+        }
+
+        /* =========================================================
+           RESPONSIVE — MOBILE
+        ========================================================== */
+
+        @media (max-width: 767.98px) {
+
+            .kucsa-events-shell {
+                padding: 0 .8rem;
+            }
+
+            .kucsa-events-page {
+                padding-bottom: 1.25rem;
+            }
+
+            .kucsa-events-hero {
+                margin-bottom: 1rem;
+                padding: 1.1rem;
+                border-radius: 17px;
+            }
+
+            .kucsa-events-hero-title {
+                font-size: 1.45rem;
+            }
+
+            .kucsa-events-hero-description {
+                font-size: .82rem;
+            }
+
+            .kucsa-filter-header {
+                padding: .9rem 1rem;
+            }
+
+            .kucsa-filter-body {
+                padding: .9rem;
+            }
+
+            .kucsa-filter-summary {
+                align-items: flex-start;
+            }
+
+            .kucsa-clear-filter {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .kucsa-results-header {
+                align-items: flex-start;
+                flex-direction: column;
+                margin-bottom: .8rem;
+            }
+
+            .kucsa-management-view {
+                align-self: flex-start;
+            }
+
+            .kucsa-event-image-wrap {
+                height: 205px;
+            }
+
+            .kucsa-event-body {
+                padding: 1rem;
+            }
+
+            .kucsa-empty-state {
+                padding: 3rem 1rem;
+            }
+        }
+
+        /* =========================================================
+           RESPONSIVE — SMALL MOBILE
+        ========================================================== */
+
+        @media (max-width: 575.98px) {
+
+            .kucsa-events-shell {
+                padding: 0 .65rem;
+            }
+
+            .kucsa-events-hero {
+                border-radius: 15px;
+            }
+
+            .kucsa-events-hero-title {
+                font-size: 1.3rem;
+            }
+
+            .kucsa-management-badge {
+                font-size: .65rem;
+            }
+
+            .kucsa-events-info {
+                padding: .85rem;
+            }
+
+            .kucsa-event-image-wrap {
+                height: 195px;
+            }
+
+            .kucsa-event-title {
+                font-size: .98rem;
+            }
+
+            .kucsa-event-description {
+                font-size: .77rem;
+            }
+
+            .kucsa-event-meta-row {
+                font-size: .72rem;
+            }
+
+            .kucsa-event-actions .row {
+                --bs-gutter-x: .45rem;
+            }
+
+            .kucsa-event-actions .btn {
+                font-size: .72rem;
+                min-height: 39px;
+                padding-left: .55rem;
+                padding-right: .55rem;
+            }
+        }
+
+        /* =========================================================
+           VERY SMALL DEVICES
+        ========================================================== */
+
+        @media (max-width: 359.98px) {
+
+            .kucsa-events-shell {
+                padding: 0 .5rem;
+            }
+
+            .kucsa-events-hero {
+                padding: .9rem;
+            }
+
+            .kucsa-events-hero-title {
+                font-size: 1.2rem;
+            }
+
+            .kucsa-events-hero-description {
+                font-size: .77rem;
+            }
+
+            .kucsa-event-image-wrap {
+                height: 175px;
+            }
+
+            .kucsa-event-body {
+                padding: .85rem;
+            }
+
+            .kucsa-event-badge {
+                font-size: .62rem;
+            }
+        }
+
+        /* =========================================================
+           REDUCED MOTION
+        ========================================================== */
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .kucsa-events-page *,
+            .kucsa-events-page *::before,
+            .kucsa-events-page *::after {
+                scroll-behavior: auto !important;
+                transition-duration: .01ms !important;
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+            }
+        }
+    </style>
+
+
+    <div class="kucsa-events-shell">
+
+        <!-- =====================================================
+             PAGE HERO
+        ====================================================== -->
+
+        <header class="kucsa-events-hero">
+
+            <div class="kucsa-events-hero-content">
+
+                <div class="kucsa-events-eyebrow">
+                    <i class="bi bi-grid-3x3-gap-fill"></i>
+                    KUCSA Community
+                </div>
+
+                <h1 class="kucsa-events-hero-title">
+
+                    <i class="bi bi-calendar-event"></i>
+
                     KUCSA Events
-                </h2>
 
-                {% if can_manage_events %}
+                    {% if can_manage_events %}
 
-                    <span class="badge bg-dark">
-                        Management
-                    </span>
+                        <span class="kucsa-management-badge">
+                            <i class="bi bi-shield-check"></i>
+                            Management
+                        </span>
 
-                {% endif %}
+                    {% endif %}
+
+                </h1>
+
+                <p class="kucsa-events-hero-description">
+                    Discover upcoming events, workshops, talks,
+                    bootcamps and other KUCSA activities.
+                </p>
 
             </div>
 
-            <p class="text-muted mb-0">
-                Discover upcoming events, workshops, talks,
-                bootcamps and other KUCSA activities.
-            </p>
 
-        </div>
+            {% if can_manage_events %}
+
+                <div class="kucsa-events-hero-action">
+
+                    <a
+                        href="{% url 'events:create' %}"
+                        class="kucsa-create-event-btn"
+                    >
+                        <i class="bi bi-plus-circle"></i>
+                        Create Event
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </header>
 
 
         <!-- =====================================================
-             MANAGEMENT ACTION
+             STUDENT INFORMATION
         ====================================================== -->
 
-        {% if can_manage_events %}
+        {% if not can_manage_events %}
 
-            <div class="mt-3 mt-md-0">
+            <div class="kucsa-events-info">
 
-                <a
-                    href="{% url 'events:create' %}"
-                    class="btn btn-primary"
-                >
-                    <i class="bi bi-plus-circle me-1"></i>
-                    Create Event
-                </a>
-
-            </div>
-
-        {% endif %}
-
-    </div>
-
-
-    <!-- =========================================================
-         STUDENT INFORMATION
-    ========================================================== -->
-
-    {% if not can_manage_events %}
-
-        <div class="alert alert-info border-0 shadow-sm mb-4">
-
-            <div class="d-flex align-items-start">
-
-                <i class="bi bi-info-circle-fill fs-5 me-2"></i>
+                <div class="kucsa-events-info-icon">
+                    <i class="bi bi-info-circle-fill"></i>
+                </div>
 
                 <div>
 
                     <strong>KUCSA Events</strong>
 
-                    <div class="small mt-1">
-
+                    <p>
                         Browse published events and register for
                         activities you would like to attend.
-
-                    </div>
+                    </p>
 
                 </div>
 
             </div>
 
-        </div>
-
-    {% endif %}
+        {% endif %}
 
 
-    <!-- =========================================================
-         FILTER CARD
-    ========================================================== -->
+        <!-- =====================================================
+             FILTER CARD
+        ====================================================== -->
 
-    <div class="card border-0 shadow-sm mb-4">
+        <section class="kucsa-filter-card">
 
-        <div class="card-body">
+            <div class="kucsa-filter-header">
 
-            <form
-                method="get"
-                action="{% url 'events:list' %}"
-            >
+                <h2 class="kucsa-filter-heading">
 
-                <div class="row g-3 align-items-end">
+                    <span class="kucsa-filter-heading-icon">
+                        <i class="bi bi-sliders"></i>
+                    </span>
 
-                    <!-- =================================================
-                         SEARCH
-                    ================================================== -->
+                    Find an Event
 
-                    <div class="col-lg-4">
+                </h2>
 
-                        <label
-                            for="eventSearch"
-                            class="form-label fw-semibold"
-                        >
-                            Search Events
-                        </label>
+            </div>
 
-                        <div class="input-group">
 
-                            <span class="input-group-text">
-                                <i class="bi bi-search"></i>
-                            </span>
+            <div class="kucsa-filter-body">
 
-                            <input
-                                type="text"
-                                name="q"
-                                id="eventSearch"
-                                value="{{ search_query }}"
-                                class="form-control"
-                                placeholder="Search events..."
-                                autocomplete="off"
+                <form
+                    method="get"
+                    action="{% url 'events:list' %}"
+                    id="kucsaEventFilterForm"
+                >
+
+                    <div class="row g-3 align-items-end">
+
+                        <!-- SEARCH -->
+
+                        <div class="col-lg-4">
+
+                            <label
+                                for="eventSearch"
+                                class="kucsa-filter-label"
                             >
+                                Search Events
+                            </label>
+
+                            <div class="kucsa-search-group">
+
+                                <span class="kucsa-search-icon">
+                                    <i class="bi bi-search"></i>
+                                </span>
+
+                                <input
+                                    type="text"
+                                    name="q"
+                                    id="eventSearch"
+                                    value="{{ search_query }}"
+                                    class="form-control"
+                                    placeholder="Search by event name..."
+                                    autocomplete="off"
+                                >
+
+                            </div>
 
                         </div>
 
-                    </div>
 
-
-                    <!-- =================================================
-                         EVENT TYPE
-                    ================================================== -->
-
-                    <div class="col-md-4 col-lg-2">
-
-                        <label
-                            for="eventType"
-                            class="form-label fw-semibold"
-                        >
-                            Event Type
-                        </label>
-
-                        <select
-                            name="event_type"
-                            id="eventType"
-                            class="form-select"
-                        >
-
-                            <option value="">
-                                All Types
-                            </option>
-
-                            {% for value, label in event_types %}
-
-                                <option
-                                    value="{{ value }}"
-                                    {% if selected_event_type == value %}
-                                        selected
-                                    {% endif %}
-                                >
-                                    {{ label }}
-                                </option>
-
-                            {% endfor %}
-
-                        </select>
-
-                    </div>
-
-
-                    <!-- =================================================
-                         STATUS
-                         EXECUTIVES / ADMINS ONLY
-                    ================================================== -->
-
-                    {% if can_manage_events %}
+                        <!-- EVENT TYPE -->
 
                         <div class="col-md-4 col-lg-2">
 
                             <label
-                                for="eventStatus"
-                                class="form-label fw-semibold"
+                                for="eventType"
+                                class="kucsa-filter-label"
                             >
-                                Status
+                                Event Type
                             </label>
 
                             <select
-                                name="status"
-                                id="eventStatus"
+                                name="event_type"
+                                id="eventType"
                                 class="form-select"
                             >
 
                                 <option value="">
-                                    All Statuses
+                                    All Types
                                 </option>
 
-                                {% for value, label in event_statuses %}
+                                {% for value, label in event_types %}
 
                                     <option
                                         value="{{ value }}"
-                                        {% if selected_status == value %}
+                                        {% if selected_event_type == value %}
                                             selected
                                         {% endif %}
                                     >
@@ -229,83 +1415,115 @@
 
                         </div>
 
-                    {% endif %}
+
+                        <!-- STATUS -->
+
+                        {% if can_manage_events %}
+
+                            <div class="col-md-4 col-lg-2">
+
+                                <label
+                                    for="eventStatus"
+                                    class="kucsa-filter-label"
+                                >
+                                    Status
+                                </label>
+
+                                <select
+                                    name="status"
+                                    id="eventStatus"
+                                    class="form-select"
+                                >
+
+                                    <option value="">
+                                        All Statuses
+                                    </option>
+
+                                    {% for value, label in event_statuses %}
+
+                                        <option
+                                            value="{{ value }}"
+                                            {% if selected_status == value %}
+                                                selected
+                                            {% endif %}
+                                        >
+                                            {{ label }}
+                                        </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+                            </div>
+
+                        {% endif %}
 
 
-                    <!-- =================================================
-                         UPCOMING ONLY
-                    ================================================== -->
+                        <!-- UPCOMING -->
 
-                    <div class="col-md-4 col-lg-2">
+                        <div class="col-md-4 col-lg-2">
 
-                        <div class="form-check mb-2">
+                            <div class="kucsa-filter-check">
 
-                            <input
-                                class="form-check-input"
-                                type="checkbox"
-                                name="upcoming"
-                                value="1"
-                                id="upcomingFilter"
-                                {% if upcoming == "1" %}
-                                    checked
-                                {% endif %}
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    name="upcoming"
+                                    value="1"
+                                    id="upcomingFilter"
+                                    {% if upcoming == "1" %}
+                                        checked
+                                    {% endif %}
+                                >
+
+                                <label
+                                    class="form-check-label"
+                                    for="upcomingFilter"
+                                >
+                                    Upcoming Only
+                                </label>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- FILTER -->
+
+                        <div class="col-lg-2">
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary w-100 kucsa-filter-submit"
+                                id="kucsaFilterButton"
                             >
-
-                            <label
-                                class="form-check-label"
-                                for="upcomingFilter"
-                            >
-                                Upcoming Only
-                            </label>
+                                <i class="bi bi-funnel me-1"></i>
+                                Filter
+                            </button>
 
                         </div>
 
                     </div>
 
-
-                    <!-- =================================================
-                         FILTER BUTTON
-                    ================================================== -->
-
-                    <div class="col-lg-2">
-
-                        <button
-                            type="submit"
-                            class="btn btn-primary w-100"
-                        >
-
-                            <i class="bi bi-funnel me-1"></i>
-
-                            Filter
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </form>
+                </form>
 
 
-            <!-- =====================================================
-                 FILTER SUMMARY
-            ====================================================== -->
+                <!-- FILTER SUMMARY -->
 
-            {% if search_query or selected_event_type or selected_status or upcoming == "1" %}
+                {% if search_query or selected_event_type or selected_status or upcoming == "1" %}
 
-                <div class="mt-3 pt-3 border-top">
+                    <div class="kucsa-filter-summary">
 
-                    <div class="d-flex flex-wrap align-items-center gap-2">
-
-                        <span class="small text-muted">
+                        <span class="kucsa-filter-summary-label">
                             Active filters:
                         </span>
 
 
                         {% if search_query %}
 
-                            <span class="badge bg-light text-dark border">
-                                Search: {{ search_query }}
+                            <span class="kucsa-filter-chip">
+                                <i class="bi bi-search me-1"></i>
+                                {{ search_query }}
                             </span>
 
                         {% endif %}
@@ -313,7 +1531,7 @@
 
                         {% if selected_event_type %}
 
-                            <span class="badge bg-light text-dark border">
+                            <span class="kucsa-filter-chip">
 
                                 Type:
 
@@ -332,7 +1550,7 @@
 
                         {% if selected_status and can_manage_events %}
 
-                            <span class="badge bg-light text-dark border">
+                            <span class="kucsa-filter-chip">
 
                                 Status:
 
@@ -351,7 +1569,8 @@
 
                         {% if upcoming == "1" %}
 
-                            <span class="badge bg-light text-dark border">
+                            <span class="kucsa-filter-chip">
+                                <i class="bi bi-calendar-check me-1"></i>
                                 Upcoming
                             </span>
 
@@ -360,713 +1579,723 @@
 
                         <a
                             href="{% url 'events:list' %}"
-                            class="btn btn-sm btn-outline-secondary ms-auto"
+                            class="btn btn-sm btn-outline-secondary kucsa-clear-filter"
                         >
-
                             <i class="bi bi-x-circle me-1"></i>
-
                             Clear Filters
-
                         </a>
 
                     </div>
 
-                </div>
-
-            {% endif %}
-
-        </div>
-
-    </div>
-
-
-    <!-- =========================================================
-         EVENT RESULTS HEADER
-    ========================================================== -->
-
-    {% if events %}
-
-        <div class="d-flex justify-content-between align-items-center mb-3">
-
-            <div>
-
-                <h5 class="fw-bold mb-1">
-                    Available Events
-                </h5>
-
-                <p class="small text-muted mb-0">
-                    Explore KUCSA activities and opportunities.
-                </p>
+                {% endif %}
 
             </div>
 
-            {% if can_manage_events %}
-
-                <span class="badge bg-primary-subtle text-primary">
-
-                    <i class="bi bi-shield-check me-1"></i>
-
-                    Management View
-
-                </span>
-
-            {% endif %}
-
-        </div>
+        </section>
 
 
-        <!-- =========================================================
-             EVENT CARDS
-        ========================================================== -->
+        <!-- =====================================================
+             RESULTS
+        ====================================================== -->
 
-        <div class="row g-4">
+        {% if events %}
 
-            {% for event in events %}
+            <div class="kucsa-results-header">
 
-                <div class="col-xl-4 col-lg-6">
+                <div>
 
-                    <div class="card h-100 border-0 shadow-sm overflow-hidden">
+                    <h2 class="kucsa-results-title">
+                        Available Events
+                    </h2>
 
-                        <!-- =================================================
-                             EVENT IMAGE
-                        ================================================== -->
+                    <p class="kucsa-results-description">
+                        Explore KUCSA activities and opportunities.
+                    </p>
 
-                        {% if event.image %}
-
-                            <img
-                                src="{{ event.image.url }}"
-                                class="card-img-top"
-                                style="
-                                    height: 220px;
-                                    object-fit: cover;
-                                "
-                                alt="{{ event.title }}"
-                                loading="lazy"
-                            >
-
-                        {% else %}
-
-                            <div
-                                class="bg-dark text-white d-flex align-items-center justify-content-center"
-                                style="height: 220px;"
-                            >
-
-                                <div class="text-center">
-
-                                    <i class="bi bi-calendar-event display-3"></i>
-
-                                    <div class="mt-2">
-                                        KUCSA Event
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        {% endif %}
+                </div>
 
 
-                        <!-- =================================================
-                             EVENT CONTENT
-                        ================================================== -->
+                {% if can_manage_events %}
 
-                        <div class="card-body d-flex flex-column">
+                    <span class="kucsa-management-view">
 
-                            <!-- =================================================
-                                 BADGES
-                            ================================================== -->
+                        <i class="bi bi-shield-check"></i>
 
-                            <div class="d-flex flex-wrap gap-2 mb-2">
+                        Management View
 
-                                <!-- Event Type -->
+                    </span>
 
-                                <span class="badge bg-primary">
+                {% endif %}
 
-                                    {{ event.event_type_display }}
-
-                                </span>
+            </div>
 
 
-                                <!-- Featured -->
+            <!-- =================================================
+                 EVENT GRID
+            ================================================== -->
 
-                                {% if event.is_featured %}
+            <div class="row g-4">
 
-                                    <span class="badge bg-warning text-dark">
+                {% for event in events %}
 
-                                        <i class="bi bi-star-fill me-1"></i>
+                    <div class="col-xl-4 col-lg-6">
 
-                                        Featured
+                        <article class="kucsa-event-card">
 
-                                    </span>
+                            <!-- EVENT IMAGE -->
 
-                                {% endif %}
+                            <div class="kucsa-event-image-wrap">
 
+                                {% if event.image %}
 
-                                <!-- =================================================
-                                     STATUS
-                                     Management sees all statuses.
-                                     Students normally only see published
-                                     events because the view filters them.
-                                ================================================== -->
+                                    <img
+                                        src="{{ event.image.url }}"
+                                        class="kucsa-event-image"
+                                        alt="{{ event.title }}"
+                                        loading="lazy"
+                                    >
 
-                                {% if event.status == "PUBLISHED" %}
-
-                                    <span class="badge bg-success">
-
-                                        <i class="bi bi-check-circle me-1"></i>
-
-                                        Published
-
-                                    </span>
-
-                                {% elif event.status == "ONGOING" %}
-
-                                    <span class="badge bg-info text-dark">
-
-                                        <i class="bi bi-play-circle me-1"></i>
-
-                                        Ongoing
-
-                                    </span>
-
-                                {% elif event.status == "COMPLETED" %}
-
-                                    <span class="badge bg-secondary">
-
-                                        <i class="bi bi-check2-all me-1"></i>
-
-                                        Completed
-
-                                    </span>
-
-                                {% elif event.status == "CANCELLED" %}
-
-                                    <span class="badge bg-danger">
-
-                                        <i class="bi bi-x-circle me-1"></i>
-
-                                        Cancelled
-
-                                    </span>
+                                    <div class="kucsa-event-image-overlay"></div>
 
                                 {% else %}
 
-                                    <span class="badge bg-dark">
+                                    <div class="kucsa-event-fallback">
 
-                                        <i class="bi bi-file-earmark me-1"></i>
+                                        <i class="bi bi-calendar-event"></i>
 
-                                        Draft
+                                        <span>
+                                            KUCSA Event
+                                        </span>
 
-                                    </span>
+                                    </div>
+
+                                {% endif %}
+
+
+                                {% if event.is_featured %}
+
+                                    <div class="kucsa-event-featured-overlay">
+
+                                        <i class="bi bi-star-fill"></i>
+
+                                        Featured
+
+                                    </div>
 
                                 {% endif %}
 
                             </div>
 
 
-                            <!-- =================================================
-                                 TITLE
-                            ================================================== -->
+                            <!-- EVENT CONTENT -->
 
-                            <h5 class="card-title fw-bold mb-2">
-
-                                {{ event.title }}
-
-                            </h5>
+                            <div class="kucsa-event-body">
 
 
-                            <!-- =================================================
-                                 DESCRIPTION
-                            ================================================== -->
+                                <!-- BADGES -->
 
-                            <p class="card-text text-muted">
+                                <div class="kucsa-event-badges">
 
-                                {{ event.description|truncatewords:25 }}
-
-                            </p>
+                                    <span class="kucsa-event-badge kucsa-badge-primary">
+                                        {{ event.event_type_display }}
+                                    </span>
 
 
-                            <!-- =================================================
-                                 EVENT INFORMATION
-                            ================================================== -->
+                                    {% if event.is_featured %}
 
-                            <div class="small text-muted mb-3">
+                                        <span class="kucsa-event-badge kucsa-badge-warning">
 
-                                <!-- Date -->
+                                            <i class="bi bi-star-fill"></i>
 
-                                <div class="mb-2">
+                                            Featured
 
-                                    <i class="bi bi-calendar3 me-2"></i>
+                                        </span>
 
-                                    <strong>
-                                        {{ event.start_datetime|date:"D, d M Y" }}
-                                    </strong>
-
-                                </div>
+                                    {% endif %}
 
 
-                                <!-- Time -->
+                                    {% if event.status == "PUBLISHED" %}
 
-                                <div class="mb-2">
+                                        <span class="kucsa-event-badge kucsa-badge-success">
 
-                                    <i class="bi bi-clock me-2"></i>
+                                            <i class="bi bi-check-circle"></i>
 
-                                    {{ event.start_datetime|date:"g:i A" }}
+                                            Published
 
-                                    –
+                                        </span>
 
-                                    {{ event.end_datetime|date:"g:i A" }}
+                                    {% elif event.status == "ONGOING" %}
 
-                                </div>
+                                        <span class="kucsa-event-badge kucsa-badge-info">
 
+                                            <i class="bi bi-play-circle"></i>
 
-                                <!-- Location -->
+                                            Ongoing
 
-                                <div>
+                                        </span>
 
-                                    {% if event.is_online %}
+                                    {% elif event.status == "COMPLETED" %}
 
-                                        <i class="bi bi-camera-video me-2"></i>
+                                        <span class="kucsa-event-badge kucsa-badge-secondary">
 
-                                        Online Event
+                                            <i class="bi bi-check2-all"></i>
+
+                                            Completed
+
+                                        </span>
+
+                                    {% elif event.status == "CANCELLED" %}
+
+                                        <span class="kucsa-event-badge kucsa-badge-danger">
+
+                                            <i class="bi bi-x-circle"></i>
+
+                                            Cancelled
+
+                                        </span>
 
                                     {% else %}
 
-                                        <i class="bi bi-geo-alt me-2"></i>
+                                        <span class="kucsa-event-badge kucsa-badge-dark">
 
-                                        {{ event.venue|default:"Venue to be announced" }}
+                                            <i class="bi bi-file-earmark"></i>
 
-                                        {% if event.location_details %}
+                                            Draft
 
-                                            <span class="text-muted">
-                                                — {{ event.location_details }}
-                                            </span>
-
-                                        {% endif %}
+                                        </span>
 
                                     {% endif %}
 
                                 </div>
 
-                            </div>
+
+                                <!-- TITLE -->
+
+                                <h3 class="kucsa-event-title">
+                                    {{ event.title }}
+                                </h3>
 
 
-                            <!-- =================================================
-                                 TARGET AUDIENCE
-                            ================================================== -->
+                                <!-- DESCRIPTION -->
 
-                            {% if event.target_audience %}
-
-                                <div class="small mb-3">
-
-                                    <i class="bi bi-people me-2 text-primary"></i>
-
-                                    <strong>For:</strong>
-
-                                    {{ event.target_audience }}
-
-                                </div>
-
-                            {% endif %}
+                                <p class="kucsa-event-description">
+                                    {{ event.description|truncatewords:25 }}
+                                </p>
 
 
-                            <!-- =================================================
-                                 REGISTRATION INFORMATION
-                            ================================================== -->
+                                <!-- EVENT META -->
 
-                            {% if event.requires_registration %}
+                                <div class="kucsa-event-meta">
 
-                                {% if event.capacity %}
+                                    <!-- DATE -->
 
-                                    <div class="mb-3">
+                                    <div class="kucsa-event-meta-row">
 
-                                        <div class="d-flex justify-content-between small mb-1">
+                                        <i class="bi bi-calendar3"></i>
+
+                                        <span>
+                                            <strong>
+                                                {{ event.start_datetime|date:"D, d M Y" }}
+                                            </strong>
+                                        </span>
+
+                                    </div>
+
+
+                                    <!-- TIME -->
+
+                                    <div class="kucsa-event-meta-row">
+
+                                        <i class="bi bi-clock"></i>
+
+                                        <span>
+
+                                            {{ event.start_datetime|date:"g:i A" }}
+
+                                            –
+
+                                            {{ event.end_datetime|date:"g:i A" }}
+
+                                        </span>
+
+                                    </div>
+
+
+                                    <!-- LOCATION -->
+
+                                    <div class="kucsa-event-meta-row">
+
+                                        {% if event.is_online %}
+
+                                            <i class="bi bi-camera-video"></i>
 
                                             <span>
-                                                Registration
+                                                Online Event
                                             </span>
 
-                                            <span class="fw-semibold">
+                                        {% else %}
 
-                                                {{ event.registration_count }}/{{ event.capacity }}
+                                            <i class="bi bi-geo-alt"></i>
+
+                                            <span>
+
+                                                {{ event.venue|default:"Venue to be announced" }}
+
+                                                {% if event.location_details %}
+
+                                                    — {{ event.location_details }}
+
+                                                {% endif %}
 
                                             </span>
-
-                                        </div>
-
-
-                                        <div
-                                            class="progress"
-                                            role="progressbar"
-                                            aria-label="Event registration capacity"
-                                            aria-valuemin="0"
-                                            aria-valuemax="{{ event.capacity }}"
-                                            aria-valuenow="{{ event.registration_count }}"
-                                            style="height: 6px;"
-                                        >
-
-                                            <div
-                                                class="progress-bar"
-                                                style="
-                                                    width:
-                                                    {% widthratio event.registration_count event.capacity 100 %}%;
-                                                "
-                                            ></div>
-
-                                        </div>
-
-
-                                        {% if event.is_full %}
-
-                                            <div class="small text-danger mt-1">
-
-                                                <i class="bi bi-exclamation-circle me-1"></i>
-
-                                                Event is full
-
-                                            </div>
-
-                                        {% elif event.available_slots is not None %}
-
-                                            <div class="small text-muted mt-1">
-
-                                                {{ event.available_slots }}
-
-                                                slot{{ event.available_slots|pluralize }}
-
-                                                remaining
-
-                                            </div>
 
                                         {% endif %}
 
                                     </div>
 
-                                {% else %}
+                                </div>
 
-                                    <div class="small text-muted mb-3">
 
-                                        <i class="bi bi-infinity me-1"></i>
+                                <!-- TARGET AUDIENCE -->
 
-                                        Unlimited capacity
+                                {% if event.target_audience %}
+
+                                    <div class="kucsa-target-audience">
+
+                                        <i class="bi bi-people"></i>
+
+                                        <div>
+
+                                            <strong>For:</strong>
+
+                                            {{ event.target_audience }}
+
+                                        </div>
 
                                     </div>
 
                                 {% endif %}
 
 
-                                <!-- =================================================
-                                     REGISTRATION STATUS
-                                ================================================== -->
+                                <!-- REGISTRATION -->
 
-                                {% if event.registration_is_open %}
+                                {% if event.requires_registration %}
 
-                                    <div class="small text-success mb-3">
+                                    {% if event.capacity %}
 
-                                        <i class="bi bi-check-circle me-1"></i>
+                                        <div class="kucsa-registration-box">
 
-                                        Registration is open
+                                            <div class="kucsa-registration-head">
 
-                                    </div>
+                                                <span>
+                                                    Registration
+                                                </span>
 
-                                {% elif event.is_full %}
+                                                <strong>
+                                                    {{ event.registration_count }}/{{ event.capacity }}
+                                                </strong>
 
-                                    <div class="small text-danger mb-3">
+                                            </div>
 
-                                        <i class="bi bi-x-circle me-1"></i>
 
-                                        Registration is full
+                                            <div
+                                                class="progress kucsa-capacity-progress"
+                                                role="progressbar"
+                                                aria-label="Event registration capacity"
+                                                aria-valuemin="0"
+                                                aria-valuemax="{{ event.capacity }}"
+                                                aria-valuenow="{{ event.registration_count }}"
+                                            >
 
-                                    </div>
+                                                <div
+                                                    class="progress-bar"
+                                                    data-capacity="{{ event.registration_count }}"
+                                                    data-capacity-total="{{ event.capacity }}"
+                                                    style="width: 0%;"
+                                                ></div>
 
-                                {% elif event.registration_deadline %}
+                                            </div>
 
-                                    <div class="small text-muted mb-3">
 
-                                        <i class="bi bi-clock-history me-1"></i>
+                                            {% if event.is_full %}
 
-                                        Registration is closed
+                                                <div class="kucsa-registration-note is-full">
 
-                                    </div>
+                                                    <i class="bi bi-exclamation-circle me-1"></i>
+
+                                                    Event is full
+
+                                                </div>
+
+                                            {% elif event.available_slots is not None %}
+
+                                                <div class="kucsa-registration-note">
+
+                                                    {{ event.available_slots }}
+
+                                                    slot{{ event.available_slots|pluralize }}
+
+                                                    remaining
+
+                                                </div>
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    {% else %}
+
+                                        <div class="kucsa-simple-meta">
+
+                                            <i class="bi bi-infinity"></i>
+
+                                            Unlimited capacity
+
+                                        </div>
+
+                                    {% endif %}
+
+
+                                    <!-- REGISTRATION STATUS -->
+
+                                    {% if event.registration_is_open %}
+
+                                        <div class="kucsa-simple-meta">
+
+                                            <span class="kucsa-registration-note is-open mt-0">
+
+                                                <i class="bi bi-check-circle me-1"></i>
+
+                                                Registration is open
+
+                                            </span>
+
+                                        </div>
+
+                                    {% elif event.is_full %}
+
+                                        <div class="kucsa-simple-meta">
+
+                                            <span class="kucsa-registration-note is-full mt-0">
+
+                                                <i class="bi bi-x-circle me-1"></i>
+
+                                                Registration is full
+
+                                            </span>
+
+                                        </div>
+
+                                    {% elif event.registration_deadline %}
+
+                                        <div class="kucsa-simple-meta">
+
+                                            <span class="kucsa-registration-note is-closed mt-0">
+
+                                                <i class="bi bi-clock-history me-1"></i>
+
+                                                Registration is closed
+
+                                            </span>
+
+                                        </div>
+
+                                    {% else %}
+
+                                        <div class="kucsa-simple-meta">
+
+                                            <span class="kucsa-registration-note is-closed mt-0">
+
+                                                <i class="bi bi-lock me-1"></i>
+
+                                                Registration is closed
+
+                                            </span>
+
+                                        </div>
+
+                                    {% endif %}
 
                                 {% else %}
 
-                                    <div class="small text-muted mb-3">
+                                    <div class="kucsa-simple-meta">
 
-                                        <i class="bi bi-lock me-1"></i>
+                                        <i class="bi bi-info-circle"></i>
 
-                                        Registration is closed
+                                        Registration not required
 
                                     </div>
 
                                 {% endif %}
 
-                            {% else %}
 
-                                <div class="small text-muted mb-3">
+                                <!-- CERTIFICATE -->
 
-                                    <i class="bi bi-info-circle me-1"></i>
+                                {% if event.certificate_available %}
 
-                                    Registration not required
+                                    <div class="kucsa-certificate">
 
-                                </div>
+                                        <i class="bi bi-award"></i>
 
-                            {% endif %}
+                                        Certificate available
 
+                                    </div>
 
-                            <!-- =================================================
-                                 CERTIFICATE
-                            ================================================== -->
-
-                            {% if event.certificate_available %}
-
-                                <div class="small text-success mb-3">
-
-                                    <i class="bi bi-award me-2"></i>
-
-                                    Certificate available
-
-                                </div>
-
-                            {% endif %}
+                                {% endif %}
 
 
-                            <!-- =================================================
-                                 ORGANIZER
-                                 Management can see organizer information.
-                            ================================================== -->
+                                <!-- ORGANIZER -->
 
-                            {% if can_manage_events and event.organizer %}
+                                {% if can_manage_events and event.organizer %}
 
-                                <div class="small text-muted mb-3">
+                                    <div class="kucsa-organizer">
 
-                                    <i class="bi bi-person-badge me-2"></i>
+                                        <i class="bi bi-person-badge"></i>
 
-                                    Organized by
+                                        <span>
 
-                                    <strong>
-                                        {{ event.organizer.get_full_name|default:event.organizer.username }}
-                                    </strong>
+                                            Organized by
 
-                                </div>
+                                            <strong>
+                                                {{ event.organizer.get_full_name|default:event.organizer.username }}
+                                            </strong>
 
-                            {% endif %}
+                                        </span>
+
+                                    </div>
+
+                                {% endif %}
 
 
-                            <!-- =================================================
-                                 MANAGEMENT REGISTRATION SUMMARY
-                            ================================================== -->
+                                <!-- MANAGEMENT SUMMARY -->
 
-                            {% if can_manage_events and event.requires_registration %}
+                                {% if can_manage_events and event.requires_registration %}
 
-                                <div class="border-top pt-3 mb-3">
+                                    <div class="kucsa-management-summary">
 
-                                    <div class="row g-2 text-center">
+                                        <div class="row g-1 text-center">
 
-                                        <div class="col-4">
+                                            <div class="col-4">
 
-                                            <div class="small text-muted">
-                                                Registered
+                                                <div class="kucsa-summary-stat">
+
+                                                    <div class="kucsa-summary-label">
+                                                        Registered
+                                                    </div>
+
+                                                    <div class="kucsa-summary-value">
+                                                        {{ event.registration_count }}
+                                                    </div>
+
+                                                </div>
+
                                             </div>
 
-                                            <div class="fw-bold">
-                                                {{ event.registration_count }}
+
+                                            <div class="col-4">
+
+                                                <div class="kucsa-summary-stat">
+
+                                                    <div class="kucsa-summary-label">
+                                                        Attended
+                                                    </div>
+
+                                                    <div class="kucsa-summary-value success">
+                                                        {{ event.attendee_count }}
+                                                    </div>
+
+                                                </div>
+
                                             </div>
 
-                                        </div>
 
-                                        <div class="col-4">
+                                            <div class="col-4">
 
-                                            <div class="small text-muted">
-                                                Attended
-                                            </div>
+                                                <div class="kucsa-summary-stat">
 
-                                            <div class="fw-bold text-success">
-                                                {{ event.attendee_count }}
-                                            </div>
+                                                    <div class="kucsa-summary-label">
+                                                        Attendance
+                                                    </div>
 
-                                        </div>
+                                                    <div class="kucsa-summary-value">
+                                                        {{ event.attendance_rate }}%
+                                                    </div>
 
-                                        <div class="col-4">
+                                                </div>
 
-                                            <div class="small text-muted">
-                                                Attendance
-                                            </div>
-
-                                            <div class="fw-bold">
-                                                {{ event.attendance_rate }}%
                                             </div>
 
                                         </div>
 
                                     </div>
 
-                                </div>
-
-                            {% endif %}
+                                {% endif %}
 
 
-                            <!-- =================================================
-                                 ACTIONS
-                            ================================================== -->
+                                <!-- ACTIONS -->
 
-                            <div class="mt-auto">
+                                <div class="kucsa-event-actions">
 
-                                <div class="d-grid gap-2">
+                                    <div class="d-grid gap-2">
 
-                                    <!-- View Event -->
+                                        <!-- VIEW -->
 
-                                    <a
-                                        href="{% url 'events:detail' event.pk %}"
-                                        class="btn btn-outline-primary"
-                                    >
+                                        <a
+                                            href="{% url 'events:detail' event.pk %}"
+                                            class="btn btn-outline-primary"
+                                        >
 
-                                        <i class="bi bi-eye me-1"></i>
+                                            <i class="bi bi-eye me-1"></i>
 
-                                        View Event
+                                            View Event
 
-                                    </a>
+                                        </a>
 
 
-                                    <!-- =================================================
-                                         MANAGEMENT ACTIONS
-                                    ================================================== -->
+                                        <!-- MANAGEMENT -->
 
-                                    {% if can_manage_events %}
+                                        {% if can_manage_events %}
 
-                                        <div class="row g-2">
+                                            <div class="row g-2">
 
-                                            <div class="col-6">
+                                                <div class="col-6">
 
-                                                <a
-                                                    href="{% url 'events:update' event.pk %}"
-                                                    class="btn btn-outline-secondary w-100"
-                                                >
-
-                                                    <i class="bi bi-pencil me-1"></i>
-
-                                                    Edit
-
-                                                </a>
-
-                                            </div>
-
-
-                                            <div class="col-6">
-
-                                                {% if event.status == "DRAFT" %}
-
-                                                    <form
-                                                        method="post"
-                                                        action="{% url 'events:publish' event.pk %}"
+                                                    <a
+                                                        href="{% url 'events:update' event.pk %}"
+                                                        class="btn btn-outline-secondary w-100"
                                                     >
 
-                                                        {% csrf_token %}
+                                                        <i class="bi bi-pencil me-1"></i>
 
-                                                        <button
-                                                            type="submit"
-                                                            class="btn btn-success w-100"
+                                                        Edit
+
+                                                    </a>
+
+                                                </div>
+
+
+                                                <div class="col-6">
+
+                                                    {% if event.status == "DRAFT" %}
+
+                                                        <form
+                                                            method="post"
+                                                            action="{% url 'events:publish' event.pk %}"
+                                                            class="kucsa-action-form"
                                                         >
 
-                                                            <i class="bi bi-send me-1"></i>
+                                                            {% csrf_token %}
 
-                                                            Publish
+                                                            <button
+                                                                type="submit"
+                                                                class="btn btn-success w-100 kucsa-action-button"
+                                                            >
+
+                                                                <i class="bi bi-send me-1"></i>
+
+                                                                Publish
+
+                                                            </button>
+
+                                                        </form>
+
+
+                                                    {% elif event.status == "PUBLISHED" or event.status == "ONGOING" %}
+
+                                                        <form
+                                                            method="post"
+                                                            action="{% url 'events:cancel' event.pk %}"
+                                                            class="kucsa-action-form"
+                                                        >
+
+                                                            {% csrf_token %}
+
+                                                            <button
+                                                                type="submit"
+                                                                class="btn btn-outline-danger w-100 kucsa-action-button"
+                                                                data-confirm="Are you sure you want to cancel this event?"
+                                                            >
+
+                                                                <i class="bi bi-x-circle me-1"></i>
+
+                                                                Cancel
+
+                                                            </button>
+
+                                                        </form>
+
+
+                                                    {% elif event.status == "COMPLETED" %}
+
+                                                        <button
+                                                            type="button"
+                                                            class="btn btn-secondary w-100"
+                                                            disabled
+                                                        >
+
+                                                            <i class="bi bi-check2-all me-1"></i>
+
+                                                            Completed
 
                                                         </button>
 
-                                                    </form>
 
-                                                {% elif event.status == "PUBLISHED" or event.status == "ONGOING" %}
-
-                                                    <form
-                                                        method="post"
-                                                        action="{% url 'events:cancel' event.pk %}"
-                                                    >
-
-                                                        {% csrf_token %}
+                                                    {% elif event.status == "CANCELLED" %}
 
                                                         <button
-                                                            type="submit"
-                                                            class="btn btn-outline-danger w-100"
-                                                            onclick="return confirm('Are you sure you want to cancel this event?');"
+                                                            type="button"
+                                                            class="btn btn-danger w-100"
+                                                            disabled
                                                         >
 
                                                             <i class="bi bi-x-circle me-1"></i>
 
-                                                            Cancel
+                                                            Cancelled
 
                                                         </button>
 
-                                                    </form>
+                                                    {% endif %}
 
-                                                {% elif event.status == "COMPLETED" %}
-
-                                                    <button
-                                                        type="button"
-                                                        class="btn btn-secondary w-100"
-                                                        disabled
-                                                    >
-
-                                                        <i class="bi bi-check2-all me-1"></i>
-
-                                                        Completed
-
-                                                    </button>
-
-                                                {% elif event.status == "CANCELLED" %}
-
-                                                    <button
-                                                        type="button"
-                                                        class="btn btn-danger w-100"
-                                                        disabled
-                                                    >
-
-                                                        <i class="bi bi-x-circle me-1"></i>
-
-                                                        Cancelled
-
-                                                    </button>
-
-                                                {% endif %}
+                                                </div>
 
                                             </div>
 
-                                        </div>
+                                        {% endif %}
 
-                                    {% endif %}
+                                    </div>
 
                                 </div>
 
                             </div>
 
-                        </div>
+                        </article>
 
                     </div>
 
+                {% endfor %}
+
+            </div>
+
+
+        {% else %}
+
+            <!-- =================================================
+                 EMPTY STATE
+            ================================================== -->
+
+            <div class="kucsa-empty-state">
+
+                <div class="kucsa-empty-icon">
+
+                    <i class="bi bi-calendar-x"></i>
+
                 </div>
 
-            {% endfor %}
-
-        </div>
-
-
-    {% else %}
-
-        <!-- =========================================================
-             EMPTY STATE
-        ========================================================== -->
-
-        <div class="card border-0 shadow-sm">
-
-            <div class="card-body text-center py-5">
-
-                <i class="bi bi-calendar-x display-1 text-muted"></i>
-
-                <h4 class="mt-3">
+                <h2 class="kucsa-empty-title">
                     No Events Found
-                </h4>
+                </h2>
 
-                <p class="text-muted mb-4">
+                <p class="kucsa-empty-text">
 
                     {% if search_query or selected_event_type or selected_status or upcoming == "1" %}
 
@@ -1082,9 +2311,7 @@
                 </p>
 
 
-                <div class="d-flex justify-content-center gap-2 flex-wrap">
-
-                    <!-- Clear Filters -->
+                <div class="kucsa-empty-actions">
 
                     {% if search_query or selected_event_type or selected_status or upcoming == "1" %}
 
@@ -1101,8 +2328,6 @@
 
                     {% endif %}
 
-
-                    <!-- Create Event -->
 
                     {% if can_manage_events %}
 
@@ -1123,9 +2348,360 @@
 
             </div>
 
+        {% endif %}
+
+    </div>
+
+
+    <!-- =========================================================
+         LOADING OVERLAY
+    ========================================================== -->
+
+    <div
+        class="kucsa-events-loading"
+        id="kucsaEventsLoading"
+        aria-hidden="true"
+    >
+
+        <div class="kucsa-loading-box">
+
+            <div
+                class="spinner-border spinner-border-sm text-primary"
+                role="status"
+                aria-hidden="true"
+            ></div>
+
+            <span>
+                Loading events...
+            </span>
+
         </div>
 
-    {% endif %}
+    </div>
+
+
+    <!-- =========================================================
+         INLINE JAVASCRIPT
+    ========================================================== -->
+
+    <script>
+        (function () {
+            "use strict";
+
+            const page = document.querySelector(".kucsa-events-page");
+
+            if (!page) return;
+
+
+            /* =====================================================
+               HELPERS
+            ====================================================== */
+
+            const prefersReducedMotion = window.matchMedia(
+                "(prefers-reduced-motion: reduce)"
+            ).matches;
+
+
+            /* =====================================================
+               FILTER FORM LOADING STATE
+            ====================================================== */
+
+            const filterForm = document.getElementById(
+                "kucsaEventFilterForm"
+            );
+
+            const filterButton = document.getElementById(
+                "kucsaFilterButton"
+            );
+
+            const loadingOverlay = document.getElementById(
+                "kucsaEventsLoading"
+            );
+
+
+            if (filterForm && filterButton) {
+
+                filterForm.addEventListener("submit", function () {
+
+                    if (filterForm.dataset.submitting === "true") {
+                        return;
+                    }
+
+                    filterForm.dataset.submitting = "true";
+
+                    filterButton.disabled = true;
+
+                    filterButton.innerHTML =
+                        '<span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>' +
+                        'Filtering...';
+
+                    if (loadingOverlay) {
+                        loadingOverlay.classList.add("is-visible");
+                        loadingOverlay.setAttribute(
+                            "aria-hidden",
+                            "false"
+                        );
+                    }
+                });
+            }
+
+
+            /* =====================================================
+               CAPACITY BAR ANIMATION
+            ====================================================== */
+
+            const capacityBars = page.querySelectorAll(
+                ".kucsa-capacity-progress .progress-bar"
+            );
+
+
+            function animateCapacityBar(bar) {
+
+                const current = parseFloat(
+                    bar.dataset.capacity || "0"
+                );
+
+                const total = parseFloat(
+                    bar.dataset.capacityTotal || "0"
+                );
+
+                if (!total || total <= 0) {
+                    bar.style.width = "0%";
+                    return;
+                }
+
+                let percentage = (current / total) * 100;
+
+                percentage = Math.max(
+                    0,
+                    Math.min(100, percentage)
+                );
+
+
+                if (prefersReducedMotion) {
+
+                    bar.style.width = percentage + "%";
+
+                    return;
+                }
+
+
+                requestAnimationFrame(function () {
+
+                    requestAnimationFrame(function () {
+
+                        bar.style.width =
+                            percentage.toFixed(2) + "%";
+
+                    });
+
+                });
+            }
+
+
+            capacityBars.forEach(animateCapacityBar);
+
+
+            /* =====================================================
+               ACTION CONFIRMATION
+            ====================================================== */
+
+            const confirmationButtons = page.querySelectorAll(
+                "[data-confirm]"
+            );
+
+
+            confirmationButtons.forEach(function (button) {
+
+                button.addEventListener("click", function (event) {
+
+                    const message =
+                        button.dataset.confirm;
+
+                    if (!message) return;
+
+                    const confirmed = window.confirm(message);
+
+                    if (!confirmed) {
+                        event.preventDefault();
+                        return;
+                    }
+
+
+                    const form =
+                        button.closest("form");
+
+                    if (form) {
+
+                        button.disabled = true;
+
+                        button.innerHTML =
+                            '<span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>' +
+                            'Processing...';
+
+                    }
+
+                });
+
+            });
+
+
+            /* =====================================================
+               PREVENT DOUBLE SUBMISSION
+            ====================================================== */
+
+            const actionForms = page.querySelectorAll(
+                ".kucsa-action-form"
+            );
+
+
+            actionForms.forEach(function (form) {
+
+                form.addEventListener("submit", function () {
+
+                    if (
+                        form.dataset.submitting === "true"
+                    ) {
+                        return;
+                    }
+
+                    form.dataset.submitting = "true";
+
+                    const button =
+                        form.querySelector(
+                            "button[type='submit']"
+                        );
+
+                    if (!button) return;
+
+                    button.disabled = true;
+
+                    if (!button.dataset.confirm) {
+
+                        button.innerHTML =
+                            '<span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>' +
+                            'Processing...';
+
+                    }
+
+                });
+
+            });
+
+
+            /* =====================================================
+               SEARCH INPUT — ESC TO CLEAR
+            ====================================================== */
+
+            const searchInput =
+                document.getElementById("eventSearch");
+
+
+            if (searchInput) {
+
+                searchInput.addEventListener(
+                    "keydown",
+                    function (event) {
+
+                        if (
+                            event.key === "Escape" &&
+                            searchInput.value
+                        ) {
+
+                            searchInput.value = "";
+
+                            searchInput.focus();
+
+                        }
+
+                    }
+                );
+
+            }
+
+
+            /* =====================================================
+               AUTO SUBMIT SELECT FILTERS
+               Only visual enhancement — normal form submission
+               remains available through the Filter button.
+            ====================================================== */
+
+            const filterSelects = page.querySelectorAll(
+                "#eventType, #eventStatus"
+            );
+
+
+            filterSelects.forEach(function (select) {
+
+                select.addEventListener("change", function () {
+
+                    select.setAttribute(
+                        "aria-busy",
+                        "true"
+                    );
+
+                });
+
+            });
+
+
+            /* =====================================================
+               PAGESHOW — RESET STALE LOADING STATE
+            ====================================================== */
+
+            window.addEventListener(
+                "pageshow",
+                function () {
+
+                    if (filterForm) {
+                        filterForm.dataset.submitting =
+                            "false";
+                    }
+
+                    if (filterButton) {
+
+                        filterButton.disabled = false;
+
+                        filterButton.innerHTML =
+                            '<i class="bi bi-funnel me-1"></i>' +
+                            'Filter';
+
+                    }
+
+                    if (loadingOverlay) {
+
+                        loadingOverlay.classList.remove(
+                            "is-visible"
+                        );
+
+                        loadingOverlay.setAttribute(
+                            "aria-hidden",
+                            "true"
+                        );
+
+                    }
+
+                    actionForms.forEach(function (form) {
+
+                        form.dataset.submitting =
+                            "false";
+
+                        const button =
+                            form.querySelector(
+                                "button[type='submit']"
+                            );
+
+                        if (button) {
+                            button.disabled = false;
+                        }
+
+                    });
+
+                }
+            );
+
+        })();
+    </script>
 
 </div>
 

@@ -4,291 +4,888 @@
 
 {% block content %}
 
-<div class="container-fluid py-4">
+<div class="kucsa-update-event-page">
 
-    <!-- ========================================================= -->
-    <!-- PAGE HEADER -->
-    <!-- ========================================================= -->
+    <style>
+        /* =========================================================
+           KUCSA UPDATE EVENT — SCOPED STYLES
+        ========================================================== */
 
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        .kucsa-update-event-page {
+            --ku-primary: #0d6efd;
+            --ku-primary-dark: #084298;
+            --ku-primary-soft: rgba(13, 110, 253, .09);
+            --ku-success: #198754;
+            --ku-warning: #f59f00;
+            --ku-danger: #dc3545;
+            --ku-info: #0dcaf0;
+            --ku-dark: #172033;
+            --ku-text: #243047;
+            --ku-muted: #6c757d;
+            --ku-border: #e8edf4;
+            --ku-surface: #ffffff;
+            --ku-soft: #f7f9fc;
+            --ku-radius: 18px;
+            --ku-radius-sm: 12px;
+            --ku-shadow: 0 12px 35px rgba(20, 35, 60, .07);
+            --ku-shadow-hover: 0 18px 45px rgba(20, 35, 60, .12);
 
-        <div>
+            position: relative;
+            min-height: 100%;
+            padding: 24px 0 48px;
+            color: var(--ku-text);
+            background:
+                radial-gradient(circle at 8% 0%, rgba(13, 110, 253, .06), transparent 28%),
+                radial-gradient(circle at 95% 10%, rgba(25, 135, 84, .045), transparent 24%);
+        }
 
-            <div class="d-flex align-items-center gap-2 mb-1">
+        .kucsa-update-event-page *,
+        .kucsa-update-event-page *::before,
+        .kucsa-update-event-page *::after {
+            box-sizing: border-box;
+        }
 
-                <h2 class="fw-bold mb-0">
-                    <i class="bi bi-pencil-square me-2"></i>
-                    Update Event
-                </h2>
+        /* =========================================================
+           PAGE HEADER
+        ========================================================== */
 
-                {% if event.status == "DRAFT" %}
+        .kucsa-update-event-page .ku-page-header {
+            margin-bottom: 28px;
+        }
 
-                    <span class="badge bg-dark">
-                        Draft
-                    </span>
+        .kucsa-update-event-page .ku-header-main {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            min-width: 0;
+        }
 
-                {% elif event.status == "PUBLISHED" %}
+        .kucsa-update-event-page .ku-header-icon {
+            width: 54px;
+            height: 54px;
+            min-width: 54px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            color: #fff;
+            background: linear-gradient(145deg, var(--ku-primary), var(--ku-primary-dark));
+            box-shadow: 0 10px 25px rgba(13, 110, 253, .20);
+            font-size: 1.35rem;
+        }
 
-                    <span class="badge bg-success">
-                        Published
-                    </span>
+        .kucsa-update-event-page .ku-header-content {
+            min-width: 0;
+        }
 
-                {% elif event.status == "ONGOING" %}
+        .kucsa-update-event-page .ku-header-title-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
 
-                    <span class="badge bg-info">
-                        Ongoing
-                    </span>
+        .kucsa-update-event-page .ku-page-title {
+            margin: 0;
+            color: var(--ku-dark);
+            font-size: clamp(1.45rem, 2.4vw, 2rem);
+            font-weight: 800;
+            letter-spacing: -.025em;
+            line-height: 1.15;
+        }
 
-                {% elif event.status == "COMPLETED" %}
+        .kucsa-update-event-page .ku-page-subtitle {
+            margin: 0;
+            max-width: 800px;
+            color: var(--ku-muted);
+            font-size: .94rem;
+            line-height: 1.6;
+        }
 
-                    <span class="badge bg-secondary">
-                        Completed
-                    </span>
+        .kucsa-update-event-page .ku-event-name {
+            color: var(--ku-dark);
+            font-weight: 700;
+        }
 
-                {% elif event.status == "CANCELLED" %}
+        .kucsa-update-event-page .ku-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
 
-                    <span class="badge bg-danger">
-                        Cancelled
-                    </span>
+        /* =========================================================
+           STATUS BADGES
+        ========================================================== */
 
-                {% endif %}
+        .kucsa-update-event-page .ku-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 30px;
+            padding: 5px 10px;
+            border-radius: 999px;
+            font-size: .72rem;
+            font-weight: 750;
+            letter-spacing: .01em;
+            white-space: nowrap;
+        }
 
-            </div>
+        .kucsa-update-event-page .ku-status-draft {
+            color: #fff;
+            background: #343a40;
+        }
 
-            <p class="text-muted mb-0">
-                Edit and manage <strong>{{ event.title }}</strong>.
-            </p>
+        .kucsa-update-event-page .ku-status-published {
+            color: #146c43;
+            background: #d1e7dd;
+        }
 
-        </div>
+        .kucsa-update-event-page .ku-status-ongoing {
+            color: #087990;
+            background: #cff4fc;
+        }
+
+        .kucsa-update-event-page .ku-status-completed {
+            color: #495057;
+            background: #e9ecef;
+        }
+
+        .kucsa-update-event-page .ku-status-cancelled {
+            color: #b02a37;
+            background: #f8d7da;
+        }
+
+        /* =========================================================
+           BUTTONS
+        ========================================================== */
+
+        .kucsa-update-event-page .ku-btn {
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            border-radius: 11px;
+            font-weight: 650;
+            transition:
+                transform .18s ease,
+                box-shadow .18s ease,
+                background-color .18s ease,
+                border-color .18s ease;
+        }
+
+        .kucsa-update-event-page .ku-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .kucsa-update-event-page .ku-btn:active {
+            transform: translateY(0);
+        }
+
+        /* =========================================================
+           ERROR SUMMARY
+        ========================================================== */
+
+        .kucsa-update-event-page .ku-error-summary {
+            display: flex;
+            align-items: flex-start;
+            gap: 13px;
+            margin-bottom: 22px;
+            padding: 16px 18px;
+            border: 1px solid rgba(220, 53, 69, .16);
+            border-radius: 14px;
+            background: #fff5f6;
+            color: #842029;
+            box-shadow: 0 6px 20px rgba(220, 53, 69, .05);
+        }
+
+        .kucsa-update-event-page .ku-error-icon {
+            width: 38px;
+            height: 38px;
+            min-width: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: rgba(220, 53, 69, .10);
+            color: var(--ku-danger);
+        }
+
+        .kucsa-update-event-page .ku-error-summary strong {
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        /* =========================================================
+           SECTION CARDS
+        ========================================================== */
+
+        .kucsa-update-event-page .ku-section-card {
+            border: 1px solid var(--ku-border);
+            border-radius: var(--ku-radius);
+            background: var(--ku-surface);
+            box-shadow: var(--ku-shadow);
+            overflow: hidden;
+            margin-bottom: 20px;
+            transition:
+                box-shadow .2s ease,
+                border-color .2s ease;
+        }
+
+        .kucsa-update-event-page .ku-section-card:hover {
+            border-color: #dde5f0;
+            box-shadow: 0 15px 38px rgba(20, 35, 60, .08);
+        }
+
+        .kucsa-update-event-page .ku-section-header {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 17px 21px;
+            border-bottom: 1px solid var(--ku-border);
+            background: linear-gradient(180deg, #fff, #fbfcfe);
+        }
+
+        .kucsa-update-event-page .ku-section-icon {
+            width: 39px;
+            height: 39px;
+            min-width: 39px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 11px;
+            color: var(--ku-primary);
+            background: var(--ku-primary-soft);
+            font-size: 1rem;
+        }
+
+        .kucsa-update-event-page .ku-section-title {
+            margin: 0;
+            color: var(--ku-dark);
+            font-size: .98rem;
+            font-weight: 750;
+        }
+
+        .kucsa-update-event-page .ku-section-description {
+            margin: 2px 0 0;
+            color: var(--ku-muted);
+            font-size: .78rem;
+        }
+
+        .kucsa-update-event-page .ku-section-body {
+            padding: 23px;
+        }
+
+        /* =========================================================
+           FORM CONTROLS
+        ========================================================== */
+
+        .kucsa-update-event-page .form-label {
+            margin-bottom: 8px;
+            color: #303b50;
+            font-size: .86rem;
+            font-weight: 700;
+        }
+
+        .kucsa-update-event-page .form-control,
+        .kucsa-update-event-page .form-select {
+            min-height: 46px;
+            border-color: #dfe5ee;
+            border-radius: 11px;
+            color: var(--ku-text);
+            background-color: #fff;
+            font-size: .9rem;
+            transition:
+                border-color .18s ease,
+                box-shadow .18s ease,
+                background-color .18s ease;
+        }
+
+        .kucsa-update-event-page textarea.form-control {
+            min-height: 125px;
+            resize: vertical;
+        }
+
+        .kucsa-update-event-page input[type="file"].form-control {
+            padding-top: 9px;
+            padding-bottom: 9px;
+        }
+
+        .kucsa-update-event-page .form-control:hover,
+        .kucsa-update-event-page .form-select:hover {
+            border-color: #c8d3e2;
+        }
+
+        .kucsa-update-event-page .form-control:focus,
+        .kucsa-update-event-page .form-select:focus {
+            border-color: rgba(13, 110, 253, .65);
+            box-shadow: 0 0 0 .22rem rgba(13, 110, 253, .10);
+        }
+
+        .kucsa-update-event-page .form-text {
+            color: #7a8494;
+            font-size: .77rem;
+            line-height: 1.5;
+        }
+
+        .kucsa-update-event-page .ku-field {
+            position: relative;
+        }
+
+        .kucsa-update-event-page .ku-field-error {
+            display: block;
+            margin-top: 7px;
+            color: var(--ku-danger);
+            font-size: .77rem;
+            line-height: 1.45;
+        }
+
+        .kucsa-update-event-page .ku-field-error i {
+            margin-right: 4px;
+        }
+
+        /* =========================================================
+           CURRENT IMAGE
+        ========================================================== */
+
+        .kucsa-update-event-page .ku-image-preview {
+            position: relative;
+            overflow: hidden;
+            margin-top: 12px;
+            border: 1px solid var(--ku-border);
+            border-radius: 13px;
+            background: #f3f5f8;
+        }
+
+        .kucsa-update-event-page .ku-image-preview img {
+            display: block;
+            width: 100%;
+            max-height: 235px;
+            object-fit: cover;
+        }
+
+        .kucsa-update-event-page .ku-image-label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 9px;
+            border-radius: 999px;
+            color: #fff;
+            background: rgba(20, 28, 43, .78);
+            backdrop-filter: blur(8px);
+            font-size: .7rem;
+            font-weight: 700;
+        }
+
+        .kucsa-update-event-page .ku-new-image-preview {
+            display: none;
+            margin-top: 12px;
+            padding: 10px;
+            border: 1px dashed #cbd5e1;
+            border-radius: 13px;
+            background: #f8fafc;
+        }
+
+        .kucsa-update-event-page .ku-new-image-preview.is-visible {
+            display: block;
+        }
+
+        .kucsa-update-event-page .ku-new-image-preview img {
+            display: block;
+            width: 100%;
+            max-height: 220px;
+            border-radius: 9px;
+            object-fit: cover;
+        }
+
+        .kucsa-update-event-page .ku-preview-caption {
+            margin-top: 8px;
+            color: var(--ku-muted);
+            font-size: .74rem;
+            overflow-wrap: anywhere;
+        }
+
+        /* =========================================================
+           CHECKBOX / SWITCH AREAS
+        ========================================================== */
+
+        .kucsa-update-event-page .ku-check-panel {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px;
+            border: 1px solid var(--ku-border);
+            border-radius: 13px;
+            background: #fbfcfe;
+            transition:
+                border-color .18s ease,
+                background-color .18s ease;
+        }
+
+        .kucsa-update-event-page .ku-check-panel:hover {
+            border-color: #cfd9e7;
+            background: #f9fbff;
+        }
+
+        .kucsa-update-event-page .ku-check-panel .form-check-input {
+            float: none;
+            flex: 0 0 auto;
+            width: 1.15rem;
+            height: 1.15rem;
+            margin: 2px 0 0;
+            cursor: pointer;
+        }
+
+        .kucsa-update-event-page .ku-check-panel .form-check-label {
+            cursor: pointer;
+            line-height: 1.45;
+        }
+
+        .kucsa-update-event-page .ku-check-title {
+            display: block;
+            color: var(--ku-dark);
+            font-size: .86rem;
+            font-weight: 700;
+        }
+
+        .kucsa-update-event-page .ku-check-description {
+            display: block;
+            margin-top: 3px;
+            color: var(--ku-muted);
+            font-size: .76rem;
+        }
+
+        /* =========================================================
+           ONLINE STATE
+        ========================================================== */
+
+        .kucsa-update-event-page .ku-online-panel {
+            border-color: rgba(13, 202, 240, .20);
+            background: rgba(13, 202, 240, .045);
+        }
+
+        .kucsa-update-event-page .ku-online-panel.is-active {
+            border-color: rgba(13, 202, 240, .40);
+            background: rgba(13, 202, 240, .08);
+        }
+
+        /* =========================================================
+           INFORMATION ALERTS
+        ========================================================== */
+
+        .kucsa-update-event-page .ku-info-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 15px;
+            padding: 12px 13px;
+            border: 1px solid rgba(13, 202, 240, .18);
+            border-radius: 11px;
+            background: #f1fbfd;
+            color: #087990;
+            font-size: .78rem;
+            line-height: 1.55;
+        }
+
+        .kucsa-update-event-page .ku-info-box i {
+            margin-top: 1px;
+            flex: 0 0 auto;
+        }
+
+        /* =========================================================
+           SIDEBAR
+        ========================================================== */
+
+        .kucsa-update-event-page .ku-sidebar {
+            position: sticky;
+            top: 18px;
+        }
+
+        .kucsa-update-event-page .ku-sidebar-card {
+            border: 1px solid var(--ku-border);
+            border-radius: var(--ku-radius);
+            background: #fff;
+            box-shadow: var(--ku-shadow);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .kucsa-update-event-page .ku-sidebar-card .ku-section-header {
+            padding: 15px 18px;
+        }
+
+        .kucsa-update-event-page .ku-sidebar-card .ku-section-body {
+            padding: 19px;
+        }
+
+        /* =========================================================
+           SUMMARY METRICS
+        ========================================================== */
+
+        .kucsa-update-event-page .ku-summary-metric {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 11px 0;
+            border-bottom: 1px solid #eef1f5;
+        }
+
+        .kucsa-update-event-page .ku-summary-metric:first-child {
+            padding-top: 0;
+        }
+
+        .kucsa-update-event-page .ku-summary-metric:last-child {
+            padding-bottom: 0;
+            border-bottom: 0;
+        }
+
+        .kucsa-update-event-page .ku-summary-label {
+            color: var(--ku-muted);
+            font-size: .79rem;
+        }
+
+        .kucsa-update-event-page .ku-summary-value {
+            color: var(--ku-dark);
+            font-size: .84rem;
+            font-weight: 750;
+            text-align: right;
+            overflow-wrap: anywhere;
+        }
+
+        /* =========================================================
+           ACTION CARD
+        ========================================================== */
+
+        .kucsa-update-event-page .ku-action-card {
+            border: 1px solid rgba(13, 110, 253, .16);
+            background:
+                radial-gradient(circle at 100% 0%, rgba(13, 110, 253, .10), transparent 45%),
+                #fff;
+        }
+
+        .kucsa-update-event-page .ku-action-note {
+            margin-bottom: 15px;
+            color: var(--ku-muted);
+            font-size: .76rem;
+            line-height: 1.5;
+        }
+
+        .kucsa-update-event-page .ku-save-button {
+            min-height: 48px;
+            border-radius: 12px;
+            font-weight: 750;
+            box-shadow: 0 8px 20px rgba(13, 110, 253, .15);
+        }
+
+        .kucsa-update-event-page .ku-save-button.is-loading {
+            pointer-events: none;
+            opacity: .78;
+        }
+
+        .kucsa-update-event-page .ku-save-spinner {
+            display: none;
+        }
+
+        .kucsa-update-event-page .ku-save-button.is-loading .ku-save-spinner {
+            display: inline-block;
+        }
+
+        .kucsa-update-event-page .ku-save-button.is-loading .ku-save-icon {
+            display: none;
+        }
+
+        /* =========================================================
+           DESCRIPTION COUNTER
+        ========================================================== */
+
+        .kucsa-update-event-page .ku-description-meta {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 5px;
+            color: #8a94a4;
+            font-size: .7rem;
+        }
+
+        /* =========================================================
+           ACCESSIBILITY
+        ========================================================== */
+
+        .kucsa-update-event-page a:focus-visible,
+        .kucsa-update-event-page button:focus-visible,
+        .kucsa-update-event-page input:focus-visible,
+        .kucsa-update-event-page select:focus-visible,
+        .kucsa-update-event-page textarea:focus-visible {
+            outline: 3px solid rgba(13, 110, 253, .25);
+            outline-offset: 2px;
+        }
+
+        /* =========================================================
+           RESPONSIVE — LARGE TABLET
+        ========================================================== */
+
+        @media (max-width: 1199.98px) {
+            .kucsa-update-event-page {
+                padding-top: 20px;
+            }
+
+            .kucsa-update-event-page .ku-sidebar {
+                position: static;
+            }
+        }
+
+        /* =========================================================
+           RESPONSIVE — TABLET
+        ========================================================== */
+
+        @media (max-width: 991.98px) {
+            .kucsa-update-event-page .ku-page-header {
+                margin-bottom: 22px;
+            }
+
+            .kucsa-update-event-page .ku-header-actions {
+                width: 100%;
+                margin-top: 14px;
+            }
+
+            .kucsa-update-event-page .ku-header-actions .ku-btn {
+                flex: 1 1 auto;
+            }
+
+            .kucsa-update-event-page .ku-section-body {
+                padding: 20px;
+            }
+
+            .kucsa-update-event-page .ku-sidebar-card {
+                margin-bottom: 16px;
+            }
+        }
+
+        /* =========================================================
+           RESPONSIVE — MOBILE
+        ========================================================== */
+
+        @media (max-width: 767.98px) {
+            .kucsa-update-event-page {
+                padding: 14px 0 34px;
+            }
+
+            .kucsa-update-event-page .ku-header-main {
+                gap: 12px;
+            }
+
+            .kucsa-update-event-page .ku-header-icon {
+                width: 46px;
+                height: 46px;
+                min-width: 46px;
+                border-radius: 13px;
+                font-size: 1.1rem;
+            }
+
+            .kucsa-update-event-page .ku-page-title {
+                font-size: 1.38rem;
+            }
+
+            .kucsa-update-event-page .ku-page-subtitle {
+                font-size: .86rem;
+            }
+
+            .kucsa-update-event-page .ku-header-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .kucsa-update-event-page .ku-header-actions .ku-btn {
+                width: 100%;
+                flex: none;
+            }
+
+            .kucsa-update-event-page .ku-section-card {
+                border-radius: 15px;
+                margin-bottom: 16px;
+            }
+
+            .kucsa-update-event-page .ku-section-header {
+                padding: 14px 16px;
+            }
+
+            .kucsa-update-event-page .ku-section-body {
+                padding: 17px 16px;
+            }
+
+            .kucsa-update-event-page .ku-section-icon {
+                width: 36px;
+                height: 36px;
+                min-width: 36px;
+            }
+
+            .kucsa-update-event-page .ku-section-description {
+                display: none;
+            }
+
+            .kucsa-update-event-page .ku-error-summary {
+                padding: 13px;
+            }
+
+            .kucsa-update-event-page .ku-check-panel {
+                padding: 13px;
+            }
+        }
+
+        /* =========================================================
+           RESPONSIVE — SMALL MOBILE
+        ========================================================== */
+
+        @media (max-width: 575.98px) {
+            .kucsa-update-event-page .ku-page-title {
+                font-size: 1.24rem;
+            }
+
+            .kucsa-update-event-page .ku-header-title-row {
+                gap: 7px;
+            }
+
+            .kucsa-update-event-page .ku-status {
+                min-height: 27px;
+                padding: 4px 8px;
+                font-size: .66rem;
+            }
+
+            .kucsa-update-event-page .ku-section-title {
+                font-size: .92rem;
+            }
+
+            .kucsa-update-event-page .form-label {
+                font-size: .83rem;
+            }
+
+            .kucsa-update-event-page .form-control,
+            .kucsa-update-event-page .form-select {
+                min-height: 45px;
+                font-size: .87rem;
+            }
+
+            .kucsa-update-event-page .ku-image-preview img,
+            .kucsa-update-event-page .ku-new-image-preview img {
+                max-height: 190px;
+            }
+        }
+
+        @media (max-width: 359.98px) {
+            .kucsa-update-event-page .ku-header-icon {
+                width: 42px;
+                height: 42px;
+                min-width: 42px;
+            }
+
+            .kucsa-update-event-page .ku-page-title {
+                font-size: 1.13rem;
+            }
+
+            .kucsa-update-event-page .ku-section-body {
+                padding: 14px 12px;
+            }
+
+            .kucsa-update-event-page .ku-section-header {
+                padding: 12px;
+            }
+        }
+
+        /* =========================================================
+           REDUCED MOTION
+        ========================================================== */
+
+        @media (prefers-reduced-motion: reduce) {
+            .kucsa-update-event-page *,
+            .kucsa-update-event-page *::before,
+            .kucsa-update-event-page *::after {
+                scroll-behavior: auto !important;
+                transition-duration: .01ms !important;
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+            }
+        }
+    </style>
 
 
-        <div class="d-flex gap-2 mt-3 mt-md-0">
+    <!-- =========================================================
+         PAGE HEADER
+    ========================================================== -->
 
-            <a
-                href="{% url 'events:detail' event.pk %}"
-                class="btn btn-outline-primary">
+    <div class="container-fluid px-0">
 
-                <i class="bi bi-eye me-1"></i>
-                View Event
+        <div class="ku-page-header">
 
-            </a>
+            <div class="row g-3 align-items-center">
 
+                <div class="col-lg">
 
-            <a
-                href="{% url 'events:list' %}"
-                class="btn btn-outline-secondary">
+                    <div class="ku-header-main">
 
-                <i class="bi bi-arrow-left me-1"></i>
-                Back to Events
-
-            </a>
-
-        </div>
-
-    </div>
-
-
-    <!-- ========================================================= -->
-    <!-- FORM -->
-    <!-- ========================================================= -->
-
-    <form
-        method="post"
-        enctype="multipart/form-data"
-        novalidate>
-
-        {% csrf_token %}
-
-
-        <!-- ===================================================== -->
-        <!-- NON-FIELD ERRORS -->
-        <!-- ===================================================== -->
-
-        {% if form.non_field_errors %}
-
-            <div class="alert alert-danger shadow-sm">
-
-                <div class="d-flex align-items-start">
-
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-
-                    <div>
-
-                        <strong>
-                            Please correct the following:
-                        </strong>
-
-                        <div class="mt-1">
-                            {{ form.non_field_errors }}
+                        <div class="ku-header-icon" aria-hidden="true">
+                            <i class="bi bi-pencil-square"></i>
                         </div>
 
-                    </div>
+                        <div class="ku-header-content">
 
-                </div>
+                            <div class="ku-header-title-row">
 
-            </div>
+                                <h1 class="ku-page-title">
+                                    Update Event
+                                </h1>
 
-        {% endif %}
+                                {% if event.status == "DRAFT" %}
 
+                                    <span class="ku-status ku-status-draft">
+                                        <i class="bi bi-file-earmark"></i>
+                                        Draft
+                                    </span>
 
-        <div class="row g-4">
+                                {% elif event.status == "PUBLISHED" %}
 
-            <!-- ================================================= -->
-            <!-- MAIN COLUMN -->
-            <!-- ================================================= -->
+                                    <span class="ku-status ku-status-published">
+                                        <i class="bi bi-check-circle"></i>
+                                        Published
+                                    </span>
 
-            <div class="col-xl-8">
+                                {% elif event.status == "ONGOING" %}
 
-                <!-- ================================================= -->
-                <!-- EVENT INFORMATION -->
-                <!-- ================================================= -->
+                                    <span class="ku-status ku-status-ongoing">
+                                        <i class="bi bi-broadcast"></i>
+                                        Ongoing
+                                    </span>
 
-                <div class="card border-0 shadow-sm mb-4">
+                                {% elif event.status == "COMPLETED" %}
 
-                    <div class="card-header bg-white border-bottom py-3">
+                                    <span class="ku-status ku-status-completed">
+                                        <i class="bi bi-check2-all"></i>
+                                        Completed
+                                    </span>
 
-                        <h5 class="mb-0 fw-bold">
-                            <i class="bi bi-info-circle me-1"></i>
-                            Event Information
-                        </h5>
+                                {% elif event.status == "CANCELLED" %}
 
-                    </div>
-
-
-                    <div class="card-body p-4">
-
-                        <!-- TITLE -->
-
-                        <div class="mb-4">
-
-                            <label
-                                for="{{ form.title.id_for_label }}"
-                                class="form-label fw-semibold">
-
-                                Event Title
-
-                            </label>
-
-                            {{ form.title }}
-
-                            {% for error in form.title.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    <i class="bi bi-exclamation-circle me-1"></i>
-                                    {{ error }}
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
-
-
-                        <!-- EVENT TYPE + IMAGE -->
-
-                        <div class="row g-4">
-
-                            <div class="col-md-6">
-
-                                <label
-                                    for="{{ form.event_type.id_for_label }}"
-                                    class="form-label fw-semibold">
-
-                                    Event Type
-
-                                </label>
-
-                                {{ form.event_type }}
-
-                                {% for error in form.event_type.errors %}
-
-                                    <div class="text-danger small mt-1">
-                                        {{ error }}
-                                    </div>
-
-                                {% endfor %}
-
-                            </div>
-
-
-                            <div class="col-md-6">
-
-                                <label
-                                    for="{{ form.image.id_for_label }}"
-                                    class="form-label fw-semibold">
-
-                                    Event Image
-
-                                </label>
-
-                                {{ form.image }}
-
-                                {% if event.image %}
-
-                                    <div class="mt-3">
-
-                                        <small class="text-muted d-block mb-2">
-                                            Current event image
-                                        </small>
-
-                                        <div class="position-relative">
-
-                                            <img
-                                                src="{{ event.image.url }}"
-                                                class="img-fluid rounded border"
-                                                style="
-                                                    width: 100%;
-                                                    max-height: 220px;
-                                                    object-fit: cover;
-                                                "
-                                                alt="{{ event.title }}">
-
-                                        </div>
-
-                                    </div>
-
-                                {% else %}
-
-                                    <small class="text-muted d-block mt-2">
-                                        No event image has been uploaded.
-                                    </small>
+                                    <span class="ku-status ku-status-cancelled">
+                                        <i class="bi bi-x-circle"></i>
+                                        Cancelled
+                                    </span>
 
                                 {% endif %}
 
-
-                                {% for error in form.image.errors %}
-
-                                    <div class="text-danger small mt-1">
-                                        {{ error }}
-                                    </div>
-
-                                {% endfor %}
-
                             </div>
 
-                        </div>
-
-
-                        <!-- DESCRIPTION -->
-
-                        <div class="mt-4">
-
-                            <label
-                                for="{{ form.description.id_for_label }}"
-                                class="form-label fw-semibold">
-
-                                Description
-
-                            </label>
-
-                            {{ form.description }}
-
-                            {% for error in form.description.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
-                                </div>
-
-                            {% endfor %}
+                            <p class="ku-page-subtitle">
+                                Edit and manage
+                                <span class="ku-event-name">{{ event.title }}</span>
+                                while keeping its event information, registration settings,
+                                and status up to date.
+                            </p>
 
                         </div>
 
@@ -297,646 +894,26 @@
                 </div>
 
 
-                <!-- ================================================= -->
-                <!-- DATE & TIME -->
-                <!-- ================================================= -->
+                <div class="col-lg-auto">
 
-                <div class="card border-0 shadow-sm mb-4">
-
-                    <div class="card-header bg-white border-bottom py-3">
-
-                        <h5 class="mb-0 fw-bold">
-
-                            <i class="bi bi-calendar3 me-1"></i>
-                            Date & Time
-
-                        </h5>
-
-                    </div>
-
-
-                    <div class="card-body p-4">
-
-                        <div class="row g-4">
-
-                            <!-- START -->
-
-                            <div class="col-md-6">
-
-                                <label
-                                    for="{{ form.start_datetime.id_for_label }}"
-                                    class="form-label fw-semibold">
-
-                                    Start Date & Time
-
-                                </label>
-
-                                {{ form.start_datetime }}
-
-                                {% for error in form.start_datetime.errors %}
-
-                                    <div class="text-danger small mt-1">
-                                        <i class="bi bi-exclamation-circle me-1"></i>
-                                        {{ error }}
-                                    </div>
-
-                                {% endfor %}
-
-                            </div>
-
-
-                            <!-- END -->
-
-                            <div class="col-md-6">
-
-                                <label
-                                    for="{{ form.end_datetime.id_for_label }}"
-                                    class="form-label fw-semibold">
-
-                                    End Date & Time
-
-                                </label>
-
-                                {{ form.end_datetime }}
-
-                                {% for error in form.end_datetime.errors %}
-
-                                    <div class="text-danger small mt-1">
-                                        <i class="bi bi-exclamation-circle me-1"></i>
-                                        {{ error }}
-                                    </div>
-
-                                {% endfor %}
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- ================================================= -->
-                <!-- LOCATION -->
-                <!-- ================================================= -->
-
-                <div class="card border-0 shadow-sm mb-4">
-
-                    <div class="card-header bg-white border-bottom py-3">
-
-                        <h5 class="mb-0 fw-bold">
-
-                            <i class="bi bi-geo-alt me-1"></i>
-                            Location
-
-                        </h5>
-
-                    </div>
-
-
-                    <div class="card-body p-4">
-
-                        <!-- ONLINE EVENT -->
-
-                        <div class="form-check mb-4">
-
-                            {{ form.is_online }}
-
-                            <label
-                                for="{{ form.is_online.id_for_label }}"
-                                class="form-check-label fw-semibold">
-
-                                Online Event
-
-                            </label>
-
-                            <div class="form-text">
-                                Enable this if participants will join remotely.
-                            </div>
-
-                            {% for error in form.is_online.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
-
-
-                        <!-- VENUE -->
-
-                        <div class="mb-4">
-
-                            <label
-                                for="{{ form.venue.id_for_label }}"
-                                class="form-label fw-semibold">
-
-                                Venue
-
-                            </label>
-
-                            {{ form.venue }}
-
-                            {% for error in form.venue.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
-
-
-                        <!-- LOCATION DETAILS -->
-
-                        <div class="mb-4">
-
-                            <label
-                                for="{{ form.location_details.id_for_label }}"
-                                class="form-label fw-semibold">
-
-                                Location Details
-
-                            </label>
-
-                            {{ form.location_details }}
-
-                            <div class="form-text">
-                                Add room, building, campus, or other useful directions.
-                            </div>
-
-                            {% for error in form.location_details.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
-
-
-                        <!-- ONLINE LINK -->
-
-                        <div>
-
-                            <label
-                                for="{{ form.online_link.id_for_label }}"
-                                class="form-label fw-semibold">
-
-                                Online Meeting Link
-
-                            </label>
-
-                            {{ form.online_link }}
-
-                            <div class="form-text">
-                                Required when this is an online event.
-                            </div>
-
-                            {% for error in form.online_link.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- ================================================= -->
-                <!-- ADDITIONAL INFORMATION -->
-                <!-- ================================================= -->
-
-                <div class="card border-0 shadow-sm">
-
-                    <div class="card-header bg-white border-bottom py-3">
-
-                        <h5 class="mb-0 fw-bold">
-
-                            <i class="bi bi-card-text me-1"></i>
-                            Additional Information
-
-                        </h5>
-
-                    </div>
-
-
-                    <div class="card-body p-4">
-
-                        <!-- REQUIREMENTS -->
-
-                        <div class="mb-4">
-
-                            <label
-                                for="{{ form.requirements.id_for_label }}"
-                                class="form-label fw-semibold">
-
-                                Requirements
-
-                            </label>
-
-                            {{ form.requirements }}
-
-                            {% for error in form.requirements.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
-
-
-                        <!-- TARGET AUDIENCE -->
-
-                        <div class="mb-4">
-
-                            <label
-                                for="{{ form.target_audience.id_for_label }}"
-                                class="form-label fw-semibold">
-
-                                Target Audience
-
-                            </label>
-
-                            {{ form.target_audience }}
-
-                            {% for error in form.target_audience.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
-
-
-                        <!-- CERTIFICATE -->
-
-                        <div class="form-check mb-3">
-
-                            {{ form.certificate_available }}
-
-                            <label
-                                for="{{ form.certificate_available.id_for_label }}"
-                                class="form-check-label">
-
-                                <strong>
-                                    Certificate Available
-                                </strong>
-
-                                <span class="text-muted">
-                                    — Participants can receive a certificate.
-                                </span>
-
-                            </label>
-
-                            {% for error in form.certificate_available.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
-
-
-                        <!-- FEATURED -->
-
-                        <div class="form-check">
-
-                            {{ form.is_featured }}
-
-                            <label
-                                for="{{ form.is_featured.id_for_label }}"
-                                class="form-check-label">
-
-                                <strong>
-                                    Featured Event
-                                </strong>
-
-                                <span class="text-muted">
-                                    — Highlight this event on the KUCSA platform.
-                                </span>
-
-                            </label>
-
-                            {% for error in form.is_featured.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- ================================================= -->
-            <!-- SIDEBAR -->
-            <!-- ================================================= -->
-
-            <div class="col-xl-4">
-
-                <!-- ================================================= -->
-                <!-- REGISTRATION SETTINGS -->
-                <!-- ================================================= -->
-
-                <div class="card border-0 shadow-sm mb-4">
-
-                    <div class="card-header bg-white border-bottom py-3">
-
-                        <h5 class="mb-0 fw-bold">
-
-                            <i class="bi bi-person-check me-1"></i>
-                            Registration Settings
-
-                        </h5>
-
-                    </div>
-
-
-                    <div class="card-body p-4">
-
-                        <!-- CAPACITY -->
-
-                        <div class="mb-4">
-
-                            <label
-                                for="{{ form.capacity.id_for_label }}"
-                                class="form-label fw-semibold">
-
-                                Capacity
-
-                            </label>
-
-                            {{ form.capacity }}
-
-                            <div class="form-text">
-                                Leave blank for unlimited capacity.
-                            </div>
-
-                            {% for error in form.capacity.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
-
-
-                        <!-- REGISTRATION STATUS -->
-
-                        <div class="mb-4">
-
-                            <label
-                                for="{{ form.registration_status.id_for_label }}"
-                                class="form-label fw-semibold">
-
-                                Registration Status
-
-                            </label>
-
-                            {{ form.registration_status }}
-
-                            {% for error in form.registration_status.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
-
-
-                        <!-- DEADLINE -->
-
-                        <div class="mb-4">
-
-                            <label
-                                for="{{ form.registration_deadline.id_for_label }}"
-                                class="form-label fw-semibold">
-
-                                Registration Deadline
-
-                            </label>
-
-                            {{ form.registration_deadline }}
-
-                            {% for error in form.registration_deadline.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
-
-
-                        <!-- REQUIRE REGISTRATION -->
-
-                        <div class="form-check">
-
-                            {{ form.requires_registration }}
-
-                            <label
-                                for="{{ form.requires_registration.id_for_label }}"
-                                class="form-check-label">
-
-                                <strong>
-                                    Require Registration
-                                </strong>
-
-                            </label>
-
-                            <div class="form-text">
-                                Participants must register before attending.
-                            </div>
-
-                            {% for error in form.requires_registration.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- ================================================= -->
-                <!-- EVENT STATUS -->
-                <!-- ================================================= -->
-
-                <div class="card border-0 shadow-sm mb-4">
-
-                    <div class="card-header bg-white border-bottom py-3">
-
-                        <h5 class="mb-0 fw-bold">
-
-                            <i class="bi bi-flag me-1"></i>
-                            Event Status
-
-                        </h5>
-
-                    </div>
-
-
-                    <div class="card-body p-4">
-
-                        <label
-                            for="{{ form.status.id_for_label }}"
-                            class="form-label fw-semibold">
-
-                            Status
-
-                        </label>
-
-                        {{ form.status }}
-
-                        {% for error in form.status.errors %}
-
-                            <div class="text-danger small mt-1">
-                                {{ error }}
-                            </div>
-
-                        {% endfor %}
-
-
-                        <div class="alert alert-info mt-3 mb-0 small">
-
-                            <i class="bi bi-info-circle me-1"></i>
-
-                            <strong>Note:</strong>
-                            Published events are visible to members,
-                            while draft events remain private to authorized
-                            event managers.
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- ================================================= -->
-                <!-- CURRENT EVENT SUMMARY -->
-                <!-- ================================================= -->
-
-                <div class="card border-0 shadow-sm mb-4">
-
-                    <div class="card-header bg-white border-bottom py-3">
-
-                        <h5 class="mb-0 fw-bold">
-
-                            <i class="bi bi-bar-chart me-1"></i>
-                            Current Event Summary
-
-                        </h5>
-
-                    </div>
-
-
-                    <div class="card-body p-4">
-
-                        <div class="d-flex justify-content-between mb-3">
-
-                            <span class="text-muted">
-                                Registered
-                            </span>
-
-                            <strong>
-                                {{ event.registration_count|default:0 }}
-                            </strong>
-
-                        </div>
-
-
-                        {% if event.capacity %}
-
-                            <div class="d-flex justify-content-between mb-3">
-
-                                <span class="text-muted">
-                                    Capacity
-                                </span>
-
-                                <strong>
-                                    {{ event.capacity }}
-                                </strong>
-
-                            </div>
-
-                        {% endif %}
-
-
-                        <div class="d-flex justify-content-between">
-
-                            <span class="text-muted">
-                                Event Type
-                            </span>
-
-                            <strong>
-                                {{ event.get_event_type_display }}
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- ================================================= -->
-                <!-- ACTIONS -->
-                <!-- ================================================= -->
-
-                <div class="card border-0 shadow-sm">
-
-                    <div class="card-body p-4">
-
-                        <button
-                            type="submit"
-                            class="btn btn-primary w-100 mb-2">
-
-                            <i class="bi bi-save me-1"></i>
-                            Save Changes
-
-                        </button>
-
+                    <div class="ku-header-actions">
 
                         <a
                             href="{% url 'events:detail' event.pk %}"
-                            class="btn btn-outline-secondary w-100">
+                            class="btn btn-outline-primary ku-btn">
 
-                            <i class="bi bi-x-circle me-1"></i>
-                            Cancel
+                            <i class="bi bi-eye"></i>
+                            <span>View Event</span>
+
+                        </a>
+
+
+                        <a
+                            href="{% url 'events:list' %}"
+                            class="btn btn-outline-secondary ku-btn">
+
+                            <i class="bi bi-arrow-left"></i>
+                            <span>Back to Events</span>
 
                         </a>
 
@@ -948,7 +925,1362 @@
 
         </div>
 
-    </form>
+
+        <!-- =====================================================
+             NON-FIELD ERRORS
+        ====================================================== -->
+
+        {% if form.non_field_errors %}
+
+            <div
+                class="ku-error-summary"
+                role="alert"
+                aria-live="assertive">
+
+                <div class="ku-error-icon">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                </div>
+
+                <div>
+
+                    <strong>
+                        Please correct the following before saving.
+                    </strong>
+
+                    <div class="small mt-1">
+                        {{ form.non_field_errors }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             FORM
+        ====================================================== -->
+
+        <form
+            method="post"
+            enctype="multipart/form-data"
+            novalidate
+            id="kucsaUpdateEventForm">
+
+            {% csrf_token %}
+
+            <div class="row g-4">
+
+                <!-- =================================================
+                     MAIN COLUMN
+                ================================================== -->
+
+                <div class="col-xl-8">
+
+
+                    <!-- =================================================
+                         EVENT INFORMATION
+                    ================================================== -->
+
+                    <div class="ku-section-card">
+
+                        <div class="ku-section-header">
+
+                            <div class="ku-section-icon">
+                                <i class="bi bi-info-circle"></i>
+                            </div>
+
+                            <div>
+
+                                <h2 class="ku-section-title">
+                                    Event Information
+                                </h2>
+
+                                <p class="ku-section-description">
+                                    Update the core information members will see.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="ku-section-body">
+
+                            <!-- TITLE -->
+
+                            <div class="ku-field mb-4">
+
+                                <label
+                                    for="{{ form.title.id_for_label }}"
+                                    class="form-label">
+
+                                    Event Title
+
+                                </label>
+
+                                {{ form.title }}
+
+                                {% for error in form.title.errors %}
+
+                                    <div class="ku-field-error">
+                                        <i class="bi bi-exclamation-circle"></i>
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- TYPE + IMAGE -->
+
+                            <div class="row g-4">
+
+                                <div class="col-md-6">
+
+                                    <div class="ku-field">
+
+                                        <label
+                                            for="{{ form.event_type.id_for_label }}"
+                                            class="form-label">
+
+                                            Event Type
+
+                                        </label>
+
+                                        {{ form.event_type }}
+
+                                        {% for error in form.event_type.errors %}
+
+                                            <div class="ku-field-error">
+                                                <i class="bi bi-exclamation-circle"></i>
+                                                {{ error }}
+                                            </div>
+
+                                        {% endfor %}
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-md-6">
+
+                                    <div class="ku-field">
+
+                                        <label
+                                            for="{{ form.image.id_for_label }}"
+                                            class="form-label">
+
+                                            Event Image
+
+                                        </label>
+
+                                        {{ form.image }}
+
+                                        <div class="form-text mt-2">
+                                            Upload a new image only if you want to replace the current one.
+                                        </div>
+
+
+                                        {% if event.image %}
+
+                                            <div class="ku-image-preview">
+
+                                                <span class="ku-image-label">
+                                                    <i class="bi bi-image"></i>
+                                                    Current Image
+                                                </span>
+
+                                                <img
+                                                    src="{{ event.image.url }}"
+                                                    alt="{{ event.title }}">
+
+                                            </div>
+
+                                        {% else %}
+
+                                            <div class="form-text mt-2">
+                                                <i class="bi bi-image me-1"></i>
+                                                No event image has been uploaded.
+                                            </div>
+
+                                        {% endif %}
+
+
+                                        <div
+                                            class="ku-new-image-preview"
+                                            id="kuNewImagePreview">
+
+                                            <img
+                                                id="kuNewImagePreviewImage"
+                                                src=""
+                                                alt="New event image preview">
+
+                                            <div
+                                                class="ku-preview-caption"
+                                                id="kuNewImageName">
+                                            </div>
+
+                                        </div>
+
+
+                                        {% for error in form.image.errors %}
+
+                                            <div class="ku-field-error">
+                                                <i class="bi bi-exclamation-circle"></i>
+                                                {{ error }}
+                                            </div>
+
+                                        {% endfor %}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- DESCRIPTION -->
+
+                            <div class="ku-field mt-4">
+
+                                <label
+                                    for="{{ form.description.id_for_label }}"
+                                    class="form-label">
+
+                                    Description
+
+                                </label>
+
+                                {{ form.description }}
+
+                                <div class="ku-description-meta">
+                                    <span id="kuDescriptionCount">0</span>
+                                    characters
+                                </div>
+
+                                {% for error in form.description.errors %}
+
+                                    <div class="ku-field-error">
+                                        <i class="bi bi-exclamation-circle"></i>
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         DATE & TIME
+                    ================================================== -->
+
+                    <div class="ku-section-card">
+
+                        <div class="ku-section-header">
+
+                            <div class="ku-section-icon">
+                                <i class="bi bi-calendar3"></i>
+                            </div>
+
+                            <div>
+
+                                <h2 class="ku-section-title">
+                                    Date &amp; Time
+                                </h2>
+
+                                <p class="ku-section-description">
+                                    Keep the event schedule accurate for participants.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="ku-section-body">
+
+                            <div class="row g-4">
+
+                                <!-- START -->
+
+                                <div class="col-md-6">
+
+                                    <div class="ku-field">
+
+                                        <label
+                                            for="{{ form.start_datetime.id_for_label }}"
+                                            class="form-label">
+
+                                            Start Date &amp; Time
+
+                                        </label>
+
+                                        {{ form.start_datetime }}
+
+                                        {% for error in form.start_datetime.errors %}
+
+                                            <div class="ku-field-error">
+                                                <i class="bi bi-exclamation-circle"></i>
+                                                {{ error }}
+                                            </div>
+
+                                        {% endfor %}
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- END -->
+
+                                <div class="col-md-6">
+
+                                    <div class="ku-field">
+
+                                        <label
+                                            for="{{ form.end_datetime.id_for_label }}"
+                                            class="form-label">
+
+                                            End Date &amp; Time
+
+                                        </label>
+
+                                        {{ form.end_datetime }}
+
+                                        {% for error in form.end_datetime.errors %}
+
+                                            <div class="ku-field-error">
+                                                <i class="bi bi-exclamation-circle"></i>
+                                                {{ error }}
+                                            </div>
+
+                                        {% endfor %}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="ku-info-box">
+
+                                <i class="bi bi-clock-history"></i>
+
+                                <div>
+                                    Make sure the end date and time are later than the start date and time.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         LOCATION
+                    ================================================== -->
+
+                    <div class="ku-section-card">
+
+                        <div class="ku-section-header">
+
+                            <div class="ku-section-icon">
+                                <i class="bi bi-geo-alt"></i>
+                            </div>
+
+                            <div>
+
+                                <h2 class="ku-section-title">
+                                    Location
+                                </h2>
+
+                                <p class="ku-section-description">
+                                    Tell participants where and how the event will take place.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="ku-section-body">
+
+                            <!-- ONLINE EVENT -->
+
+                            <div
+                                class="ku-check-panel ku-online-panel mb-4"
+                                id="kuOnlinePanel">
+
+                                {{ form.is_online }}
+
+                                <label
+                                    for="{{ form.is_online.id_for_label }}"
+                                    class="form-check-label">
+
+                                    <span class="ku-check-title">
+                                        <i class="bi bi-camera-video me-1"></i>
+                                        Online Event
+                                    </span>
+
+                                    <span class="ku-check-description">
+                                        Enable this when participants will join remotely.
+                                    </span>
+
+                                </label>
+
+                            </div>
+
+
+                            <!-- VENUE -->
+
+                            <div class="ku-field mb-4">
+
+                                <label
+                                    for="{{ form.venue.id_for_label }}"
+                                    class="form-label">
+
+                                    Venue
+
+                                </label>
+
+                                {{ form.venue }}
+
+                                {% for error in form.venue.errors %}
+
+                                    <div class="ku-field-error">
+                                        <i class="bi bi-exclamation-circle"></i>
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- LOCATION DETAILS -->
+
+                            <div class="ku-field mb-4">
+
+                                <label
+                                    for="{{ form.location_details.id_for_label }}"
+                                    class="form-label">
+
+                                    Location Details
+
+                                </label>
+
+                                {{ form.location_details }}
+
+                                <div class="form-text mt-2">
+                                    Add a room, building, campus, landmark, or other useful directions.
+                                </div>
+
+                                {% for error in form.location_details.errors %}
+
+                                    <div class="ku-field-error">
+                                        <i class="bi bi-exclamation-circle"></i>
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- ONLINE LINK -->
+
+                            <div class="ku-field">
+
+                                <label
+                                    for="{{ form.online_link.id_for_label }}"
+                                    class="form-label">
+
+                                    Online Meeting Link
+
+                                </label>
+
+                                {{ form.online_link }}
+
+                                <div class="form-text mt-2">
+                                    Required when this is an online event.
+                                </div>
+
+                                {% for error in form.online_link.errors %}
+
+                                    <div class="ku-field-error">
+                                        <i class="bi bi-exclamation-circle"></i>
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         ADDITIONAL INFORMATION
+                    ================================================== -->
+
+                    <div class="ku-section-card">
+
+                        <div class="ku-section-header">
+
+                            <div class="ku-section-icon">
+                                <i class="bi bi-card-text"></i>
+                            </div>
+
+                            <div>
+
+                                <h2 class="ku-section-title">
+                                    Additional Information
+                                </h2>
+
+                                <p class="ku-section-description">
+                                    Provide useful information to help members prepare.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="ku-section-body">
+
+                            <!-- REQUIREMENTS -->
+
+                            <div class="ku-field mb-4">
+
+                                <label
+                                    for="{{ form.requirements.id_for_label }}"
+                                    class="form-label">
+
+                                    Requirements
+
+                                </label>
+
+                                {{ form.requirements }}
+
+                                {% for error in form.requirements.errors %}
+
+                                    <div class="ku-field-error">
+                                        <i class="bi bi-exclamation-circle"></i>
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- TARGET AUDIENCE -->
+
+                            <div class="ku-field mb-4">
+
+                                <label
+                                    for="{{ form.target_audience.id_for_label }}"
+                                    class="form-label">
+
+                                    Target Audience
+
+                                </label>
+
+                                {{ form.target_audience }}
+
+                                {% for error in form.target_audience.errors %}
+
+                                    <div class="ku-field-error">
+                                        <i class="bi bi-exclamation-circle"></i>
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- CERTIFICATE -->
+
+                            <div class="ku-check-panel mb-3">
+
+                                {{ form.certificate_available }}
+
+                                <label
+                                    for="{{ form.certificate_available.id_for_label }}"
+                                    class="form-check-label">
+
+                                    <span class="ku-check-title">
+                                        <i class="bi bi-award me-1"></i>
+                                        Certificate Available
+                                    </span>
+
+                                    <span class="ku-check-description">
+                                        Participants can receive a certificate where applicable.
+                                    </span>
+
+                                </label>
+
+                            </div>
+
+                            {% for error in form.certificate_available.errors %}
+
+                                <div class="ku-field-error mb-3">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+
+                            <!-- FEATURED -->
+
+                            <div class="ku-check-panel">
+
+                                {{ form.is_featured }}
+
+                                <label
+                                    for="{{ form.is_featured.id_for_label }}"
+                                    class="form-check-label">
+
+                                    <span class="ku-check-title">
+                                        <i class="bi bi-star me-1"></i>
+                                        Featured Event
+                                    </span>
+
+                                    <span class="ku-check-description">
+                                        Highlight this event on the KUCSA platform.
+                                    </span>
+
+                                </label>
+
+                            </div>
+
+                            {% for error in form.is_featured.errors %}
+
+                                <div class="ku-field-error mt-2">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     SIDEBAR
+                ================================================== -->
+
+                <div class="col-xl-4">
+
+                    <div class="ku-sidebar">
+
+
+                        <!-- =================================================
+                             REGISTRATION SETTINGS
+                        ================================================== -->
+
+                        <div class="ku-sidebar-card">
+
+                            <div class="ku-section-header">
+
+                                <div class="ku-section-icon">
+                                    <i class="bi bi-person-check"></i>
+                                </div>
+
+                                <div>
+
+                                    <h2 class="ku-section-title">
+                                        Registration Settings
+                                    </h2>
+
+                                    <p class="ku-section-description">
+                                        Control how members register.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="ku-section-body">
+
+                                <!-- CAPACITY -->
+
+                                <div class="ku-field mb-4">
+
+                                    <label
+                                        for="{{ form.capacity.id_for_label }}"
+                                        class="form-label">
+
+                                        Capacity
+
+                                    </label>
+
+                                    {{ form.capacity }}
+
+                                    <div class="form-text mt-2">
+                                        Leave blank for unlimited capacity.
+                                    </div>
+
+                                    {% for error in form.capacity.errors %}
+
+                                        <div class="ku-field-error">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                            {{ error }}
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+
+                                <!-- REGISTRATION STATUS -->
+
+                                <div class="ku-field mb-4">
+
+                                    <label
+                                        for="{{ form.registration_status.id_for_label }}"
+                                        class="form-label">
+
+                                        Registration Status
+
+                                    </label>
+
+                                    {{ form.registration_status }}
+
+                                    {% for error in form.registration_status.errors %}
+
+                                        <div class="ku-field-error">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                            {{ error }}
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+
+                                <!-- DEADLINE -->
+
+                                <div class="ku-field mb-4">
+
+                                    <label
+                                        for="{{ form.registration_deadline.id_for_label }}"
+                                        class="form-label">
+
+                                        Registration Deadline
+
+                                    </label>
+
+                                    {{ form.registration_deadline }}
+
+                                    {% for error in form.registration_deadline.errors %}
+
+                                        <div class="ku-field-error">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                            {{ error }}
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+
+                                <!-- REQUIRE REGISTRATION -->
+
+                                <div class="ku-check-panel">
+
+                                    {{ form.requires_registration }}
+
+                                    <label
+                                        for="{{ form.requires_registration.id_for_label }}"
+                                        class="form-check-label">
+
+                                        <span class="ku-check-title">
+                                            <i class="bi bi-person-check me-1"></i>
+                                            Require Registration
+                                        </span>
+
+                                        <span class="ku-check-description">
+                                            Participants must register before attending.
+                                        </span>
+
+                                    </label>
+
+                                </div>
+
+                                {% for error in form.requires_registration.errors %}
+
+                                    <div class="ku-field-error mt-2">
+                                        <i class="bi bi-exclamation-circle"></i>
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =================================================
+                             EVENT STATUS
+                        ================================================== -->
+
+                        <div class="ku-sidebar-card">
+
+                            <div class="ku-section-header">
+
+                                <div class="ku-section-icon">
+                                    <i class="bi bi-flag"></i>
+                                </div>
+
+                                <div>
+
+                                    <h2 class="ku-section-title">
+                                        Event Status
+                                    </h2>
+
+                                    <p class="ku-section-description">
+                                        Control event visibility and lifecycle.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="ku-section-body">
+
+                                <label
+                                    for="{{ form.status.id_for_label }}"
+                                    class="form-label">
+
+                                    Status
+
+                                </label>
+
+                                {{ form.status }}
+
+                                {% for error in form.status.errors %}
+
+                                    <div class="ku-field-error">
+                                        <i class="bi bi-exclamation-circle"></i>
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+
+                                <div class="ku-info-box">
+
+                                    <i class="bi bi-info-circle"></i>
+
+                                    <div>
+                                        <strong>Visibility:</strong>
+                                        Published events are visible to members,
+                                        while draft events remain private to authorized
+                                        event managers.
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =================================================
+                             CURRENT EVENT SUMMARY
+                        ================================================== -->
+
+                        <div class="ku-sidebar-card">
+
+                            <div class="ku-section-header">
+
+                                <div class="ku-section-icon">
+                                    <i class="bi bi-bar-chart"></i>
+                                </div>
+
+                                <div>
+
+                                    <h2 class="ku-section-title">
+                                        Current Event Summary
+                                    </h2>
+
+                                    <p class="ku-section-description">
+                                        Current registration information.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="ku-section-body">
+
+                                <div class="ku-summary-metric">
+
+                                    <span class="ku-summary-label">
+                                        Registered
+                                    </span>
+
+                                    <strong class="ku-summary-value">
+                                        {{ event.registration_count|default:0 }}
+                                    </strong>
+
+                                </div>
+
+
+                                {% if event.capacity %}
+
+                                    <div class="ku-summary-metric">
+
+                                        <span class="ku-summary-label">
+                                            Capacity
+                                        </span>
+
+                                        <strong class="ku-summary-value">
+                                            {{ event.capacity }}
+                                        </strong>
+
+                                    </div>
+
+                                {% endif %}
+
+
+                                <div class="ku-summary-metric">
+
+                                    <span class="ku-summary-label">
+                                        Event Type
+                                    </span>
+
+                                    <strong class="ku-summary-value">
+                                        {{ event.get_event_type_display }}
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =================================================
+                             ACTIONS
+                        ================================================== -->
+
+                        <div class="ku-sidebar-card ku-action-card">
+
+                            <div class="ku-section-body">
+
+                                <div class="ku-action-note">
+
+                                    <i class="bi bi-shield-check me-1"></i>
+
+                                    Review your changes carefully before saving.
+                                    Updated information will be reflected on the event.
+
+                                </div>
+
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary w-100 ku-save-button"
+                                    id="kuSaveEventButton">
+
+                                    <span class="ku-save-icon">
+                                        <i class="bi bi-save"></i>
+                                    </span>
+
+                                    <span
+                                        class="spinner-border spinner-border-sm ku-save-spinner"
+                                        role="status"
+                                        aria-hidden="true">
+                                    </span>
+
+                                    <span id="kuSaveEventText">
+                                        Save Changes
+                                    </span>
+
+                                </button>
+
+
+                                <a
+                                    href="{% url 'events:detail' event.pk %}"
+                                    class="btn btn-outline-secondary w-100 ku-btn mt-2">
+
+                                    <i class="bi bi-x-circle"></i>
+                                    Cancel
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const page = document.querySelector(".kucsa-update-event-page");
+
+            if (!page) return;
+
+
+            const form = document.getElementById("kucsaUpdateEventForm");
+            const saveButton = document.getElementById("kuSaveEventButton");
+            const saveText = document.getElementById("kuSaveEventText");
+
+            const imageInput = page.querySelector(
+                'input[type="file"][name="image"]'
+            );
+
+            const imagePreview = document.getElementById(
+                "kuNewImagePreview"
+            );
+
+            const imagePreviewImage = document.getElementById(
+                "kuNewImagePreviewImage"
+            );
+
+            const imageName = document.getElementById(
+                "kuNewImageName"
+            );
+
+            const description = page.querySelector(
+                "textarea[name='description']"
+            );
+
+            const descriptionCount = document.getElementById(
+                "kuDescriptionCount"
+            );
+
+            const onlineCheckbox = page.querySelector(
+                'input[name="is_online"]'
+            );
+
+            const onlinePanel = document.getElementById(
+                "kuOnlinePanel"
+            );
+
+
+            /* =====================================================
+               FORM CONTROL ENHANCEMENT
+            ====================================================== */
+
+            const controls = page.querySelectorAll(
+                "input:not([type='checkbox']):not([type='radio']):not([type='hidden']), select, textarea"
+            );
+
+            controls.forEach(function (control) {
+
+                if (
+                    !control.classList.contains("form-control") &&
+                    !control.classList.contains("form-select")
+                ) {
+
+                    if (control.tagName.toLowerCase() === "select") {
+                        control.classList.add("form-select");
+                    } else {
+                        control.classList.add("form-control");
+                    }
+
+                }
+
+            });
+
+
+            /* =====================================================
+               DESCRIPTION CHARACTER COUNT
+            ====================================================== */
+
+            function updateDescriptionCount() {
+
+                if (!description || !descriptionCount) return;
+
+                descriptionCount.textContent =
+                    description.value.length.toLocaleString();
+
+            }
+
+            if (description) {
+
+                updateDescriptionCount();
+
+                description.addEventListener(
+                    "input",
+                    updateDescriptionCount
+                );
+
+            }
+
+
+            /* =====================================================
+               IMAGE PREVIEW
+            ====================================================== */
+
+            if (imageInput) {
+
+                imageInput.addEventListener("change", function () {
+
+                    const file = this.files && this.files[0];
+
+                    if (!file) {
+
+                        imagePreview.classList.remove("is-visible");
+                        imagePreviewImage.removeAttribute("src");
+                        imageName.textContent = "";
+
+                        return;
+                    }
+
+
+                    const validTypes = [
+                        "image/jpeg",
+                        "image/png",
+                        "image/webp",
+                        "image/gif"
+                    ];
+
+                    if (!validTypes.includes(file.type)) {
+
+                        this.value = "";
+
+                        imagePreview.classList.remove("is-visible");
+
+                        alert(
+                            "Please select a valid image file such as JPG, PNG, WEBP, or GIF."
+                        );
+
+                        return;
+                    }
+
+
+                    const objectUrl = URL.createObjectURL(file);
+
+                    imagePreviewImage.src = objectUrl;
+
+                    imageName.textContent =
+                        "New image: " + file.name;
+
+                    imagePreview.classList.add("is-visible");
+
+                    imagePreviewImage.onload = function () {
+                        URL.revokeObjectURL(objectUrl);
+                    };
+
+                });
+
+            }
+
+
+            /* =====================================================
+               ONLINE EVENT VISUAL STATE
+            ====================================================== */
+
+            function updateOnlineState() {
+
+                if (!onlineCheckbox || !onlinePanel) return;
+
+                if (onlineCheckbox.checked) {
+
+                    onlinePanel.classList.add("is-active");
+
+                } else {
+
+                    onlinePanel.classList.remove("is-active");
+
+                }
+
+            }
+
+            if (onlineCheckbox) {
+
+                updateOnlineState();
+
+                onlineCheckbox.addEventListener(
+                    "change",
+                    updateOnlineState
+                );
+
+            }
+
+
+            /* =====================================================
+               SUBMIT PROTECTION + LOADING STATE
+            ====================================================== */
+
+            let isSubmitting = false;
+
+            if (form) {
+
+                form.addEventListener("submit", function (event) {
+
+                    if (isSubmitting) {
+
+                        event.preventDefault();
+                        return;
+
+                    }
+
+                    isSubmitting = true;
+
+
+                    if (saveButton) {
+
+                        saveButton.classList.add("is-loading");
+                        saveButton.setAttribute(
+                            "aria-disabled",
+                            "true"
+                        );
+
+                        saveButton.disabled = true;
+
+                    }
+
+
+                    if (saveText) {
+                        saveText.textContent = "Saving Changes...";
+                    }
+
+                });
+
+            }
+
+
+            /* =====================================================
+               VALIDATION ERROR NAVIGATION
+            ====================================================== */
+
+            const errorElements = page.querySelectorAll(
+                ".ku-field-error"
+            );
+
+            if (errorElements.length) {
+
+                const firstError = errorElements[0];
+
+                const fieldContainer =
+                    firstError.closest(".ku-field");
+
+                if (fieldContainer) {
+
+                    const invalidField =
+                        fieldContainer.querySelector(
+                            "input, select, textarea"
+                        );
+
+                    if (invalidField) {
+
+                        window.setTimeout(function () {
+
+                            try {
+
+                                invalidField.scrollIntoView({
+                                    behavior: "smooth",
+                                    block: "center"
+                                });
+
+                                invalidField.focus({
+                                    preventScroll: true
+                                });
+
+                            } catch (error) {
+
+                                invalidField.focus();
+
+                            }
+
+                        }, 150);
+
+                    }
+
+                }
+
+            }
+
+
+            /* =====================================================
+               RESET BUTTON AFTER BFCACHE NAVIGATION
+            ====================================================== */
+
+            window.addEventListener("pageshow", function () {
+
+                isSubmitting = false;
+
+                if (saveButton) {
+
+                    saveButton.disabled = false;
+                    saveButton.classList.remove("is-loading");
+                    saveButton.removeAttribute("aria-disabled");
+
+                }
+
+                if (saveText) {
+                    saveText.textContent = "Save Changes";
+                }
+
+            });
+
+
+            /* =====================================================
+               KEYBOARD SUPPORT
+            ====================================================== */
+
+            page.addEventListener("keydown", function (event) {
+
+                if (
+                    event.key === "Enter" &&
+                    event.ctrlKey &&
+                    form
+                ) {
+
+                    if (
+                        document.activeElement &&
+                        (
+                            document.activeElement.tagName === "TEXTAREA"
+                        )
+                    ) {
+                        return;
+                    }
+
+                    form.requestSubmit();
+
+                }
+
+            });
+
+        });
+    </script>
 
 </div>
 

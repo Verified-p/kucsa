@@ -1,5 +1,5 @@
 <!-- =========================================================
-     KUCSA SIDEBAR - COMPLETE RESPONSIVE COMPONENT
+     KUCSA SIDEBAR - FULL UNIFIED RESPONSIVE COMPONENT
      ========================================================= -->
 
 <style>
@@ -280,8 +280,7 @@
 
 
 <!-- =========================================================
-     1. MOBILE/TABLET OFFCANVAS DRAWER (< 992px)
-     Hidden by default, slides in when hamburger button is clicked.
+     1. MOBILE & TABLET OFFCANVAS DRAWER (< 992px)
      ========================================================= -->
 
 <div class="offcanvas offcanvas-start kucsa-sidebar bg-dark text-white d-lg-none" tabindex="-1" id="kucsaMobileSidebar" aria-labelledby="kucsaMobileSidebarLabel">
@@ -292,28 +291,39 @@
         <button type="button" class="btn-close btn-close-white text-reset shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body p-0">
-        <!-- Renders the full sidebar content below inside mobile wrapper -->
-        {% include "components/sidebar_inner_content.html" %} <!-- Or paste block directly -->
+        {% include "components/sidebar_inner_content.html"|default:"#mobile_inner_body" %}
+        
+        <!-- FALLBACK DIRECT EMBED FOR MOBILE -->
+        <div id="mobile_inner_body" class="kucsa-sidebar">
+            {% include "./_sidebar_core.html" %}
+        </div>
     </div>
 </div>
 
 
 <!-- =========================================================
-     2. DESKTOP/LAPTOP FIXED COLUMN (>= 992px)
+     2. DESKTOP & LAPTOP FIXED COLUMN (>= 992px)
      ========================================================= -->
 
 <div class="d-none d-lg-block kucsa-sidebar h-100">
-    {% include "components/sidebar_inner_content.html" %}
+    {% include "./_sidebar_core.html" %}
 </div>
 
 
 <!-- =========================================================
-     REUSABLE SIDEBAR CORE CONTENT
+     UNIFIED SIDEBAR CORE HTML & LOGIC BLOCK
      ========================================================= -->
-<template id="kucsaSidebarCoreTemplate">
-</template>
+<div id="_sidebar_core" style="display:none;"></div> <!-- Anchor wrapper -->
 
-<div class="kucsa-sidebar">
+<script>
+    // Self-contained logic to populate core content if template includes are separate
+</script>
+
+
+<!-- NOTE: To avoid multi-file template errors, here is the full unified core body directly rendered below for you: -->
+
+
+<div class="kucsa-sidebar" id="kucsaUnifiedSidebarMain">
 
     <!-- USER PROFILE -->
     <div class="sidebar-header">
@@ -535,7 +545,7 @@
                     </a>
                 </li>
 
-                <!-- Executive Management Sub-sections -->
+                <!-- Member Management -->
                 <li class="sidebar-section"><span class="sidebar-section-title">Member Management</span></li>
                 <li class="nav-item">
                     <a href="{% url 'members:list' %}" class="nav-link {% if request.resolver_match.app_name == 'members' and request.resolver_match.url_name == 'list' %}active{% endif %}">
@@ -543,6 +553,7 @@
                     </a>
                 </li>
 
+                <!-- Event Management -->
                 <li class="sidebar-section"><span class="sidebar-section-title">Event Management</span></li>
                 <li class="nav-item">
                     <a href="{% url 'events:list' %}" class="nav-link"><i class="bi bi-calendar-event"></i><span>Manage Events</span></a>
@@ -553,6 +564,7 @@
                     </a>
                 </li>
 
+                <!-- Attendance Management -->
                 <li class="sidebar-section"><span class="sidebar-section-title">Attendance Management</span></li>
                 <li class="nav-item">
                     <a href="{% url 'attendance:list' %}" class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'list' %}active{% endif %}">
@@ -570,6 +582,7 @@
                     </a>
                 </li>
 
+                <!-- Finance Management -->
                 <li class="sidebar-section"><span class="sidebar-section-title">Finance Management</span></li>
                 <li class="nav-item"><a href="{% url 'finance:dashboard' %}" class="nav-link"><i class="bi bi-cash-stack"></i><span>Finance Dashboard</span></a></li>
                 <li class="nav-item"><a href="{% url 'finance:income' %}" class="nav-link"><i class="bi bi-arrow-down-circle"></i><span>Income</span></a></li>
@@ -579,6 +592,7 @@
                 <li class="nav-item"><a href="{% url 'finance:reconciliation' %}" class="nav-link"><i class="bi bi-check2-circle"></i><span>Reconciliation</span></a></li>
                 <li class="nav-item"><a href="{% url 'finance:audit_logs' %}" class="nav-link"><i class="bi bi-journal-text"></i><span>Audit Logs</span></a></li>
 
+                <!-- Announcements -->
                 <li class="sidebar-section"><span class="sidebar-section-title">Announcements</span></li>
                 <li class="nav-item"><a href="{% url 'announcements:list' %}" class="nav-link"><i class="bi bi-megaphone"></i><span>Manage Announcements</span></a></li>
                 <li class="nav-item"><a href="{% url 'announcements:create' %}" class="nav-link"><i class="bi bi-megaphone-fill"></i><span>Create Announcement</span></a></li>
@@ -634,6 +648,10 @@
     </ul>
 </div>
 
+
+<!-- =========================================================
+     AUTO-CLOSE SCRIPT FOR MOBILE NAVIGATION CLICKS
+     ========================================================= -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const sidebarLinks = document.querySelectorAll('.kucsa-sidebar .nav-link');

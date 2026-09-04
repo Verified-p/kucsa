@@ -18,3 +18,1830 @@ u = User.objects.create_user(
     is_active=True,
     is_verified=True,
 )
+
+
+
+
+
+
+
+
+
+<!-- =========================================================
+     KUCSA SIDEBAR
+     ========================================================= -->
+
+<style>
+    /* =========================================================
+       SIDEBAR BASE
+       ========================================================= */
+
+    .kucsa-sidebar {
+        background: #212529;
+        color: #fff;
+        min-height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .kucsa-sidebar * {
+        box-sizing: border-box;
+    }
+
+
+    /* =========================================================
+       PROFILE HEADER
+       ========================================================= */
+
+    .kucsa-sidebar .sidebar-header {
+        padding: 1.5rem 1rem;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .kucsa-sidebar .sidebar-profile-picture {
+        width: 82px;
+        height: 82px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .kucsa-sidebar .sidebar-default-avatar {
+        display: inline-block;
+        font-size: 4.5rem;
+        line-height: 1;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .kucsa-sidebar .sidebar-user-name {
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 600;
+        margin-top: 0.75rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .kucsa-sidebar .sidebar-user-role {
+        color: rgba(255, 255, 255, 0.65);
+        font-size: 0.8rem;
+    }
+
+    .kucsa-sidebar .sidebar-membership-number {
+        color: rgba(255, 255, 255, 0.45);
+        font-size: 0.68rem;
+        margin-top: 0.3rem;
+    }
+
+
+    /* =========================================================
+       STATUS BADGES
+       ========================================================= */
+
+    .kucsa-sidebar .sidebar-status {
+        margin-top: 0.75rem;
+    }
+
+    .kucsa-sidebar .sidebar-status .badge {
+        font-size: 0.68rem;
+        font-weight: 500;
+        padding: 0.4rem 0.65rem;
+    }
+
+
+    /* =========================================================
+       NAVIGATION
+       ========================================================= */
+
+    .kucsa-sidebar .sidebar-nav {
+        padding: 0.75rem 0;
+        margin: 0;
+    }
+
+    .kucsa-sidebar .nav-item {
+        list-style: none;
+    }
+
+    .kucsa-sidebar .nav-link {
+        display: flex;
+        align-items: center;
+        min-height: 44px;
+        margin: 2px 8px;
+        padding: 0.65rem 0.85rem;
+        border-radius: 7px;
+        color: rgba(255, 255, 255, 0.88) !important;
+        text-decoration: none;
+        font-size: 0.88rem;
+        font-weight: 400;
+        transition:
+            background-color 0.18s ease,
+            color 0.18s ease,
+            transform 0.18s ease;
+    }
+
+    .kucsa-sidebar .nav-link i {
+        width: 22px;
+        min-width: 22px;
+        margin-right: 0.65rem;
+        color: rgba(255, 255, 255, 0.78);
+        font-size: 1rem;
+        text-align: center;
+    }
+
+    .kucsa-sidebar .nav-link span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .kucsa-sidebar .nav-link:hover {
+        background: rgba(255, 255, 255, 0.09);
+        color: #fff !important;
+        transform: translateX(2px);
+    }
+
+    .kucsa-sidebar .nav-link:hover i {
+        color: #fff;
+    }
+
+    .kucsa-sidebar .nav-link.active {
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff !important;
+        font-weight: 600;
+    }
+
+    .kucsa-sidebar .nav-link.active i {
+        color: #fff;
+    }
+
+
+    /* =========================================================
+       SECTION TITLES
+       ========================================================= */
+
+    .kucsa-sidebar .sidebar-section {
+        margin-top: 1rem;
+        margin-bottom: 0.25rem;
+        padding: 0 1rem;
+    }
+
+    .kucsa-sidebar .sidebar-section-title {
+        display: block;
+        color: rgba(255, 255, 255, 0.48) !important;
+        font-size: 0.66rem;
+        font-weight: 700;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+    }
+
+
+    /* =========================================================
+       DIVIDERS
+       ========================================================= */
+
+    .kucsa-sidebar .sidebar-divider {
+        margin: 0.8rem 1rem;
+        border: 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+
+    /* =========================================================
+       PAYMENT NOTICES
+       ========================================================= */
+
+    .kucsa-sidebar .payment-required-box,
+    .kucsa-sidebar .payment-pending-box {
+        margin: 0.75rem;
+        padding: 0.8rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        line-height: 1.5;
+        color: rgba(255, 255, 255, 0.85);
+    }
+
+    .kucsa-sidebar .payment-required-box {
+        background: rgba(255, 193, 7, 0.10);
+        border: 1px solid rgba(255, 193, 7, 0.25);
+    }
+
+    .kucsa-sidebar .payment-required-box strong {
+        display: block;
+        color: #ffc107;
+        margin-bottom: 0.3rem;
+    }
+
+    .kucsa-sidebar .payment-pending-box {
+        background: rgba(13, 202, 240, 0.08);
+        border: 1px solid rgba(13, 202, 240, 0.25);
+    }
+
+    .kucsa-sidebar .payment-pending-box strong {
+        display: block;
+        color: #0dcaf0;
+        margin-bottom: 0.3rem;
+    }
+
+
+    /* =========================================================
+       ACCOUNT STATUS
+       ========================================================= */
+
+    .kucsa-sidebar .account-state-box {
+        margin: 0.75rem;
+        padding: 0.7rem 0.8rem;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        font-size: 0.72rem;
+    }
+
+    .kucsa-sidebar .account-state-label {
+        color: rgba(255, 255, 255, 0.45);
+        display: block;
+        margin-bottom: 0.15rem;
+    }
+
+    .kucsa-sidebar .account-state-value {
+        color: rgba(255, 255, 255, 0.85);
+        font-weight: 500;
+    }
+
+
+    /* =========================================================
+       LOGOUT
+       ========================================================= */
+
+    .kucsa-sidebar .logout-link {
+        color: #ff7676 !important;
+    }
+
+    .kucsa-sidebar .logout-link i {
+        color: #ff7676 !important;
+    }
+
+    .kucsa-sidebar .logout-link:hover {
+        background: rgba(220, 53, 69, 0.14);
+        color: #ff7676 !important;
+    }
+
+
+    /* =========================================================
+       MOBILE
+       ========================================================= */
+
+    @media (max-width: 767.98px) {
+
+        .kucsa-sidebar .sidebar-header {
+            padding: 1.25rem 0.75rem;
+        }
+
+        .kucsa-sidebar .sidebar-profile-picture {
+            width: 68px;
+            height: 68px;
+        }
+
+        .kucsa-sidebar .sidebar-default-avatar {
+            font-size: 3.8rem;
+        }
+
+        .kucsa-sidebar .nav-link {
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+    }
+</style>
+
+
+<div class="kucsa-sidebar">
+
+    <!-- =====================================================
+         USER PROFILE
+         ===================================================== -->
+
+    <div class="sidebar-header">
+
+        {% if user.profile_picture %}
+
+            <img
+                src="{{ user.profile_picture.url }}"
+                class="sidebar-profile-picture"
+                alt="{{ user.full_name|default:user.username }}"
+            >
+
+        {% else %}
+
+            <i class="bi bi-person-circle sidebar-default-avatar"></i>
+
+        {% endif %}
+
+
+        <div class="sidebar-user-name">
+
+            {{ user.full_name|default:user.username }}
+
+        </div>
+
+
+        {% if user.get_role_display %}
+
+            <div class="sidebar-user-role">
+
+                {{ user.get_role_display }}
+
+            </div>
+
+        {% endif %}
+
+
+        {% if user.membership_number %}
+
+            <div class="sidebar-membership-number">
+
+                Membership No. {{ user.membership_number }}
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- MEMBERSHIP STATUS -->
+
+        <div class="sidebar-status">
+
+            {% if user.is_kucsa_admin %}
+
+                <span class="badge bg-primary">
+
+                    <i class="bi bi-shield-check me-1"></i>
+                    Administrator
+
+                </span>
+
+            {% elif user.has_platform_access %}
+
+                <span class="badge bg-success">
+
+                    <i class="bi bi-check-circle me-1"></i>
+                    Active Membership
+
+                </span>
+
+            {% elif user.payment_state == "PENDING" %}
+
+                <span class="badge bg-info text-dark">
+
+                    <i class="bi bi-hourglass-split me-1"></i>
+                    Payment Pending
+
+                </span>
+
+            {% elif user.payment_state == "SUSPENDED" %}
+
+                <span class="badge bg-danger">
+
+                    <i class="bi bi-slash-circle me-1"></i>
+                    Membership Suspended
+
+                </span>
+
+            {% elif user.payment_state == "EXPIRED" %}
+
+                <span class="badge bg-secondary">
+
+                    <i class="bi bi-calendar-x me-1"></i>
+                    Membership Expired
+
+                </span>
+
+            {% else %}
+
+                <span class="badge bg-warning text-dark">
+
+                    <i class="bi bi-credit-card me-1"></i>
+                    Payment Required
+
+                </span>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         NAVIGATION
+         ===================================================== -->
+
+    <ul class="nav flex-column sidebar-nav">
+
+
+        <!-- =================================================
+             ACCOUNT
+             ================================================= -->
+
+        <li class="sidebar-section">
+
+            <span class="sidebar-section-title">
+                Account
+            </span>
+
+        </li>
+
+
+        <li class="nav-item">
+
+            <a
+                href="{% url 'accounts:profile' %}"
+                class="nav-link {% if request.resolver_match.app_name == 'accounts' and request.resolver_match.url_name == 'profile' %}active{% endif %}"
+            >
+
+                <i class="bi bi-person"></i>
+
+                <span>
+                    My Profile
+                </span>
+
+            </a>
+
+        </li>
+
+
+        <!-- =================================================
+             PAYMENT GATE
+             ================================================= -->
+
+        {% if not user.is_kucsa_admin and not user.has_platform_access %}
+
+            <li>
+                <hr class="sidebar-divider">
+            </li>
+
+
+            <li class="sidebar-section">
+
+                <span class="sidebar-section-title">
+                    Membership
+                </span>
+
+            </li>
+
+
+            {% if user.payment_state == "REQUIRED" %}
+
+                <li class="nav-item">
+
+                    <div class="payment-required-box">
+
+                        <strong>
+
+                            <i class="bi bi-exclamation-circle me-1"></i>
+                            Membership Payment Required
+
+                        </strong>
+
+                        Complete your KUCSA membership payment
+                        to unlock the platform.
+
+                    </div>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'payments:payment_create' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'payments' and request.resolver_match.url_name == 'payment_create' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-phone"></i>
+
+                        <span>
+                            Make Membership Payment
+                        </span>
+
+                    </a>
+
+                </li>
+
+            {% endif %}
+
+
+            {% if user.payment_state == "PENDING" %}
+
+                <li class="nav-item">
+
+                    <div class="payment-pending-box">
+
+                        <strong>
+
+                            <i class="bi bi-hourglass-split me-1"></i>
+                            Payment Pending
+
+                        </strong>
+
+                        Your M-Pesa payment is awaiting
+                        confirmation.
+
+                    </div>
+
+                </li>
+
+
+                {% if user.member and user.member.has_pending_payment %}
+
+                    {% with pending_payment=user.member.payments.all|first %}
+
+                        {% if pending_payment %}
+
+                            <li class="nav-item">
+
+                                <a
+                                    href="{% url 'payments:payment_pending' payment_id=pending_payment.id %}"
+                                    class="nav-link"
+                                >
+
+                                    <i class="bi bi-clock-history"></i>
+
+                                    <span>
+                                        Payment Status
+                                    </span>
+
+                                </a>
+
+                            </li>
+
+                        {% endif %}
+
+                    {% endwith %}
+
+                {% endif %}
+
+            {% endif %}
+
+
+            <li class="nav-item">
+
+                <a
+                    href="{% url 'payments:payment_list' %}"
+                    class="nav-link {% if request.resolver_match.app_name == 'payments' and request.resolver_match.url_name == 'payment_list' %}active{% endif %}"
+                >
+
+                    <i class="bi bi-wallet2"></i>
+
+                    <span>
+                        My Payments
+                    </span>
+
+                </a>
+
+            </li>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             PLATFORM ACCESS
+             ================================================= -->
+
+        {% if user.is_kucsa_admin or user.has_platform_access %}
+
+            <li>
+                <hr class="sidebar-divider">
+            </li>
+
+
+            <li class="sidebar-section">
+
+                <span class="sidebar-section-title">
+                    KUCSA Platform
+                </span>
+
+            </li>
+
+
+            <!-- =================================================
+                 DASHBOARD
+                 ================================================= -->
+
+            <li class="nav-item">
+
+                {% if user.is_kucsa_admin %}
+
+                    <a
+                        href="{% url 'executives:dashboard' %}"
+                        class="nav-link"
+                    >
+
+                        <i class="bi bi-speedometer2"></i>
+
+                        <span>
+                            Administration Dashboard
+                        </span>
+
+                    </a>
+
+                {% elif user.is_executive %}
+
+                    <a
+                        href="{% url 'executives:dashboard' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-speedometer2"></i>
+
+                        <span>
+                            Executive Dashboard
+                        </span>
+
+                    </a>
+
+                {% else %}
+
+                    <a
+                        href="{% url 'dashboard:student_dashboard' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'dashboard' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-speedometer2"></i>
+
+                        <span>
+                            Dashboard
+                        </span>
+
+                    </a>
+
+                {% endif %}
+
+            </li>
+
+
+            <!-- =================================================
+                 MEMBER SERVICES
+                 ================================================= -->
+
+            {% if not user.is_kucsa_admin %}
+
+                <li class="sidebar-section">
+
+                    <span class="sidebar-section-title">
+                        Membership
+                    </span>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'members:profile' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'members' and request.resolver_match.url_name == 'profile' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-person-badge"></i>
+
+                        <span>
+                            My Membership
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'members:membership_status' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'members' and request.resolver_match.url_name == 'membership_status' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-card-checklist"></i>
+
+                        <span>
+                            Membership Status
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'members:technical_domains' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'members' and request.resolver_match.url_name == 'technical_domains' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-code-slash"></i>
+
+                        <span>
+                            Technical Domains
+                        </span>
+
+                    </a>
+
+                </li>
+
+            {% endif %}
+
+
+            <!-- =================================================
+                 PAYMENTS
+                 ================================================= -->
+
+            <li class="sidebar-section">
+
+                <span class="sidebar-section-title">
+                    Payments
+                </span>
+
+            </li>
+
+
+            <li class="nav-item">
+
+                <a
+                    href="{% url 'payments:payment_list' %}"
+                    class="nav-link {% if request.resolver_match.app_name == 'payments' %}active{% endif %}"
+                >
+
+                    <i class="bi bi-wallet2"></i>
+
+                    <span>
+                        My Payments
+                    </span>
+
+                </a>
+
+            </li>
+
+
+            <!-- =================================================
+                 EVENTS
+                 ================================================= -->
+
+            <li class="sidebar-section">
+
+                <span class="sidebar-section-title">
+                    Events
+                </span>
+
+            </li>
+
+
+            <li class="nav-item">
+
+                <a
+                    href="{% url 'events:list' %}"
+                    class="nav-link {% if request.resolver_match.app_name == 'events' and request.resolver_match.url_name == 'list' %}active{% endif %}"
+                >
+
+                    <i class="bi bi-calendar-event"></i>
+
+                    <span>
+                        Browse Events
+                    </span>
+
+                </a>
+
+            </li>
+
+
+            <li class="nav-item">
+
+                <a
+                    href="{% url 'events:my_events' %}"
+                    class="nav-link {% if request.resolver_match.app_name == 'events' and request.resolver_match.url_name == 'my_events' %}active{% endif %}"
+                >
+
+                    <i class="bi bi-calendar-check"></i>
+
+                    <span>
+                        My Events
+                    </span>
+
+                </a>
+
+            </li>
+
+
+            <!-- =================================================
+                 MEMBER ATTENDANCE
+                 ================================================= -->
+
+            {% if not user.is_kucsa_admin and not user.is_executive %}
+
+                <li class="sidebar-section">
+
+                    <span class="sidebar-section-title">
+                        Attendance
+                    </span>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'attendance:active' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'active' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-broadcast-pin"></i>
+
+                        <span>
+                            Active Attendance
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'attendance:my_attendance' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'my_attendance' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-person-check"></i>
+
+                        <span>
+                            My Attendance
+                        </span>
+
+                    </a>
+
+                </li>
+
+            {% endif %}
+
+
+            <!-- =================================================
+                 COMMUNICATION
+                 ================================================= -->
+
+            <li class="sidebar-section">
+
+                <span class="sidebar-section-title">
+                    Communication
+                </span>
+
+            </li>
+
+
+            <li class="nav-item">
+
+                <a
+                    href="{% url 'announcements:list' %}"
+                    class="nav-link {% if request.resolver_match.app_name == 'announcements' %}active{% endif %}"
+                >
+
+                    <i class="bi bi-megaphone"></i>
+
+                    <span>
+                        Announcements
+                    </span>
+
+                </a>
+
+            </li>
+
+
+            <!-- =================================================
+                 EXECUTIVE AREA
+                 ================================================= -->
+
+            {% if user.is_executive %}
+
+                <li>
+                    <hr class="sidebar-divider">
+                </li>
+
+
+                <li class="sidebar-section">
+
+                    <span class="sidebar-section-title">
+                        Executive
+                    </span>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'executives:dashboard' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-speedometer2"></i>
+
+                        <span>
+                            Executive Dashboard
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'executives:board' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'board' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-diagram-3"></i>
+
+                        <span>
+                            Executive Board
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'executives:profile' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'profile' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-person-vcard"></i>
+
+                        <span>
+                            My Executive Profile
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'executives:edit_profile' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'edit_profile' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-pencil-square"></i>
+
+                        <span>
+                            Edit Executive Profile
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'executives:list' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-people"></i>
+
+                        <span>
+                            Executive Directory
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'executives:search' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'search' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-search"></i>
+
+                        <span>
+                            Search Executives
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <!-- =================================================
+                     EXECUTIVE MEMBER MANAGEMENT
+                     ================================================= -->
+
+                <li class="sidebar-section">
+
+                    <span class="sidebar-section-title">
+                        Member Management
+                    </span>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'members:list' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'members' and request.resolver_match.url_name == 'list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-people-fill"></i>
+
+                        <span>
+                            Members
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <!-- =================================================
+                     EXECUTIVE EVENT MANAGEMENT
+                     ================================================= -->
+
+                <li class="sidebar-section">
+
+                    <span class="sidebar-section-title">
+                        Event Management
+                    </span>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'events:list' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'events' and request.resolver_match.url_name == 'list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-calendar-event"></i>
+
+                        <span>
+                            Manage Events
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'events:create' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'events' and request.resolver_match.url_name == 'create' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-calendar-plus"></i>
+
+                        <span>
+                            Create Event
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <!-- =================================================
+                     EXECUTIVE ATTENDANCE MANAGEMENT
+                     ================================================= -->
+
+                <li class="sidebar-section">
+
+                    <span class="sidebar-section-title">
+                        Attendance Management
+                    </span>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'attendance:list' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-check2-square"></i>
+
+                        <span>
+                            Attendance Management
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'attendance:active' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'active' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-broadcast-pin"></i>
+
+                        <span>
+                            Active Sessions
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'attendance:report' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'report' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-file-earmark-bar-graph"></i>
+
+                        <span>
+                            Attendance Reports
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <!-- =================================================
+                     EXECUTIVE FINANCE MANAGEMENT
+                     ================================================= -->
+
+                <li class="sidebar-section">
+
+                    <span class="sidebar-section-title">
+                        Finance Management
+                    </span>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:dashboard' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-cash-stack"></i>
+
+                        <span>
+                            Finance Dashboard
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:income' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'income_list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-arrow-down-circle"></i>
+
+                        <span>
+                            Income
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:expenses' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'expense_list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-arrow-up-circle"></i>
+
+                        <span>
+                            Expenses
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:transactions' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'transaction_list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-receipt"></i>
+
+                        <span>
+                            Transactions
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:categories' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'category_list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-tags"></i>
+
+                        <span>
+                            Categories
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:reconciliation' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'reconciliation' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-check2-circle"></i>
+
+                        <span>
+                            Reconciliation
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:audit_logs' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'audit_logs' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-journal-text"></i>
+
+                        <span>
+                            Audit Logs
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <!-- =================================================
+                     EXECUTIVE ANNOUNCEMENTS
+                     ================================================= -->
+
+                <li class="sidebar-section">
+
+                    <span class="sidebar-section-title">
+                        Announcements
+                    </span>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'announcements:list' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'announcements' and request.resolver_match.url_name == 'list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-megaphone"></i>
+
+                        <span>
+                            Manage Announcements
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'announcements:create' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'announcements' and request.resolver_match.url_name == 'create' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-megaphone-fill"></i>
+
+                        <span>
+                            Create Announcement
+                        </span>
+
+                    </a>
+
+                </li>
+
+            {% endif %}
+
+
+            <!-- =================================================
+                 ADMINISTRATION
+                 ================================================= -->
+
+            {% if user.is_kucsa_admin %}
+
+                <li>
+                    <hr class="sidebar-divider">
+                </li>
+
+
+                <li class="sidebar-section">
+
+                    <span class="sidebar-section-title">
+                        Administration
+                    </span>
+
+                </li>
+
+
+                <!-- MEMBERS -->
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'members:list' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'members' and request.resolver_match.url_name == 'list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-people-fill"></i>
+
+                        <span>
+                            All Members
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <!-- EXECUTIVES -->
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'executives:list' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-person-badge"></i>
+
+                        <span>
+                            Executive Management
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'executives:assign_role' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'assign_role' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-person-plus-fill"></i>
+
+                        <span>
+                            Assign Executive Role
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <!-- EVENTS -->
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'events:list' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'events' and request.resolver_match.url_name == 'list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-calendar-event"></i>
+
+                        <span>
+                            All Events
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'events:create' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'events' and request.resolver_match.url_name == 'create' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-calendar-plus"></i>
+
+                        <span>
+                            Create Event
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <!-- =================================================
+                     ADMIN ATTENDANCE
+                     ================================================= -->
+
+                <li class="sidebar-section">
+
+                    <span class="sidebar-section-title">
+                        Attendance Administration
+                    </span>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'attendance:list' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-check2-square"></i>
+
+                        <span>
+                            Attendance Management
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'attendance:active' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'active' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-broadcast-pin"></i>
+
+                        <span>
+                            Active Sessions
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'attendance:report' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'report' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-file-earmark-bar-graph"></i>
+
+                        <span>
+                            Attendance Reports
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <!-- =================================================
+                     ADMIN FINANCE
+                     ================================================= -->
+
+                <li class="sidebar-section">
+
+                    <span class="sidebar-section-title">
+                        Finance Administration
+                    </span>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:dashboard' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-cash-stack"></i>
+
+                        <span>
+                            Finance Dashboard
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:income' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'income_list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-arrow-down-circle"></i>
+
+                        <span>
+                            Income
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:expenses' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'expense_list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-arrow-up-circle"></i>
+
+                        <span>
+                            Expenses
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:transactions' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'transaction_list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-receipt"></i>
+
+                        <span>
+                            Transactions
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:categories' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'category_list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-tags"></i>
+
+                        <span>
+                            Categories
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:reconciliation' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'reconciliation' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-check2-circle"></i>
+
+                        <span>
+                            Reconciliation
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:audit_logs' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'audit_logs' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-journal-text"></i>
+
+                        <span>
+                            Audit Logs
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <!-- =================================================
+                     ADMIN ANNOUNCEMENTS
+                     ================================================= -->
+
+                <li class="sidebar-section">
+
+                    <span class="sidebar-section-title">
+                        Announcements
+                    </span>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'announcements:list' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'announcements' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-megaphone"></i>
+
+                        <span>
+                            All Announcements
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'announcements:create' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'announcements' and request.resolver_match.url_name == 'create' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-megaphone-fill"></i>
+
+                        <span>
+                            Create Announcement
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <!-- =================================================
+                     SYSTEM
+                     ================================================= -->
+
+                <li class="sidebar-section">
+
+                    <span class="sidebar-section-title">
+                        System
+                    </span>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'executives:dashboard' %}"
+                        class="nav-link"
+                    >
+
+                        <i class="bi bi-shield-lock"></i>
+
+                        <span>
+                            System Administration
+                        </span>
+
+                    </a>
+
+                </li>
+
+            {% endif %}
+
+        {% endif %}
+
+
+        <!-- =================================================
+             ACCOUNT ACTIONS
+             ================================================= -->
+
+        <li>
+            <hr class="sidebar-divider">
+        </li>
+
+
+        <li class="sidebar-section">
+
+            <span class="sidebar-section-title">
+                Account
+            </span>
+
+        </li>
+
+
+        <!-- CHANGE PASSWORD -->
+
+        <li class="nav-item">
+
+            <a
+                href="{% url 'accounts:change_password' %}"
+                class="nav-link {% if request.resolver_match.app_name == 'accounts' and request.resolver_match.url_name == 'change_password' %}active{% endif %}"
+            >
+
+                <i class="bi bi-key"></i>
+
+                <span>
+                    Change Password
+                </span>
+
+            </a>
+
+        </li>
+
+
+        <!-- LOGOUT -->
+
+        <li class="nav-item">
+
+            <a
+                href="{% url 'accounts:logout' %}"
+                class="nav-link logout-link"
+            >
+
+                <i class="bi bi-box-arrow-right"></i>
+
+                <span>
+                    Logout
+                </span>
+
+            </a>
+
+        </li>
+
+    </ul>
+
+</div>
+

@@ -2,786 +2,334 @@
 
 {% load static %}
 
-{% block title %}Active Attendance | KUCSA{% endblock %}
+{% block title %}Active Attendance | KUCSA Platform{% endblock %}
 
 {% block content %}
 
+<!-- Custom Styling Injection matching the KUCSA Design System -->
+<style>
+    :root {
+        --kucsa-primary: #0d6efd;
+        --kucsa-primary-hover: #0b5ed7;
+        --kucsa-bg-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    body {
+        background: var(--kucsa-bg-gradient);
+    }
+
+    .kucsa-card {
+        border-radius: 1rem;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .kucsa-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.06) !important;
+    }
+</style>
+
 <div class="container-fluid py-4">
 
-    <!-- =====================================================
-         PAGE HEADER
-    ====================================================== -->
-
-    <div class="d-flex flex-column flex-lg-row
-                justify-content-between align-items-lg-center
-                gap-3 mb-4">
-
+    <!-- ===================================================== -->
+    <!-- PAGE HEADER -->
+    <!-- ===================================================== -->
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
         <div>
-
-            <h1 class="h3 fw-bold mb-1">
-                Active Attendance
+            <h1 class="h3 fw-bold mb-1 text-dark">
+                <i class="bi bi-broadcast text-success me-2"></i>Active Attendance Sessions
             </h1>
-
             <p class="text-muted mb-0">
-                View currently active attendance sessions
-                and mark your attendance.
+                View open attendance sessions in real-time and securely confirm your presence.
             </p>
-
         </div>
 
-        <div class="d-flex gap-2">
-
-            <a href="{% url 'attendance:my_attendance' %}"
-               class="btn btn-outline-primary">
-
-                <i class="bi bi-clock-history me-1"></i>
-                My Attendance
-
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{% url 'attendance:my_attendance' %}" class="btn btn-outline-primary shadow-sm fw-semibold">
+                <i class="bi bi-clock-history me-1"></i>My Attendance History
             </a>
 
             {% if can_manage %}
-
-                <a href="{% url 'attendance:list' %}"
-                   class="btn btn-primary">
-
-                    <i class="bi bi-clipboard-check me-1"></i>
-                    Manage Attendance
-
+                <a href="{% url 'attendance:list' %}" class="btn btn-primary shadow-sm fw-bold">
+                    <i class="bi bi-clipboard-check me-1"></i>Manage Attendance
                 </a>
-
             {% endif %}
-
         </div>
-
     </div>
 
 
-    <!-- =====================================================
-         SUMMARY CARD
-    ====================================================== -->
-
+    <!-- ===================================================== -->
+    <!-- SUMMARY METRICS CARD -->
+    <!-- ===================================================== -->
     <div class="row g-4 mb-4">
-
-        <div class="col-sm-6 col-xl-4">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
-                    <div class="d-flex
-                                justify-content-between
-                                align-items-center">
-
+        <div class="col-12 col-sm-6 col-xl-4">
+            <div class="card kucsa-card border-0 shadow-sm h-100 bg-white">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center">
                         <div>
-
-                            <p class="text-muted mb-1">
-                                Active Sessions
-                            </p>
-
-                            <h2 class="fw-bold mb-0">
-                                {{ active_count|default:0 }}
-                            </h2>
-
+                            <p class="text-muted mb-1 small fw-semibold text-uppercase tracking-wider">Live Active Sessions</p>
+                            <h2 class="fw-bold mb-0 text-success">{{ active_count|default:0 }}</h2>
                         </div>
-
-                        <div class="rounded-circle
-                                    bg-success-subtle
-                                    text-success
-                                    d-flex
-                                    align-items-center
-                                    justify-content-center"
-                             style="width: 52px; height: 52px;">
-
+                        <div class="rounded-circle bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center flex-shrink-0" style="width: 52px; height: 52px;">
                             <i class="bi bi-broadcast fs-4"></i>
-
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
     </div>
 
 
-    <!-- =====================================================
-         ACTIVE SESSIONS
-    ====================================================== -->
-
+    <!-- ===================================================== -->
+    <!-- ACTIVE SESSIONS GRID -->
+    <!-- ===================================================== -->
     {% if active_sessions %}
 
         <div class="row g-4">
-
             {% for session in active_sessions %}
-
                 <div class="col-12 col-md-6 col-xl-4">
+                    <div class="card kucsa-card border-0 shadow-sm h-100 bg-white d-flex flex-column">
 
-                    <div class="card border-0 shadow-sm h-100">
-
-
-                        <!-- =====================================
-                             SESSION HEADER
-                        ====================================== -->
-
-                        <div class="card-header
-                                    bg-transparent
-                                    border-0
-                                    pt-4
-                                    px-4">
-
-                            <div class="d-flex
-                                        justify-content-between
-                                        align-items-start
-                                        gap-3">
-
+                        <!-- SESSION HEADER -->
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0">
+                            <div class="d-flex justify-content-between align-items-start gap-3">
                                 <div>
-
-                                    <span class="badge bg-success mb-2">
-
-                                        <i class="bi bi-circle-fill me-1"
-                                           style="font-size: 7px;"></i>
-
-                                        LIVE
-
+                                    <span class="badge bg-success bg-opacity-15 text-success mb-2 px-2.5 py-1.5 fw-bold shadow-sm">
+                                        <i class="bi bi-circle-fill me-1 text-success" style="font-size: 6px;"></i>LIVE SESSION
                                     </span>
-
-                                    <h2 class="h5 fw-bold mb-1">
-
-                                        {{ session.title }}
-
-                                    </h2>
-
+                                    <h2 class="h5 fw-bold mb-1 text-dark">{{ session.title }}</h2>
                                 </div>
-
-                                <i class="bi bi-calendar-check
-                                          text-primary
-                                          fs-4"></i>
-
+                                <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px;">
+                                    <i class="bi bi-calendar-check fs-5"></i>
+                                </div>
                             </div>
-
                         </div>
 
-
-                        <!-- =====================================
-                             SESSION BODY
-                        ====================================== -->
-
-                        <div class="card-body px-4">
-
+                        <!-- SESSION BODY -->
+                        <div class="card-body px-4 pt-3 flex-grow-1">
 
                             {% if session.description %}
-
                                 <p class="text-muted small mb-4">
-
                                     {{ session.description }}
-
                                 </p>
-
                             {% endif %}
 
-
-                            <!-- =================================
-                                 SESSION INFORMATION
-                            ================================== -->
-
-                            <div class="mb-4">
-
-
+                            <!-- SESSION TIMING DETAILS -->
+                            <div class="mb-4 bg-light bg-opacity-50 p-3 rounded-3 border">
                                 <!-- OPENS -->
-
-                                <div class="d-flex
-                                            align-items-center
-                                            mb-3">
-
-                                    <i class="bi bi-calendar-event
-                                              text-muted
-                                              me-2"></i>
-
+                                <div class="d-flex align-items-center mb-2.5">
+                                    <div class="text-muted me-3 fs-5"><i class="bi bi-calendar-event"></i></div>
                                     <div>
-
-                                        <small class="text-muted d-block">
-                                            Opens
-                                        </small>
-
-                                        <span class="fw-semibold">
-
+                                        <small class="text-muted d-block text-uppercase fw-semibold" style="font-size: 11px;">Opens At</small>
+                                        <span class="fw-semibold text-dark small">
                                             {% if session.opens_at %}
-
                                                 {{ session.opens_at|date:"M d, Y H:i" }}
-
                                             {% else %}
-
-                                                Immediately
-
+                                                Immediately Available
                                             {% endif %}
-
                                         </span>
-
                                     </div>
-
                                 </div>
-
 
                                 <!-- CLOSES -->
-
-                                <div class="d-flex
-                                            align-items-center
-                                            mb-3">
-
-                                    <i class="bi bi-hourglass-split
-                                              text-muted
-                                              me-2"></i>
-
+                                <div class="d-flex align-items-center mb-2.5">
+                                    <div class="text-muted me-3 fs-5"><i class="bi bi-hourglass-split"></i></div>
                                     <div>
-
-                                        <small class="text-muted d-block">
-                                            Closes
-                                        </small>
-
-                                        <span class="fw-semibold">
-
+                                        <small class="text-muted d-block text-uppercase fw-semibold" style="font-size: 11px;">Closes At</small>
+                                        <span class="fw-semibold text-dark small">
                                             {% if session.closes_at %}
-
                                                 {{ session.closes_at|date:"M d, Y H:i" }}
-
                                             {% else %}
-
-                                                No closing time
-
+                                                No closing time specified
                                             {% endif %}
-
                                         </span>
-
                                     </div>
-
                                 </div>
-
 
                                 <!-- CREATED BY -->
-
                                 {% if session.created_by %}
-
-                                    <div class="d-flex
-                                                align-items-center">
-
-                                        <i class="bi bi-person
-                                                  text-muted
-                                                  me-2"></i>
-
+                                    <div class="d-flex align-items-center">
+                                        <div class="text-muted me-3 fs-5"><i class="bi bi-person-badge"></i></div>
                                         <div>
-
-                                            <small class="text-muted d-block">
-                                                Created by
-                                            </small>
-
-                                            <span class="fw-semibold">
-
+                                            <small class="text-muted d-block text-uppercase fw-semibold" style="font-size: 11px;">Host / Creator</small>
+                                            <span class="fw-semibold text-dark small">
                                                 {% if session.created_by.get_full_name %}
-
                                                     {{ session.created_by.get_full_name }}
-
                                                 {% else %}
-
                                                     {{ session.created_by.username }}
-
                                                 {% endif %}
-
                                             </span>
-
                                         </div>
-
                                     </div>
-
                                 {% endif %}
-
-
                             </div>
 
-
-                            <!-- =================================
-                                 COUNTDOWN
-                            ================================== -->
-
-                            <div class="rounded-3
-                                        bg-light
-                                        border
-                                        p-3
-                                        mb-4">
-
-                                <div class="d-flex
-                                            justify-content-between
-                                            align-items-center">
-
+                            <!-- COUNTDOWN TIMER CONTAINER -->
+                            <div class="rounded-3 bg-white border p-3 mb-4 shadow-sm">
+                                <div class="d-flex justify-content-between align-items-center">
                                     <div>
-
-                                        <small class="text-muted d-block">
-                                            Time remaining
-                                        </small>
-
-                                        <span class="fw-bold
-                                                     text-primary
-                                                     fs-5
-                                                     attendance-countdown"
-                                              data-seconds="{{ session.seconds_remaining|default:0 }}">
-
+                                        <small class="text-muted d-block text-uppercase fw-semibold tracking-wider" style="font-size: 11px;">Time Remaining</small>
+                                        <span class="fw-bold text-primary fs-5 attendance-countdown" data-seconds="{{ session.seconds_remaining|default:0 }}">
                                             Calculating...
-
                                         </span>
-
                                     </div>
-
-                                    <i class="bi bi-stopwatch
-                                              text-primary
-                                              fs-3"></i>
-
+                                    <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                        <i class="bi bi-stopwatch fs-5"></i>
+                                    </div>
                                 </div>
-
                             </div>
 
-
-                            <!-- =================================
-                                 USER ATTENDANCE STATUS
-                            ================================== -->
-
-
+                            <!-- USER PARTICIPATION STATUS ALERTS -->
                             {% if session.user_attendance.status == "PRESENT" %}
-
-                                <!-- STUDENT HAS ACTUALLY MARKED
-                                     THEMSELVES PRESENT -->
-
-                                <div class="alert
-                                            alert-success
-                                            d-flex
-                                            align-items-start
-                                            gap-2
-                                            mb-0">
-
-                                    <i class="bi bi-check-circle-fill
-                                              mt-1"></i>
-
-                                    <div>
-
-                                        <strong>
-                                            Attendance Recorded
-                                        </strong>
-
-                                        <div class="small mt-1">
-
-                                            Your attendance has been
-                                            successfully recorded as present.
-
-                                        </div>
-
-                                        {% if session.user_attendance.attendance_time %}
-
-                                            <div class="small mt-1">
-
-                                                Marked at:
-
-                                                {{ session.user_attendance.attendance_time|date:"M d, Y H:i" }}
-
+                                <div class="alert alert-success border-0 shadow-sm rounded-3 mb-0 bg-success bg-opacity-15 text-success border-start border-success border-4">
+                                    <div class="d-flex align-items-start gap-2">
+                                        <i class="bi bi-check-circle-fill fs-5 mt-0.5"></i>
+                                        <div>
+                                            <strong class="text-dark">Attendance Logged Successfully</strong>
+                                            <div class="small mt-1 text-secondary">
+                                                You are recorded as present for this session.
                                             </div>
-
-                                        {% endif %}
-
+                                            {% if session.user_attendance.attendance_time %}
+                                                <div class="small mt-1 text-muted">
+                                                    Marked on: {{ session.user_attendance.attendance_time|date:"M d, Y H:i" }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
                                     </div>
-
                                 </div>
-
-
                             {% elif session.user_attendance.status == "ABSENT" %}
-
-                                <div class="alert
-                                            alert-danger
-                                            d-flex
-                                            align-items-start
-                                            gap-2
-                                            mb-0">
-
-                                    <i class="bi bi-x-circle-fill mt-1"></i>
-
-                                    <div>
-
-                                        <strong>
-                                            Attendance marked absent
-                                        </strong>
-
-                                        <div class="small mt-1">
-
-                                            Your attendance has been marked
-                                            as absent for this session.
-
+                                <div class="alert alert-danger border-0 shadow-sm rounded-3 mb-0 bg-danger bg-opacity-15 text-danger border-start border-danger border-4">
+                                    <div class="d-flex align-items-start gap-2">
+                                        <i class="bi bi-x-circle-fill fs-5 mt-0.5"></i>
+                                        <div>
+                                            <strong class="text-dark">Marked Absent</strong>
+                                            <div class="small mt-1 text-secondary">
+                                                Your participation record is marked as absent.
+                                            </div>
                                         </div>
-
                                     </div>
-
                                 </div>
-
-
                             {% elif session.user_attendance.status == "EXCUSED" %}
-
-                                <div class="alert
-                                            alert-warning
-                                            d-flex
-                                            align-items-start
-                                            gap-2
-                                            mb-0">
-
-                                    <i class="bi bi-info-circle-fill mt-1"></i>
-
-                                    <div>
-
-                                        <strong>
-                                            Attendance excused
-                                        </strong>
-
-                                        <div class="small mt-1">
-
-                                            Your attendance has been marked
-                                            as excused for this session.
-
+                                <div class="alert alert-warning border-0 shadow-sm rounded-3 mb-0 bg-warning bg-opacity-15 text-dark border-start border-warning border-4">
+                                    <div class="d-flex align-items-start gap-2">
+                                        <i class="bi bi-info-circle-fill fs-5 mt-0.5 text-warning"></i>
+                                        <div>
+                                            <strong class="text-dark">Attendance Excused</strong>
+                                            <div class="small mt-1 text-secondary">
+                                                Your record for this session is excused.
+                                            </div>
                                         </div>
-
                                     </div>
-
                                 </div>
-
-
                             {% else %}
-
-                                <!-- =================================
-                                     NO PRESENT ATTENDANCE YET
-
-                                     This includes:
-
-                                     - No AttendanceRecord
-                                     - PENDING AttendanceRecord
-
-                                     The student can still mark
-                                     themselves present.
-                                ================================== -->
-
-                                <div class="alert
-                                            alert-info
-                                            d-flex
-                                            align-items-start
-                                            gap-2
-                                            mb-0">
-
-                                    <i class="bi bi-info-circle-fill
-                                              mt-1"></i>
-
-                                    <div>
-
-                                        <strong>
-                                            Attendance Available
-                                        </strong>
-
-                                        <div class="small mt-1">
-
-                                            You have not yet marked your
-                                            attendance for this session.
-
-                                            Confirm your presence below to
-                                            record yourself as present.
-
+                                <div class="alert alert-info border-0 shadow-sm rounded-3 mb-0 bg-info bg-opacity-10 text-dark border-start border-info border-4">
+                                    <div class="d-flex align-items-start gap-2">
+                                        <i class="bi bi-info-circle-fill fs-5 mt-0.5 text-info"></i>
+                                        <div>
+                                            <strong class="text-dark">Check-in Available</strong>
+                                            <div class="small mt-1 text-secondary">
+                                                Confirm your presence below to log yourself present.
+                                            </div>
                                         </div>
-
                                     </div>
-
                                 </div>
-
                             {% endif %}
-
 
                         </div>
 
-
-                        <!-- =====================================
-                             SESSION ACTIONS
-                        ====================================== -->
-
-                        <div class="card-footer
-                                    bg-transparent
-                                    border-0
-                                    px-4
-                                    pb-4">
-
-
-                            <!-- =================================
-                                 ONLY DISABLE BUTTON IF STUDENT
-                                 IS ACTUALLY PRESENT
-                            ================================== -->
-
+                        <!-- SESSION FOOTER ACTIONS -->
+                        <div class="card-footer bg-transparent border-0 px-4 pb-4 pt-0">
                             {% if session.user_attendance.status == "PRESENT" %}
-
-                                <button type="button"
-                                        class="btn btn-success w-100"
-                                        disabled>
-
-                                    <i class="bi bi-check-circle me-1"></i>
-
-                                    Attendance Recorded
-
+                                <button type="button" class="btn btn-success w-100 shadow-sm fw-semibold" disabled>
+                                    <i class="bi bi-check-circle me-1"></i>Attendance Recorded
                                 </button>
-
-
                             {% elif session.user_attendance.status == "ABSENT" %}
-
-                                <button type="button"
-                                        class="btn btn-danger w-100"
-                                        disabled>
-
-                                    <i class="bi bi-x-circle me-1"></i>
-
-                                    Marked Absent
-
+                                <button type="button" class="btn btn-danger w-100 shadow-sm fw-semibold" disabled>
+                                    <i class="bi bi-x-circle me-1"></i>Marked Absent
                                 </button>
-
-
                             {% elif session.user_attendance.status == "EXCUSED" %}
-
-                                <button type="button"
-                                        class="btn btn-warning w-100"
-                                        disabled>
-
-                                    <i class="bi bi-info-circle me-1"></i>
-
-                                    Attendance Excused
-
+                                <button type="button" class="btn btn-warning w-100 shadow-sm fw-semibold text-dark" disabled>
+                                    <i class="bi bi-info-circle me-1"></i>Attendance Excused
                                 </button>
-
-
                             {% else %}
-
-                                <!-- =================================
-                                     STUDENT CAN MARK ATTENDANCE
-
-                                     Works when:
-
-                                     - No record exists
-
-                                     OR
-
-                                     - Record exists but is PENDING
-                                ================================== -->
-
-                                <form method="post"
-                                      action="{% url 'attendance:mark_self' session.id %}">
-
+                                <form method="post" action="{% url 'attendance:mark_self' session.id %}">
                                     {% csrf_token %}
-
-
-                                    <div class="form-check mb-3">
-
-                                        <input class="form-check-input"
-                                               type="checkbox"
-                                               name="confirmation"
-                                               value="1"
-                                               id="confirmAttendance{{ session.id }}"
-                                               required>
-
-                                        <label class="form-check-label small"
-                                               for="confirmAttendance{{ session.id }}">
-
-                                            I confirm that I am present
-                                            and want to mark my attendance.
-
+                                    <div class="form-check mb-3 px-3 py-2 bg-light rounded-3 border">
+                                        <input class="form-check-input mt-1" type="checkbox" name="confirmation" value="1" id="confirmAttendance{{ session.id }}" required>
+                                        <label class="form-check-label small fw-semibold text-dark cursor-pointer" for="confirmAttendance{{ session.id }}">
+                                            I confirm that I am present and authorize recording my attendance.
                                         </label>
-
                                     </div>
-
-
-                                    <button type="submit"
-                                            class="btn btn-primary w-100">
-
-                                        <i class="bi bi-check2-circle me-1"></i>
-
-                                        Mark My Attendance
-
+                                    <button type="submit" class="btn btn-primary w-100 shadow-sm fw-bold">
+                                        <i class="bi bi-check2-circle me-1"></i>Mark My Attendance
                                     </button>
-
                                 </form>
-
-
                             {% endif %}
-
-
                         </div>
 
                     </div>
-
                 </div>
-
             {% endfor %}
-
         </div>
-
 
     {% else %}
 
-
-        <!-- =============================================
-             NO ACTIVE SESSIONS
-        ============================================== -->
-
-        <div class="card border-0 shadow-sm">
-
-            <div class="card-body text-center py-5">
-
-                <div class="mb-3">
-
-                    <div class="rounded-circle
-                                bg-light
-                                d-inline-flex
-                                align-items-center
-                                justify-content-center"
-                         style="width: 80px; height: 80px;">
-
-                        <i class="bi bi-calendar-x
-                                  text-muted
-                                  fs-1"></i>
-
-                    </div>
-
+        <!-- EMPTY STATE -->
+        <div class="card kucsa-card border-0 shadow-sm bg-white">
+            <div class="card-body text-center py-5 px-4">
+                <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mb-3 text-muted shadow-sm" style="width: 80px; height: 80px;">
+                    <i class="bi bi-calendar-x fs-1"></i>
                 </div>
-
-
-                <h2 class="h5 fw-bold">
-
-                    No Active Attendance
-
-                </h2>
-
-
-                <p class="text-muted mb-4">
-
-                    There are currently no attendance sessions
-                    available for marking.
-
-                </p>
-
-
-                <a href="{% url 'attendance:my_attendance' %}"
-                   class="btn btn-outline-primary">
-
-                    <i class="bi bi-clock-history me-1"></i>
-
-                    View My Attendance
-
+                <h2 class="h5 fw-bold text-dark">No Active Attendance Sessions</h2>
+                <p class="text-muted mb-4">There are currently no active attendance check-in windows available.</p>
+                <a href="{% url 'attendance:my_attendance' %}" class="btn btn-primary shadow-sm px-4 fw-bold">
+                    <i class="bi bi-clock-history me-1"></i>View My Attendance History
                 </a>
-
             </div>
-
         </div>
-
 
     {% endif %}
 
 </div>
 
 
-<!-- =========================================================
-     COUNTDOWN SCRIPT
-========================================================== -->
-
+<!-- ========================================================= -->
+<!-- COUNTDOWN SCRIPT WITH DYNAMIC TICKER -->
+<!-- ========================================================= -->
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const countdownElements = document.querySelectorAll(".attendance-countdown");
 
-document.addEventListener("DOMContentLoaded", function () {
+        countdownElements.forEach(function (element) {
+            let remaining = parseInt(element.dataset.seconds || "0", 10);
 
-    const countdownElements =
-        document.querySelectorAll(
-            ".attendance-countdown"
-        );
+            function updateCountdown() {
+                if (remaining <= 0) {
+                    element.textContent = "Session closing...";
+                    element.classList.remove("text-primary");
+                    element.classList.add("text-danger");
+                    return;
+                }
 
+                const hours = Math.floor(remaining / 3600);
+                const minutes = Math.floor((remaining % 3600) / 60);
+                const seconds = remaining % 60;
 
-    countdownElements.forEach(function (element) {
+                if (hours > 0) {
+                    element.textContent = `${hours}h ${minutes}m ${seconds}s`;
+                } else if (minutes > 0) {
+                    element.textContent = `${minutes}m ${seconds}s`;
+                } else {
+                    element.textContent = `${seconds}s`;
+                }
 
-        let remaining =
-            parseInt(
-                element.dataset.seconds || "0",
-                10
-            );
-
-
-        function updateCountdown() {
-
-            if (remaining <= 0) {
-
-                element.textContent =
-                    "Attendance closing...";
-
-                element.classList.remove(
-                    "text-primary"
-                );
-
-                element.classList.add(
-                    "text-danger"
-                );
-
-                return;
-
+                remaining--;
             }
 
-
-            const hours =
-                Math.floor(
-                    remaining / 3600
-                );
-
-
-            const minutes =
-                Math.floor(
-                    (remaining % 3600) / 60
-                );
-
-
-            const seconds =
-                remaining % 60;
-
-
-            if (hours > 0) {
-
-                element.textContent =
-                    `${hours}h ${minutes}m ${seconds}s`;
-
-            }
-
-            else if (minutes > 0) {
-
-                element.textContent =
-                    `${minutes}m ${seconds}s`;
-
-            }
-
-            else {
-
-                element.textContent =
-                    `${seconds}s`;
-
-            }
-
-
-            remaining--;
-
-        }
-
-
-        updateCountdown();
-
-
-        setInterval(
-            updateCountdown,
-            1000
-        );
-
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        });
     });
-
-});
-
 </script>
 
 {% endblock %}

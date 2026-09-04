@@ -1,1448 +1,651 @@
 {% extends "base.html" %}
 
-{% block title %}Attendance Reports | KUCSA{% endblock %}
+{% block title %}Attendance Reports | KUCSA Platform{% endblock %}
 
 {% block content %}
 
+<!-- Custom Styling Injection matching the KUCSA Design System -->
+<style>
+    :root {
+        --kucsa-primary: #0d6efd;
+        --kucsa-primary-hover: #0b5ed7;
+        --kucsa-bg-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    body {
+        background: var(--kucsa-bg-gradient);
+    }
+
+    .kucsa-card {
+        border-radius: 1rem;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .metric-card {
+        border-radius: 1rem;
+        border: none;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.06) !important;
+    }
+
+    .table-hover tbody tr {
+        transition: background-color 0.15s ease-in-out;
+    }
+</style>
+
 <div class="container-fluid py-4">
 
-    <!-- =========================================================
-         PAGE HEADER
-    ========================================================== -->
-    <div class="d-flex flex-column flex-xl-row
-                justify-content-between align-items-xl-center
-                gap-3 mb-4">
-
+    <!-- ========================================================= -->
+    <!-- PAGE HEADER -->
+    <!-- ========================================================= -->
+    <div class="d-flex flex-column flex-xl-row justify-content-between align-items-xl-center gap-3 mb-4">
         <div>
-
             <div class="d-flex align-items-center gap-2 mb-1">
-
-                <span class="badge text-bg-primary">
-                    <i class="bi bi-bar-chart-line me-1"></i>
-                    Reports
+                <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-1.5 fw-bold shadow-sm">
+                    <i class="bi bi-bar-chart-line me-1"></i>REPORTS & ANALYTICS
                 </span>
-
             </div>
-
-            <h1 class="h3 fw-bold mb-1">
+            <h1 class="h3 fw-bold mb-1 text-dark">
                 Attendance Reports
             </h1>
-
-            <p class="text-muted mb-0">
-                Review, analyze and export KUCSA attendance records.
+            <p class="text-muted mb-0 small">
+                Comprehensive performance metrics, historical records, and filterable export tools.
             </p>
-
         </div>
-
 
         <!-- PAGE ACTIONS -->
         <div class="d-flex flex-wrap gap-2">
-
-            <a href="{% url 'attendance:list' %}"
-               class="btn btn-outline-secondary">
-
-                <i class="bi bi-calendar-check me-1"></i>
-                Attendance Sessions
-
+            <a href="{% url 'attendance:list' %}" class="btn btn-outline-secondary shadow-sm fw-semibold">
+                <i class="bi bi-calendar-check me-1"></i>Attendance Sessions
             </a>
 
-
-            <a href="{% url 'attendance:active' %}"
-               class="btn btn-outline-primary">
-
-                <i class="bi bi-broadcast me-1"></i>
-                Active Attendance
-
+            <a href="{% url 'attendance:active' %}" class="btn btn-outline-primary shadow-sm fw-semibold">
+                <i class="bi bi-broadcast me-1"></i>Active Attendance
             </a>
-
 
             {% if form.report_format %}
-
-                <button type="submit"
-                        form="attendance-report-form"
-                        name="report_format"
-                        value="csv"
-                        class="btn btn-success">
-
-                    <i class="bi bi-file-earmark-spreadsheet me-1"></i>
-                    Export CSV
-
+                <button type="submit" form="attendance-report-form" name="report_format" value="csv" class="btn btn-success shadow-sm fw-bold">
+                    <i class="bi bi-file-earmark-spreadsheet me-1"></i>Export CSV
                 </button>
-
             {% endif %}
-
         </div>
-
     </div>
 
 
-    <!-- =========================================================
-         SUMMARY CARDS
-    ========================================================== -->
+    <!-- ========================================================= -->
+    <!-- SUMMARY METRICS CARDS - ROW 1 -->
+    <!-- ========================================================= -->
     <div class="row g-3 mb-4">
-
         <!-- TOTAL RECORDS -->
         <div class="col-12 col-sm-6 col-xl-3">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
+            <div class="card metric-card shadow-sm h-100 bg-white">
+                <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-start">
-
                         <div>
-
-                            <p class="text-muted small mb-1">
-                                Total Records
-                            </p>
-
-                            <h3 class="fw-bold mb-0">
-                                {{ total_records|default:total|default:0 }}
-                            </h3>
-
+                            <p class="text-muted small mb-1 text-uppercase fw-semibold" style="font-size: 11px;">Total Records</p>
+                            <h3 class="fw-bold mb-0 text-dark">{{ total_records|default:total|default:0 }}</h3>
                         </div>
-
-                        <div class="rounded-circle bg-primary-subtle p-3">
-
-                            <i class="bi bi-clipboard-data text-primary fs-5"></i>
-
+                        <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                            <i class="bi bi-clipboard-data fs-5"></i>
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
 
         <!-- PRESENT -->
         <div class="col-12 col-sm-6 col-xl-3">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
+            <div class="card metric-card shadow-sm h-100 bg-white">
+                <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-start">
-
                         <div>
-
-                            <p class="text-muted small mb-1">
-                                Present
-                            </p>
-
-                            <h3 class="fw-bold mb-0 text-success">
-                                {{ present|default:0 }}
-                            </h3>
-
+                            <p class="text-muted small mb-1 text-uppercase fw-semibold" style="font-size: 11px;">Present</p>
+                            <h3 class="fw-bold mb-0 text-success">{{ present|default:0 }}</h3>
                         </div>
-
-                        <div class="rounded-circle bg-success-subtle p-3">
-
-                            <i class="bi bi-check-circle text-success fs-5"></i>
-
+                        <div class="rounded-circle bg-success bg-opacity-10 text-success p-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                            <i class="bi bi-check-circle fs-5"></i>
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
 
         <!-- ABSENT -->
         <div class="col-12 col-sm-6 col-xl-3">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
+            <div class="card metric-card shadow-sm h-100 bg-white">
+                <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-start">
-
                         <div>
-
-                            <p class="text-muted small mb-1">
-                                Absent
-                            </p>
-
-                            <h3 class="fw-bold mb-0 text-danger">
-                                {{ absent|default:0 }}
-                            </h3>
-
+                            <p class="text-muted small mb-1 text-uppercase fw-semibold" style="font-size: 11px;">Absent</p>
+                            <h3 class="fw-bold mb-0 text-danger">{{ absent|default:0 }}</h3>
                         </div>
-
-                        <div class="rounded-circle bg-danger-subtle p-3">
-
-                            <i class="bi bi-x-circle text-danger fs-5"></i>
-
+                        <div class="rounded-circle bg-danger bg-opacity-10 text-danger p-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                            <i class="bi bi-x-circle fs-5"></i>
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
 
         <!-- EXCUSED -->
         <div class="col-12 col-sm-6 col-xl-3">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
+            <div class="card metric-card shadow-sm h-100 bg-white">
+                <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-start">
-
                         <div>
-
-                            <p class="text-muted small mb-1">
-                                Excused
-                            </p>
-
-                            <h3 class="fw-bold mb-0 text-info">
-                                {{ excused|default:0 }}
-                            </h3>
-
+                            <p class="text-muted small mb-1 text-uppercase fw-semibold" style="font-size: 11px;">Excused</p>
+                            <h3 class="fw-bold mb-0 text-info">{{ excused|default:0 }}</h3>
                         </div>
-
-                        <div class="rounded-circle bg-info-subtle p-3">
-
-                            <i class="bi bi-info-circle text-info fs-5"></i>
-
+                        <div class="rounded-circle bg-info bg-opacity-10 text-info p-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                            <i class="bi bi-info-circle fs-5"></i>
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
     </div>
 
 
-    <!-- =========================================================
-         SECONDARY SUMMARY
-    ========================================================== -->
+    <!-- ========================================================= -->
+    <!-- SECONDARY SUMMARY - ROW 2 -->
+    <!-- ========================================================= -->
     <div class="row g-3 mb-4">
-
         <!-- FINALIZED -->
         <div class="col-12 col-md-4">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
+            <div class="card kucsa-card border-0 shadow-sm h-100 bg-white">
+                <div class="card-body p-4">
                     <div class="d-flex align-items-center gap-3">
-
-                        <div class="rounded-circle bg-secondary-subtle p-3">
-
-                            <i class="bi bi-check2-all text-secondary fs-5"></i>
-
+                        <div class="rounded-circle bg-secondary bg-opacity-10 text-secondary p-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                            <i class="bi bi-check2-all fs-5"></i>
                         </div>
-
                         <div>
-
-                            <div class="text-muted small">
-                                Finalized Records
-                            </div>
-
-                            <div class="fs-4 fw-bold">
-                                {{ finalized|default:0 }}
-                            </div>
-
+                            <div class="text-muted small text-uppercase fw-semibold" style="font-size: 11px;">Finalized Records</div>
+                            <div class="fs-4 fw-bold text-dark">{{ finalized|default:0 }}</div>
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
 
         <!-- PENDING -->
         <div class="col-12 col-md-4">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
+            <div class="card kucsa-card border-0 shadow-sm h-100 bg-white">
+                <div class="card-body p-4">
                     <div class="d-flex align-items-center gap-3">
-
-                        <div class="rounded-circle bg-warning-subtle p-3">
-
-                            <i class="bi bi-hourglass-split text-warning fs-5"></i>
-
+                        <div class="rounded-circle bg-warning bg-opacity-10 text-warning p-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                            <i class="bi bi-hourglass-split fs-5"></i>
                         </div>
-
                         <div>
-
-                            <div class="text-muted small">
-                                Pending Records
-                            </div>
-
-                            <div class="fs-4 fw-bold">
-                                {{ pending|default:0 }}
-                            </div>
-
+                            <div class="text-muted small text-uppercase fw-semibold" style="font-size: 11px;">Pending Records</div>
+                            <div class="fs-4 fw-bold text-dark">{{ pending|default:0 }}</div>
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
 
         <!-- ATTENDANCE RATE -->
         <div class="col-12 col-md-4">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
+            <div class="card kucsa-card border-0 shadow-sm h-100 bg-white">
+                <div class="card-body p-4">
                     <div class="d-flex align-items-center gap-3">
-
-                        <div class="rounded-circle bg-success-subtle p-3">
-
-                            <i class="bi bi-graph-up-arrow text-success fs-5"></i>
-
+                        <div class="rounded-circle bg-success bg-opacity-10 text-success p-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                            <i class="bi bi-graph-up-arrow fs-5"></i>
                         </div>
-
                         <div>
-
-                            <div class="text-muted small">
-                                Attendance Rate
-                            </div>
-
-                            <div class="fs-4 fw-bold text-success">
-                                {{ attendance_percentage|default:0 }}%
-                            </div>
-
+                            <div class="text-muted small text-uppercase fw-semibold" style="font-size: 11px;">Overall Rate</div>
+                            <div class="fs-4 fw-bold text-success">{{ attendance_percentage|default:0 }}%</div>
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
     </div>
 
 
-    <!-- =========================================================
-         ATTENDANCE RATE
-    ========================================================== -->
-    <div class="card border-0 shadow-sm mb-4">
-
-        <div class="card-body">
-
+    <!-- ========================================================= -->
+    <!-- ATTENDANCE RATE VISUALIZATION CARD -->
+    <!-- ========================================================= -->
+    <div class="card kucsa-card border-0 shadow-sm mb-4 bg-white">
+        <div class="card-body p-4">
             <div class="row align-items-center">
-
-                <!-- RATE -->
                 <div class="col-12 col-lg-7">
-
                     <div class="d-flex justify-content-between align-items-center gap-3 mb-2">
-
                         <div>
-
-                            <h5 class="fw-bold mb-1">
-                                Overall Attendance Rate
-                            </h5>
-
-                            <p class="text-muted small mb-0">
-                                Percentage of finalized attendance
-                                records marked as present.
-                            </p>
-
+                            <h5 class="fw-bold mb-1 text-dark">Overall Attendance Analytics</h5>
+                            <p class="text-muted small mb-0">Percentage breakdown of participation across finalized attendance sessions.</p>
                         </div>
-
-                        <span class="fs-4 fw-bold text-success">
-                            {{ attendance_percentage|default:0 }}%
-                        </span>
-
+                        <span class="fs-4 fw-bold text-success">{{ attendance_percentage|default:0 }}%</span>
                     </div>
 
-
-                    <div class="progress"
-                         style="height: 12px;"
-                         role="progressbar"
-                         aria-label="Overall attendance rate"
-                         aria-valuenow="{{ attendance_percentage|default:0 }}"
-                         aria-valuemin="0"
-                         aria-valuemax="100">
-
-                        <div class="progress-bar bg-success"
-                             style="width: {{ attendance_percentage|default:0 }}%;">
-                        </div>
-
+                    <div class="progress shadow-sm" style="height: 10px; border-radius: 5px;" role="progressbar" aria-valuenow="{{ attendance_percentage|default:0 }}" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar bg-success" style="width: {{ attendance_percentage|default:0 }}%;"></div>
                     </div>
-
                 </div>
 
-
-                <!-- BREAKDOWN -->
-                <div class="col-12 col-lg-5 mt-4 mt-lg-0">
-
-                    <div class="row text-center">
-
+                <div class="col-12 col-lg-5 mt-4 mt-lg-0 border-start-lg ps-lg-4">
+                    <div class="row text-center g-2 bg-light bg-opacity-50 p-3 rounded-3 border">
                         <div class="col-3">
-
-                            <div class="fw-bold text-success">
-                                {{ present|default:0 }}
-                            </div>
-
-                            <small class="text-muted">
-                                Present
-                            </small>
-
+                            <div class="fw-bold text-success">{{ present|default:0 }}</div>
+                            <small class="text-muted" style="font-size: 11px;">Present</small>
                         </div>
-
-
                         <div class="col-3">
-
-                            <div class="fw-bold text-danger">
-                                {{ absent|default:0 }}
-                            </div>
-
-                            <small class="text-muted">
-                                Absent
-                            </small>
-
+                            <div class="fw-bold text-danger">{{ absent|default:0 }}</div>
+                            <small class="text-muted" style="font-size: 11px;">Absent</small>
                         </div>
-
-
                         <div class="col-3">
-
-                            <div class="fw-bold text-info">
-                                {{ excused|default:0 }}
-                            </div>
-
-                            <small class="text-muted">
-                                Excused
-                            </small>
-
+                            <div class="fw-bold text-info">{{ excused|default:0 }}</div>
+                            <small class="text-muted" style="font-size: 11px;">Excused</small>
                         </div>
-
-
                         <div class="col-3">
-
-                            <div class="fw-bold text-secondary">
-                                {{ finalized|default:0 }}
-                            </div>
-
-                            <small class="text-muted">
-                                Finalized
-                            </small>
-
+                            <div class="fw-bold text-secondary">{{ finalized|default:0 }}</div>
+                            <small class="text-muted" style="font-size: 11px;">Final</small>
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
     </div>
 
 
-    <!-- =========================================================
-         FILTERS
-    ========================================================== -->
-    <div class="card border-0 shadow-sm mb-4">
-
-        <div class="card-header bg-transparent border-bottom
-                    d-flex justify-content-between align-items-center">
-
+    <!-- ========================================================= -->
+    <!-- FILTER CARD -->
+    <!-- ========================================================= -->
+    <div class="card kucsa-card border-0 shadow-sm mb-4 bg-white">
+        <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
             <div>
-
-                <h5 class="fw-bold mb-1">
-                    Filter Report
-                </h5>
-
-                <small class="text-muted">
-                    Filter attendance records by status and date.
-                </small>
-
+                <h5 class="fw-bold mb-1 text-dark">Filter Report Parameters</h5>
+                <p class="text-muted small mb-0">Refine dataset by status and specific opening date ranges.</p>
             </div>
-
             <i class="bi bi-funnel fs-5 text-muted"></i>
-
         </div>
 
-
-        <div class="card-body">
-
-            <form method="get"
-                  id="attendance-report-form"
-                  action="{% url 'attendance:report' %}">
-
+        <div class="card-body px-4 pb-4 pt-3">
+            <form method="get" id="attendance-report-form" action="{% url 'attendance:report' %}">
                 <div class="row g-3">
-
-                    <!-- STATUS -->
                     {% if form.status %}
-
-                        <div class="col-12 col-md-4">
-
-                            <label for="{{ form.status.id_for_label }}"
-                                   class="form-label fw-semibold">
-                                Attendance Status
-                            </label>
-
+                        <div class="col-12 col-md-3">
+                            <label for="{{ form.status.id_for_label }}" class="form-label fw-semibold small text-muted">Attendance Status</label>
                             {{ form.status }}
-
                             {% if form.status.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ form.status.errors }}
-                                </div>
-
+                                <div class="text-danger small mt-1">{{ form.status.errors }}</div>
                             {% endif %}
-
                         </div>
-
                     {% endif %}
 
-
-                    <!-- START DATE -->
                     {% if form.start_date %}
-
-                        <div class="col-12 col-md-4">
-
-                            <label for="{{ form.start_date.id_for_label }}"
-                                   class="form-label fw-semibold">
-                                From Date
-                            </label>
-
+                        <div class="col-12 col-md-3">
+                            <label for="{{ form.start_date.id_for_label }}" class="form-label fw-semibold small text-muted">From Date</label>
                             {{ form.start_date }}
-
                             {% if form.start_date.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ form.start_date.errors }}
-                                </div>
-
+                                <div class="text-danger small mt-1">{{ form.start_date.errors }}</div>
                             {% endif %}
-
                         </div>
-
                     {% endif %}
 
-
-                    <!-- END DATE -->
                     {% if form.end_date %}
-
-                        <div class="col-12 col-md-4">
-
-                            <label for="{{ form.end_date.id_for_label }}"
-                                   class="form-label fw-semibold">
-                                To Date
-                            </label>
-
+                        <div class="col-12 col-md-3">
+                            <label for="{{ form.end_date.id_for_label }}" class="form-label fw-semibold small text-muted">To Date</label>
                             {{ form.end_date }}
-
                             {% if form.end_date.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ form.end_date.errors }}
-                                </div>
-
+                                <div class="text-danger small mt-1">{{ form.end_date.errors }}</div>
                             {% endif %}
-
                         </div>
-
                     {% endif %}
 
-
-                    <!-- REPORT FORMAT -->
                     {% if form.report_format %}
-
-                        <div class="col-12 col-md-4">
-
-                            <label for="{{ form.report_format.id_for_label }}"
-                                   class="form-label fw-semibold">
-                                Report Format
-                            </label>
-
+                        <div class="col-12 col-md-3">
+                            <label for="{{ form.report_format.id_for_label }}" class="form-label fw-semibold small text-muted">Format</label>
                             {{ form.report_format }}
-
                             {% if form.report_format.errors %}
-
-                                <div class="text-danger small mt-1">
-                                    {{ form.report_format.errors }}
-                                </div>
-
+                                <div class="text-danger small mt-1">{{ form.report_format.errors }}</div>
                             {% endif %}
-
                         </div>
-
                     {% endif %}
 
-
-                    <!-- ACTIONS -->
-                    <div class="col-12 d-flex flex-wrap gap-2">
-
-                        <button type="submit"
-                                class="btn btn-primary">
-
-                            <i class="bi bi-funnel me-1"></i>
-                            Apply Filters
-
+                    <div class="col-12 d-flex flex-wrap gap-2 pt-2">
+                        <button type="submit" class="btn btn-primary shadow-sm fw-semibold">
+                            <i class="bi bi-funnel me-1"></i>Apply Filters
                         </button>
-
-
-                        <a href="{% url 'attendance:report' %}"
-                           class="btn btn-outline-secondary">
-
-                            <i class="bi bi-arrow-counterclockwise me-1"></i>
-                            Reset
-
+                        <a href="{% url 'attendance:report' %}" class="btn btn-outline-secondary shadow-sm fw-semibold">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
                         </a>
-
-
                         {% if form.report_format %}
-
-                            <button type="submit"
-                                    name="report_format"
-                                    value="csv"
-                                    class="btn btn-outline-success">
-
-                                <i class="bi bi-file-earmark-spreadsheet me-1"></i>
-                                Export CSV
-
+                            <button type="submit" name="report_format" value="csv" class="btn btn-outline-success shadow-sm fw-semibold">
+                                <i class="bi bi-file-earmark-spreadsheet me-1"></i>Export CSV
                             </button>
-
                         {% endif %}
-
                     </div>
-
                 </div>
 
-
-                <!-- NON-FIELD ERRORS -->
                 {% if form.non_field_errors %}
-
-                    <div class="alert alert-danger mt-3 mb-0">
-
-                        <i class="bi bi-exclamation-triangle me-1"></i>
-
-                        {{ form.non_field_errors }}
-
+                    <div class="alert alert-danger mt-3 mb-0 border-0 shadow-sm">
+                        <i class="bi bi-exclamation-triangle me-1"></i>{{ form.non_field_errors }}
                     </div>
-
                 {% endif %}
-
             </form>
-
         </div>
-
     </div>
 
 
-    <!-- =========================================================
-         ACTIVE FILTER INDICATOR
-    ========================================================== -->
+    <!-- ========================================================= -->
+    <!-- ACTIVE FILTER BANNER -->
+    <!-- ========================================================= -->
     {% if request.GET.status or request.GET.start_date or request.GET.end_date %}
-
-        <div class="alert alert-info border-0 shadow-sm mb-4">
-
+        <div class="alert alert-info border-0 shadow-sm mb-4 bg-info bg-opacity-10 text-dark border-start border-info border-4">
             <div class="d-flex align-items-start gap-2">
-
-                <i class="bi bi-funnel-fill fs-5"></i>
-
+                <i class="bi bi-funnel-fill fs-5 text-info"></i>
                 <div>
-
-                    <div class="fw-semibold">
-                        Report filters are active
+                    <strong class="text-dark">Active Report Filters Applied</strong>
+                    <div class="small text-muted mt-1">
+                        {% if request.GET.status %}Status: <strong>{{ request.GET.status }}</strong>{% endif %}
+                        {% if request.GET.start_date %}{% if request.GET.status %} &bull; {% endif %}From: <strong>{{ request.GET.start_date }}</strong>{% endif %}
+                        {% if request.GET.end_date %} &bull; To: <strong>{{ request.GET.end_date }}</strong>{% endif %}
                     </div>
-
-                    <div class="small">
-
-                        {% if request.GET.status %}
-
-                            Status:
-                            <strong>{{ request.GET.status }}</strong>
-
-                        {% endif %}
-
-
-                        {% if request.GET.start_date %}
-
-                            {% if request.GET.status %}
-                                &nbsp;•&nbsp;
-                            {% endif %}
-
-                            From:
-                            <strong>{{ request.GET.start_date }}</strong>
-
-                        {% endif %}
-
-
-                        {% if request.GET.end_date %}
-
-                            &nbsp;•&nbsp;
-                            To:
-                            <strong>{{ request.GET.end_date }}</strong>
-
-                        {% endif %}
-
-                    </div>
-
                 </div>
-
             </div>
-
         </div>
-
     {% endif %}
 
 
-    <!-- =========================================================
-         SESSION SUMMARY
-    ========================================================== -->
-    <div class="card border-0 shadow-sm mb-4">
-
-        <div class="card-header bg-transparent border-bottom
-                    d-flex justify-content-between align-items-center">
-
+    <!-- ========================================================= -->
+    <!-- SESSIONS TABLE SUMMARY CONTAINER -->
+    <!-- ========================================================= -->
+    <div class="card kucsa-card border-0 shadow-sm mb-4 bg-white overflow-hidden">
+        <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
             <div>
-
-                <h5 class="fw-bold mb-1">
-                    Attendance Sessions
-                </h5>
-
-                <small class="text-muted">
-                    Sessions represented in the current report.
-                </small>
-
+                <h5 class="fw-bold mb-1 text-dark">Attendance Sessions Summary</h5>
+                <p class="text-muted small mb-0">Overview of sessions represented under current filter parameters.</p>
             </div>
-
-
-            <span class="badge text-bg-primary">
-
-                {{ sessions|length|default:0 }}
-
-                session{{ sessions|length|pluralize }}
-
+            <span class="badge bg-secondary bg-opacity-10 text-dark rounded-pill px-3 py-2 fw-semibold">
+                {{ sessions|length|default:0 }} Session{{ sessions|length|pluralize }}
             </span>
-
         </div>
 
-
-        <div class="table-responsive">
-
+        <div class="table-responsive pt-3">
             <table class="table table-hover align-middle mb-0">
-
-                <thead class="table-light">
-
+                <thead class="table-light text-uppercase fs-7 text-muted">
                     <tr>
-
-                        <th>Session</th>
-                        <th>Status</th>
-                        <th>Opening</th>
-                        <th>Closing</th>
-                        <th class="text-center">Records</th>
-                        <th class="text-center">Present</th>
-                        <th class="text-center">Absent</th>
-                        <th class="text-center">Excused</th>
-                        <th class="text-center">Rate</th>
-                        <th class="text-end">Action</th>
-
+                        <th class="ps-4 py-3">Session</th>
+                        <th class="py-3">Status</th>
+                        <th class="py-3">Opening</th>
+                        <th class="py-3">Closing</th>
+                        <th class="text-center py-3">Records</th>
+                        <th class="text-center py-3">Present</th>
+                        <th class="text-center py-3">Absent</th>
+                        <th class="text-center py-3">Excused</th>
+                        <th class="text-center py-3">Rate</th>
+                        <th class="text-end pe-4 py-3">Action</th>
                     </tr>
-
                 </thead>
-
-
                 <tbody>
-
                     {% for session in sessions %}
-
                         <tr>
-
-                            <!-- SESSION -->
-                            <td>
-
-                                <div class="fw-semibold">
-                                    {{ session.title }}
-                                </div>
-
+                            <td class="ps-4">
+                                <div class="fw-bold text-dark">{{ session.title }}</div>
                                 {% if session.description %}
-
-                                    <div class="small text-muted text-truncate"
-                                         style="max-width: 280px;">
-                                        {{ session.description }}
-                                    </div>
-
+                                    <div class="small text-muted text-truncate" style="max-width: 250px;">{{ session.description }}</div>
                                 {% endif %}
-
                             </td>
-
-
-                            <!-- STATUS -->
                             <td>
-
                                 {% if session.status == "DRAFT" %}
-
-                                    <span class="badge text-bg-secondary">
-                                        <i class="bi bi-file-earmark me-1"></i>
-                                        Draft
-                                    </span>
-
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary px-2.5 py-1.5"><i class="bi bi-file-earmark me-1"></i>Draft</span>
                                 {% elif session.status == "OPEN" %}
-
-                                    <span class="badge text-bg-success">
-                                        <i class="bi bi-broadcast me-1"></i>
-                                        Open
-                                    </span>
-
+                                    <span class="badge bg-success bg-opacity-10 text-success px-2.5 py-1.5"><i class="bi bi-broadcast me-1"></i>Open</span>
                                 {% elif session.status == "CLOSED" %}
-
-                                    <span class="badge text-bg-dark">
-                                        <i class="bi bi-lock me-1"></i>
-                                        Closed
-                                    </span>
-
+                                    <span class="badge bg-dark bg-opacity-10 text-dark px-2.5 py-1.5"><i class="bi bi-lock me-1"></i>Closed</span>
                                 {% elif session.status == "EXPIRED" %}
-
-                                    <span class="badge text-bg-warning">
-                                        <i class="bi bi-clock-history me-1"></i>
-                                        Expired
-                                    </span>
-
+                                    <span class="badge bg-warning bg-opacity-10 text-warning px-2.5 py-1.5"><i class="bi bi-clock-history me-1"></i>Expired</span>
                                 {% else %}
-
-                                    <span class="badge text-bg-secondary">
-                                        {{ session.get_status_display }}
-                                    </span>
-
+                                    <span class="badge bg-light text-dark px-2.5 py-1.5">{{ session.get_status_display }}</span>
                                 {% endif %}
-
                             </td>
-
-
-                            <!-- OPENING -->
                             <td>
-
                                 {% if session.opens_at %}
-
-                                    <div class="small">
-                                        {{ session.opens_at|date:"d M Y" }}
-                                    </div>
-
-                                    <div class="small text-muted">
-                                        {{ session.opens_at|date:"H:i" }}
-                                    </div>
-
+                                    <div class="small fw-semibold text-dark">{{ session.opens_at|date:"d M Y" }}</div>
+                                    <small class="text-muted">{{ session.opens_at|date:"H:i" }}</small>
                                 {% else %}
-
                                     <span class="text-muted">—</span>
-
                                 {% endif %}
-
                             </td>
-
-
-                            <!-- CLOSING -->
                             <td>
-
                                 {% if session.closes_at %}
-
-                                    <div class="small">
-                                        {{ session.closes_at|date:"d M Y" }}
-                                    </div>
-
-                                    <div class="small text-muted">
-                                        {{ session.closes_at|date:"H:i" }}
-                                    </div>
-
+                                    <div class="small fw-semibold text-dark">{{ session.closes_at|date:"d M Y" }}</div>
+                                    <small class="text-muted">{{ session.closes_at|date:"H:i" }}</small>
                                 {% else %}
-
                                     <span class="text-muted">—</span>
-
                                 {% endif %}
-
                             </td>
-
-
-                            <!-- RECORDS -->
-                            <td class="text-center">
-
-                                {% if session.statistics %}
-
-                                    <span class="fw-semibold">
-                                        {{ session.statistics.total }}
-                                    </span>
-
-                                {% else %}
-
-                                    <span class="text-muted">—</span>
-
-                                {% endif %}
-
+                            <td class="text-center fw-semibold text-dark">
+                                {% if session.statistics %}{{ session.statistics.total }}{% else %}<span class="text-muted">—</span>{% endif %}
                             </td>
-
-
-                            <!-- PRESENT -->
-                            <td class="text-center">
-
-                                {% if session.statistics %}
-
-                                    <span class="fw-semibold text-success">
-                                        {{ session.statistics.present }}
-                                    </span>
-
-                                {% else %}
-
-                                    <span class="text-muted">—</span>
-
-                                {% endif %}
-
+                            <td class="text-center fw-semibold text-success">
+                                {% if session.statistics %}{{ session.statistics.present }}{% else %}<span class="text-muted">—</span>{% endif %}
                             </td>
-
-
-                            <!-- ABSENT -->
-                            <td class="text-center">
-
-                                {% if session.statistics %}
-
-                                    <span class="fw-semibold text-danger">
-                                        {{ session.statistics.absent }}
-                                    </span>
-
-                                {% else %}
-
-                                    <span class="text-muted">—</span>
-
-                                {% endif %}
-
+                            <td class="text-center fw-semibold text-danger">
+                                {% if session.statistics %}{{ session.statistics.absent }}{% else %}<span class="text-muted">—</span>{% endif %}
                             </td>
-
-
-                            <!-- EXCUSED -->
-                            <td class="text-center">
-
-                                {% if session.statistics %}
-
-                                    <span class="fw-semibold text-info">
-                                        {{ session.statistics.excused }}
-                                    </span>
-
-                                {% else %}
-
-                                    <span class="text-muted">—</span>
-
-                                {% endif %}
-
+                            <td class="text-center fw-semibold text-info">
+                                {% if session.statistics %}{{ session.statistics.excused }}{% else %}<span class="text-muted">—</span>{% endif %}
                             </td>
-
-
-                            <!-- RATE -->
-                            <td class="text-center">
-
-                                {% if session.statistics %}
-
-                                    <span class="fw-semibold">
-                                        {{ session.statistics.attendance_percentage }}%
-                                    </span>
-
-                                {% else %}
-
-                                    <span class="text-muted">—</span>
-
-                                {% endif %}
-
+                            <td class="text-center fw-bold text-primary">
+                                {% if session.statistics %}{{ session.statistics.attendance_percentage }}%{% else %}<span class="text-muted">—</span>{% endif %}
                             </td>
-
-
-                            <!-- ACTION -->
-                            <td class="text-end">
-
-                                <a href="{% url 'attendance:detail' session.pk %}"
-                                   class="btn btn-sm btn-outline-primary">
-
-                                    <i class="bi bi-eye me-1"></i>
-                                    View
-
+                            <td class="text-end pe-4">
+                                <a href="{% url 'attendance:detail' session.pk %}" class="btn btn-sm btn-outline-primary shadow-sm fw-semibold">
+                                    <i class="bi bi-eye me-1"></i>View
                                 </a>
-
                             </td>
-
                         </tr>
-
                     {% empty %}
-
                         <tr>
-
                             <td colspan="10" class="text-center py-5">
-
                                 <div class="text-muted">
-
-                                    <i class="bi bi-calendar-x
-                                              fs-1 d-block mb-3"></i>
-
-                                    <h6 class="fw-semibold">
-                                        No attendance sessions found
-                                    </h6>
-
-                                    <p class="small mb-0">
-                                        No sessions match the selected
-                                        report filters.
-                                    </p>
-
+                                    <i class="bi bi-calendar-x fs-1 d-block mb-2"></i>
+                                    <h6 class="fw-bold text-dark">No attendance sessions found</h6>
+                                    <p class="small mb-0">No sessions match your selected report filters.</p>
                                 </div>
-
                             </td>
-
                         </tr>
-
                     {% endfor %}
-
                 </tbody>
-
             </table>
-
         </div>
-
     </div>
 
 
-    <!-- =========================================================
-         ATTENDANCE RECORDS
-    ========================================================== -->
-    <div class="card border-0 shadow-sm">
-
-        <!-- HEADER -->
-        <div class="card-header bg-transparent border-bottom
-                    d-flex flex-column flex-md-row
-                    justify-content-between align-items-md-center
-                    gap-2">
-
+    <!-- ========================================================= -->
+    <!-- DETAILED ATTENDANCE RECORDS TABLE CONTAINER -->
+    <!-- ========================================================= -->
+    <div class="card kucsa-card border-0 shadow-sm bg-white overflow-hidden">
+        <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
             <div>
-
-                <h5 class="fw-bold mb-1">
-                    Attendance Records
-                </h5>
-
-                <small class="text-muted">
-                    Detailed records included in this report.
-                </small>
-
+                <h5 class="fw-bold mb-1 text-dark">Detailed Attendance Records</h5>
+                <p class="text-muted small mb-0">Granular entry list corresponding to active filter conditions.</p>
             </div>
-
-
-            <span class="badge text-bg-secondary">
-
-                {% if records_count %}
-
-                    {{ records_count }}
-
-                {% elif attendance_records %}
-
-                    {{ attendance_records|length }}
-
-                {% else %}
-
-                    0
-
-                {% endif %}
-
-                record{{ records_count|default:0|pluralize }}
-
+            <span class="badge bg-secondary bg-opacity-10 text-dark rounded-pill px-3 py-2 fw-semibold">
+                {% if records_count %}{{ records_count }}{% elif attendance_records %}{{ attendance_records|length }}{% else %}0{% endif %} Record{{ records_count|default:0|pluralize }}
             </span>
-
         </div>
 
-
-        <!-- TABLE -->
-        <div class="table-responsive">
-
+        <div class="table-responsive pt-3">
             <table class="table table-hover align-middle mb-0">
-
-                <thead class="table-light">
-
+                <thead class="table-light text-uppercase fs-7 text-muted">
                     <tr>
-
-                        <th>Member</th>
-                        <th>Attendance Session</th>
-                        <th>Date</th>
-                        <th>Status</th>
-                        <th>Attendance Time</th>
-                        <th>Source</th>
-                        <th>Marked By</th>
-                        <th>Notes</th>
-
+                        <th class="ps-4 py-3">Member</th>
+                        <th class="py-3">Attendance Session</th>
+                        <th class="py-3">Date</th>
+                        <th class="py-3">Status</th>
+                        <th class="py-3">Check-in Time</th>
+                        <th class="py-3">Source</th>
+                        <th class="py-3">Marked By</th>
+                        <th class="pe-4 py-3">Notes</th>
                     </tr>
-
                 </thead>
-
-
                 <tbody>
-
                     {% for record in attendance_records %}
-
                         <tr>
-
                             <!-- MEMBER -->
-                            <td>
-
-                                <div class="fw-semibold">
-
-                                    {% if record.user.get_full_name %}
-
-                                        {{ record.user.get_full_name }}
-
-                                    {% else %}
-
-                                        {{ record.user.username }}
-
-                                    {% endif %}
-
+                            <td class="ps-4">
+                                <div class="fw-bold text-dark">
+                                    {% if record.user.get_full_name %}{{ record.user.get_full_name }}{% else %}{{ record.user.username }}{% endif %}
                                 </div>
-
-
                                 <div class="small text-muted">
-
-                                    {% if record.user.registration_number %}
-
-                                        {{ record.user.registration_number }}
-
-                                    {% elif record.user.email %}
-
-                                        {{ record.user.email }}
-
-                                    {% else %}
-
-                                        {{ record.user.username }}
-
-                                    {% endif %}
-
+                                    {% if record.user.registration_number %}{{ record.user.registration_number }}{% elif record.user.email %}{{ record.user.email }}{% else %}{{ record.user.username }}{% endif %}
                                 </div>
-
                             </td>
-
 
                             <!-- SESSION -->
                             <td>
-
-                                <div class="fw-semibold">
-                                    {{ record.session.title }}
-                                </div>
-
+                                <div class="fw-semibold text-dark">{{ record.session.title }}</div>
                                 {% if record.session.description %}
-
-                                    <div class="small text-muted text-truncate"
-                                         style="max-width: 250px;">
-                                        {{ record.session.description }}
-                                    </div>
-
+                                    <div class="small text-muted text-truncate" style="max-width: 200px;">{{ record.session.description }}</div>
                                 {% endif %}
-
                             </td>
-
 
                             <!-- DATE -->
                             <td>
-
                                 {% if record.session.opens_at %}
-
-                                    <div class="small">
-                                        {{ record.session.opens_at|date:"d M Y" }}
-                                    </div>
-
-                                    <div class="small text-muted">
-                                        {{ record.session.opens_at|date:"H:i" }}
-                                    </div>
-
+                                    <div class="small fw-semibold text-dark">{{ record.session.opens_at|date:"d M Y" }}</div>
+                                    <small class="text-muted">{{ record.session.opens_at|date:"H:i" }}</small>
                                 {% else %}
-
                                     <span class="text-muted">—</span>
-
                                 {% endif %}
-
                             </td>
-
 
                             <!-- STATUS -->
                             <td>
-
                                 {% if record.status == "PRESENT" %}
-
-                                    <span class="badge text-bg-success">
-                                        <i class="bi bi-check-circle me-1"></i>
-                                        Present
-                                    </span>
-
+                                    <span class="badge bg-success bg-opacity-10 text-success px-2.5 py-1.5"><i class="bi bi-check-circle me-1"></i>Present</span>
                                 {% elif record.status == "ABSENT" %}
-
-                                    <span class="badge text-bg-danger">
-                                        <i class="bi bi-x-circle me-1"></i>
-                                        Absent
-                                    </span>
-
+                                    <span class="badge bg-danger bg-opacity-10 text-danger px-2.5 py-1.5"><i class="bi bi-x-circle me-1"></i>Absent</span>
                                 {% elif record.status == "EXCUSED" %}
-
-                                    <span class="badge text-bg-info">
-                                        <i class="bi bi-info-circle me-1"></i>
-                                        Excused
-                                    </span>
-
+                                    <span class="badge bg-info bg-opacity-10 text-info px-2.5 py-1.5"><i class="bi bi-info-circle me-1"></i>Excused</span>
                                 {% elif record.status == "PENDING" %}
-
-                                    <span class="badge text-bg-warning">
-                                        <i class="bi bi-hourglass-split me-1"></i>
-                                        Pending
-                                    </span>
-
+                                    <span class="badge bg-warning bg-opacity-10 text-warning px-2.5 py-1.5"><i class="bi bi-hourglass-split me-1"></i>Pending</span>
                                 {% else %}
-
-                                    <span class="badge text-bg-secondary">
-                                        {{ record.get_status_display }}
-                                    </span>
-
+                                    <span class="badge bg-light text-dark px-2.5 py-1.5">{{ record.get_status_display }}</span>
                                 {% endif %}
-
                             </td>
 
-
-                            <!-- ATTENDANCE TIME -->
+                            <!-- CHECK-IN TIME -->
                             <td>
-
                                 {% if record.attendance_time %}
-
-                                    <div class="small">
-                                        {{ record.attendance_time|date:"d M Y" }}
-                                    </div>
-
-                                    <div class="small text-muted">
-                                        {{ record.attendance_time|date:"H:i:s" }}
-                                    </div>
-
+                                    <div class="small fw-semibold text-dark">{{ record.attendance_time|date:"d M Y" }}</div>
+                                    <small class="text-muted">{{ record.attendance_time|date:"H:i:s" }}</small>
                                 {% else %}
-
                                     <span class="text-muted">—</span>
-
                                 {% endif %}
-
                             </td>
-
 
                             <!-- SOURCE -->
                             <td>
-
                                 {% if record.source %}
-
-                                    {{ record.get_source_display }}
-
+                                    <span class="badge bg-light text-dark border px-2 py-1">{{ record.get_source_display }}</span>
                                 {% else %}
-
                                     <span class="text-muted">—</span>
-
                                 {% endif %}
-
                             </td>
-
 
                             <!-- MARKED BY -->
                             <td>
-
                                 {% if record.marked_by %}
-
-                                    {% if record.marked_by.get_full_name %}
-
-                                        {{ record.marked_by.get_full_name }}
-
-                                    {% else %}
-
-                                        {{ record.marked_by.username }}
-
-                                    {% endif %}
-
+                                    <span class="fw-semibold text-dark">
+                                        {% if record.marked_by.get_full_name %}{{ record.marked_by.get_full_name }}{% else %}{{ record.marked_by.username }}{% endif %}
+                                    </span>
                                 {% else %}
-
                                     <span class="text-muted">—</span>
-
                                 {% endif %}
-
                             </td>
-
 
                             <!-- NOTES -->
-                            <td>
-
+                            <td class="pe-4">
                                 {% if record.notes %}
-
-                                    <span class="small">
-                                        {{ record.notes }}
-                                    </span>
-
+                                    <span class="small text-muted">{{ record.notes }}</span>
                                 {% else %}
-
                                     <span class="text-muted">—</span>
-
                                 {% endif %}
-
                             </td>
-
                         </tr>
-
                     {% empty %}
-
                         <tr>
-
                             <td colspan="8" class="text-center py-5">
-
                                 <div class="text-muted">
-
-                                    <i class="bi bi-clipboard-x
-                                              fs-1 d-block mb-3"></i>
-
-                                    <h6 class="fw-semibold">
-                                        No attendance records found
-                                    </h6>
-
-                                    <p class="small mb-0">
-                                        Try changing your filters or
-                                        create an attendance session first.
-                                    </p>
-
+                                    <i class="bi bi-clipboard-x fs-1 d-block mb-2"></i>
+                                    <h6 class="fw-bold text-dark">No attendance records found</h6>
+                                    <p class="small mb-0">Try clearing active parameters or create new attendance sessions first.</p>
                                 </div>
-
                             </td>
-
                         </tr>
-
                     {% endfor %}
-
                 </tbody>
-
             </table>
-
         </div>
 
 
-        <!-- =====================================================
-             PAGINATION
-        ====================================================== -->
+        <!-- ========================================================= -->
+        <!-- PAGINATION -->
+        <!-- ========================================================= -->
         {% if attendance_records.has_other_pages %}
-
-            <div class="card-footer bg-transparent">
-
+            <div class="card-footer bg-transparent border-0 py-3">
                 <nav aria-label="Attendance report pagination">
-
                     <ul class="pagination justify-content-center mb-0">
-
                         <!-- PREVIOUS -->
                         {% if attendance_records.has_previous %}
-
                             <li class="page-item">
-
-                                <a class="page-link"
-                                   href="?page={{ attendance_records.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status|urlencode }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date|urlencode }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date|urlencode }}{% endif %}">
-
-                                    <i class="bi bi-chevron-left"></i>
-                                    Previous
-
+                                <a class="page-link shadow-sm" href="?page={{ attendance_records.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status|urlencode }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date|urlencode }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date|urlencode }}{% endif %}">
+                                    <i class="bi bi-chevron-left me-1"></i>Previous
                                 </a>
-
                             </li>
-
                         {% else %}
-
                             <li class="page-item disabled">
-
-                                <span class="page-link">
-
-                                    <i class="bi bi-chevron-left"></i>
-                                    Previous
-
-                                </span>
-
+                                <span class="page-link"><i class="bi bi-chevron-left me-1"></i>Previous</span>
                             </li>
-
                         {% endif %}
-
 
                         <!-- CURRENT PAGE -->
                         <li class="page-item active">
-
-                            <span class="page-link">
-
-                                Page
-                                {{ attendance_records.number }}
-                                of
-                                {{ attendance_records.paginator.num_pages }}
-
-                            </span>
-
+                            <span class="page-link shadow-sm">Page {{ attendance_records.number }} of {{ attendance_records.paginator.num_pages }}</span>
                         </li>
-
 
                         <!-- NEXT -->
                         {% if attendance_records.has_next %}
-
                             <li class="page-item">
-
-                                <a class="page-link"
-                                   href="?page={{ attendance_records.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status|urlencode }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date|urlencode }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date|urlencode }}{% endif %}">
-
-                                    Next
-                                    <i class="bi bi-chevron-right"></i>
-
+                                <a class="page-link shadow-sm" href="?page={{ attendance_records.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status|urlencode }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date|urlencode }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date|urlencode }}{% endif %}">
+                                    Next<i class="bi bi-chevron-right ms-1"></i>
                                 </a>
-
                             </li>
-
                         {% else %}
-
                             <li class="page-item disabled">
-
-                                <span class="page-link">
-
-                                    Next
-                                    <i class="bi bi-chevron-right"></i>
-
-                                </span>
-
+                                <span class="page-link">Next<i class="bi bi-chevron-right ms-1"></i></span>
                             </li>
-
                         {% endif %}
-
                     </ul>
-
                 </nav>
-
             </div>
-
         {% endif %}
-
     </div>
 
 
-    <!-- =========================================================
-         FOOTER INFORMATION
-    ========================================================== -->
-    <div class="text-muted small mt-4">
-
-        <i class="bi bi-info-circle me-1"></i>
-
-        Attendance statistics are calculated from the records
-        included in the current report. Pending records are
-        excluded from the finalized attendance percentage.
-
+    <!-- ========================================================= -->
+    <!-- FOOTER GUIDELINE NOTICE -->
+    <!-- ========================================================= -->
+    <div class="alert alert-light border shadow-sm rounded-3 mt-4 bg-white p-4">
+        <div class="d-flex align-items-start gap-3">
+            <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px;">
+                <i class="bi bi-info-circle fs-5"></i>
+            </div>
+            <div>
+                <h6 class="fw-bold mb-1 text-dark">Data Governance Notice</h6>
+                <p class="small text-muted mb-0">
+                    Analytical metrics are dynamically calculated using active reporting boundaries. Pending records are isolated and excluded from aggregate finalized attendance computations.
+                </p>
+            </div>
+        </div>
     </div>
 
 </div>

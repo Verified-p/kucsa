@@ -1077,452 +1077,683 @@
 
                                                     <!-- PRESENT -->
 
-                                                    <li>
-
-                                                        <form method="post"
-                                                              action="{% url 'attendance:mark' attendance.pk %}">
-
-                                                            {% csrf_token %}
-
-                                                            <input type="hidden"
-                                                                   name="status"
-                                                                   value="PRESENT">
-
-                                                            <input type="hidden"
-                                                                   name="notes"
-                                                                   value="{{ attendance.notes|default:'' }}">
-
-                                                            <button type="submit"
-                                                                    class="dropdown-item">
-
-                                                                <i class="bi bi-check-circle text-success me-2"></i>
-                                                                Mark Present
-
-                                                            </button>
-
-                                                        </form>
-
-                                                    </li>
-
-
-                                                    <!-- ABSENT -->
-
-                                                    <li>
-
-                                                        <form method="post"
-                                                              action="{% url 'attendance:mark' attendance.pk %}">
-
-                                                            {% csrf_token %}
-
-                                                            <input type="hidden"
-                                                                   name="status"
-                                                                   value="ABSENT">
-
-                                                            <input type="hidden"
-                                                                   name="notes"
-                                                                   value="{{ attendance.notes|default:'' }}">
-
-                                                            <button type="submit"
-                                                                    class="dropdown-item">
-
-                                                                <i class="bi bi-x-circle text-danger me-2"></i>
-                                                                Mark Absent
-
-                                                            </button>
-
-                                                        </form>
-
-                                                    </li>
-
-
-                                                    <!-- EXCUSED -->
-
-                                                    <li>
-
-                                                        <form method="post"
-                                                              action="{% url 'attendance:mark' attendance.pk %}">
-
-                                                            {% csrf_token %}
-
-                                                            <input type="hidden"
-                                                                   name="status"
-                                                                   value="EXCUSED">
-
-                                                            <input type="hidden"
-                                                                   name="notes"
-                                                                   value="{{ attendance.notes|default:'' }}">
-
-                                                            <button type="submit"
-                                                                    class="dropdown-item">
-
-                                                                <i class="bi bi-info-circle text-warning me-2"></i>
-                                                                Mark Excused
-
-                                                            </button>
-
-                                                        </form>
-
-                                                    </li>
-
-
-                                                    <li>
-                                                        <hr class="dropdown-divider">
-                                                    </li>
-
-
-                                                    <!-- RESET -->
-
-                                                    <li>
-
-                                                        <form method="post"
-                                                              action="{% url 'attendance:reset' attendance.pk %}">
-
-                                                            {% csrf_token %}
-
-                                                            <button type="submit"
-                                                                    class="dropdown-item">
-
-                                                                <i class="bi bi-arrow-counterclockwise me-2"></i>
-                                                                Reset to Pending
-
-                                                            </button>
-
-                                                        </form>
-
-                                                    </li>
-
-                                                </ul>
-
-                                            </div>
-
-                                        </td>
-
-                                    {% endif %}
-
-                                </tr>
-
-                            {% endfor %}
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            {% else %}
-
-                <!-- =================================================
-                     EMPTY STATE
-                ================================================== -->
-
-                <div class="text-center py-5 px-3">
-
-                    <div class="mb-3">
-
-                        <div class="bg-light rounded-circle d-inline-flex p-4">
-
-                            <i class="bi bi-people text-muted fs-1"></i>
-
-                        </div>
-
-                    </div>
-
-                    <h5>
-                        No Attendance Records
-                    </h5>
-
-                    <p class="text-muted mb-0">
-
-                        There are currently no member attendance
-                        records associated with this session.
-
-                    </p>
-
-                </div>
-
+                                               {% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+    {{ session.title }} | Attendance Sheet | KUCSA Platform
+{% endblock %}
+
+{% block content %}
+
+<!-- Custom Styling Injection matching the KUCSA Design System -->
+<style>
+    :root {
+        --kucsa-primary: #0d6efd;
+        --kucsa-primary-hover: #0b5ed7;
+        --kucsa-bg-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    body {
+        background: var(--kucsa-bg-gradient);
+    }
+
+    .kucsa-card {
+        border-radius: 1rem;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .metric-card {
+        border-radius: 1rem;
+        border: none;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.06) !important;
+    }
+
+    .table-hover tbody tr {
+        transition: background-color 0.15s ease-in-out;
+    }
+</style>
+
+<div class="container-fluid py-4">
+
+    <!-- ===================================================== -->
+    <!-- PAGE HEADER -->
+    <!-- ===================================================== -->
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <a href="{% url 'attendance:list' %}" class="btn btn-sm btn-outline-secondary shadow-sm px-2">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <span class="text-muted small">Attendance Sessions</span>
+                <i class="bi bi-chevron-right text-muted small"></i>
+                <span class="text-muted small">Attendance Sheet</span>
+            </div>
+
+            <h1 class="h3 fw-bold mb-1 text-dark">
+                <i class="bi bi-clipboard2-check-fill text-primary me-2"></i>{{ session.title }}
+            </h1>
+
+            {% if session.description %}
+                <p class="text-muted mb-0 small" style="max-width: 700px;">
+                    {{ session.description }}
+                </p>
             {% endif %}
-
         </div>
 
+        <!-- SESSION STATUS BADGE -->
+        <div>
+            {% if session.status == "DRAFT" %}
+                <span class="badge bg-secondary shadow-sm fs-6 px-3 py-2"><i class="bi bi-pencil me-1"></i>Draft</span>
+            {% elif session.status == "OPEN" %}
+                <span class="badge bg-success shadow-sm fs-6 px-3 py-2"><i class="bi bi-broadcast me-1"></i>Attendance Open</span>
+            {% elif session.status == "CLOSED" %}
+                <span class="badge bg-dark shadow-sm fs-6 px-3 py-2"><i class="bi bi-lock me-1"></i>Closed</span>
+            {% elif session.status == "EXPIRED" %}
+                <span class="badge bg-warning text-dark shadow-sm fs-6 px-3 py-2"><i class="bi bi-clock-history me-1"></i>Expired</span>
+            {% else %}
+                <span class="badge bg-secondary shadow-sm fs-6 px-3 py-2">{{ session.get_status_display }}</span>
+            {% endif %}
+        </div>
     </div>
 
 
-    <!-- =====================================================
-         NOTES / INFORMATION
-    ====================================================== -->
+    <!-- ===================================================== -->
+    <!-- SESSION TIMING WINDOW METRICS -->
+    <!-- ===================================================== -->
+    <div class="card kucsa-card border-0 shadow-sm mb-4 bg-white">
+        <div class="card-body p-4">
+            <div class="row g-4">
+                <!-- OPENING TIME -->
+                <div class="col-12 col-md-4">
+                    <div class="d-flex align-items-start">
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-3 me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                            <i class="bi bi-calendar-event fs-5"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block text-uppercase fw-semibold" style="font-size: 11px;">Opening Time</small>
+                            {% if session.opens_at %}
+                                <strong class="text-dark">{{ session.opens_at|date:"d M Y" }}</strong>
+                                <div class="small text-muted">{{ session.opens_at|time:"H:i" }}</div>
+                            {% else %}
+                                <span class="text-muted">Not set</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
 
-    <div class="alert alert-light border mt-4">
+                <!-- CLOSING TIME -->
+                <div class="col-12 col-md-4">
+                    <div class="d-flex align-items-start">
+                        <div class="bg-warning bg-opacity-10 text-warning rounded-3 p-3 me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                            <i class="bi bi-clock fs-5"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block text-uppercase fw-semibold" style="font-size: 11px;">Closing Time</small>
+                            {% if session.closes_at %}
+                                <strong class="text-dark">{{ session.closes_at|date:"d M Y" }}</strong>
+                                <div class="small text-muted">{{ session.closes_at|time:"H:i" }}</div>
+                            {% else %}
+                                <span class="text-muted">Not set</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
 
-        <div class="d-flex align-items-start">
-
-            <i class="bi bi-info-circle text-primary fs-5 me-3"></i>
-
-            <div>
-
-                <strong>
-                    Attendance Management
-                </strong>
-
-                <p class="small text-muted mb-0 mt-1">
-
-                    Members can mark themselves present while
-                    attendance is open. Authorized KUCSA management
-                    users can continue updating attendance records
-                    after a session has been closed or expired.
-
-                </p>
-
+                <!-- WINDOW STATUS -->
+                <div class="col-12 col-md-4">
+                    <div class="d-flex align-items-start">
+                        <div class="bg-success bg-opacity-10 text-success rounded-3 p-3 me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                            <i class="bi bi-hourglass-split fs-5"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block text-uppercase fw-semibold" style="font-size: 11px;">Attendance Window</small>
+                            {% if attendance_is_open %}
+                                <strong class="text-success">Currently Open</strong>
+                                <div class="small text-muted" id="attendance-countdown">
+                                    {% if seconds_remaining %}
+                                        {{ seconds_remaining }} seconds remaining
+                                    {% else %}
+                                        Active
+                                    {% endif %}
+                                </div>
+                            {% elif session.status == "DRAFT" %}
+                                <strong class="text-secondary">Not Open</strong>
+                            {% elif session.status == "CLOSED" %}
+                                <strong class="text-dark">Closed</strong>
+                            {% elif session.status == "EXPIRED" %}
+                                <strong class="text-warning">Expired</strong>
+                            {% else %}
+                                <strong>Not Active</strong>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
             </div>
+        </div>
+    </div>
 
+
+    <!-- ===================================================== -->
+    <!-- ACTION BAR CARD -->
+    <!-- ===================================================== -->
+    <div class="card kucsa-card border-0 shadow-sm mb-4 bg-white">
+        <div class="card-body p-4">
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                {% if session.status == "DRAFT" %}
+                    <form method="post" action="{% url 'attendance:open' session.pk %}" class="d-inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="open_attendance" value="1">
+                        <button type="submit" class="btn btn-success shadow-sm fw-semibold">
+                            <i class="bi bi-broadcast me-1"></i>Open Attendance
+                        </button>
+                    </form>
+                {% endif %}
+
+                {% if session.status == "OPEN" %}
+                    <form method="post" action="{% url 'attendance:close' session.pk %}" class="d-inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="close_attendance" value="1">
+                        <button type="submit" class="btn btn-danger shadow-sm fw-semibold">
+                            <i class="bi bi-stop-circle me-1"></i>Close Attendance
+                        </button>
+                    </form>
+                {% endif %}
+
+                {% if session.status == "DRAFT" %}
+                    <a href="{% url 'attendance:update_timing' session.pk %}" class="btn btn-outline-primary shadow-sm fw-semibold">
+                        <i class="bi bi-clock me-1"></i>Set Timing
+                    </a>
+                {% endif %}
+
+                {% if attendance_is_open %}
+                    <a href="{% url 'attendance:active_status' session.pk %}" class="btn btn-outline-success shadow-sm fw-semibold">
+                        <i class="bi bi-broadcast-pin me-1"></i>Active View
+                    </a>
+                {% endif %}
+
+                <a href="{% url 'attendance:report' %}?session={{ session.pk }}" class="btn btn-outline-secondary shadow-sm fw-semibold">
+                    <i class="bi bi-bar-chart me-1"></i>Report & Analytics
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- SUMMARY STATISTICS METRIC CARDS -->
+    <!-- ===================================================== -->
+    <div class="row g-4 mb-4">
+        <!-- TOTAL -->
+        <div class="col-6 col-md-3">
+            <div class="card metric-card shadow-sm h-100 bg-white">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted d-block text-uppercase fw-semibold" style="font-size: 11px;">Total</small>
+                            <h3 class="fw-bold mb-0 text-dark">{{ total|default:0 }}</h3>
+                        </div>
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                            <i class="bi bi-people fs-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
+        <!-- PRESENT -->
+        <div class="col-6 col-md-3">
+            <div class="card metric-card shadow-sm h-100 bg-white">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted d-block text-uppercase fw-semibold" style="font-size: 11px;">Present</small>
+                            <h3 class="fw-bold mb-0 text-success">{{ present|default:0 }}</h3>
+                        </div>
+                        <div class="bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                            <i class="bi bi-person-check fs-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABSENT -->
+        <div class="col-6 col-md-3">
+            <div class="card metric-card shadow-sm h-100 bg-white">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted d-block text-uppercase fw-semibold" style="font-size: 11px;">Absent</small>
+                            <h3 class="fw-bold mb-0 text-danger">{{ absent|default:0 }}</h3>
+                        </div>
+                        <div class="bg-danger bg-opacity-10 text-danger rounded-circle d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                            <i class="bi bi-person-x fs-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PENDING -->
+        <div class="col-6 col-md-3">
+            <div class="card metric-card shadow-sm h-100 bg-white">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted d-block text-uppercase fw-semibold" style="font-size: 11px;">Pending</small>
+                            <h3 class="fw-bold mb-0 text-warning">{{ pending|default:0 }}</h3>
+                        </div>
+                        <div class="bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                            <i class="bi bi-hourglass fs-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- ATTENDANCE RATE PROGRESS CARD -->
+    <!-- ===================================================== -->
+    <div class="card kucsa-card border-0 shadow-sm mb-4 bg-white">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div>
+                    <h6 class="fw-bold mb-1 text-dark">Attendance Rate</h6>
+                    <small class="text-muted">Calculated based on finalized session records.</small>
+                </div>
+                <strong class="text-primary fs-5">{{ attendance_percentage|default:0 }}%</strong>
+            </div>
+            <div class="progress shadow-sm" style="height: 10px; border-radius: 5px;">
+                <div class="progress-bar bg-success" role="progressbar" style="width: {{ attendance_percentage|default:0 }}%;" aria-valuenow="{{ attendance_percentage|default:0 }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- BULK ATTENDANCE MANAGEMENT CARD -->
+    <!-- ===================================================== -->
+    {% if can_manage and attendance_records %}
+        <div class="card kucsa-card border-0 shadow-sm mb-4 bg-white">
+            <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <div>
+                        <h5 class="fw-bold mb-1 text-dark">Bulk Attendance Management</h5>
+                        <p class="text-muted small mb-0">Select members below to apply status updates simultaneously.</p>
+                    </div>
+                    <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 fw-bold" id="selected-count">0 selected</span>
+                </div>
+            </div>
+
+            <div class="card-body px-4 pb-4 pt-3">
+                <form method="post" id="bulk-attendance-form" action="{% url 'attendance:detail' session.pk %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="bulk_update" value="1">
+
+                    <div class="row g-3">
+                        <div class="col-12 col-md-4">
+                            <label for="{{ bulk_form.attendance_status.id_for_label }}" class="form-label fw-semibold small text-muted">Attendance Status</label>
+                            {{ bulk_form.attendance_status }}
+                            {% if bulk_form.attendance_status.errors %}
+                                <div class="text-danger small mt-1">{{ bulk_form.attendance_status.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12 col-md-5">
+                            <label for="{{ bulk_form.notes.id_for_label }}" class="form-label fw-semibold small text-muted">Notes (Optional)</label>
+                            {{ bulk_form.notes }}
+                            {% if bulk_form.notes.errors %}
+                                <div class="text-danger small mt-1">{{ bulk_form.notes.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12 col-md-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100 shadow-sm fw-semibold" id="bulk-update-button" disabled>
+                                <i class="bi bi-check2-square me-1"></i>Apply to Selected
+                            </button>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="selected_attendance" id="selected-attendance" value="">
+                </form>
+            </div>
+        </div>
+    {% endif %}
+
+
+    <!-- ===================================================== -->
+    <!-- ATTENDANCE RECORDS TABLE CONTAINER -->
+    <!-- ===================================================== -->
+    <div class="card kucsa-card border-0 shadow-sm bg-white overflow-hidden">
+        <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div>
+                    <h5 class="fw-bold mb-1 text-dark">Member Attendance Logs</h5>
+                    <p class="text-muted small mb-0">Verified participation records tied to this session.</p>
+                </div>
+                {% if attendance_records %}
+                    <span class="badge bg-secondary bg-opacity-10 text-dark rounded-pill px-3 py-2 fw-semibold">
+                        {{ attendance_records|length }} Record{{ attendance_records|length|pluralize }} Found
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card-body p-0 pt-3">
+            {% if attendance_records %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light text-uppercase fs-7 text-muted">
+                            <tr>
+                                {% if can_manage %}
+                                    <th class="ps-4 py-3" style="width: 45px;">
+                                        <input type="checkbox" class="form-check-input shadow-sm" id="select-all" aria-label="Select all members">
+                                    </th>
+                                {% endif %}
+                                <th class="{% if not can_manage %}ps-4 {% endif %}py-3">#</th>
+                                <th class="py-3">Member</th>
+                                <th class="py-3">Status</th>
+                                <th class="py-3">Attendance Time</th>
+                                <th class="py-3">Source</th>
+                                <th class="py-3">Marked By</th>
+                                {% if can_manage %}
+                                    <th class="text-end pe-4 py-3">Action</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for attendance in attendance_records %}
+                                <tr>
+                                    <!-- SELECTION -->
+                                    {% if can_manage %}
+                                        <td class="ps-4">
+                                            <input type="checkbox" class="form-check-input attendance-checkbox shadow-sm" value="{{ attendance.pk }}" aria-label="Select attendance record">
+                                        </td>
+                                    {% endif %}
+
+                                    <!-- NUMBER -->
+                                    <td class="{% if not can_manage %}ps-4 {% endif %}text-muted fw-semibold">
+                                        {{ forloop.counter }}
+                                    </td>
+
+                                    <!-- MEMBER DETAILS -->
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center me-3 flex-shrink-0" style="width: 40px; height: 40px;">
+                                                <i class="bi bi-person"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark">
+                                                    {% if attendance.user.get_full_name %}
+                                                        {{ attendance.user.get_full_name }}
+                                                    {% elif attendance.user.username %}
+                                                        {{ attendance.user.username }}
+                                                    {% else %}
+                                                        Member
+                                                    {% endif %}
+                                                </div>
+                                                {% if attendance.user.email %}
+                                                    <small class="text-muted">{{ attendance.user.email }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- STATUS -->
+                                    <td>
+                                        {% if attendance.status == "PRESENT" %}
+                                            <span class="badge bg-success bg-opacity-10 text-success px-3 py-2"><i class="bi bi-check-circle me-1"></i>Present</span>
+                                        {% elif attendance.status == "ABSENT" %}
+                                            <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2"><i class="bi bi-x-circle me-1"></i>Absent</span>
+                                        {% elif attendance.status == "EXCUSED" %}
+                                            <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2"><i class="bi bi-info-circle me-1"></i>Excused</span>
+                                        {% elif attendance.status == "PENDING" %}
+                                            <span class="badge bg-secondary bg-opacity-10 text-secondary px-3 py-2"><i class="bi bi-hourglass-split me-1"></i>Pending</span>
+                                        {% else %}
+                                            <span class="badge bg-light text-dark px-3 py-2">{{ attendance.get_status_display }}</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <!-- ATTENDANCE TIME -->
+                                    <td>
+                                        {% if attendance.attendance_time %}
+                                            <div class="fw-semibold text-dark">{{ attendance.attendance_time|date:"d M Y" }}</div>
+                                            <small class="text-muted">{{ attendance.attendance_time|time:"H:i:s" }}</small>
+                                        {% else %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <!-- SOURCE -->
+                                    <td>
+                                        {% if attendance.source == "SELF" %}
+                                            <span class="badge bg-info bg-opacity-10 text-info px-2.5 py-1.5"><i class="bi bi-person-check me-1"></i>Self</span>
+                                        {% elif attendance.source == "MANUAL" %}
+                                            <span class="badge bg-primary bg-opacity-10 text-primary px-2.5 py-1.5"><i class="bi bi-pencil me-1"></i>Manual</span>
+                                        {% elif attendance.source %}
+                                            <span class="badge bg-secondary bg-opacity-10 text-secondary px-2.5 py-1.5">{{ attendance.get_source_display }}</span>
+                                        {% else %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <!-- MARKED BY -->
+                                    <td>
+                                        {% if attendance.marked_by %}
+                                            <span class="text-dark fw-semibold">
+                                                {% if attendance.marked_by.get_full_name %}
+                                                    {{ attendance.marked_by.get_full_name }}
+                                                {% else %}
+                                                    {{ attendance.marked_by.username }}
+                                                {% endif %}
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <!-- ACTIONS DROPDOWN -->
+                                    {% if can_manage %}
+                                        <td class="text-end pe-4">
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-outline-secondary shadow-sm dropdown-toggle fw-semibold" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    Manage
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 py-2">
+                                                    <!-- MARK PRESENT -->
+                                                    <li>
+                                                        <form method="post" action="{% url 'attendance:mark' attendance.pk %}">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="status" value="PRESENT">
+                                                            <input type="hidden" name="notes" value="{{ attendance.notes|default:'' }}">
+                                                            <button type="submit" class="dropdown-item py-2">
+                                                                <i class="bi bi-check-circle text-success me-2"></i>Mark Present
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                    <!-- MARK ABSENT -->
+                                                    <li>
+                                                        <form method="post" action="{% url 'attendance:mark' attendance.pk %}">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="status" value="ABSENT">
+                                                            <input type="hidden" name="notes" value="{{ attendance.notes|default:'' }}">
+                                                            <button type="submit" class="dropdown-item py-2">
+                                                                <i class="bi bi-x-circle text-danger me-2"></i>Mark Absent
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                    <!-- MARK EXCUSED -->
+                                                    <li>
+                                                        <form method="post" action="{% url 'attendance:mark' attendance.pk %}">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="status" value="EXCUSED">
+                                                            <input type="hidden" name="notes" value="{{ attendance.notes|default:'' }}">
+                                                            <button type="submit" class="dropdown-item py-2">
+                                                                <i class="bi bi-info-circle text-warning me-2"></i>Mark Excused
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <!-- RESET -->
+                                                    <li>
+                                                        <form method="post" action="{% url 'attendance:reset' attendance.pk %}">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="dropdown-item py-2">
+                                                                <i class="bi bi-arrow-counterclockwise me-2"></i>Reset to Pending
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <!-- EMPTY STATE -->
+                <div class="text-center py-5 px-3">
+                    <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mb-3 text-muted shadow-sm" style="width: 80px; height: 80px;">
+                        <i class="bi bi-people fs-1"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">No Attendance Records Found</h5>
+                    <p class="text-muted mb-0">There are currently no member records associated with this session.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- FOOTER GUIDELINE NOTICE -->
+    <!-- ===================================================== -->
+    <div class="alert alert-light border shadow-sm rounded-3 mt-4 bg-white p-4">
+        <div class="d-flex align-items-start gap-3">
+            <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px;">
+                <i class="bi bi-info-circle fs-5"></i>
+            </div>
+            <div>
+                <h6 class="fw-bold mb-1 text-dark">Attendance Governance Policy</h6>
+                <p class="small text-muted mb-0">
+                    Members can securely mark their own presence while check-in is active. Authorized KUCSA management personnel retain full administrative privileges to review, audit, and modify records post-session closure.
+                </p>
+            </div>
+        </div>
     </div>
 
 </div>
 
 
-<!-- =========================================================
-     BULK ATTENDANCE JAVASCRIPT
-========================================================== -->
-
+<!-- ========================================================= -->
+<!-- AUTOMATED JAVASCRIPT: BULK SELECTION & COUNTDOWN -->
+<!-- ========================================================= -->
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const selectAll = document.getElementById("select-all");
+        const checkboxes = document.querySelectorAll(".attendance-checkbox");
+        const selectedInput = document.getElementById("selected-attendance");
+        const selectedCount = document.getElementById("selected-count");
+        const bulkButton = document.getElementById("bulk-update-button");
 
-document.addEventListener("DOMContentLoaded", function () {
+        function updateSelection() {
+            const selected = [];
+            checkboxes.forEach(function (checkbox) {
+                if (checkbox.checked) {
+                    selected.push(checkbox.value);
+                }
+            });
 
-    const selectAll = document.getElementById("select-all");
-
-    const checkboxes = document.querySelectorAll(
-        ".attendance-checkbox"
-    );
-
-    const selectedInput = document.getElementById(
-        "selected-attendance"
-    );
-
-    const selectedCount = document.getElementById(
-        "selected-count"
-    );
-
-    const bulkButton = document.getElementById(
-        "bulk-update-button"
-    );
-
-
-    function updateSelection() {
-
-        const selected = [];
-
-        checkboxes.forEach(function (checkbox) {
-
-            if (checkbox.checked) {
-
-                selected.push(
-                    checkbox.value
-                );
-
+            if (selectedInput) {
+                selectedInput.value = selected.join(",");
             }
 
-        });
+            if (selectedCount) {
+                selectedCount.textContent = selected.length + (selected.length === 1 ? " selected" : " selected");
+            }
 
+            if (bulkButton) {
+                bulkButton.disabled = selected.length === 0;
+            }
 
-        if (selectedInput) {
-
-            selectedInput.value =
-                selected.join(",");
-
+            if (selectAll) {
+                if (selected.length === 0) {
+                    selectAll.checked = false;
+                    selectAll.indeterminate = false;
+                } else if (selected.length === checkboxes.length) {
+                    selectAll.checked = true;
+                    selectAll.indeterminate = false;
+                } else {
+                    selectAll.checked = false;
+                    selectAll.indeterminate = true;
+                }
+            }
         }
-
-
-        if (selectedCount) {
-
-            selectedCount.textContent =
-                selected.length +
-                (
-                    selected.length === 1
-                        ? " selected"
-                        : " selected"
-                );
-
-        }
-
-
-        if (bulkButton) {
-
-            bulkButton.disabled =
-                selected.length === 0;
-
-        }
-
 
         if (selectAll) {
-
-            if (selected.length === 0) {
-
-                selectAll.checked = false;
-                selectAll.indeterminate = false;
-
-            } else if (
-                selected.length === checkboxes.length
-            ) {
-
-                selectAll.checked = true;
-                selectAll.indeterminate = false;
-
-            } else {
-
-                selectAll.checked = false;
-                selectAll.indeterminate = true;
-
-            }
-
-        }
-
-    }
-
-
-    if (selectAll) {
-
-        selectAll.addEventListener(
-            "change",
-            function () {
-
-                checkboxes.forEach(
-                    function (checkbox) {
-
-                        checkbox.checked =
-                            selectAll.checked;
-
-                    }
-                );
-
+            selectAll.addEventListener("change", function () {
+                checkboxes.forEach(function (checkbox) {
+                    checkbox.checked = selectAll.checked;
+                });
                 updateSelection();
-
-            }
-        );
-
-    }
-
-
-    checkboxes.forEach(
-        function (checkbox) {
-
-            checkbox.addEventListener(
-                "change",
-                updateSelection
-            );
-
+            });
         }
-    );
 
+        checkboxes.forEach(function (checkbox) {
+            checkbox.addEventListener("change", updateSelection);
+        });
 
-    updateSelection();
+        updateSelection();
+    });
 
-});
+    /* =========================================================
+       ATTENDANCE COUNTDOWN TIMER
+    ========================================================= */
+    (function () {
+        const countdownElement = document.getElementById("attendance-countdown");
+        if (!countdownElement) {
+            return;
+        }
 
+        let remaining = parseInt("{{ seconds_remaining|default:0 }}", 10);
+        if (Number.isNaN(remaining) || remaining <= 0) {
+            return;
+        }
 
-/* =========================================================
-   ATTENDANCE COUNTDOWN
-========================================================= */
+        const timer = setInterval(function () {
+            remaining--;
+            if (remaining <= 0) {
+                clearInterval(timer);
+                countdownElement.textContent = "Attendance window has ended.";
+                return;
+            }
 
-(function () {
+            const hours = Math.floor(remaining / 3600);
+            const minutes = Math.floor((remaining % 3600) / 60);
+            const seconds = remaining % 60;
 
-    const countdownElement =
-        document.getElementById(
-            "attendance-countdown"
-        );
+            let text = "";
+            if (hours > 0) {
+                text += hours + "h ";
+            }
+            if (minutes > 0 || hours > 0) {
+                text += minutes + "m ";
+            }
+            text += seconds + "s remaining";
 
-    if (!countdownElement) {
-        return;
-    }
-
-
-    let remaining =
-        parseInt(
-            "{{ seconds_remaining|default:0 }}",
-            10
-        );
-
-
-    if (
-        Number.isNaN(remaining)
-        || remaining <= 0
-    ) {
-
-        return;
-
-    }
-
-
-    const timer =
-        setInterval(
-            function () {
-
-                remaining--;
-
-                if (remaining <= 0) {
-
-                    clearInterval(timer);
-
-                    countdownElement.textContent =
-                        "Attendance window has ended.";
-
-                    return;
-
-                }
-
-
-                const hours =
-                    Math.floor(
-                        remaining / 3600
-                    );
-
-                const minutes =
-                    Math.floor(
-                        (remaining % 3600) / 60
-                    );
-
-                const seconds =
-                    remaining % 60;
-
-
-                let text = "";
-
-
-                if (hours > 0) {
-
-                    text +=
-                        hours +
-                        "h ";
-
-                }
-
-
-                if (
-                    minutes > 0
-                    || hours > 0
-                ) {
-
-                    text +=
-                        minutes +
-                        "m ";
-
-                }
-
-
-                text +=
-                    seconds +
-                    "s remaining";
-
-
-                countdownElement.textContent =
-                    text;
-
-            },
-            1000
-        );
-
-})();
-
+            countdownElement.textContent = text;
+        }, 1000);
+    })();
 </script>
 
 {% endblock %}

@@ -6,302 +6,1779 @@
 
 {% block content %}
 
-<!-- Custom Styling Injection matching the KUCSA Design System -->
 <style>
-    :root {
-        --kucsa-primary: #0d6efd;
-        --kucsa-primary-hover: #0b5ed7;
-        --kucsa-bg-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    /* =========================================================
+       KUCSA EDIT ANNOUNCEMENT
+       Scoped styling — does not modify the global site layout
+       ========================================================= */
+
+    .kucsa-edit-announcement {
+        --kea-primary: #0d6efd;
+        --kea-primary-dark: #0b5ed7;
+        --kea-success: #198754;
+        --kea-danger: #dc3545;
+        --kea-warning: #ffc107;
+        --kea-dark: #172033;
+        --kea-text: #263244;
+        --kea-muted: #6c757d;
+        --kea-border: #e4e8ef;
+        --kea-surface: #ffffff;
+        --kea-soft: #f6f8fb;
+        --kea-radius: 18px;
+        --kea-radius-sm: 12px;
+        --kea-shadow: 0 12px 35px rgba(20, 35, 60, 0.08);
+        --kea-shadow-hover: 0 18px 45px rgba(20, 35, 60, 0.12);
+
+        background:
+            radial-gradient(
+                circle at top right,
+                rgba(13, 110, 253, 0.07),
+                transparent 28rem
+            ),
+            linear-gradient(
+                180deg,
+                #f8fafc 0%,
+                #f3f6fa 100%
+            );
+
+        min-height: 100%;
+        padding: 28px 0 50px;
     }
 
-    body {
-        background: var(--kucsa-bg-gradient);
+    /* =========================================================
+       PAGE CONTAINER
+       ========================================================= */
+
+    .kucsa-edit-announcement .kea-container {
+        width: min(100% - 32px, 1180px);
+        margin: 0 auto;
     }
 
-    .kucsa-card {
-        border-radius: 1rem;
-        transition: all 0.2s ease-in-out;
+    /* =========================================================
+       TOP NAVIGATION
+       ========================================================= */
+
+    .kucsa-edit-announcement .kea-back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 42px;
+        padding: 9px 15px;
+        border: 1px solid var(--kea-border);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.88);
+        color: var(--kea-text);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        box-shadow: 0 4px 14px rgba(20, 35, 60, 0.05);
+        transition:
+            transform 0.2s ease,
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            background 0.2s ease;
     }
 
-    .form-control, .form-select {
-        padding: 0.75rem 1rem;
+    .kucsa-edit-announcement .kea-back-link:hover {
+        color: var(--kea-primary);
+        border-color: rgba(13, 110, 253, 0.3);
+        background: #fff;
+        transform: translateX(-2px);
+        box-shadow: 0 7px 18px rgba(20, 35, 60, 0.08);
+    }
+
+    /* =========================================================
+       PAGE HEADER
+       ========================================================= */
+
+    .kucsa-edit-announcement .kea-page-header {
+        margin: 22px 0 26px;
+    }
+
+    .kucsa-edit-announcement .kea-title-row {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .kucsa-edit-announcement .kea-title-icon {
+        width: 52px;
+        height: 52px;
+        flex: 0 0 52px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+        background: linear-gradient(
+            135deg,
+            var(--kea-primary),
+            #4f8df7
+        );
+        color: #fff;
+        font-size: 1.35rem;
+        box-shadow: 0 10px 24px rgba(13, 110, 253, 0.22);
+    }
+
+    .kucsa-edit-announcement .kea-page-title {
+        margin: 0;
+        color: var(--kea-dark);
+        font-size: clamp(1.55rem, 3vw, 2.15rem);
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        line-height: 1.15;
+    }
+
+    .kucsa-edit-announcement .kea-page-description {
+        margin: 7px 0 0;
+        color: var(--kea-muted);
+        font-size: 0.96rem;
+        line-height: 1.6;
+    }
+
+    /* =========================================================
+       MAIN EDIT CARD
+       ========================================================= */
+
+    .kucsa-edit-announcement .kea-editor-card {
+        background: var(--kea-surface);
+        border: 1px solid rgba(228, 232, 239, 0.95);
+        border-radius: var(--kea-radius);
+        box-shadow: var(--kea-shadow);
+        overflow: hidden;
+    }
+
+    /* =========================================================
+       EDITOR HEADER
+       ========================================================= */
+
+    .kucsa-edit-announcement .kea-editor-header {
+        padding: 24px;
+        background:
+            linear-gradient(
+                135deg,
+                #ffffff 0%,
+                #f8fbff 100%
+            );
+        border-bottom: 1px solid var(--kea-border);
+    }
+
+    .kucsa-edit-announcement .kea-editor-summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 18px;
+        border: 1px solid var(--kea-border);
+        border-radius: 14px;
+        background: #fff;
+    }
+
+    .kucsa-edit-announcement .kea-summary-main {
+        min-width: 0;
+    }
+
+    .kucsa-edit-announcement .kea-eyebrow {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--kea-primary);
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+    }
+
+    .kucsa-edit-announcement .kea-announcement-title {
+        margin: 0;
+        color: var(--kea-dark);
+        font-size: 1.08rem;
+        font-weight: 750;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+    }
+
+    .kucsa-edit-announcement .kea-updated {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 8px;
+        color: var(--kea-muted);
+        font-size: 0.8rem;
+    }
+
+    .kucsa-edit-announcement .kea-status-area {
+        flex: 0 0 auto;
+    }
+
+    .kucsa-edit-announcement .kea-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        min-height: 36px;
+        padding: 7px 13px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    .kucsa-edit-announcement .kea-status-published {
+        color: #146c43;
+        background: #d1e7dd;
+        border: 1px solid #badbcc;
+    }
+
+    .kucsa-edit-announcement .kea-status-archived {
+        color: #495057;
+        background: #e9ecef;
+        border: 1px solid #dee2e6;
+    }
+
+    .kucsa-edit-announcement .kea-status-draft {
+        color: #664d03;
+        background: #fff3cd;
+        border: 1px solid #ffecb5;
+    }
+
+    /* =========================================================
+       FORM BODY
+       ========================================================= */
+
+    .kucsa-edit-announcement .kea-editor-body {
+        padding: 28px;
+    }
+
+    /* =========================================================
+       ERROR SUMMARY
+       ========================================================= */
+
+    .kucsa-edit-announcement .kea-error-summary {
+        display: flex;
+        align-items: flex-start;
+        gap: 13px;
+        padding: 15px 17px;
+        margin-bottom: 25px;
+        border: 1px solid #f1aeb5;
+        border-radius: 13px;
+        background: #f8d7da;
+        color: #842029;
+    }
+
+    .kucsa-edit-announcement .kea-error-icon {
+        flex: 0 0 auto;
+        font-size: 1.25rem;
+        margin-top: 1px;
+    }
+
+    .kucsa-edit-announcement .kea-error-content {
+        min-width: 0;
+    }
+
+    .kucsa-edit-announcement .kea-error-title {
+        margin: 0 0 3px;
+        font-size: 0.92rem;
+        font-weight: 800;
+    }
+
+    .kucsa-edit-announcement .kea-error-message {
+        margin: 0;
+        font-size: 0.82rem;
+        line-height: 1.55;
+    }
+
+    /* =========================================================
+       FORM FIELD WRAPPER
+       ========================================================= */
+
+    .kucsa-edit-announcement .kea-field {
+        position: relative;
+        margin-bottom: 22px;
+    }
+
+    .kucsa-edit-announcement .kea-field-label {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 3px;
+        margin-bottom: 8px;
+        color: var(--kea-text);
+        font-size: 0.9rem;
+        font-weight: 700;
+        line-height: 1.4;
+    }
+
+    .kucsa-edit-announcement .kea-label-icon {
+        color: var(--kea-primary);
         font-size: 0.95rem;
-        border-radius: 0.50rem;
-        border: 1px solid #ced4da;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        margin-right: 3px;
     }
 
-    .form-control:focus, .form-select:focus {
-        border-color: var(--kucsa-primary);
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    .kucsa-edit-announcement .kea-required {
+        margin-left: 2px;
+        color: var(--kea-danger);
+        font-weight: 800;
     }
 
-    textarea.form-control {
-        min-height: 160px;
+    /* =========================================================
+       FORM CONTROLS
+       ========================================================= */
+
+    .kucsa-edit-announcement .form-control,
+    .kucsa-edit-announcement .form-select {
+        width: 100%;
+        min-height: 47px;
+        padding: 11px 14px;
+        border: 1px solid #d9dee7;
+        border-radius: 11px;
+        background: #fff;
+        color: var(--kea-text);
+        font-size: 0.92rem;
+        line-height: 1.5;
+        box-shadow: none;
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            background 0.2s ease,
+            transform 0.2s ease;
     }
 
-    .modal-content {
-        border-radius: 1rem;
-        border: none;
-        box-shadow: 0 1rem 3rem rgba(0,0,0,0.15);
+    .kucsa-edit-announcement .form-control:hover,
+    .kucsa-edit-announcement .form-select:hover {
+        border-color: #b8c1cf;
+    }
+
+    .kucsa-edit-announcement .form-control:focus,
+    .kucsa-edit-announcement .form-select:focus {
+        border-color: var(--kea-primary);
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.11);
+        outline: none;
+    }
+
+    .kucsa-edit-announcement textarea.form-control {
+        min-height: 175px;
+        resize: vertical;
+        line-height: 1.65;
+    }
+
+    .kucsa-edit-announcement input[type="file"].form-control {
+        min-height: auto;
+        padding: 9px 11px;
+        cursor: pointer;
+    }
+
+    .kucsa-edit-announcement input[type="checkbox"] {
+        width: 1.15rem;
+        height: 1.15rem;
+        cursor: pointer;
+    }
+
+    .kucsa-edit-announcement .form-check {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        min-height: 42px;
+        padding: 10px 13px;
+        margin-top: 5px;
+        border: 1px solid var(--kea-border);
+        border-radius: 11px;
+        background: var(--kea-soft);
+    }
+
+    .kucsa-edit-announcement .form-check-input {
+        margin: 0;
+        flex: 0 0 auto;
+    }
+
+    .kucsa-edit-announcement .form-check-label {
+        margin: 0;
+        color: var(--kea-text);
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    /* =========================================================
+       HELP TEXT / FIELD ERRORS
+       ========================================================= */
+
+    .kucsa-edit-announcement .kea-help {
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+        margin-top: 7px;
+        color: var(--kea-muted);
+        font-size: 0.78rem;
+        line-height: 1.55;
+    }
+
+    .kucsa-edit-announcement .kea-help i {
+        flex: 0 0 auto;
+        color: var(--kea-primary);
+        margin-top: 2px;
+    }
+
+    .kucsa-edit-announcement .kea-field-errors {
+        margin-top: 8px;
+        padding: 9px 11px;
+        border-radius: 9px;
+        background: #fff1f2;
+        color: #b02a37;
+        font-size: 0.8rem;
+    }
+
+    .kucsa-edit-announcement .kea-field-error {
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+        line-height: 1.45;
+    }
+
+    .kucsa-edit-announcement .kea-field-error + .kea-field-error {
+        margin-top: 4px;
+    }
+
+    /* =========================================================
+       REVIEW NOTICE
+       ========================================================= */
+
+    .kucsa-edit-announcement .kea-review-box {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        margin: 26px 0 0;
+        padding: 17px;
+        border: 1px solid rgba(13, 110, 253, 0.15);
+        border-radius: 14px;
+        background:
+            linear-gradient(
+                135deg,
+                rgba(13, 110, 253, 0.055),
+                rgba(13, 110, 253, 0.015)
+            );
+    }
+
+    .kucsa-edit-announcement .kea-review-icon {
+        width: 40px;
+        height: 40px;
+        flex: 0 0 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 11px;
+        background: rgba(13, 110, 253, 0.1);
+        color: var(--kea-primary);
+        font-size: 1.1rem;
+    }
+
+    .kucsa-edit-announcement .kea-review-title {
+        margin: 0 0 4px;
+        color: var(--kea-dark);
+        font-size: 0.9rem;
+        font-weight: 800;
+    }
+
+    .kucsa-edit-announcement .kea-review-text {
+        margin: 0;
+        color: var(--kea-muted);
+        font-size: 0.8rem;
+        line-height: 1.6;
+    }
+
+    /* =========================================================
+       ACTION FOOTER
+       ========================================================= */
+
+    .kucsa-edit-announcement .kea-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        margin-top: 28px;
+        padding-top: 22px;
+        border-top: 1px solid var(--kea-border);
+    }
+
+    .kucsa-edit-announcement .kea-action-group {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
+
+    .kucsa-edit-announcement .kea-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 44px;
+        padding: 10px 17px;
+        border-radius: 10px;
+        font-size: 0.87rem;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            border-color 0.2s ease,
+            background 0.2s ease;
+    }
+
+    .kucsa-edit-announcement .kea-btn:hover {
+        transform: translateY(-1px);
+    }
+
+    .kucsa-edit-announcement .kea-btn-secondary {
+        border: 1px solid #d7dce4;
+        background: #fff;
+        color: #495057;
+    }
+
+    .kucsa-edit-announcement .kea-btn-secondary:hover {
+        color: var(--kea-dark);
+        border-color: #b8c1cf;
+        box-shadow: 0 5px 14px rgba(20, 35, 60, 0.07);
+    }
+
+    .kucsa-edit-announcement .kea-btn-danger {
+        border: 1px solid #dc3545;
+        background: #fff;
+        color: #dc3545;
+    }
+
+    .kucsa-edit-announcement .kea-btn-danger:hover {
+        background: #dc3545;
+        color: #fff;
+        box-shadow: 0 6px 17px rgba(220, 53, 69, 0.2);
+    }
+
+    .kucsa-edit-announcement .kea-btn-primary {
+        min-width: 155px;
+        border: 1px solid var(--kea-primary);
+        background: linear-gradient(
+            135deg,
+            var(--kea-primary),
+            #3d82ed
+        );
+        color: #fff;
+        box-shadow: 0 7px 18px rgba(13, 110, 253, 0.2);
+    }
+
+    .kucsa-edit-announcement .kea-btn-primary:hover {
+        color: #fff;
+        box-shadow: 0 10px 23px rgba(13, 110, 253, 0.28);
+    }
+
+    .kucsa-edit-announcement .kea-btn:focus-visible,
+    .kucsa-edit-announcement .kea-back-link:focus-visible {
+        outline: 3px solid rgba(13, 110, 253, 0.25);
+        outline-offset: 2px;
+    }
+
+    /* =========================================================
+       LOADING STATE
+       ========================================================= */
+
+    .kucsa-edit-announcement .kea-spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.45);
+        border-top-color: #fff;
+        border-radius: 50%;
+        display: none;
+        animation: keaSpin 0.75s linear infinite;
+    }
+
+    .kucsa-edit-announcement .kea-btn-primary.is-loading .kea-spinner {
+        display: inline-block;
+    }
+
+    .kucsa-edit-announcement .kea-btn-primary.is-loading .kea-save-icon {
+        display: none;
+    }
+
+    @keyframes keaSpin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* =========================================================
+       MODAL
+       ========================================================= */
+
+    .kucsa-edit-announcement .modal-content {
+        border: 0;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.2);
+    }
+
+    .kucsa-edit-announcement .kea-delete-header {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 18px 21px;
+        background: linear-gradient(
+            135deg,
+            #dc3545,
+            #bb2d3b
+        );
+        color: #fff;
+    }
+
+    .kucsa-edit-announcement .kea-delete-header h5 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 800;
+    }
+
+    .kucsa-edit-announcement .kea-delete-body {
+        padding: 24px;
+    }
+
+    .kucsa-edit-announcement .kea-delete-warning {
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+        padding: 13px;
+        margin-top: 15px;
+        border: 1px solid #f1aeb5;
+        border-radius: 11px;
+        background: #f8d7da;
+        color: #842029;
+        font-size: 0.8rem;
+        line-height: 1.5;
+    }
+
+    .kucsa-edit-announcement .kea-delete-title {
+        margin: 0;
+        padding: 12px 14px;
+        border-left: 4px solid var(--kea-danger);
+        border-radius: 0 10px 10px 0;
+        background: #f8f9fa;
+        color: var(--kea-dark);
+        font-size: 0.9rem;
+        font-weight: 750;
+        overflow-wrap: anywhere;
+    }
+
+    .kucsa-edit-announcement .kea-modal-footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 9px;
+        padding: 15px 20px;
+        border-top: 1px solid var(--kea-border);
+        background: #f8f9fa;
+    }
+
+    /* =========================================================
+       TABLET
+       ========================================================= */
+
+    @media (max-width: 991.98px) {
+        .kucsa-edit-announcement {
+            padding-top: 22px;
+        }
+
+        .kucsa-edit-announcement .kea-editor-body {
+            padding: 24px;
+        }
+
+        .kucsa-edit-announcement .kea-editor-header {
+            padding: 20px;
+        }
+    }
+
+    /* =========================================================
+       MOBILE
+       ========================================================= */
+
+    @media (max-width: 767.98px) {
+        .kucsa-edit-announcement .kea-container {
+            width: min(100% - 22px, 680px);
+        }
+
+        .kucsa-edit-announcement {
+            padding: 16px 0 35px;
+        }
+
+        .kucsa-edit-announcement .kea-page-header {
+            margin: 18px 0 20px;
+        }
+
+        .kucsa-edit-announcement .kea-title-icon {
+            width: 45px;
+            height: 45px;
+            flex-basis: 45px;
+            border-radius: 13px;
+            font-size: 1.15rem;
+        }
+
+        .kucsa-edit-announcement .kea-page-title {
+            font-size: 1.45rem;
+        }
+
+        .kucsa-edit-announcement .kea-page-description {
+            font-size: 0.86rem;
+        }
+
+        .kucsa-edit-announcement .kea-editor-card {
+            border-radius: 15px;
+        }
+
+        .kucsa-edit-announcement .kea-editor-summary {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 15px;
+        }
+
+        .kucsa-edit-announcement .kea-status-area {
+            width: 100%;
+        }
+
+        .kucsa-edit-announcement .kea-status {
+            width: fit-content;
+        }
+
+        .kucsa-edit-announcement .kea-editor-header,
+        .kucsa-edit-announcement .kea-editor-body {
+            padding: 17px;
+        }
+
+        .kucsa-edit-announcement .kea-actions {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .kucsa-edit-announcement .kea-action-group {
+            width: 100%;
+            flex-direction: column;
+        }
+
+        .kucsa-edit-announcement .kea-btn {
+            width: 100%;
+        }
+
+        .kucsa-edit-announcement .kea-btn-primary {
+            min-width: 0;
+        }
+
+        .kucsa-edit-announcement .kea-review-box {
+            padding: 14px;
+        }
+
+        .kucsa-edit-announcement .kea-modal-footer {
+            flex-direction: column-reverse;
+        }
+
+        .kucsa-edit-announcement .kea-modal-footer .btn {
+            width: 100%;
+        }
+    }
+
+    /* =========================================================
+       SMALL PHONES
+       ========================================================= */
+
+    @media (max-width: 575.98px) {
+        .kucsa-edit-announcement .kea-container {
+            width: min(100% - 16px, 520px);
+        }
+
+        .kucsa-edit-announcement .kea-title-row {
+            align-items: flex-start;
+            gap: 11px;
+        }
+
+        .kucsa-edit-announcement .kea-page-title {
+            font-size: 1.3rem;
+        }
+
+        .kucsa-edit-announcement .kea-page-description {
+            font-size: 0.82rem;
+        }
+
+        .kucsa-edit-announcement .kea-announcement-title {
+            font-size: 0.96rem;
+        }
+
+        .kucsa-edit-announcement .kea-updated {
+            font-size: 0.74rem;
+        }
+
+        .kucsa-edit-announcement .kea-field-label {
+            font-size: 0.86rem;
+        }
+
+        .kucsa-edit-announcement .form-control,
+        .kucsa-edit-announcement .form-select {
+            min-height: 45px;
+            font-size: 0.88rem;
+        }
+
+        .kucsa-edit-announcement textarea.form-control {
+            min-height: 155px;
+        }
+
+        .kucsa-edit-announcement .kea-error-summary {
+            padding: 13px;
+        }
+    }
+
+    /* =========================================================
+       EXTRA SMALL DEVICES
+       ========================================================= */
+
+    @media (max-width: 359.98px) {
+        .kucsa-edit-announcement .kea-container {
+            width: calc(100% - 12px);
+        }
+
+        .kucsa-edit-announcement .kea-editor-header,
+        .kucsa-edit-announcement .kea-editor-body {
+            padding: 13px;
+        }
+
+        .kucsa-edit-announcement .kea-title-icon {
+            width: 40px;
+            height: 40px;
+            flex-basis: 40px;
+        }
+
+        .kucsa-edit-announcement .kea-page-title {
+            font-size: 1.18rem;
+        }
+
+        .kucsa-edit-announcement .kea-status {
+            font-size: 0.72rem;
+        }
+    }
+
+    /* =========================================================
+       REDUCED MOTION
+       ========================================================= */
+
+    @media (prefers-reduced-motion: reduce) {
+        .kucsa-edit-announcement *,
+        .kucsa-edit-announcement *::before,
+        .kucsa-edit-announcement *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            scroll-behavior: auto !important;
+            transition-duration: 0.01ms !important;
+        }
     }
 </style>
 
-<div class="container py-4">
 
-    <!-- ===================================================== -->
-    <!-- PAGE HEADER -->
-    <!-- ===================================================== -->
-    <div class="mb-4">
-        <a href="{% url 'announcements:detail' announcement.pk %}" class="btn btn-outline-secondary btn-sm shadow-sm px-3">
-            <i class="bi bi-arrow-left me-1"></i>Back to Announcement
+<div class="kucsa-edit-announcement">
+
+    <div class="kea-container">
+
+        <!-- =====================================================
+             BACK NAVIGATION
+             ===================================================== -->
+
+        <a
+            href="{% url 'announcements:detail' announcement.pk %}"
+            class="kea-back-link"
+            aria-label="Return to announcement details"
+        >
+            <i class="bi bi-arrow-left"></i>
+            <span>Back to Announcement</span>
         </a>
 
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mt-3 gap-3">
-            <div>
-                <h2 class="fw-bold mb-1 text-dark">
-                    <i class="bi bi-pencil-square me-2 text-primary"></i>Edit Announcement
-                </h2>
-                <p class="text-muted mb-0">
-                    Update announcement details, target audience, and publication parameters.
-                </p>
-            </div>
-        </div>
-    </div>
 
+        <!-- =====================================================
+             PAGE HEADER
+             ===================================================== -->
 
-    <!-- ===================================================== -->
-    <!-- FORM CARD CONTAINER -->
-    <!-- ===================================================== -->
-    <div class="row justify-content-center">
-        <div class="col-12 col-xl-9">
+        <header class="kea-page-header">
 
-            <div class="card kucsa-card border-0 shadow-lg bg-white overflow-hidden">
+            <div class="kea-title-row">
 
-                <!-- ================================================= -->
-                <!-- CARD HEADER -->
-                <!-- ================================================= -->
-                <div class="card-header bg-white border-0 p-4 p-md-5 pb-3">
-                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 bg-light p-3 rounded-3 border">
-                        <div>
-                            <span class="text-uppercase small text-muted fw-bold tracking-wider">Editing Notice</span>
-                            <h5 class="fw-bold mb-1 text-dark text-truncate" style="max-width: 500px;">
-                                "{{ announcement.title }}"
-                            </h5>
-                            <div class="small text-muted">
-                                <i class="bi bi-clock me-1 text-primary"></i>Last updated: {{ announcement.updated_at|date:"d M Y, H:i" }}
-                            </div>
-                        </div>
-
-                        <!-- STATUS BADGE -->
-                        <div>
-                            {% if announcement.status == "PUBLISHED" %}
-                                <span class="badge bg-success shadow-sm px-3 py-2"><i class="bi bi-check-circle me-1"></i>Published</span>
-                            {% elif announcement.status == "ARCHIVED" %}
-                                <span class="badge bg-secondary shadow-sm px-3 py-2"><i class="bi bi-archive me-1"></i>Archived</span>
-                            {% else %}
-                                <span class="badge bg-warning text-dark shadow-sm px-3 py-2"><i class="bi bi-pencil me-1"></i>Draft</span>
-                            {% endif %}
-                        </div>
-                    </div>
+                <div class="kea-title-icon" aria-hidden="true">
+                    <i class="bi bi-pencil-square"></i>
                 </div>
 
+                <div>
+                    <h1 class="kea-page-title">
+                        Edit Announcement
+                    </h1>
 
-                <!-- ================================================= -->
-                <!-- FORM BODY -->
-                <!-- ================================================= -->
-                <div class="card-body p-4 p-md-5 pt-3">
+                    <p class="kea-page-description">
+                        Update the announcement details, audience, visibility,
+                        and publication settings.
+                    </p>
+                </div>
 
-                    <form method="post" enctype="multipart/form-data" novalidate id="kucsaEditAnnouncementForm">
+            </div>
 
-                        {% csrf_token %}
+        </header>
 
-                        <!-- ================================================= -->
-                        <!-- NON-FIELD ERRORS -->
-                        <!-- ================================================= -->
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
-                                <div class="d-flex align-items-start">
-                                    <i class="bi bi-exclamation-triangle-fill fs-4 me-2 mt-1"></i>
-                                    <div>
-                                        <strong>Unable to save the announcement:</strong>
-                                        <div class="mt-1 small">{{ form.non_field_errors }}</div>
-                                    </div>
-                                </div>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
+
+        <!-- =====================================================
+             MAIN EDITOR CARD
+             ===================================================== -->
+
+        <main class="kea-editor-card">
+
+            <!-- =================================================
+                 EDITOR HEADER
+                 ================================================= -->
+
+            <div class="kea-editor-header">
+
+                <div class="kea-editor-summary">
+
+                    <div class="kea-summary-main">
+
+                        <span class="kea-eyebrow">
+                            Editing Announcement
+                        </span>
+
+                        <h2 class="kea-announcement-title">
+                            "{{ announcement.title }}"
+                        </h2>
+
+                        <div class="kea-updated">
+                            <i class="bi bi-clock"></i>
+
+                            <span>
+                                Last updated:
+                                {{ announcement.updated_at|date:"d M Y, H:i" }}
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <!-- STATUS -->
+
+                    <div class="kea-status-area">
+
+                        {% if announcement.status == "PUBLISHED" %}
+
+                            <span class="kea-status kea-status-published">
+                                <i class="bi bi-check-circle-fill"></i>
+                                Published
+                            </span>
+
+                        {% elif announcement.status == "ARCHIVED" %}
+
+                            <span class="kea-status kea-status-archived">
+                                <i class="bi bi-archive-fill"></i>
+                                Archived
+                            </span>
+
+                        {% else %}
+
+                            <span class="kea-status kea-status-draft">
+                                <i class="bi bi-pencil-fill"></i>
+                                Draft
+                            </span>
+
                         {% endif %}
 
-
-                        <!-- ================================================= -->
-                        <!-- FORM FIELDS LOOP -->
-                        <!-- ================================================= -->
-                        {% for field in form %}
-                            <div class="mb-4">
-
-                                <label for="{{ field.id_for_label }}" class="form-label fw-semibold text-dark">
-                                    <i class="bi bi-dot text-primary fs-5"></i>{{ field.label }}
-                                    {% if field.field.required %}
-                                        <span class="text-danger" title="Required field">*</span>
-                                    {% endif %}
-                                </label>
-
-                                <!-- FIELD RENDER -->
-                                {{ field }}
-
-                                <!-- HELP TEXT -->
-                                {% if field.help_text %}
-                                    <div class="form-text small text-muted mt-1">
-                                        <i class="bi bi-info-circle me-1"></i>{{ field.help_text }}
-                                    </div>
-                                {% endif %}
-
-                                <!-- FIELD ERRORS -->
-                                {% if field.errors %}
-                                    <div class="text-danger small mt-2">
-                                        {% for error in field.errors %}
-                                            <div class="d-flex align-items-center">
-                                                <i class="bi bi-exclamation-circle me-1"></i>
-                                                <span>{{ error }}</span>
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-
-                            </div>
-                        {% endfor %}
-
-
-                        <!-- ================================================= -->
-                        <!-- ADVISORY TIPS BOX -->
-                        <!-- ================================================= -->
-                        <div class="alert alert-light border shadow-sm my-4 rounded-3 p-3">
-                            <div class="d-flex align-items-start gap-3">
-                                <div class="text-primary fs-4 mt-1">
-                                    <i class="bi bi-shield-check"></i>
-                                </div>
-                                <div>
-                                    <h6 class="fw-bold mb-1 text-dark">Review Before Submitting</h6>
-                                    <p class="small text-muted mb-0">
-                                        Ensure target audience metrics, visibility settings, and scheduled timelines are verified before finalizing edits.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <!-- ================================================= -->
-                        <!-- ACTION BUTTONS -->
-                        <!-- ================================================= -->
-                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mt-4 pt-4 border-top">
-
-                            <!-- CANCEL BUTTON -->
-                            <a href="{% url 'announcements:detail' announcement.pk %}" class="btn btn-outline-secondary px-4 shadow-sm w-100 w-md-auto">
-                                <i class="bi bi-x-circle me-1"></i>Cancel
-                            </a>
-
-                            <!-- RIGHT ACTION BUTTONS (DELETE & SAVE) -->
-                            <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto">
-                                <button type="button" class="btn btn-outline-danger px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#deleteAnnouncementModal">
-                                    <i class="bi bi-trash me-1"></i>Delete Notice
-                                </button>
-
-                                <button type="submit" class="btn btn-primary px-5 shadow-sm fw-bold py-2">
-                                    <i class="bi bi-check-circle-fill me-1"></i>Save Changes
-                                </button>
-                            </div>
-
-                        </div>
-
-                    </form>
+                    </div>
 
                 </div>
 
             </div>
 
-        </div>
+
+            <!-- =================================================
+                 EDITOR BODY
+                 ================================================= -->
+
+            <div class="kea-editor-body">
+
+                <form
+                    method="post"
+                    enctype="multipart/form-data"
+                    novalidate
+                    id="kucsaEditAnnouncementForm"
+                >
+
+                    {% csrf_token %}
+
+
+                    <!-- =========================================
+                         NON-FIELD ERRORS
+                         ========================================= -->
+
+                    {% if form.non_field_errors %}
+
+                        <div
+                            class="kea-error-summary"
+                            role="alert"
+                            aria-live="assertive"
+                        >
+
+                            <div class="kea-error-icon">
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                            </div>
+
+                            <div class="kea-error-content">
+
+                                <p class="kea-error-title">
+                                    Unable to save the announcement
+                                </p>
+
+                                <p class="kea-error-message">
+                                    {{ form.non_field_errors }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- =========================================
+                         FORM FIELDS
+                         ========================================= -->
+
+                    {% for field in form %}
+
+                        <div
+                            class="kea-field"
+                            data-field-wrapper
+                            data-field-name="{{ field.name }}"
+                        >
+
+                            <label
+                                for="{{ field.id_for_label }}"
+                                class="kea-field-label"
+                            >
+
+                                <i class="bi bi-dot kea-label-icon"></i>
+
+                                <span>
+                                    {{ field.label }}
+                                </span>
+
+                                {% if field.field.required %}
+
+                                    <span
+                                        class="kea-required"
+                                        title="Required field"
+                                        aria-label="Required"
+                                    >
+                                        *
+                                    </span>
+
+                                {% endif %}
+
+                            </label>
+
+
+                            <!-- FIELD -->
+
+                            {{ field }}
+
+
+                            <!-- HELP TEXT -->
+
+                            {% if field.help_text %}
+
+                                <div class="kea-help">
+
+                                    <i class="bi bi-info-circle"></i>
+
+                                    <span>
+                                        {{ field.help_text }}
+                                    </span>
+
+                                </div>
+
+                            {% endif %}
+
+
+                            <!-- FIELD ERRORS -->
+
+                            {% if field.errors %}
+
+                                <div
+                                    class="kea-field-errors"
+                                    role="alert"
+                                >
+
+                                    {% for error in field.errors %}
+
+                                        <div class="kea-field-error">
+
+                                            <i class="bi bi-exclamation-circle"></i>
+
+                                            <span>
+                                                {{ error }}
+                                            </span>
+
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    {% endfor %}
+
+
+                    <!-- =========================================
+                         REVIEW NOTICE
+                         ========================================= -->
+
+                    <div class="kea-review-box">
+
+                        <div class="kea-review-icon" aria-hidden="true">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+
+                        <div>
+
+                            <h3 class="kea-review-title">
+                                Review Before Saving
+                            </h3>
+
+                            <p class="kea-review-text">
+                                Check the announcement content, target audience,
+                                visibility settings, attachments, and publication
+                                timelines before finalizing your changes.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         ACTIONS
+                         ========================================= -->
+
+                    <div class="kea-actions">
+
+                        <!-- CANCEL -->
+
+                        <a
+                            href="{% url 'announcements:detail' announcement.pk %}"
+                            class="kea-btn kea-btn-secondary"
+                        >
+                            <i class="bi bi-x-circle"></i>
+                            <span>Cancel</span>
+                        </a>
+
+
+                        <!-- RIGHT ACTIONS -->
+
+                        <div class="kea-action-group">
+
+                            <!-- DELETE -->
+
+                            <button
+                                type="button"
+                                class="kea-btn kea-btn-danger"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteAnnouncementModal"
+                            >
+                                <i class="bi bi-trash3"></i>
+                                <span>Delete Notice</span>
+                            </button>
+
+
+                            <!-- SAVE -->
+
+                            <button
+                                type="submit"
+                                class="kea-btn kea-btn-primary"
+                                id="keaSaveButton"
+                            >
+
+                                <span
+                                    class="kea-spinner"
+                                    aria-hidden="true"
+                                ></span>
+
+                                <i
+                                    class="bi bi-check-circle-fill kea-save-icon"
+                                ></i>
+
+                                <span class="kea-save-text">
+                                    Save Changes
+                                </span>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </main>
+
     </div>
 
 </div>
 
 
-<!-- ========================================================= -->
-<!-- DELETE CONFIRMATION MODAL -->
-<!-- ========================================================= -->
-<div class="modal fade" id="deleteAnnouncementModal" tabindex="-1" aria-labelledby="deleteAnnouncementModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content shadow-lg">
+<!-- =============================================================
+     DELETE CONFIRMATION MODAL
+     ============================================================= -->
 
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title fw-bold" id="deleteAnnouncementModalLabel">
-                    <i class="bi bi-exclamation-triangle me-2"></i>Delete Announcement
+<div
+    class="modal fade"
+    id="deleteAnnouncementModal"
+    tabindex="-1"
+    aria-labelledby="deleteAnnouncementModalLabel"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <!-- MODAL HEADER -->
+
+            <div class="kea-delete-header">
+
+                <i
+                    class="bi bi-exclamation-triangle-fill"
+                    aria-hidden="true"
+                ></i>
+
+                <h5 id="deleteAnnouncementModalLabel">
+                    Delete Announcement
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                <button
+                    type="button"
+                    class="btn-close btn-close-white ms-auto"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
             </div>
 
-            <div class="modal-body p-4">
-                <p class="text-danger fw-semibold mb-2">Are you sure you want to permanently delete this announcement?</p>
-                <p class="fw-bold text-dark border-start border-danger border-4 ps-3 py-1 mb-3 bg-light rounded-end">
+
+            <!-- MODAL BODY -->
+
+            <div class="kea-delete-body">
+
+                <p class="fw-semibold text-danger mb-3">
+                    Are you sure you want to permanently delete this announcement?
+                </p>
+
+                <p class="kea-delete-title">
                     "{{ announcement.title }}"
                 </p>
-                <div class="alert alert-danger mb-0 py-2 small shadow-sm">
-                    <i class="bi bi-exclamation-circle me-1"></i>This action cannot be undone. All database records and associated attachments will be wiped.
+
+
+                <div class="kea-delete-warning">
+
+                    <i class="bi bi-exclamation-circle-fill"></i>
+
+                    <span>
+                        This action cannot be undone. The announcement and
+                        its associated records and attachments will be removed.
+                    </span>
+
                 </div>
+
             </div>
 
-            <div class="modal-footer bg-light">
-                <button type="button" class="btn btn-outline-secondary px-4 shadow-sm" data-bs-dismiss="modal">Cancel</button>
 
-                <form method="post" action="{% url 'announcements:delete' announcement.pk %}" class="d-inline">
+            <!-- MODAL FOOTER -->
+
+            <div class="kea-modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-outline-secondary px-4"
+                    data-bs-dismiss="modal"
+                >
+                    Cancel
+                </button>
+
+
+                <form
+                    method="post"
+                    action="{% url 'announcements:delete' announcement.pk %}"
+                    class="m-0"
+                    id="keaDeleteForm"
+                >
+
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger px-4 shadow-sm fw-bold">
-                        <i class="bi bi-trash me-1"></i>Permanently Delete
+
+                    <button
+                        type="submit"
+                        class="btn btn-danger px-4 fw-bold"
+                        id="keaDeleteButton"
+                    >
+                        <i class="bi bi-trash3 me-1"></i>
+                        Permanently Delete
                     </button>
+
                 </form>
+
             </div>
 
         </div>
+
     </div>
+
 </div>
 
 
-<!-- ========================================================= -->
-<!-- AUTOMATED CSS CLASS INJECTOR JAVASCRIPT -->
-<!-- ========================================================= -->
+<!-- =============================================================
+     INLINE JAVASCRIPT
+     ============================================================= -->
+
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const textInputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="url"], input[type="number"], input[type="password"], input[type="datetime-local"], input[type="date"]');
-        const textAreas = document.querySelectorAll('textarea');
-        const selectInputs = document.querySelectorAll('select');
-        const fileInputs = document.querySelectorAll('input[type="file"]');
-        const checkboxInputs = document.querySelectorAll('input[type="checkbox"]');
+document.addEventListener("DOMContentLoaded", function () {
 
-        textInputs.forEach(el => {
-            if (!el.classList.contains('form-control')) el.classList.add('form-control');
-        });
+    const page = document.querySelector(".kucsa-edit-announcement");
 
-        textAreas.forEach(el => {
-            if (!el.classList.contains('form-control')) el.classList.add('form-control');
-        });
+    if (!page) {
+        return;
+    }
 
-        selectInputs.forEach(el => {
-            if (!el.classList.contains('form-select')) el.classList.add('form-select');
-        });
 
-        fileInputs.forEach(el => {
-            if (!el.classList.contains('form-control')) el.classList.add('form-control');
-        });
+    /* =========================================================
+       FORM ELEMENTS
+       ========================================================= */
 
-        checkboxInputs.forEach(el => {
-            if (!el.classList.contains('form-check-input')) {
-                el.classList.add('form-check-input');
-                const parent = el.parentNode;
-                if (parent && !parent.classList.contains('form-check')) {
-                    parent.classList.add('form-check', 'form-switch', 'my-2');
+    const form = document.getElementById("kucsaEditAnnouncementForm");
+    const saveButton = document.getElementById("keaSaveButton");
+    const saveText = saveButton
+        ? saveButton.querySelector(".kea-save-text")
+        : null;
+
+    const deleteForm = document.getElementById("keaDeleteForm");
+    const deleteButton = document.getElementById("keaDeleteButton");
+
+
+    /* =========================================================
+       AUTOMATIC BOOTSTRAP FORM CLASS ENHANCEMENT
+       ========================================================= */
+
+    const controls = form
+        ? form.querySelectorAll(
+            "input, textarea, select"
+        )
+        : [];
+
+    controls.forEach(function (element) {
+
+        const type = (element.type || "").toLowerCase();
+
+        if (
+            type === "hidden" ||
+            type === "submit" ||
+            type === "button" ||
+            type === "reset"
+        ) {
+            return;
+        }
+
+
+        /* SELECT */
+
+        if (element.tagName === "SELECT") {
+
+            if (!element.classList.contains("form-select")) {
+                element.classList.add("form-select");
+            }
+
+            return;
+        }
+
+
+        /* CHECKBOX */
+
+        if (type === "checkbox") {
+
+            element.classList.add("form-check-input");
+
+            const wrapper = element.closest(".kea-field");
+
+            if (wrapper) {
+
+                const label = wrapper.querySelector(
+                    ".kea-field-label"
+                );
+
+                if (label) {
+                    label.style.marginBottom = "7px";
                 }
             }
-        });
+
+            return;
+        }
+
+
+        /* FILE */
+
+        if (type === "file") {
+
+            element.classList.add("form-control");
+
+            return;
+        }
+
+
+        /* STANDARD INPUTS / TEXTAREA */
+
+        element.classList.add("form-control");
+
     });
+
+
+    /* =========================================================
+       BETTER AUTOCOMPLETE ATTRIBUTES
+       ========================================================= */
+
+    const usernameInputs = page.querySelectorAll(
+        'input[name="username"]'
+    );
+
+    usernameInputs.forEach(function (input) {
+        input.setAttribute("autocomplete", "username");
+    });
+
+
+    const emailInputs = page.querySelectorAll(
+        'input[type="email"]'
+    );
+
+    emailInputs.forEach(function (input) {
+        input.setAttribute("autocomplete", "email");
+    });
+
+
+    /* =========================================================
+       FILE INPUT FEEDBACK
+       ========================================================= */
+
+    const fileInputs = page.querySelectorAll(
+        'input[type="file"]'
+    );
+
+    fileInputs.forEach(function (input) {
+
+        input.addEventListener("change", function () {
+
+            const wrapper = input.closest(".kea-field");
+
+            if (!wrapper) {
+                return;
+            }
+
+            let feedback = wrapper.querySelector(
+                ".kea-file-feedback"
+            );
+
+            if (!feedback) {
+
+                feedback = document.createElement("div");
+
+                feedback.className = "kea-help kea-file-feedback";
+
+                input.insertAdjacentElement(
+                    "afterend",
+                    feedback
+                );
+            }
+
+            if (input.files && input.files.length > 0) {
+
+                const file = input.files[0];
+
+                feedback.innerHTML =
+                    '<i class="bi bi-paperclip"></i>' +
+                    '<span>Selected: ' +
+                    escapeHtml(file.name) +
+                    '</span>';
+
+            } else {
+
+                feedback.innerHTML =
+                    '<i class="bi bi-info-circle"></i>' +
+                    '<span>No new file selected.</span>';
+
+            }
+
+        });
+
+    });
+
+
+    /* =========================================================
+       BASIC IMAGE FILE VALIDATION
+       ========================================================= */
+
+    fileInputs.forEach(function (input) {
+
+        input.addEventListener("change", function () {
+
+            if (!input.files || !input.files.length) {
+                return;
+            }
+
+            const file = input.files[0];
+
+            if (
+                file.type &&
+                !file.type.startsWith("image/")
+            ) {
+
+                input.setCustomValidity(
+                    "Please select a valid image file."
+                );
+
+                input.classList.add("is-invalid");
+
+            } else {
+
+                input.setCustomValidity("");
+
+                input.classList.remove("is-invalid");
+
+            }
+
+        });
+
+    });
+
+
+    /* =========================================================
+       FORM SUBMISSION / DOUBLE-SUBMIT PROTECTION
+       ========================================================= */
+
+    let formSubmitting = false;
+
+    if (form && saveButton) {
+
+        form.addEventListener("submit", function (event) {
+
+            if (formSubmitting) {
+
+                event.preventDefault();
+
+                return;
+
+            }
+
+
+            /* Let browser / Django validation happen normally. */
+
+            formSubmitting = true;
+
+            saveButton.disabled = true;
+
+            saveButton.classList.add("is-loading");
+
+            if (saveText) {
+                saveText.textContent = "Saving Changes...";
+            }
+
+        });
+
+    }
+
+
+    /* =========================================================
+       ERROR FIELD ENHANCEMENT
+       ========================================================= */
+
+    const invalidFields = page.querySelectorAll(
+        ".kea-field-errors"
+    );
+
+    invalidFields.forEach(function (errorBox) {
+
+        const fieldWrapper = errorBox.closest(
+            ".kea-field"
+        );
+
+        if (!fieldWrapper) {
+            return;
+        }
+
+        const control = fieldWrapper.querySelector(
+            "input:not([type='hidden']), textarea, select"
+        );
+
+        if (control) {
+
+            control.classList.add("is-invalid");
+
+            control.setAttribute(
+                "aria-invalid",
+                "true"
+            );
+
+        }
+
+    });
+
+
+    /* =========================================================
+       SCROLL TO FIRST ERROR
+       ========================================================= */
+
+    const firstError = page.querySelector(
+        ".kea-field-errors"
+    );
+
+    if (firstError) {
+
+        setTimeout(function () {
+
+            const wrapper = firstError.closest(
+                ".kea-field"
+            );
+
+            if (!wrapper) {
+                return;
+            }
+
+            wrapper.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+            const control = wrapper.querySelector(
+                "input:not([type='hidden']), textarea, select"
+            );
+
+            if (control) {
+                setTimeout(function () {
+                    control.focus({
+                        preventScroll: true
+                    });
+                }, 350);
+            }
+
+        }, 150);
+
+    }
+
+
+    /* =========================================================
+       DELETE DOUBLE-SUBMIT PROTECTION
+       ========================================================= */
+
+    if (deleteForm && deleteButton) {
+
+        let deleteSubmitting = false;
+
+        deleteForm.addEventListener(
+            "submit",
+            function (event) {
+
+                if (deleteSubmitting) {
+
+                    event.preventDefault();
+
+                    return;
+
+                }
+
+                deleteSubmitting = true;
+
+                deleteButton.disabled = true;
+
+                deleteButton.innerHTML =
+                    '<span class="spinner-border spinner-border-sm me-2" ' +
+                    'aria-hidden="true"></span>' +
+                    'Deleting...';
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       KEYBOARD ACCESSIBILITY
+       ========================================================= */
+
+    page.addEventListener("keydown", function (event) {
+
+        if (event.key === "Escape") {
+
+            const modal = document.getElementById(
+                "deleteAnnouncementModal"
+            );
+
+            if (
+                modal &&
+                modal.classList.contains("show")
+            ) {
+
+                const closeButton =
+                    modal.querySelector(
+                        '[data-bs-dismiss="modal"]'
+                    );
+
+                if (closeButton) {
+                    closeButton.click();
+                }
+
+            }
+
+        }
+
+    });
+
+
+    /* =========================================================
+       ESCAPE HTML FOR FILE NAME FEEDBACK
+       ========================================================= */
+
+    function escapeHtml(value) {
+
+        const div = document.createElement("div");
+
+        div.textContent = value;
+
+        return div.innerHTML;
+
+    }
+
+
+    /* =========================================================
+       RESTORE BUTTON STATE AFTER BFCACHE NAVIGATION
+       ========================================================= */
+
+    window.addEventListener("pageshow", function () {
+
+        if (formSubmitting && saveButton) {
+
+            formSubmitting = false;
+
+            saveButton.disabled = false;
+
+            saveButton.classList.remove(
+                "is-loading"
+            );
+
+            if (saveText) {
+                saveText.textContent = "Save Changes";
+            }
+
+        }
+
+    });
+
+});
 </script>
 
 {% endblock %}

@@ -6,574 +6,2842 @@
 
 {% block content %}
 
-<!-- Custom Styling Injection matching the KUCSA Design System -->
 <style>
-    :root {
-        --kucsa-primary: #0d6efd;
-        --kucsa-primary-hover: #0b5ed7;
-        --kucsa-bg-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    /* =========================================================
+       KUCSA ANNOUNCEMENTS
+       Scoped page styling — no global body modifications
+       ========================================================= */
+
+    .kucsa-announcements-page {
+        --ku-primary: #0d6efd;
+        --ku-primary-dark: #0b5ed7;
+        --ku-primary-soft: rgba(13, 110, 253, 0.08);
+        --ku-primary-soft-strong: rgba(13, 110, 253, 0.13);
+
+        --ku-success: #198754;
+        --ku-danger: #dc3545;
+        --ku-warning: #ffc107;
+        --ku-info: #0dcaf0;
+
+        --ku-dark: #172033;
+        --ku-text: #344054;
+        --ku-muted: #667085;
+        --ku-border: #e4e7ec;
+        --ku-surface: #ffffff;
+        --ku-soft: #f8fafc;
+
+        --ku-radius: 18px;
+        --ku-radius-sm: 11px;
+
+        --ku-shadow:
+            0 10px 30px rgba(16, 24, 40, 0.06),
+            0 2px 8px rgba(16, 24, 40, 0.03);
+
+        --ku-shadow-hover:
+            0 18px 40px rgba(16, 24, 40, 0.10),
+            0 4px 12px rgba(16, 24, 40, 0.04);
+
+        --ku-transition: 180ms ease;
+
+        position: relative;
+        min-height: 100vh;
+        padding: 28px 18px 45px;
+
+        background:
+            radial-gradient(
+                circle at 0% 0%,
+                rgba(13, 110, 253, 0.055),
+                transparent 28%
+            ),
+            radial-gradient(
+                circle at 100% 100%,
+                rgba(25, 135, 84, 0.035),
+                transparent 25%
+            ),
+            linear-gradient(
+                135deg,
+                #f8fafc 0%,
+                #f1f5f9 100%
+            );
     }
 
-    body {
-        background: var(--kucsa-bg-gradient);
+    .kucsa-announcements-container {
+        position: relative;
+        z-index: 1;
+        max-width: 1500px;
+        margin: 0 auto;
     }
 
-    .kucsa-card {
-        border-radius: 1rem;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    /* =========================================================
+       PAGE HEADER
+       ========================================================= */
+
+    .kucsa-page-header {
+        position: relative;
+        overflow: hidden;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 22px;
+
+        margin-bottom: 25px;
+        padding: 25px 27px;
+
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: var(--ku-radius);
+
+        background:
+            linear-gradient(
+                135deg,
+                #ffffff 0%,
+                #f8fbff 100%
+            );
+
+        box-shadow: var(--ku-shadow);
     }
 
-    .kucsa-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+    .kucsa-page-header::before {
+        content: "";
+        position: absolute;
+
+        width: 220px;
+        height: 220px;
+
+        right: -95px;
+        top: -130px;
+
+        border-radius: 50%;
+        background: rgba(13, 110, 253, 0.055);
+        pointer-events: none;
     }
 
-    .form-control, .form-select {
-        padding: 0.75rem 1rem;
+    .kucsa-page-header-content {
+        position: relative;
+        z-index: 1;
+
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        min-width: 0;
+    }
+
+    .kucsa-page-header-icon {
+        width: 54px;
+        height: 54px;
+        flex: 0 0 54px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 15px;
+
+        color: var(--ku-primary);
+
+        background:
+            linear-gradient(
+                145deg,
+                rgba(13, 110, 253, 0.14),
+                rgba(13, 110, 253, 0.055)
+            );
+    }
+
+    .kucsa-page-header-icon i {
+        font-size: 1.45rem;
+    }
+
+    .kucsa-eyebrow {
+        margin-bottom: 4px;
+
+        color: var(--ku-primary);
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    .kucsa-page-title {
+        margin: 0;
+
+        color: var(--ku-dark);
+        font-size: clamp(1.55rem, 2.5vw, 2rem);
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        line-height: 1.2;
+    }
+
+    .kucsa-page-description {
+        max-width: 700px;
+        margin: 6px 0 0;
+
+        color: var(--ku-muted);
+        font-size: 0.87rem;
+        line-height: 1.6;
+    }
+
+    .kucsa-header-actions {
+        position: relative;
+        z-index: 2;
+
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 9px;
+        flex-shrink: 0;
+    }
+
+    .kucsa-action-btn {
+        min-height: 42px;
+        border-radius: var(--ku-radius-sm);
+        padding: 0.58rem 0.9rem;
+
+        font-size: 0.78rem;
+        font-weight: 700;
+
+        transition:
+            transform var(--ku-transition),
+            box-shadow var(--ku-transition);
+    }
+
+    .kucsa-action-btn:hover {
+        transform: translateY(-1px);
+    }
+
+    /* =========================================================
+       MESSAGES
+       ========================================================= */
+
+    .kucsa-message {
+        border-radius: var(--ku-radius-sm);
+        font-size: 0.82rem;
+        line-height: 1.5;
+    }
+
+    /* =========================================================
+       STATISTICS
+       ========================================================= */
+
+    .kucsa-stat-grid {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 13px;
+
+        margin-bottom: 25px;
+    }
+
+    .kucsa-stat-card {
+        position: relative;
+        overflow: hidden;
+
+        min-width: 0;
+        padding: 17px;
+
+        border: 1px solid var(--ku-border);
+        border-radius: 15px;
+
+        background: var(--ku-surface);
+        box-shadow: var(--ku-shadow);
+
+        transition:
+            transform var(--ku-transition),
+            box-shadow var(--ku-transition);
+    }
+
+    .kucsa-stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--ku-shadow-hover);
+    }
+
+    .kucsa-stat-card::after {
+        content: "";
+
+        position: absolute;
+        width: 65px;
+        height: 65px;
+
+        right: -28px;
+        bottom: -30px;
+
+        border-radius: 50%;
+        background: rgba(13, 110, 253, 0.035);
+    }
+
+    .kucsa-stat-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .kucsa-stat-label {
+        display: block;
+        margin-bottom: 4px;
+
+        color: var(--ku-muted);
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .kucsa-stat-value {
+        margin: 0;
+
+        color: var(--ku-dark);
+        font-size: 1.35rem;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .kucsa-stat-icon {
+        width: 37px;
+        height: 37px;
+        flex: 0 0 37px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 10px;
+
         font-size: 0.95rem;
-        border-radius: 0.50rem;
-        border: 1px solid #ced4da;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .form-control:focus, .form-select:focus {
-        border-color: var(--kucsa-primary);
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    .stat-blue .kucsa-stat-icon {
+        color: var(--ku-primary);
+        background: rgba(13, 110, 253, 0.09);
     }
 
-    .stat-card {
-        border-radius: 0.75rem;
-        border: none;
-        transition: all 0.2s ease;
+    .stat-gray .kucsa-stat-icon {
+        color: #6c757d;
+        background: rgba(108, 117, 125, 0.09);
     }
 
-    .stat-card:hover {
-        background-color: #f8f9fa;
+    .stat-green .kucsa-stat-icon {
+        color: var(--ku-success);
+        background: rgba(25, 135, 84, 0.09);
     }
 
-    .announcement-img {
-        height: 200px;
+    .stat-yellow .kucsa-stat-icon {
+        color: #b78103;
+        background: rgba(255, 193, 7, 0.13);
+    }
+
+    .stat-cyan .kucsa-stat-icon {
+        color: #087990;
+        background: rgba(13, 202, 240, 0.10);
+    }
+
+    /* =========================================================
+       FILTER PANEL
+       ========================================================= */
+
+    .kucsa-filter-card {
+        margin-bottom: 30px;
+
+        overflow: hidden;
+
+        border: 1px solid var(--ku-border);
+        border-radius: var(--ku-radius);
+
+        background: var(--ku-surface);
+        box-shadow: var(--ku-shadow);
+    }
+
+    .kucsa-filter-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+
+        padding: 17px 21px;
+
+        border-bottom: 1px solid var(--ku-border);
+        background: #fbfcfe;
+    }
+
+    .kucsa-filter-title {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+
+        margin: 0;
+
+        color: var(--ku-dark);
+        font-size: 0.88rem;
+        font-weight: 800;
+    }
+
+    .kucsa-filter-title i {
+        color: var(--ku-primary);
+    }
+
+    .kucsa-filter-hint {
+        color: var(--ku-muted);
+        font-size: 0.72rem;
+    }
+
+    .kucsa-filter-body {
+        padding: 21px;
+    }
+
+    .kucsa-filter-body .form-label {
+        margin-bottom: 6px;
+
+        color: var(--ku-text);
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .kucsa-filter-body .form-control,
+    .kucsa-filter-body .form-select {
+        min-height: 45px;
+
+        border: 1px solid var(--ku-border);
+        border-radius: var(--ku-radius-sm);
+
+        font-size: 0.82rem;
+
+        transition:
+            border-color var(--ku-transition),
+            box-shadow var(--ku-transition);
+    }
+
+    .kucsa-filter-body .form-control:focus,
+    .kucsa-filter-body .form-select:focus {
+        border-color: var(--ku-primary);
+
+        box-shadow:
+            0 0 0 4px rgba(13, 110, 253, 0.09);
+    }
+
+    .kucsa-filter-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .kucsa-filter-actions .btn {
+        min-height: 45px;
+        border-radius: var(--ku-radius-sm);
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+
+    /* =========================================================
+       SECTION HEADERS
+       ========================================================= */
+
+    .kucsa-section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 15px;
+
+        margin-bottom: 16px;
+    }
+
+    .kucsa-section-heading-main {
+        min-width: 0;
+    }
+
+    .kucsa-section-title {
+        margin: 0;
+
+        color: var(--ku-dark);
+        font-size: 1.12rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+    }
+
+    .kucsa-section-title i {
+        margin-right: 7px;
+    }
+
+    .kucsa-section-description {
+        margin: 4px 0 0;
+
+        color: var(--ku-muted);
+        font-size: 0.76rem;
+    }
+
+    .kucsa-count-badge {
+        flex-shrink: 0;
+
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+
+        padding: 7px 11px;
+
+        border: 1px solid var(--ku-border);
+        border-radius: 20px;
+
+        color: var(--ku-text);
+        background: #ffffff;
+
+        font-size: 0.7rem;
+        font-weight: 700;
+
+        box-shadow: 0 3px 10px rgba(16, 24, 40, 0.035);
+    }
+
+    /* =========================================================
+       ANNOUNCEMENT GRID
+       ========================================================= */
+
+    .kucsa-announcement-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    /* =========================================================
+       ANNOUNCEMENT CARD
+       ========================================================= */
+
+    .kucsa-announcement-card {
+        position: relative;
+
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        overflow: hidden;
+
+        border: 1px solid var(--ku-border);
+        border-radius: var(--ku-radius);
+
+        background: var(--ku-surface);
+        box-shadow: var(--ku-shadow);
+
+        transition:
+            transform var(--ku-transition),
+            box-shadow var(--ku-transition),
+            border-color var(--ku-transition);
+    }
+
+    .kucsa-announcement-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(13, 110, 253, 0.16);
+        box-shadow: var(--ku-shadow-hover);
+    }
+
+    /* =========================================================
+       ANNOUNCEMENT IMAGE
+       ========================================================= */
+
+    .kucsa-announcement-image-wrapper {
+        position: relative;
+        overflow: hidden;
+        height: 190px;
+        background:
+            linear-gradient(
+                135deg,
+                #eef4ff,
+                #f8fafc
+            );
+    }
+
+    .kucsa-announcement-image {
+        width: 100%;
+        height: 100%;
+
+        display: block;
+
         object-fit: cover;
-        border-top-left-radius: 1rem;
-        border-top-right-radius: 1rem;
+
+        transition:
+            transform 450ms ease;
+    }
+
+    .kucsa-announcement-card:hover .kucsa-announcement-image {
+        transform: scale(1.035);
+    }
+
+    .kucsa-image-overlay {
+        position: absolute;
+        inset: auto 0 0 0;
+
+        height: 55%;
+
+        pointer-events: none;
+
+        background:
+            linear-gradient(
+                to top,
+                rgba(0, 0, 0, 0.38),
+                transparent
+            );
+    }
+
+    /* Placeholder when no image */
+
+    .kucsa-announcement-no-image {
+        height: 118px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        color: rgba(13, 110, 253, 0.35);
+
+        background:
+            radial-gradient(
+                circle at center,
+                rgba(13, 110, 253, 0.08),
+                transparent 62%
+            ),
+            #f8fafc;
+    }
+
+    .kucsa-announcement-no-image i {
+        font-size: 2.2rem;
+    }
+
+    /* =========================================================
+       CARD BADGES
+       ========================================================= */
+
+    .kucsa-card-badges {
+        position: absolute;
+        top: 13px;
+        left: 13px;
+        right: 13px;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 8px;
+
+        z-index: 2;
+    }
+
+    .kucsa-badge-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .kucsa-modern-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+
+        padding: 5px 8px;
+
+        border-radius: 7px;
+
+        font-size: 0.65rem;
+        font-weight: 800;
+
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .kucsa-badge-urgent {
+        color: #ffffff;
+        background: #dc3545;
+    }
+
+    .kucsa-badge-high {
+        color: #332701;
+        background: #ffc107;
+    }
+
+    .kucsa-badge-normal {
+        color: #ffffff;
+        background: #0d6efd;
+    }
+
+    .kucsa-badge-low {
+        color: #ffffff;
+        background: #6c757d;
+    }
+
+    .kucsa-badge-featured {
+        color: #332701;
+        background: #ffc107;
+    }
+
+    .kucsa-badge-published {
+        color: #ffffff;
+        background: #198754;
+    }
+
+    .kucsa-badge-draft {
+        color: #ffffff;
+        background: #6c757d;
+    }
+
+    .kucsa-badge-archived {
+        color: #ffffff;
+        background: #212529;
+    }
+
+    /* =========================================================
+       CARD CONTENT
+       ========================================================= */
+
+    .kucsa-announcement-content {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+
+        padding: 19px;
+    }
+
+    .kucsa-announcement-type {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+
+        margin-bottom: 8px;
+
+        color: var(--ku-primary);
+
+        font-size: 0.67rem;
+        font-weight: 800;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+    }
+
+    .kucsa-announcement-title {
+        margin: 0 0 8px;
+
+        color: var(--ku-dark);
+
+        font-size: 1rem;
+        font-weight: 800;
+        line-height: 1.4;
+    }
+
+    .kucsa-announcement-title a {
+        color: inherit;
+        text-decoration: none;
+
+        transition: color var(--ku-transition);
+    }
+
+    .kucsa-announcement-title a:hover {
+        color: var(--ku-primary);
+    }
+
+    .kucsa-announcement-summary {
+        display: -webkit-box;
+        overflow: hidden;
+
+        margin: 0 0 16px;
+
+        color: var(--ku-muted);
+
+        font-size: 0.77rem;
+        line-height: 1.65;
+
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+    }
+
+    /* =========================================================
+       METADATA
+       ========================================================= */
+
+    .kucsa-announcement-meta {
+        margin-top: auto;
+        padding-top: 13px;
+
+        border-top: 1px solid var(--ku-border);
+    }
+
+    .kucsa-meta-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+
+        margin-bottom: 6px;
+
+        color: var(--ku-muted);
+
+        font-size: 0.68rem;
+        line-height: 1.45;
+    }
+
+    .kucsa-meta-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .kucsa-meta-item i {
+        width: 14px;
+        flex: 0 0 14px;
+
+        margin-top: 1px;
+
+        color: #98a2b3;
+        text-align: center;
+    }
+
+    /* =========================================================
+       CARD FOOTER
+       ========================================================= */
+
+    .kucsa-announcement-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+
+        padding: 0 19px 19px;
+    }
+
+    .kucsa-read-btn {
+        min-height: 36px;
+
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+
+        border-radius: 9px;
+
+        font-size: 0.72rem;
+        font-weight: 800;
+
+        transition:
+            transform var(--ku-transition),
+            background-color var(--ku-transition);
+    }
+
+    .kucsa-read-btn:hover {
+        transform: translateX(2px);
+    }
+
+    .kucsa-management-button {
+        width: 36px;
+        height: 36px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 0;
+
+        border: 1px solid var(--ku-border);
+        border-radius: 9px;
+
+        color: var(--ku-text);
+        background: #ffffff;
+
+        transition:
+            border-color var(--ku-transition),
+            color var(--ku-transition),
+            background-color var(--ku-transition);
+    }
+
+    .kucsa-management-button:hover {
+        border-color: rgba(13, 110, 253, 0.25);
+        color: var(--ku-primary);
+        background: var(--ku-primary-soft);
+    }
+
+    .kucsa-management-menu {
+        min-width: 190px;
+        padding: 7px;
+
+        border: 1px solid var(--ku-border);
+        border-radius: 12px;
+
+        box-shadow:
+            0 15px 35px rgba(16, 24, 40, 0.12);
+    }
+
+    .kucsa-management-menu .dropdown-item {
+        padding: 8px 10px;
+        border-radius: 7px;
+
+        font-size: 0.76rem;
+    }
+
+    .kucsa-management-menu .dropdown-item:hover {
+        background: var(--ku-soft);
+    }
+
+    .kucsa-management-menu form {
+        margin: 0;
+    }
+
+    /* =========================================================
+       FEATURED SECTION
+       ========================================================= */
+
+    .kucsa-featured-section {
+        margin-bottom: 40px;
+    }
+
+    .kucsa-featured-card {
+        border: 1px solid rgba(255, 193, 7, 0.18);
+    }
+
+    .kucsa-featured-card:hover {
+        border-color: rgba(255, 193, 7, 0.35);
+    }
+
+    /* =========================================================
+       EMPTY STATE
+       ========================================================= */
+
+    .kucsa-empty-state {
+        padding: 65px 25px;
+
+        text-align: center;
+
+        border: 1px solid var(--ku-border);
+        border-radius: var(--ku-radius);
+
+        background: #ffffff;
+        box-shadow: var(--ku-shadow);
+    }
+
+    .kucsa-empty-icon {
+        width: 82px;
+        height: 82px;
+        margin: 0 auto 19px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 24px;
+
+        color: #98a2b3;
+
+        background:
+            linear-gradient(
+                145deg,
+                #f1f5f9,
+                #f8fafc
+            );
+    }
+
+    .kucsa-empty-icon i {
+        font-size: 2.15rem;
+    }
+
+    .kucsa-empty-title {
+        margin: 0 0 7px;
+
+        color: var(--ku-dark);
+        font-size: 1.1rem;
+        font-weight: 800;
+    }
+
+    .kucsa-empty-description {
+        max-width: 500px;
+        margin: 0 auto 20px;
+
+        color: var(--ku-muted);
+        font-size: 0.8rem;
+        line-height: 1.65;
+    }
+
+    .kucsa-empty-actions {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    /* =========================================================
+       FOCUS ACCESSIBILITY
+       ========================================================= */
+
+    .kucsa-announcements-page a:focus-visible,
+    .kucsa-announcements-page button:focus-visible,
+    .kucsa-announcements-page input:focus-visible,
+    .kucsa-announcements-page select:focus-visible {
+        outline: 3px solid rgba(13, 110, 253, 0.18);
+        outline-offset: 2px;
+    }
+
+    /* =========================================================
+       TABLET
+       ========================================================= */
+
+    @media (max-width: 1199.98px) {
+
+        .kucsa-stat-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .kucsa-announcement-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    /* =========================================================
+       SMALL TABLET / LARGE MOBILE
+       ========================================================= */
+
+    @media (max-width: 767.98px) {
+
+        .kucsa-announcements-page {
+            padding: 20px 12px 35px;
+        }
+
+        .kucsa-page-header {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .kucsa-page-header-content {
+            align-items: flex-start;
+        }
+
+        .kucsa-header-actions {
+            width: 100%;
+            justify-content: flex-start;
+        }
+
+        .kucsa-header-actions .btn {
+            flex: 1 1 auto;
+        }
+
+        .kucsa-stat-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .kucsa-stat-card {
+            padding: 14px;
+        }
+
+        .kucsa-stat-value {
+            font-size: 1.2rem;
+        }
+
+        .kucsa-filter-body {
+            padding: 17px;
+        }
+
+        .kucsa-filter-hint {
+            display: none;
+        }
+
+        .kucsa-announcement-grid {
+            gap: 14px;
+        }
+
+        .kucsa-announcement-image-wrapper {
+            height: 175px;
+        }
+
+        .kucsa-section-heading {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+
+    /* =========================================================
+       MOBILE
+       ========================================================= */
+
+    @media (max-width: 575.98px) {
+
+        .kucsa-announcements-page {
+            padding: 14px 8px 28px;
+        }
+
+        .kucsa-page-header {
+            border-radius: 15px;
+            padding: 17px;
+            margin-bottom: 18px;
+        }
+
+        .kucsa-page-header-content {
+            gap: 11px;
+        }
+
+        .kucsa-page-header-icon {
+            width: 45px;
+            height: 45px;
+            flex-basis: 45px;
+            border-radius: 12px;
+        }
+
+        .kucsa-page-header-icon i {
+            font-size: 1.15rem;
+        }
+
+        .kucsa-eyebrow {
+            font-size: 0.65rem;
+        }
+
+        .kucsa-page-title {
+            font-size: 1.42rem;
+        }
+
+        .kucsa-page-description {
+            font-size: 0.77rem;
+        }
+
+        .kucsa-header-actions {
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+
+        .kucsa-header-actions .btn {
+            width: 100%;
+        }
+
+        .kucsa-stat-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .kucsa-stat-label {
+            font-size: 0.61rem;
+        }
+
+        .kucsa-stat-icon {
+            width: 32px;
+            height: 32px;
+            flex-basis: 32px;
+        }
+
+        .kucsa-stat-value {
+            font-size: 1.08rem;
+        }
+
+        .kucsa-filter-card {
+            border-radius: 15px;
+        }
+
+        .kucsa-filter-header {
+            padding: 14px 15px;
+        }
+
+        .kucsa-filter-body {
+            padding: 15px;
+        }
+
+        .kucsa-filter-actions {
+            width: 100%;
+        }
+
+        .kucsa-filter-actions .btn {
+            flex: 1;
+        }
+
+        .kucsa-announcement-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .kucsa-announcement-card {
+            border-radius: 15px;
+        }
+
+        .kucsa-announcement-image-wrapper {
+            height: 200px;
+        }
+
+        .kucsa-announcement-content {
+            padding: 17px;
+        }
+
+        .kucsa-announcement-footer {
+            padding: 0 17px 17px;
+        }
+
+        .kucsa-empty-state {
+            padding: 45px 18px;
+        }
+
+        .kucsa-empty-actions {
+            flex-direction: column;
+        }
+
+        .kucsa-empty-actions .btn {
+            width: 100%;
+        }
+    }
+
+    /* =========================================================
+       VERY SMALL DEVICES
+       ========================================================= */
+
+    @media (max-width: 359.98px) {
+
+        .kucsa-stat-card {
+            padding: 12px;
+        }
+
+        .kucsa-stat-icon {
+            display: none;
+        }
+
+        .kucsa-page-title {
+            font-size: 1.3rem;
+        }
+
+        .kucsa-announcement-image-wrapper {
+            height: 180px;
+        }
+
+        .kucsa-modern-badge {
+            font-size: 0.59rem;
+            padding: 4px 6px;
+        }
+    }
+
+    /* =========================================================
+       REDUCED MOTION
+       ========================================================= */
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .kucsa-announcements-page *,
+        .kucsa-announcements-page *::before,
+        .kucsa-announcements-page *::after {
+            transition-duration: 0.01ms !important;
+            animation-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
     }
 </style>
 
-<div class="container-fluid py-4 px-lg-5">
 
-    <!-- ========================================================= -->
-    <!-- PAGE HEADER -->
-    <!-- ========================================================= -->
-    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4 pb-2 border-bottom">
-        <div>
-            <h2 class="fw-bold mb-1 text-dark">
-                <i class="bi bi-megaphone-fill me-2 text-primary"></i>
-                {{ page_title|default:"Announcements" }}
-            </h2>
-            <p class="text-muted mb-0">
-                Stay updated with the latest KUCSA news, notices, opportunities, and campus events.
-            </p>
-        </div>
+<div class="kucsa-announcements-page">
 
-        {% if can_manage %}
-            <div class="d-flex flex-wrap gap-2">
-                <a href="{% url 'announcements:management' %}" class="btn btn-outline-secondary shadow-sm">
-                    <i class="bi bi-speedometer2 me-1"></i>Management Portal
-                </a>
-                <a href="{% url 'announcements:create' %}" class="btn btn-primary shadow-sm fw-bold">
-                    <i class="bi bi-plus-circle me-1"></i>New Announcement
-                </a>
-            </div>
-        {% endif %}
-    </div>
+    <div class="kucsa-announcements-container">
 
+        <!-- =====================================================
+             PAGE HEADER
+             ===================================================== -->
 
-    <!-- ========================================================= -->
-    <!-- MESSAGES -->
-    <!-- ========================================================= -->
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-info-circle-fill me-2"></i>{{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
+        <header class="kucsa-page-header">
 
+            <div class="kucsa-page-header-content">
 
-    <!-- ========================================================= -->
-    <!-- MANAGEMENT STATISTICS -->
-    <!-- ========================================================= -->
-    {% if can_manage and statistics %}
-        <div class="row g-3 mb-4">
-            <!-- Total -->
-            <div class="col-6 col-md-4 col-xl-2">
-                <div class="card stat-card shadow-sm h-100 bg-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <small class="text-muted d-block fw-semibold">Total</small>
-                                <h4 class="fw-bold mb-0 text-dark">{{ statistics.total|default:0 }}</h4>
-                            </div>
-                            <i class="bi bi-megaphone text-primary fs-3 opacity-75"></i>
-                        </div>
-                    </div>
+                <div class="kucsa-page-header-icon" aria-hidden="true">
+                    <i class="bi bi-megaphone-fill"></i>
                 </div>
-            </div>
 
-            <!-- Drafts -->
-            <div class="col-6 col-md-4 col-xl-2">
-                <div class="card stat-card shadow-sm h-100 bg-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <small class="text-muted d-block fw-semibold">Drafts</small>
-                                <h4 class="fw-bold mb-0 text-secondary">{{ statistics.drafts|default:0 }}</h4>
-                            </div>
-                            <i class="bi bi-file-earmark-text text-secondary fs-3 opacity-75"></i>
-                        </div>
+                <div>
+
+                    <div class="kucsa-eyebrow">
+                        KUCSA Community
                     </div>
+
+                    <h1 class="kucsa-page-title">
+                        {{ page_title|default:"Announcements" }}
+                    </h1>
+
+                    <p class="kucsa-page-description">
+                        Stay informed with the latest KUCSA news, notices,
+                        opportunities, important updates, and campus events.
+                    </p>
+
                 </div>
+
             </div>
 
-            <!-- Published -->
-            <div class="col-6 col-md-4 col-xl-2">
-                <div class="card stat-card shadow-sm h-100 bg-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <small class="text-muted d-block fw-semibold">Published</small>
-                                <h4 class="fw-bold mb-0 text-success">{{ statistics.published|default:0 }}</h4>
-                            </div>
-                            <i class="bi bi-check-circle text-success fs-3 opacity-75"></i>
-                        </div>
-                    </div>
+
+            {% if can_manage %}
+
+                <div class="kucsa-header-actions">
+
+                    <a
+                        href="{% url 'announcements:management' %}"
+                        class="btn btn-outline-secondary kucsa-action-btn"
+                    >
+                        <i class="bi bi-speedometer2 me-1"></i>
+                        Management Portal
+                    </a>
+
+                    <a
+                        href="{% url 'announcements:create' %}"
+                        class="btn btn-primary kucsa-action-btn shadow-sm"
+                    >
+                        <i class="bi bi-plus-circle me-1"></i>
+                        New Announcement
+                    </a>
+
                 </div>
-            </div>
 
-            <!-- Archived -->
-            <div class="col-6 col-md-4 col-xl-2">
-                <div class="card stat-card shadow-sm h-100 bg-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <small class="text-muted d-block fw-semibold">Archived</small>
-                                <h4 class="fw-bold mb-0 text-warning">{{ statistics.archived|default:0 }}</h4>
-                            </div>
-                            <i class="bi bi-archive text-warning fs-3 opacity-75"></i>
-                        </div>
-                    </div>
+            {% endif %}
+
+        </header>
+
+
+        <!-- =====================================================
+             MESSAGES
+             ===================================================== -->
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div
+                    class="alert alert-{{ message.tags|default:'info' }}
+                           alert-dismissible fade show
+                           kucsa-message shadow-sm mb-3"
+                    role="alert"
+                >
+
+                    <i class="bi bi-info-circle-fill me-2"></i>
+
+                    {{ message }}
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Close"
+                    ></button>
+
                 </div>
-            </div>
 
-            <!-- Featured -->
-            <div class="col-6 col-md-4 col-xl-2">
-                <div class="card stat-card shadow-sm h-100 bg-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <small class="text-muted d-block fw-semibold">Featured</small>
-                                <h4 class="fw-bold mb-0 text-warning">{{ statistics.featured|default:0 }}</h4>
-                            </div>
-                            <i class="bi bi-star-fill text-warning fs-3 opacity-75"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Views -->
-            <div class="col-6 col-md-4 col-xl-2">
-                <div class="card stat-card shadow-sm h-100 bg-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <small class="text-muted d-block fw-semibold">Total Views</small>
-                                <h4 class="fw-bold mb-0 text-info">{{ statistics.total_views|default:0 }}</h4>
-                            </div>
-                            <i class="bi bi-eye text-info fs-3 opacity-75"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    {% endif %}
-
-
-    <!-- ========================================================= -->
-    <!-- FILTERS -->
-    <!-- ========================================================= -->
-    {% if form %}
-        <div class="card kucsa-card border-0 shadow-sm mb-4 bg-white">
-            <div class="card-body p-4">
-                <form method="get" action="{% url 'announcements:list' %}">
-                    <div class="row g-3 align-items-end">
-                        <!-- Search -->
-                        <div class="col-12 col-lg-4">
-                            <label for="{{ form.search.id_for_label }}" class="form-label fw-semibold text-secondary">Search</label>
-                            {{ form.search }}
-                        </div>
-
-                        <!-- Type -->
-                        <div class="col-6 col-md-4 col-lg-2">
-                            <label for="{{ form.announcement_type.id_for_label }}" class="form-label fw-semibold text-secondary">Type</label>
-                            {{ form.announcement_type }}
-                        </div>
-
-                        <!-- Priority -->
-                        <div class="col-6 col-md-4 col-lg-2">
-                            <label for="{{ form.priority.id_for_label }}" class="form-label fw-semibold text-secondary">Priority</label>
-                            {{ form.priority }}
-                        </div>
-
-                        <!-- Audience -->
-                        <div class="col-6 col-md-4 col-lg-2">
-                            <label for="{{ form.target_audience.id_for_label }}" class="form-label fw-semibold text-secondary">Audience</label>
-                            {{ form.target_audience }}
-                        </div>
-
-                        <!-- Status -->
-                        {% if can_manage %}
-                            <div class="col-6 col-md-4 col-lg-2">
-                                <label for="{{ form.status.id_for_label }}" class="form-label fw-semibold text-secondary">Status</label>
-                                {{ form.status }}
-                            </div>
-                        {% endif %}
-
-                        <!-- Featured -->
-                        <div class="col-6 col-md-4 col-lg-2">
-                            <label for="{{ form.featured.id_for_label }}" class="form-label fw-semibold text-secondary">Featured</label>
-                            {{ form.featured }}
-                        </div>
-
-                        <!-- Buttons -->
-                        <div class="col-12 col-lg-auto">
-                            <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-primary px-4 shadow-sm fw-bold">
-                                    <i class="bi bi-search me-1"></i>Filter
-                                </button>
-                                <a href="{% url 'announcements:list' %}" class="btn btn-outline-secondary px-3 shadow-sm">
-                                    <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    {% endif %}
-
-
-    <!-- ========================================================= -->
-    <!-- FEATURED ANNOUNCEMENTS SECTION -->
-    <!-- ========================================================= -->
-    {% if featured_announcements and not request.GET %}
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <div>
-                <h4 class="fw-bold mb-1 text-dark">
-                    <i class="bi bi-star-fill text-warning me-2"></i>Featured Announcements
-                </h4>
-                <p class="text-muted small mb-0">High-priority notices handpicked by KUCSA leadership.</p>
-            </div>
-            <a href="{% url 'announcements:featured' %}" class="btn btn-sm btn-outline-primary fw-semibold shadow-sm">
-                View All <i class="bi bi-arrow-right ms-1"></i>
-            </a>
-        </div>
-
-        <div class="row g-4 mb-5">
-            {% for announcement in featured_announcements %}
-                <div class="col-12 col-md-6 col-xl-4">
-                    <div class="card kucsa-card h-100 border-0 shadow-sm bg-white">
-                        {% if announcement.image %}
-                            <img src="{{ announcement.image.url }}" class="announcement-img card-img-top" alt="{{ announcement.title }}">
-                        {% endif %}
-
-                        <div class="card-body p-4">
-                            <div class="d-flex flex-wrap gap-2 mb-3">
-                                <span class="badge bg-warning text-dark fw-semibold">
-                                    <i class="bi bi-star-fill me-1"></i>Featured
-                                </span>
-                                {% if announcement.priority == "URGENT" %}
-                                    <span class="badge bg-danger">Urgent</span>
-                                {% elif announcement.priority == "HIGH" %}
-                                    <span class="badge bg-warning text-dark">High Priority</span>
-                                {% else %}
-                                    <span class="badge bg-primary">{{ announcement.get_priority_display }}</span>
-                                {% endif %}
-                            </div>
-
-                            <h5 class="fw-bold mb-2">
-                                <a href="{% url 'announcements:detail' announcement.pk %}" class="text-decoration-none text-dark stretched-link">
-                                    {{ announcement.title }}
-                                </a>
-                            </h5>
-
-                            {% if announcement.summary %}
-                                <p class="text-muted small mb-0">{{ announcement.summary|truncatewords:22 }}</p>
-                            {% elif announcement.content %}
-                                <p class="text-muted small mb-0">{{ announcement.content|striptags|truncatewords:22 }}</p>
-                            {% endif %}
-                        </div>
-
-                        <div class="card-footer bg-white border-0 px-4 pb-4 pt-0">
-                            <span class="text-primary small fw-bold">Read Full Announcement <i class="bi bi-arrow-right ms-1"></i></span>
-                        </div>
-                    </div>
-                </div>
             {% endfor %}
-        </div>
-    {% endif %}
+
+        {% endif %}
 
 
-    <!-- ========================================================= -->
-    <!-- MAIN ANNOUNCEMENTS GRID -->
-    <!-- ========================================================= -->
-    {% if announcements %}
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
-            <div>
-                <h4 class="fw-bold mb-1 text-dark">
-                    {% if page_title %}{{ page_title }}{% else %}All Announcements{% endif %}
-                </h4>
-                <p class="text-muted small mb-0">
-                    {% if can_manage %}Manage and monitor KUCSA broadcasts.{% else %}Browse notices and community messages.{% endif %}
-                </p>
-            </div>
-            <span class="badge bg-white text-dark border shadow-sm mt-2 mt-md-0 px-3 py-2">
-                <i class="bi bi-megaphone me-1 text-primary"></i>
-                {{ announcements|length }} announcement{{ announcements|length|pluralize }} available
-            </span>
-        </div>
+        <!-- =====================================================
+             MANAGEMENT STATISTICS
+             ===================================================== -->
 
-        <div class="row g-4">
-            {% for announcement in announcements %}
-                <div class="col-12 col-md-6 col-xl-4">
-                    <div class="card kucsa-card h-100 border-0 shadow-sm bg-white overflow-hidden">
-                        
-                        <!-- Image -->
-                        {% if announcement.image %}
-                            <img src="{{ announcement.image.url }}" class="announcement-img card-img-top" alt="{{ announcement.title }}" loading="lazy">
-                        {% endif %}
+        {% if can_manage and statistics %}
 
-                        <!-- Card Header Badges -->
-                        <div class="card-header bg-white border-0 pt-3 px-3 pb-0">
-                            <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
-                                <div class="d-flex flex-wrap gap-1">
-                                    {% if announcement.priority == "URGENT" %}
-                                        <span class="badge bg-danger"><i class="bi bi-exclamation-triangle me-1"></i>Urgent</span>
-                                    {% elif announcement.priority == "HIGH" %}
-                                        <span class="badge bg-warning text-dark"><i class="bi bi-exclamation-circle me-1"></i>High Priority</span>
-                                    {% elif announcement.priority == "LOW" %}
-                                        <span class="badge bg-secondary">Low Priority</span>
-                                    {% else %}
-                                        <span class="badge bg-primary">{{ announcement.get_priority_display }}</span>
-                                    {% endif %}
+            <section
+                class="kucsa-stat-grid"
+                aria-label="Announcement statistics"
+            >
 
-                                    {% if announcement.is_featured %}
-                                        <span class="badge bg-warning text-dark"><i class="bi bi-star-fill me-1"></i>Featured</span>
-                                    {% endif %}
+                <!-- Total -->
+
+                <div class="kucsa-stat-card stat-blue">
+
+                    <div class="kucsa-stat-top">
+
+                        <div>
+                            <span class="kucsa-stat-label">
+                                Total
+                            </span>
+
+                            <h2 class="kucsa-stat-value">
+                                {{ statistics.total|default:0 }}
+                            </h2>
+                        </div>
+
+                        <div class="kucsa-stat-icon">
+                            <i class="bi bi-megaphone"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Drafts -->
+
+                <div class="kucsa-stat-card stat-gray">
+
+                    <div class="kucsa-stat-top">
+
+                        <div>
+                            <span class="kucsa-stat-label">
+                                Drafts
+                            </span>
+
+                            <h2 class="kucsa-stat-value">
+                                {{ statistics.drafts|default:0 }}
+                            </h2>
+                        </div>
+
+                        <div class="kucsa-stat-icon">
+                            <i class="bi bi-file-earmark-text"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Published -->
+
+                <div class="kucsa-stat-card stat-green">
+
+                    <div class="kucsa-stat-top">
+
+                        <div>
+                            <span class="kucsa-stat-label">
+                                Published
+                            </span>
+
+                            <h2 class="kucsa-stat-value">
+                                {{ statistics.published|default:0 }}
+                            </h2>
+                        </div>
+
+                        <div class="kucsa-stat-icon">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Archived -->
+
+                <div class="kucsa-stat-card stat-yellow">
+
+                    <div class="kucsa-stat-top">
+
+                        <div>
+                            <span class="kucsa-stat-label">
+                                Archived
+                            </span>
+
+                            <h2 class="kucsa-stat-value">
+                                {{ statistics.archived|default:0 }}
+                            </h2>
+                        </div>
+
+                        <div class="kucsa-stat-icon">
+                            <i class="bi bi-archive"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Featured -->
+
+                <div class="kucsa-stat-card stat-yellow">
+
+                    <div class="kucsa-stat-top">
+
+                        <div>
+                            <span class="kucsa-stat-label">
+                                Featured
+                            </span>
+
+                            <h2 class="kucsa-stat-value">
+                                {{ statistics.featured|default:0 }}
+                            </h2>
+                        </div>
+
+                        <div class="kucsa-stat-icon">
+                            <i class="bi bi-star-fill"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Views -->
+
+                <div class="kucsa-stat-card stat-cyan">
+
+                    <div class="kucsa-stat-top">
+
+                        <div>
+                            <span class="kucsa-stat-label">
+                                Total Views
+                            </span>
+
+                            <h2 class="kucsa-stat-value">
+                                {{ statistics.total_views|default:0 }}
+                            </h2>
+                        </div>
+
+                        <div class="kucsa-stat-icon">
+                            <i class="bi bi-eye"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             FILTERS
+             ===================================================== -->
+
+        {% if form %}
+
+            <section class="kucsa-filter-card">
+
+                <div class="kucsa-filter-header">
+
+                    <h2 class="kucsa-filter-title">
+                        <i class="bi bi-funnel-fill"></i>
+                        Find Announcements
+                    </h2>
+
+                    <span class="kucsa-filter-hint">
+                        Refine the announcements displayed below
+                    </span>
+
+                </div>
+
+
+                <div class="kucsa-filter-body">
+
+                    <form
+                        method="get"
+                        action="{% url 'announcements:list' %}"
+                        id="announcementFilterForm"
+                    >
+
+                        <div class="row g-3 align-items-end">
+
+                            <!-- Search -->
+
+                            <div class="col-12 col-lg-4">
+
+                                <label
+                                    for="{{ form.search.id_for_label }}"
+                                    class="form-label"
+                                >
+                                    Search
+                                </label>
+
+                                {{ form.search }}
+
+                            </div>
+
+
+                            <!-- Type -->
+
+                            <div class="col-6 col-md-4 col-lg-2">
+
+                                <label
+                                    for="{{ form.announcement_type.id_for_label }}"
+                                    class="form-label"
+                                >
+                                    Type
+                                </label>
+
+                                {{ form.announcement_type }}
+
+                            </div>
+
+
+                            <!-- Priority -->
+
+                            <div class="col-6 col-md-4 col-lg-2">
+
+                                <label
+                                    for="{{ form.priority.id_for_label }}"
+                                    class="form-label"
+                                >
+                                    Priority
+                                </label>
+
+                                {{ form.priority }}
+
+                            </div>
+
+
+                            <!-- Audience -->
+
+                            <div class="col-6 col-md-4 col-lg-2">
+
+                                <label
+                                    for="{{ form.target_audience.id_for_label }}"
+                                    class="form-label"
+                                >
+                                    Audience
+                                </label>
+
+                                {{ form.target_audience }}
+
+                            </div>
+
+
+                            <!-- Status -->
+
+                            {% if can_manage %}
+
+                                <div class="col-6 col-md-4 col-lg-2">
+
+                                    <label
+                                        for="{{ form.status.id_for_label }}"
+                                        class="form-label"
+                                    >
+                                        Status
+                                    </label>
+
+                                    {{ form.status }}
+
                                 </div>
 
-                                <!-- Status Badge -->
-                                {% if announcement.status == "PUBLISHED" %}
-                                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Published</span>
-                                {% elif announcement.status == "DRAFT" %}
-                                    <span class="badge bg-secondary"><i class="bi bi-file-earmark me-1"></i>Draft</span>
-                                {% elif announcement.status == "ARCHIVED" %}
-                                    <span class="badge bg-dark"><i class="bi bi-archive me-1"></i>Archived</span>
-                                {% else %}
-                                    <span class="badge bg-secondary">{{ announcement.get_status_display }}</span>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <!-- Card Body -->
-                        <div class="card-body px-3 pt-2">
-                            <div class="small text-muted mb-2 fw-semibold">
-                                <i class="bi bi-tag me-1 text-primary"></i>{{ announcement.get_announcement_type_display }}
-                            </div>
-
-                            <h5 class="card-title fw-bold mb-2">
-                                <a href="{% url 'announcements:detail' announcement.pk %}" class="text-decoration-none text-dark">
-                                    {{ announcement.title }}
-                                </a>
-                            </h5>
-
-                            {% if announcement.summary %}
-                                <p class="text-muted small mb-3">{{ announcement.summary|truncatewords:20 }}</p>
-                            {% elif announcement.content %}
-                                <p class="text-muted small mb-3">{{ announcement.content|striptags|truncatewords:20 }}</p>
                             {% endif %}
 
-                            <div class="small text-muted border-top pt-2">
-                                <div class="mb-1"><i class="bi bi-people me-1 text-secondary"></i>{{ announcement.get_target_audience_display }}</div>
-                                {% if announcement.created_by %}
-                                    <div class="mb-1"><i class="bi bi-person me-1 text-secondary"></i>{{ announcement.created_by.get_full_name|default:announcement.created_by.username }}</div>
-                                {% endif %}
-                                {% if announcement.published_at %}
-                                    <div class="mb-1"><i class="bi bi-calendar-check me-1 text-secondary"></i>Published {{ announcement.published_at|date:"d M Y, H:i" }}</div>
-                                {% else %}
-                                    <div class="mb-1"><i class="bi bi-calendar3 me-1 text-secondary"></i>Created {{ announcement.created_at|date:"d M Y, H:i" }}</div>
-                                {% endif %}
-                                <div><i class="bi bi-eye me-1 text-secondary"></i>{{ announcement.view_count|default:0 }} view{{ announcement.view_count|default:0|pluralize }}</div>
+
+                            <!-- Featured -->
+
+                            <div class="col-6 col-md-4 col-lg-2">
+
+                                <label
+                                    for="{{ form.featured.id_for_label }}"
+                                    class="form-label"
+                                >
+                                    Featured
+                                </label>
+
+                                {{ form.featured }}
+
                             </div>
+
+
+                            <!-- Buttons -->
+
+                            <div class="col-12 col-lg-auto">
+
+                                <div class="kucsa-filter-actions">
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary px-4"
+                                        id="announcementFilterButton"
+                                    >
+                                        <i class="bi bi-search me-1"></i>
+                                        Filter
+                                    </button>
+
+                                    <a
+                                        href="{% url 'announcements:list' %}"
+                                        class="btn btn-outline-secondary px-3"
+                                    >
+                                        <i class="bi bi-arrow-counterclockwise me-1"></i>
+                                        Reset
+                                    </a>
+
+                                </div>
+
+                            </div>
+
                         </div>
 
-                        <!-- Card Footer actions -->
-                        <div class="card-footer bg-white border-0 px-3 pb-3 pt-0">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <a href="{% url 'announcements:detail' announcement.pk %}" class="btn btn-outline-primary btn-sm shadow-sm fw-semibold">
-                                    Read More <i class="bi bi-arrow-right ms-1"></i>
-                                </a>
+                    </form>
 
-                                {% if can_manage %}
-                                    <div class="dropdown">
-                                        <button class="btn btn-light btn-sm border shadow-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Announcement actions">
-                                            <i class="bi bi-three-dots-vertical"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                                            <li>
-                                                <a class="dropdown-item" href="{% url 'announcements:edit' announcement.pk %}">
-                                                    <i class="bi bi-pencil me-2 text-primary"></i>Edit
-                                                </a>
-                                            </li>
+                </div>
 
-                                            {% if announcement.status != "PUBLISHED" %}
-                                                <li>
-                                                    <form method="post" action="{% url 'announcements:publish' announcement.pk %}">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="published_at" value="">
-                                                        <button type="submit" class="dropdown-item">
-                                                            <i class="bi bi-send me-2 text-success"></i>Publish
-                                                        </button>
-                                                    </form>
-                                                </li>
-                                            {% endif %}
+            </section>
 
-                                            {% if announcement.status == "PUBLISHED" %}
-                                                <li>
-                                                    <form method="post" action="{% url 'announcements:unpublish' announcement.pk %}">
-                                                        {% csrf_token %}
-                                                        <button type="submit" class="dropdown-item">
-                                                            <i class="bi bi-arrow-down-circle me-2 text-warning"></i>Unpublish
-                                                        </button>
-                                                    </form>
-                                                </li>
-                                            {% endif %}
+        {% endif %}
 
-                                            {% if announcement.status == "PUBLISHED" and not announcement.is_featured %}
-                                                <li>
-                                                    <form method="post" action="{% url 'announcements:feature' announcement.pk %}">
-                                                        {% csrf_token %}
-                                                        <button type="submit" class="dropdown-item">
-                                                            <i class="bi bi-star me-2 text-warning"></i>Feature
-                                                        </button>
-                                                    </form>
-                                                </li>
-                                            {% endif %}
 
-                                            {% if announcement.is_featured %}
-                                                <li>
-                                                    <form method="post" action="{% url 'announcements:unfeature' announcement.pk %}">
-                                                        {% csrf_token %}
-                                                        <button type="submit" class="dropdown-item">
-                                                            <i class="bi bi-star-fill me-2 text-warning"></i>Remove Feature
-                                                        </button>
-                                                    </form>
-                                                </li>
-                                            {% endif %}
+        <!-- =====================================================
+             FEATURED ANNOUNCEMENTS
+             ===================================================== -->
 
-                                            {% if announcement.status != "ARCHIVED" %}
-                                                <li>
-                                                    <form method="post" action="{% url 'announcements:archive' announcement.pk %}">
-                                                        {% csrf_token %}
-                                                        <button type="submit" class="dropdown-item">
-                                                            <i class="bi bi-archive me-2 text-secondary"></i>Archive
-                                                        </button>
-                                                    </form>
-                                                </li>
-                                            {% endif %}
+        {% if featured_announcements and not request.GET %}
 
-                                            {% if announcement.status == "ARCHIVED" %}
-                                                <li>
-                                                    <form method="post" action="{% url 'announcements:restore' announcement.pk %}">
-                                                        {% csrf_token %}
-                                                        <button type="submit" class="dropdown-item">
-                                                            <i class="bi bi-arrow-counterclockwise me-2 text-success"></i>Restore
-                                                        </button>
-                                                    </form>
-                                                </li>
-                                            {% endif %}
+            <section class="kucsa-featured-section">
 
-                                            <li><hr class="dropdown-divider"></li>
+                <div class="kucsa-section-heading">
 
-                                            <li>
-                                                <form method="post" action="{% url 'announcements:delete' announcement.pk %}" onsubmit="return confirm('Are you sure you want to permanently delete this announcement?');">
-                                                    {% csrf_token %}
-                                                    <button type="submit" class="dropdown-item text-danger">
-                                                        <i class="bi bi-trash me-2"></i>Delete
-                                                    </button>
-                                                </form>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
+                    <div class="kucsa-section-heading-main">
+
+                        <h2 class="kucsa-section-title">
+
+                            <i class="bi bi-star-fill text-warning"></i>
+
+                            Featured Announcements
+
+                        </h2>
+
+                        <p class="kucsa-section-description">
+                            Important notices and updates highlighted by KUCSA leadership.
+                        </p>
 
                     </div>
-                </div>
-            {% endfor %}
-        </div>
 
-    {% else %}
-        <!-- ===================================================== -->
-        <!-- EMPTY STATE -->
-        <!-- ===================================================== -->
-        <div class="card kucsa-card border-0 shadow-sm bg-white">
-            <div class="card-body text-center py-5">
-                <div class="mb-3 d-inline-block p-4 bg-light rounded-circle text-muted">
-                    <i class="bi bi-megaphone display-4"></i>
+                    <a
+                        href="{% url 'announcements:featured' %}"
+                        class="btn btn-sm btn-outline-primary fw-semibold"
+                    >
+                        View All
+                        <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+
                 </div>
-                <h4 class="fw-bold mt-2 text-dark">No Announcements Found</h4>
-                <p class="text-muted mb-4">
+
+
+                <div class="kucsa-announcement-grid">
+
+                    {% for announcement in featured_announcements %}
+
+                        <article
+                            class="kucsa-announcement-card kucsa-featured-card"
+                        >
+
+                            <!-- Image -->
+
+                            {% if announcement.image %}
+
+                                <div class="kucsa-announcement-image-wrapper">
+
+                                    <img
+                                        src="{{ announcement.image.url }}"
+                                        class="kucsa-announcement-image"
+                                        alt="{{ announcement.title }}"
+                                        loading="lazy"
+                                    >
+
+                                    <div class="kucsa-image-overlay"></div>
+
+                                    <div class="kucsa-card-badges">
+
+                                        <div class="kucsa-badge-group">
+
+                                            <span class="kucsa-modern-badge kucsa-badge-featured">
+                                                <i class="bi bi-star-fill"></i>
+                                                Featured
+                                            </span>
+
+                                            {% if announcement.priority == "URGENT" %}
+
+                                                <span class="kucsa-modern-badge kucsa-badge-urgent">
+                                                    Urgent
+                                                </span>
+
+                                            {% elif announcement.priority == "HIGH" %}
+
+                                                <span class="kucsa-modern-badge kucsa-badge-high">
+                                                    High Priority
+                                                </span>
+
+                                            {% else %}
+
+                                                <span class="kucsa-modern-badge kucsa-badge-normal">
+                                                    {{ announcement.get_priority_display }}
+                                                </span>
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            {% else %}
+
+                                <div class="kucsa-announcement-no-image">
+
+                                    <i class="bi bi-megaphone-fill"></i>
+
+                                </div>
+
+                            {% endif %}
+
+
+                            <!-- Content -->
+
+                            <div class="kucsa-announcement-content">
+
+                                {% if not announcement.image %}
+
+                                    <div class="kucsa-card-badges position-static mb-2">
+
+                                        <div class="kucsa-badge-group">
+
+                                            <span class="kucsa-modern-badge kucsa-badge-featured">
+                                                <i class="bi bi-star-fill"></i>
+                                                Featured
+                                            </span>
+
+                                            {% if announcement.priority == "URGENT" %}
+
+                                                <span class="kucsa-modern-badge kucsa-badge-urgent">
+                                                    Urgent
+                                                </span>
+
+                                            {% elif announcement.priority == "HIGH" %}
+
+                                                <span class="kucsa-modern-badge kucsa-badge-high">
+                                                    High Priority
+                                                </span>
+
+                                            {% else %}
+
+                                                <span class="kucsa-modern-badge kucsa-badge-normal">
+                                                    {{ announcement.get_priority_display }}
+                                                </span>
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    </div>
+
+                                {% endif %}
+
+
+                                <div class="kucsa-announcement-type">
+
+                                    <i class="bi bi-tag-fill"></i>
+
+                                    {{ announcement.get_announcement_type_display }}
+
+                                </div>
+
+
+                                <h3 class="kucsa-announcement-title">
+
+                                    <a
+                                        href="{% url 'announcements:detail' announcement.pk %}"
+                                    >
+                                        {{ announcement.title }}
+                                    </a>
+
+                                </h3>
+
+
+                                {% if announcement.summary %}
+
+                                    <p class="kucsa-announcement-summary">
+                                        {{ announcement.summary|truncatewords:22 }}
+                                    </p>
+
+                                {% elif announcement.content %}
+
+                                    <p class="kucsa-announcement-summary">
+                                        {{ announcement.content|striptags|truncatewords:22 }}
+                                    </p>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="kucsa-announcement-footer">
+
+                                <a
+                                    href="{% url 'announcements:detail' announcement.pk %}"
+                                    class="btn btn-outline-primary kucsa-read-btn"
+                                >
+                                    Read Full Announcement
+                                    <i class="bi bi-arrow-right"></i>
+                                </a>
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             MAIN ANNOUNCEMENTS
+             ===================================================== -->
+
+        {% if announcements %}
+
+            <section>
+
+                <div class="kucsa-section-heading">
+
+                    <div class="kucsa-section-heading-main">
+
+                        <h2 class="kucsa-section-title">
+
+                            <i class="bi bi-megaphone-fill text-primary"></i>
+
+                            {% if page_title %}
+                                {{ page_title }}
+                            {% else %}
+                                All Announcements
+                            {% endif %}
+
+                        </h2>
+
+                        <p class="kucsa-section-description">
+
+                            {% if can_manage %}
+                                Manage, publish, and monitor KUCSA community broadcasts.
+                            {% else %}
+                                Browse the latest notices and community messages.
+                            {% endif %}
+
+                        </p>
+
+                    </div>
+
+
+                    <span class="kucsa-count-badge">
+
+                        <i class="bi bi-megaphone text-primary"></i>
+
+                        {{ announcements|length }}
+                        announcement{{ announcements|length|pluralize }}
+
+                    </span>
+
+                </div>
+
+
+                <div class="kucsa-announcement-grid">
+
+                    {% for announcement in announcements %}
+
+                        <article class="kucsa-announcement-card">
+
+                            <!-- =================================================
+                                 IMAGE
+                                 ================================================= -->
+
+                            {% if announcement.image %}
+
+                                <div class="kucsa-announcement-image-wrapper">
+
+                                    <img
+                                        src="{{ announcement.image.url }}"
+                                        class="kucsa-announcement-image"
+                                        alt="{{ announcement.title }}"
+                                        loading="lazy"
+                                    >
+
+                                    <div class="kucsa-image-overlay"></div>
+
+                                    <!-- Badges -->
+
+                                    <div class="kucsa-card-badges">
+
+                                        <div class="kucsa-badge-group">
+
+                                            {% if announcement.priority == "URGENT" %}
+
+                                                <span class="kucsa-modern-badge kucsa-badge-urgent">
+                                                    <i class="bi bi-exclamation-triangle-fill"></i>
+                                                    Urgent
+                                                </span>
+
+                                            {% elif announcement.priority == "HIGH" %}
+
+                                                <span class="kucsa-modern-badge kucsa-badge-high">
+                                                    <i class="bi bi-exclamation-circle-fill"></i>
+                                                    High
+                                                </span>
+
+                                            {% elif announcement.priority == "LOW" %}
+
+                                                <span class="kucsa-modern-badge kucsa-badge-low">
+                                                    Low
+                                                </span>
+
+                                            {% else %}
+
+                                                <span class="kucsa-modern-badge kucsa-badge-normal">
+                                                    {{ announcement.get_priority_display }}
+                                                </span>
+
+                                            {% endif %}
+
+
+                                            {% if announcement.is_featured %}
+
+                                                <span class="kucsa-modern-badge kucsa-badge-featured">
+                                                    <i class="bi bi-star-fill"></i>
+                                                    Featured
+                                                </span>
+
+                                            {% endif %}
+
+                                        </div>
+
+
+                                        <!-- Status -->
+
+                                        {% if announcement.status == "PUBLISHED" %}
+
+                                            <span class="kucsa-modern-badge kucsa-badge-published">
+                                                Published
+                                            </span>
+
+                                        {% elif announcement.status == "DRAFT" %}
+
+                                            <span class="kucsa-modern-badge kucsa-badge-draft">
+                                                Draft
+                                            </span>
+
+                                        {% elif announcement.status == "ARCHIVED" %}
+
+                                            <span class="kucsa-modern-badge kucsa-badge-archived">
+                                                Archived
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="kucsa-modern-badge kucsa-badge-draft">
+                                                {{ announcement.get_status_display }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+                            {% endif %}
+
+
+                            <!-- =================================================
+                                 CONTENT
+                                 ================================================= -->
+
+                            <div class="kucsa-announcement-content">
+
+                                {% if not announcement.image %}
+
+                                    <!-- Badges for cards without images -->
+
+                                    <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+
+                                        <div class="kucsa-badge-group">
+
+                                            {% if announcement.priority == "URGENT" %}
+
+                                                <span class="kucsa-modern-badge kucsa-badge-urgent">
+                                                    <i class="bi bi-exclamation-triangle-fill"></i>
+                                                    Urgent
+                                                </span>
+
+                                            {% elif announcement.priority == "HIGH" %}
+
+                                                <span class="kucsa-modern-badge kucsa-badge-high">
+                                                    <i class="bi bi-exclamation-circle-fill"></i>
+                                                    High
+                                                </span>
+
+                                            {% elif announcement.priority == "LOW" %}
+
+                                                <span class="kucsa-modern-badge kucsa-badge-low">
+                                                    Low
+                                                </span>
+
+                                            {% else %}
+
+                                                <span class="kucsa-modern-badge kucsa-badge-normal">
+                                                    {{ announcement.get_priority_display }}
+                                                </span>
+
+                                            {% endif %}
+
+
+                                            {% if announcement.is_featured %}
+
+                                                <span class="kucsa-modern-badge kucsa-badge-featured">
+                                                    <i class="bi bi-star-fill"></i>
+                                                </span>
+
+                                            {% endif %}
+
+                                        </div>
+
+
+                                        {% if announcement.status == "PUBLISHED" %}
+
+                                            <span class="kucsa-modern-badge kucsa-badge-published">
+                                                Published
+                                            </span>
+
+                                        {% elif announcement.status == "DRAFT" %}
+
+                                            <span class="kucsa-modern-badge kucsa-badge-draft">
+                                                Draft
+                                            </span>
+
+                                        {% elif announcement.status == "ARCHIVED" %}
+
+                                            <span class="kucsa-modern-badge kucsa-badge-archived">
+                                                Archived
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="kucsa-modern-badge kucsa-badge-draft">
+                                                {{ announcement.get_status_display }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                {% endif %}
+
+
+                                <!-- Type -->
+
+                                <div class="kucsa-announcement-type">
+
+                                    <i class="bi bi-tag-fill"></i>
+
+                                    {{ announcement.get_announcement_type_display }}
+
+                                </div>
+
+
+                                <!-- Title -->
+
+                                <h3 class="kucsa-announcement-title">
+
+                                    <a
+                                        href="{% url 'announcements:detail' announcement.pk %}"
+                                    >
+                                        {{ announcement.title }}
+                                    </a>
+
+                                </h3>
+
+
+                                <!-- Summary -->
+
+                                {% if announcement.summary %}
+
+                                    <p class="kucsa-announcement-summary">
+                                        {{ announcement.summary|truncatewords:20 }}
+                                    </p>
+
+                                {% elif announcement.content %}
+
+                                    <p class="kucsa-announcement-summary">
+                                        {{ announcement.content|striptags|truncatewords:20 }}
+                                    </p>
+
+                                {% endif %}
+
+
+                                <!-- Metadata -->
+
+                                <div class="kucsa-announcement-meta">
+
+                                    <!-- Audience -->
+
+                                    <div class="kucsa-meta-item">
+
+                                        <i class="bi bi-people-fill"></i>
+
+                                        <span>
+                                            {{ announcement.get_target_audience_display }}
+                                        </span>
+
+                                    </div>
+
+
+                                    <!-- Creator -->
+
+                                    {% if announcement.created_by %}
+
+                                        <div class="kucsa-meta-item">
+
+                                            <i class="bi bi-person-fill"></i>
+
+                                            <span>
+                                                {{ announcement.created_by.get_full_name|default:announcement.created_by.username }}
+                                            </span>
+
+                                        </div>
+
+                                    {% endif %}
+
+
+                                    <!-- Published / Created -->
+
+                                    {% if announcement.published_at %}
+
+                                        <div class="kucsa-meta-item">
+
+                                            <i class="bi bi-calendar-check-fill"></i>
+
+                                            <span>
+                                                Published
+                                                {{ announcement.published_at|date:"d M Y, H:i" }}
+                                            </span>
+
+                                        </div>
+
+                                    {% else %}
+
+                                        <div class="kucsa-meta-item">
+
+                                            <i class="bi bi-calendar3"></i>
+
+                                            <span>
+                                                Created
+                                                {{ announcement.created_at|date:"d M Y, H:i" }}
+                                            </span>
+
+                                        </div>
+
+                                    {% endif %}
+
+
+                                    <!-- Views -->
+
+                                    <div class="kucsa-meta-item">
+
+                                        <i class="bi bi-eye-fill"></i>
+
+                                        <span>
+                                            {{ announcement.view_count|default:0 }}
+                                            view{{ announcement.view_count|default:0|pluralize }}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- =================================================
+                                 FOOTER
+                                 ================================================= -->
+
+                            <div class="kucsa-announcement-footer">
+
+                                <a
+                                    href="{% url 'announcements:detail' announcement.pk %}"
+                                    class="btn btn-outline-primary kucsa-read-btn"
+                                >
+                                    Read More
+                                    <i class="bi bi-arrow-right"></i>
+                                </a>
+
+
+                                {% if can_manage %}
+
+                                    <div class="dropdown">
+
+                                        <button
+                                            class="kucsa-management-button"
+                                            type="button"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false"
+                                            aria-label="Announcement actions"
+                                        >
+                                            <i class="bi bi-three-dots"></i>
+                                        </button>
+
+
+                                        <ul class="dropdown-menu dropdown-menu-end kucsa-management-menu">
+
+
+                                            <!-- Edit -->
+
+                                            <li>
+
+                                                <a
+                                                    class="dropdown-item"
+                                                    href="{% url 'announcements:edit' announcement.pk %}"
+                                                >
+
+                                                    <i class="bi bi-pencil me-2 text-primary"></i>
+
+                                                    Edit
+
+                                                </a>
+
+                                            </li>
+
+
+                                            <!-- Publish -->
+
+                                            {% if announcement.status != "PUBLISHED" %}
+
+                                                <li>
+
+                                                    <form
+                                                        method="post"
+                                                        action="{% url 'announcements:publish' announcement.pk %}"
+                                                    >
+
+                                                        {% csrf_token %}
+
+                                                        <input
+                                                            type="hidden"
+                                                            name="published_at"
+                                                            value=""
+                                                        >
+
+                                                        <button
+                                                            type="submit"
+                                                            class="dropdown-item"
+                                                        >
+
+                                                            <i class="bi bi-send me-2 text-success"></i>
+
+                                                            Publish
+
+                                                        </button>
+
+                                                    </form>
+
+                                                </li>
+
+                                            {% endif %}
+
+
+                                            <!-- Unpublish -->
+
+                                            {% if announcement.status == "PUBLISHED" %}
+
+                                                <li>
+
+                                                    <form
+                                                        method="post"
+                                                        action="{% url 'announcements:unpublish' announcement.pk %}"
+                                                    >
+
+                                                        {% csrf_token %}
+
+                                                        <button
+                                                            type="submit"
+                                                            class="dropdown-item"
+                                                        >
+
+                                                            <i class="bi bi-arrow-down-circle me-2 text-warning"></i>
+
+                                                            Unpublish
+
+                                                        </button>
+
+                                                    </form>
+
+                                                </li>
+
+                                            {% endif %}
+
+
+                                            <!-- Feature -->
+
+                                            {% if announcement.status == "PUBLISHED" and not announcement.is_featured %}
+
+                                                <li>
+
+                                                    <form
+                                                        method="post"
+                                                        action="{% url 'announcements:feature' announcement.pk %}"
+                                                    >
+
+                                                        {% csrf_token %}
+
+                                                        <button
+                                                            type="submit"
+                                                            class="dropdown-item"
+                                                        >
+
+                                                            <i class="bi bi-star me-2 text-warning"></i>
+
+                                                            Feature
+
+                                                        </button>
+
+                                                    </form>
+
+                                                </li>
+
+                                            {% endif %}
+
+
+                                            <!-- Remove Feature -->
+
+                                            {% if announcement.is_featured %}
+
+                                                <li>
+
+                                                    <form
+                                                        method="post"
+                                                        action="{% url 'announcements:unfeature' announcement.pk %}"
+                                                    >
+
+                                                        {% csrf_token %}
+
+                                                        <button
+                                                            type="submit"
+                                                            class="dropdown-item"
+                                                        >
+
+                                                            <i class="bi bi-star-fill me-2 text-warning"></i>
+
+                                                            Remove Feature
+
+                                                        </button>
+
+                                                    </form>
+
+                                                </li>
+
+                                            {% endif %}
+
+
+                                            <!-- Archive -->
+
+                                            {% if announcement.status != "ARCHIVED" %}
+
+                                                <li>
+
+                                                    <form
+                                                        method="post"
+                                                        action="{% url 'announcements:archive' announcement.pk %}"
+                                                    >
+
+                                                        {% csrf_token %}
+
+                                                        <button
+                                                            type="submit"
+                                                            class="dropdown-item"
+                                                        >
+
+                                                            <i class="bi bi-archive me-2 text-secondary"></i>
+
+                                                            Archive
+
+                                                        </button>
+
+                                                    </form>
+
+                                                </li>
+
+                                            {% endif %}
+
+
+                                            <!-- Restore -->
+
+                                            {% if announcement.status == "ARCHIVED" %}
+
+                                                <li>
+
+                                                    <form
+                                                        method="post"
+                                                        action="{% url 'announcements:restore' announcement.pk %}"
+                                                    >
+
+                                                        {% csrf_token %}
+
+                                                        <button
+                                                            type="submit"
+                                                            class="dropdown-item"
+                                                        >
+
+                                                            <i class="bi bi-arrow-counterclockwise me-2 text-success"></i>
+
+                                                            Restore
+
+                                                        </button>
+
+                                                    </form>
+
+                                                </li>
+
+                                            {% endif %}
+
+
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+
+
+                                            <!-- Delete -->
+
+                                            <li>
+
+                                                <form
+                                                    method="post"
+                                                    action="{% url 'announcements:delete' announcement.pk %}"
+                                                    class="kucsa-delete-form"
+                                                >
+
+                                                    {% csrf_token %}
+
+                                                    <button
+                                                        type="submit"
+                                                        class="dropdown-item text-danger"
+                                                    >
+
+                                                        <i class="bi bi-trash me-2"></i>
+
+                                                        Delete
+
+                                                    </button>
+
+                                                </form>
+
+                                            </li>
+
+                                        </ul>
+
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+
+        {% else %}
+
+            <!-- =====================================================
+                 EMPTY STATE
+                 ===================================================== -->
+
+            <section class="kucsa-empty-state">
+
+                <div class="kucsa-empty-icon">
+
+                    <i class="bi bi-megaphone"></i>
+
+                </div>
+
+
+                <h2 class="kucsa-empty-title">
+                    No Announcements Found
+                </h2>
+
+
+                <p class="kucsa-empty-description">
+
                     {% if request.GET %}
-                        No announcements match your current filter parameters. Try broadening your criteria.
+
+                        No announcements match your current filter
+                        parameters. Try broadening your search or
+                        clearing some filters.
+
                     {% else %}
-                        There are currently no active announcements published on the KUCSA platform.
+
+                        There are currently no active announcements
+                        available on the KUCSA platform.
+
                     {% endif %}
+
                 </p>
 
-                <div class="d-flex justify-content-center gap-2">
+
+                <div class="kucsa-empty-actions">
+
                     {% if request.GET %}
-                        <a href="{% url 'announcements:list' %}" class="btn btn-outline-secondary shadow-sm">
-                            <i class="bi bi-arrow-counterclockwise me-1"></i>Clear Filters
+
+                        <a
+                            href="{% url 'announcements:list' %}"
+                            class="btn btn-outline-secondary"
+                        >
+                            <i class="bi bi-arrow-counterclockwise me-1"></i>
+                            Clear Filters
                         </a>
+
                     {% endif %}
 
+
                     {% if can_manage %}
-                        <a href="{% url 'announcements:create' %}" class="btn btn-primary shadow-sm fw-bold">
-                            <i class="bi bi-plus-circle me-1"></i>Create Announcement
+
+                        <a
+                            href="{% url 'announcements:create' %}"
+                            class="btn btn-primary fw-bold"
+                        >
+                            <i class="bi bi-plus-circle me-1"></i>
+                            Create Announcement
                         </a>
+
                     {% endif %}
+
                 </div>
-            </div>
-        </div>
-    {% endif %}
+
+            </section>
+
+        {% endif %}
+
+    </div>
 
 </div>
 
-<!-- Inline JavaScript Component to Auto-Format Filter Fields -->
+
+<!-- =============================================================
+     INLINE JAVASCRIPT
+     ============================================================= -->
+
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const filterInputs = document.querySelectorAll('form input[type="text"], form select');
-        filterInputs.forEach(input => {
-            if (!input.classList.contains('form-control') && !input.classList.contains('form-select')) {
-                if (input.tagName.toLowerCase() === 'select') {
-                    input.classList.add('form-select');
-                } else {
-                    input.classList.add('form-control');
+    document.addEventListener("DOMContentLoaded", function () {
+
+        /* =========================================================
+           AUTO-FORMAT DJANGO FILTER FIELDS
+           ========================================================= */
+
+        const filterInputs = document.querySelectorAll(
+            "#announcementFilterForm input, #announcementFilterForm select"
+        );
+
+        filterInputs.forEach(function (input) {
+
+            if (input.tagName.toLowerCase() === "select") {
+
+                if (!input.classList.contains("form-select")) {
+                    input.classList.add("form-select");
                 }
+
+            } else {
+
+                if (!input.classList.contains("form-control")) {
+                    input.classList.add("form-control");
+                }
+
             }
+
         });
+
+
+        /* =========================================================
+           SEARCH FIELD
+           ========================================================= */
+
+        const searchInput = document.querySelector(
+            "#announcementFilterForm input[type='text'], " +
+            "#announcementFilterForm input[type='search']"
+        );
+
+        if (searchInput) {
+
+            if (!searchInput.getAttribute("placeholder")) {
+
+                searchInput.setAttribute(
+                    "placeholder",
+                    "Search announcements..."
+                );
+
+            }
+
+            searchInput.setAttribute(
+                "autocomplete",
+                "off"
+            );
+
+        }
+
+
+        /* =========================================================
+           FILTER SUBMISSION FEEDBACK
+           ========================================================= */
+
+        const filterForm = document.getElementById(
+            "announcementFilterForm"
+        );
+
+        const filterButton = document.getElementById(
+            "announcementFilterButton"
+        );
+
+        if (filterForm && filterButton) {
+
+            filterForm.addEventListener("submit", function () {
+
+                if (filterForm.dataset.submitting === "true") {
+                    return;
+                }
+
+                filterForm.dataset.submitting = "true";
+
+                filterButton.disabled = true;
+
+                filterButton.innerHTML =
+                    '<span class="spinner-border spinner-border-sm me-1" ' +
+                    'role="status" aria-hidden="true"></span>' +
+                    'Filtering...';
+
+            });
+
+        }
+
+
+        /* =========================================================
+           MANAGEMENT DELETE CONFIRMATION
+           ========================================================= */
+
+        const deleteForms = document.querySelectorAll(
+            ".kucsa-delete-form"
+        );
+
+        deleteForms.forEach(function (deleteForm) {
+
+            deleteForm.addEventListener("submit", function (event) {
+
+                const confirmed = window.confirm(
+                    "Are you sure you want to permanently delete this announcement? This action cannot be undone."
+                );
+
+                if (!confirmed) {
+                    event.preventDefault();
+                    return;
+                }
+
+                const button = deleteForm.querySelector(
+                    "button[type='submit']"
+                );
+
+                if (button) {
+
+                    button.disabled = true;
+
+                    button.innerHTML =
+                        '<span class="spinner-border spinner-border-sm me-2" ' +
+                        'role="status" aria-hidden="true"></span>' +
+                        'Deleting...';
+
+                }
+
+            });
+
+        });
+
+
+        /* =========================================================
+           MANAGEMENT FORM SUBMISSION FEEDBACK
+           ========================================================= */
+
+        const managementForms = document.querySelectorAll(
+            ".kucsa-management-menu form:not(.kucsa-delete-form)"
+        );
+
+        managementForms.forEach(function (managementForm) {
+
+            managementForm.addEventListener("submit", function () {
+
+                const button = managementForm.querySelector(
+                    "button[type='submit']"
+                );
+
+                if (!button) {
+                    return;
+                }
+
+                button.disabled = true;
+
+                const originalText = button.innerText.trim();
+
+                button.innerHTML =
+                    '<span class="spinner-border spinner-border-sm me-2" ' +
+                    'role="status" aria-hidden="true"></span>' +
+                    'Processing...';
+
+            });
+
+        });
+
+
+        /* =========================================================
+           CLOSE OPEN DROPDOWN ON ESCAPE
+           ========================================================= */
+
+        document.addEventListener("keydown", function (event) {
+
+            if (event.key !== "Escape") {
+                return;
+            }
+
+            const openDropdowns = document.querySelectorAll(
+                ".kucsa-management-menu.show"
+            );
+
+            openDropdowns.forEach(function (menu) {
+
+                const toggle = menu.parentElement.querySelector(
+                    "[data-bs-toggle='dropdown']"
+                );
+
+                if (toggle && window.bootstrap) {
+
+                    const dropdown =
+                        bootstrap.Dropdown.getInstance(toggle) ||
+                        new bootstrap.Dropdown(toggle);
+
+                    dropdown.hide();
+
+                }
+
+            });
+
+        });
+
+
+        /* =========================================================
+           IMAGE ERROR HANDLING
+           ========================================================= */
+
+        const announcementImages = document.querySelectorAll(
+            ".kucsa-announcement-image"
+        );
+
+        announcementImages.forEach(function (image) {
+
+            image.addEventListener("error", function () {
+
+                const wrapper =
+                    image.closest(
+                        ".kucsa-announcement-image-wrapper"
+                    );
+
+                if (!wrapper) {
+                    return;
+                }
+
+                image.style.display = "none";
+
+                const fallback =
+                    document.createElement("div");
+
+                fallback.className =
+                    "kucsa-announcement-no-image";
+
+                fallback.innerHTML =
+                    '<i class="bi bi-megaphone-fill" aria-hidden="true"></i>';
+
+                wrapper.appendChild(fallback);
+
+            });
+
+        });
+
+
+        /* =========================================================
+           PAGE RESTORATION
+           ========================================================= */
+
+        window.addEventListener("pageshow", function () {
+
+            if (filterForm) {
+                filterForm.dataset.submitting = "false";
+            }
+
+            if (filterButton) {
+
+                filterButton.disabled = false;
+
+                filterButton.innerHTML =
+                    '<i class="bi bi-search me-1"></i>Filter';
+
+            }
+
+        });
+
     });
 </script>
 

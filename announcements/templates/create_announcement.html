@@ -7,194 +7,1528 @@
 {% block content %}
 
 <style>
-    :root {
-        --kucsa-primary: #0d6efd;
-        --kucsa-primary-hover: #0b5ed7;
-        --kucsa-bg-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    /* =========================================================
+       KUCSA CREATE ANNOUNCEMENT
+       All styling is scoped to this page.
+       ========================================================= */
+
+    .kucsa-create-announcement {
+        --ku-primary: #0d6efd;
+        --ku-primary-dark: #0b5ed7;
+        --ku-primary-soft: rgba(13, 110, 253, 0.08);
+
+        --ku-success: #198754;
+        --ku-warning: #ffc107;
+        --ku-danger: #dc3545;
+
+        --ku-dark: #172033;
+        --ku-text: #273142;
+        --ku-muted: #6c757d;
+        --ku-border: #e5eaf0;
+
+        --ku-surface: #ffffff;
+        --ku-soft: #f7f9fc;
+        --ku-soft-blue: #f4f8ff;
+
+        --ku-radius: 20px;
+        --ku-radius-md: 14px;
+        --ku-radius-sm: 10px;
+
+        --ku-shadow: 0 18px 50px rgba(22, 34, 51, 0.08);
+        --ku-shadow-hover: 0 24px 65px rgba(22, 34, 51, 0.13);
+
+        --ku-transition: 180ms ease;
+
+        width: 100%;
+        min-width: 0;
+        padding: 28px 0 55px;
+
+        color: var(--ku-text);
     }
 
-    body {
-        background: var(--kucsa-bg-gradient);
+
+    /* =========================================================
+       PAGE WIDTH
+       ========================================================= */
+
+    .kucsa-create-announcement .ku-page-shell {
+        width: min(1050px, calc(100% - 32px));
+        margin: 0 auto;
     }
 
-    .kucsa-card {
-        border-radius: 1rem;
-        transition: all 0.2s ease-in-out;
+
+    /* =========================================================
+       BACK BUTTON
+       ========================================================= */
+
+    .kucsa-create-announcement .ku-back-area {
+        margin-bottom: 22px;
     }
 
-    .form-control, .form-select {
-        padding: 0.75rem 1rem;
-        font-size: 0.95rem;
-        border-radius: 0.50rem;
-        border: 1px solid #ced4da;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    .kucsa-create-announcement .ku-back-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+
+        min-height: 42px;
+        padding: 9px 16px;
+
+        border: 1px solid var(--ku-border);
+        border-radius: 10px;
+
+        background: rgba(255, 255, 255, 0.94);
+        color: var(--ku-text);
+
+        font-size: 0.88rem;
+        font-weight: 700;
+
+        box-shadow: 0 6px 18px rgba(22, 34, 51, 0.05);
+
+        transition:
+            transform var(--ku-transition),
+            color var(--ku-transition),
+            border-color var(--ku-transition),
+            box-shadow var(--ku-transition);
     }
 
-    .form-control:focus, .form-select:focus {
-        border-color: var(--kucsa-primary);
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    .kucsa-create-announcement .ku-back-btn:hover {
+        transform: translateY(-1px);
+        color: var(--ku-primary);
+        border-color: rgba(13, 110, 253, 0.25);
+        box-shadow: 0 9px 24px rgba(22, 34, 51, 0.08);
     }
 
-    textarea.form-control {
-        min-height: 150px;
+
+    /* =========================================================
+       MAIN CARD
+       ========================================================= */
+
+    .kucsa-create-announcement .ku-create-card {
+        overflow: hidden;
+
+        border: 1px solid rgba(229, 234, 240, 0.95);
+        border-radius: var(--ku-radius);
+
+        background: var(--ku-surface);
+
+        box-shadow: var(--ku-shadow);
+
+        transition: box-shadow var(--ku-transition);
+    }
+
+    .kucsa-create-announcement .ku-create-card:hover {
+        box-shadow: var(--ku-shadow-hover);
+    }
+
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+
+    .kucsa-create-announcement .ku-create-header {
+        position: relative;
+        overflow: hidden;
+
+        padding: 32px 38px;
+
+        background:
+            radial-gradient(
+                circle at 100% 0%,
+                rgba(255, 255, 255, 0.20),
+                transparent 30%
+            ),
+            radial-gradient(
+                circle at 0% 100%,
+                rgba(255, 255, 255, 0.10),
+                transparent 28%
+            ),
+            linear-gradient(
+                135deg,
+                #0d6efd 0%,
+                #0b5ed7 55%,
+                #084298 100%
+            );
+
+        color: #fff;
+    }
+
+    .kucsa-create-announcement .ku-create-header::before {
+        content: "";
+
+        position: absolute;
+        width: 230px;
+        height: 230px;
+
+        right: -90px;
+        top: -125px;
+
+        border-radius: 50%;
+
+        background: rgba(255, 255, 255, 0.07);
+
+        pointer-events: none;
+    }
+
+    .kucsa-create-announcement .ku-create-header::after {
+        content: "";
+
+        position: absolute;
+        width: 150px;
+        height: 150px;
+
+        left: 36%;
+        bottom: -120px;
+
+        border-radius: 50%;
+
+        border: 1px solid rgba(255, 255, 255, 0.08);
+
+        pointer-events: none;
+    }
+
+    .kucsa-create-announcement .ku-header-content {
+        position: relative;
+        z-index: 1;
+
+        display: flex;
+        align-items: center;
+        gap: 17px;
+    }
+
+    .kucsa-create-announcement .ku-header-icon {
+        flex: 0 0 58px;
+
+        width: 58px;
+        height: 58px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 16px;
+
+        background: rgba(255, 255, 255, 0.13);
+
+        font-size: 1.45rem;
+
+        box-shadow:
+            0 8px 25px rgba(0, 0, 0, 0.10);
+    }
+
+    .kucsa-create-announcement .ku-eyebrow {
+        margin-bottom: 5px;
+
+        color: rgba(255, 255, 255, 0.78);
+
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    .kucsa-create-announcement .ku-create-title {
+        margin: 0;
+
+        color: #fff;
+
+        font-size: clamp(1.55rem, 3vw, 2.1rem);
+        font-weight: 800;
+        line-height: 1.2;
+        letter-spacing: -0.025em;
+    }
+
+    .kucsa-create-announcement .ku-create-subtitle {
+        max-width: 720px;
+        margin: 6px 0 0;
+
+        color: rgba(255, 255, 255, 0.82);
+
+        font-size: 0.91rem;
+        line-height: 1.6;
+    }
+
+
+    /* =========================================================
+       FORM BODY
+       ========================================================= */
+
+    .kucsa-create-announcement .ku-form-body {
+        padding: 36px 38px 32px;
+    }
+
+
+    /* =========================================================
+       ERROR SUMMARY
+       ========================================================= */
+
+    .kucsa-create-announcement .ku-error-summary {
+        display: flex;
+        align-items: flex-start;
+        gap: 13px;
+
+        margin-bottom: 28px;
+        padding: 16px;
+
+        border: 1px solid rgba(220, 53, 69, 0.18);
+        border-radius: 13px;
+
+        background: rgba(220, 53, 69, 0.055);
+        color: var(--ku-text);
+    }
+
+    .kucsa-create-announcement .ku-error-icon {
+        flex: 0 0 auto;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 38px;
+        height: 38px;
+
+        border-radius: 10px;
+
+        background: rgba(220, 53, 69, 0.10);
+        color: var(--ku-danger);
+    }
+
+
+    /* =========================================================
+       FORM FIELD
+       ========================================================= */
+
+    .kucsa-create-announcement .ku-form-field {
+        margin-bottom: 24px;
+    }
+
+    .kucsa-create-announcement .ku-field-label {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+
+        margin-bottom: 8px;
+
+        color: var(--ku-dark);
+
+        font-size: 0.86rem;
+        font-weight: 750;
+    }
+
+    .kucsa-create-announcement .ku-field-label .ku-required {
+        color: var(--ku-danger);
+        font-size: 0.9rem;
+        font-weight: 800;
+    }
+
+
+    /* =========================================================
+       DJANGO GENERATED FORM CONTROLS
+       ========================================================= */
+
+    .kucsa-create-announcement input.form-control,
+    .kucsa-create-announcement textarea.form-control,
+    .kucsa-create-announcement select.form-select {
+        width: 100%;
+
+        min-height: 46px;
+        padding: 10px 13px;
+
+        border: 1px solid #dce2e9;
+        border-radius: 11px;
+
+        background-color: #fff;
+        color: var(--ku-text);
+
+        font-size: 0.91rem;
+        line-height: 1.5;
+
+        transition:
+            border-color var(--ku-transition),
+            box-shadow var(--ku-transition),
+            background-color var(--ku-transition),
+            transform var(--ku-transition);
+    }
+
+    .kucsa-create-announcement input.form-control:hover,
+    .kucsa-create-announcement textarea.form-control:hover,
+    .kucsa-create-announcement select.form-select:hover {
+        border-color: #c8d0da;
+    }
+
+    .kucsa-create-announcement input.form-control:focus,
+    .kucsa-create-announcement textarea.form-control:focus,
+    .kucsa-create-announcement select.form-select:focus {
+        border-color: rgba(13, 110, 253, 0.65);
+
+        box-shadow:
+            0 0 0 0.22rem rgba(13, 110, 253, 0.10);
+
+        outline: none;
+    }
+
+    .kucsa-create-announcement textarea.form-control {
+        min-height: 190px;
+        resize: vertical;
+        line-height: 1.7;
+    }
+
+    .kucsa-create-announcement input[type="file"].form-control {
+        min-height: 48px;
+        padding: 8px 10px;
+        cursor: pointer;
+    }
+
+    .kucsa-create-announcement input[type="file"].form-control::file-selector-button {
+        margin-right: 10px;
+
+        padding: 7px 12px;
+
+        border: 0;
+        border-radius: 8px;
+
+        background: var(--ku-primary-soft);
+        color: var(--ku-primary);
+
+        font-size: 0.82rem;
+        font-weight: 700;
+
+        cursor: pointer;
+
+        transition: background var(--ku-transition);
+    }
+
+    .kucsa-create-announcement input[type="file"].form-control:hover::file-selector-button {
+        background: rgba(13, 110, 253, 0.14);
+    }
+
+
+    /* =========================================================
+       CHECKBOXES / SWITCHES
+       ========================================================= */
+
+    .kucsa-create-announcement .form-check {
+        min-height: 46px;
+
+        display: flex;
+        align-items: center;
+        gap: 9px;
+
+        margin-top: 5px;
+        margin-bottom: 5px;
+
+        padding: 11px 13px;
+
+        border: 1px solid var(--ku-border);
+        border-radius: 11px;
+
+        background: var(--ku-soft);
+
+        transition:
+            border-color var(--ku-transition),
+            background var(--ku-transition);
+    }
+
+    .kucsa-create-announcement .form-check:hover {
+        border-color: rgba(13, 110, 253, 0.25);
+        background: var(--ku-soft-blue);
+    }
+
+    .kucsa-create-announcement .form-check-input {
+        width: 1.1rem;
+        height: 1.1rem;
+
+        margin: 0;
+
+        flex: 0 0 auto;
+
+        cursor: pointer;
+    }
+
+    .kucsa-create-announcement .form-check-label {
+        margin: 0;
+
+        color: var(--ku-text);
+
+        font-size: 0.86rem;
+        font-weight: 600;
+
+        cursor: pointer;
+    }
+
+
+    /* =========================================================
+       HELP TEXT
+       ========================================================= */
+
+    .kucsa-create-announcement .form-text {
+        display: block;
+
+        margin-top: 7px;
+
+        color: var(--ku-muted) !important;
+
+        font-size: 0.76rem;
+        line-height: 1.55;
+    }
+
+
+    /* =========================================================
+       FIELD ERRORS
+       ========================================================= */
+
+    .kucsa-create-announcement .ku-field-errors {
+        margin-top: 8px;
+    }
+
+    .kucsa-create-announcement .ku-field-error {
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+
+        margin-top: 4px;
+
+        color: var(--ku-danger);
+
+        font-size: 0.78rem;
+        line-height: 1.5;
+    }
+
+    .kucsa-create-announcement .ku-has-error input,
+    .kucsa-create-announcement .ku-has-error textarea,
+    .kucsa-create-announcement .ku-has-error select {
+        border-color: rgba(220, 53, 69, 0.55) !important;
+    }
+
+
+    /* =========================================================
+       PUBLISHING GUIDANCE
+       ========================================================= */
+
+    .kucsa-create-announcement .ku-guidance {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+
+        margin: 30px 0;
+
+        padding: 17px;
+
+        border: 1px solid rgba(13, 110, 253, 0.12);
+        border-radius: 14px;
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(13, 110, 253, 0.055),
+                rgba(13, 110, 253, 0.015)
+            );
+    }
+
+    .kucsa-create-announcement .ku-guidance-icon {
+        flex: 0 0 40px;
+
+        width: 40px;
+        height: 40px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 11px;
+
+        background: var(--ku-primary-soft);
+        color: var(--ku-primary);
+
+        font-size: 1.15rem;
+    }
+
+    .kucsa-create-announcement .ku-guidance-title {
+        margin: 0 0 4px;
+
+        color: var(--ku-dark);
+
+        font-size: 0.88rem;
+        font-weight: 800;
+    }
+
+    .kucsa-create-announcement .ku-guidance-text {
+        margin: 0;
+
+        color: var(--ku-muted);
+
+        font-size: 0.78rem;
+        line-height: 1.6;
+    }
+
+
+    /* =========================================================
+       FORM FOOTER
+       ========================================================= */
+
+    .kucsa-create-announcement .ku-form-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+
+        padding-top: 25px;
+
+        border-top: 1px solid var(--ku-border);
+    }
+
+    .kucsa-create-announcement .ku-form-footer .btn {
+        min-height: 45px;
+        border-radius: 10px;
+
+        font-size: 0.87rem;
+        font-weight: 750;
+    }
+
+    .kucsa-create-announcement .ku-submit-btn {
+        min-width: 205px;
+    }
+
+
+    /* =========================================================
+       LOADING STATE
+       ========================================================= */
+
+    .kucsa-create-announcement .ku-submit-loading {
+        pointer-events: none;
+        opacity: 0.78;
+    }
+
+    .kucsa-create-announcement .ku-spinner {
+        display: inline-block;
+
+        width: 0.9rem;
+        height: 0.9rem;
+
+        margin-right: 7px;
+
+        border: 2px solid currentColor;
+        border-right-color: transparent;
+
+        border-radius: 50%;
+
+        vertical-align: -2px;
+
+        animation: ku-create-spin 0.65s linear infinite;
+    }
+
+    @keyframes ku-create-spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+
+    /* =========================================================
+       FOCUS ACCESSIBILITY
+       ========================================================= */
+
+    .kucsa-create-announcement a:focus-visible,
+    .kucsa-create-announcement button:focus-visible,
+    .kucsa-create-announcement input:focus-visible,
+    .kucsa-create-announcement textarea:focus-visible,
+    .kucsa-create-announcement select:focus-visible {
+        outline: 3px solid rgba(13, 110, 253, 0.25);
+        outline-offset: 2px;
+    }
+
+
+    /* =========================================================
+       LARGE TABLETS
+       ========================================================= */
+
+    @media (max-width: 991.98px) {
+
+        .kucsa-create-announcement {
+            padding-top: 22px;
+        }
+
+        .kucsa-create-announcement .ku-create-header {
+            padding: 28px;
+        }
+
+        .kucsa-create-announcement .ku-form-body {
+            padding: 30px 28px;
+        }
+    }
+
+
+    /* =========================================================
+       TABLETS / MOBILE
+       ========================================================= */
+
+    @media (max-width: 767.98px) {
+
+        .kucsa-create-announcement {
+            padding: 18px 0 40px;
+        }
+
+        .kucsa-create-announcement .ku-page-shell {
+            width: min(100% - 22px, 680px);
+        }
+
+        .kucsa-create-announcement .ku-create-card {
+            border-radius: 16px;
+        }
+
+        .kucsa-create-announcement .ku-create-header {
+            padding: 24px 20px;
+        }
+
+        .kucsa-create-announcement .ku-header-content {
+            align-items: flex-start;
+            gap: 13px;
+        }
+
+        .kucsa-create-announcement .ku-header-icon {
+            flex-basis: 50px;
+            width: 50px;
+            height: 50px;
+
+            border-radius: 13px;
+            font-size: 1.2rem;
+        }
+
+        .kucsa-create-announcement .ku-create-title {
+            font-size: 1.5rem;
+        }
+
+        .kucsa-create-announcement .ku-create-subtitle {
+            font-size: 0.84rem;
+        }
+
+        .kucsa-create-announcement .ku-form-body {
+            padding: 25px 20px;
+        }
+
+        .kucsa-create-announcement .ku-form-footer {
+            flex-direction: column-reverse;
+            align-items: stretch;
+        }
+
+        .kucsa-create-announcement .ku-form-footer .btn,
+        .kucsa-create-announcement .ku-submit-btn {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .kucsa-create-announcement .ku-guidance {
+            padding: 14px;
+        }
+    }
+
+
+    /* =========================================================
+       SMALL PHONES
+       ========================================================= */
+
+    @media (max-width: 575.98px) {
+
+        .kucsa-create-announcement .ku-page-shell {
+            width: calc(100% - 16px);
+        }
+
+        .kucsa-create-announcement .ku-back-area {
+            margin-bottom: 14px;
+        }
+
+        .kucsa-create-announcement .ku-back-btn {
+            width: 100%;
+        }
+
+        .kucsa-create-announcement .ku-create-header {
+            padding: 20px 16px;
+        }
+
+        .kucsa-create-announcement .ku-header-content {
+            gap: 11px;
+        }
+
+        .kucsa-create-announcement .ku-header-icon {
+            flex-basis: 44px;
+            width: 44px;
+            height: 44px;
+
+            border-radius: 11px;
+            font-size: 1rem;
+        }
+
+        .kucsa-create-announcement .ku-create-title {
+            font-size: 1.3rem;
+        }
+
+        .kucsa-create-announcement .ku-create-subtitle {
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+
+        .kucsa-create-announcement .ku-form-body {
+            padding: 22px 16px;
+        }
+
+        .kucsa-create-announcement .ku-form-field {
+            margin-bottom: 21px;
+        }
+
+        .kucsa-create-announcement input.form-control,
+        .kucsa-create-announcement textarea.form-control,
+        .kucsa-create-announcement select.form-select {
+            font-size: 0.88rem;
+        }
+
+        .kucsa-create-announcement textarea.form-control {
+            min-height: 170px;
+        }
+
+        .kucsa-create-announcement .ku-guidance {
+            gap: 10px;
+        }
+
+        .kucsa-create-announcement .ku-guidance-icon {
+            flex-basis: 35px;
+            width: 35px;
+            height: 35px;
+            font-size: 1rem;
+        }
+
+        .kucsa-create-announcement .ku-error-summary {
+            padding: 13px;
+        }
+    }
+
+
+    /* =========================================================
+       VERY SMALL DEVICES
+       ========================================================= */
+
+    @media (max-width: 359.98px) {
+
+        .kucsa-create-announcement .ku-page-shell {
+            width: calc(100% - 12px);
+        }
+
+        .kucsa-create-announcement .ku-create-header {
+            padding: 18px 13px;
+        }
+
+        .kucsa-create-announcement .ku-form-body {
+            padding: 20px 13px;
+        }
+
+        .kucsa-create-announcement .ku-create-title {
+            font-size: 1.2rem;
+        }
+    }
+
+
+    /* =========================================================
+       REDUCED MOTION
+       ========================================================= */
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .kucsa-create-announcement *,
+        .kucsa-create-announcement *::before,
+        .kucsa-create-announcement *::after {
+            transition-duration: 0.01ms !important;
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+        }
     }
 </style>
 
-<div class="container py-4">
 
-    <div class="mb-4">
-        <a href="{% url 'announcements:list' %}" class="btn btn-outline-secondary btn-sm shadow-sm px-3">
-            <i class="bi bi-arrow-left me-1"></i>Back to Announcements
-        </a>
-    </div>
+<div class="kucsa-create-announcement">
+
+    <div class="ku-page-shell">
+
+        <!-- =====================================================
+             BACK NAVIGATION
+             ====================================================== -->
+
+        <div class="ku-back-area">
+            <a
+                href="{% url 'announcements:list' %}"
+                class="ku-back-btn"
+            >
+                <i class="bi bi-arrow-left"></i>
+                <span>Back to Announcements</span>
+            </a>
+        </div>
 
 
-    <div class="row justify-content-center">
-        <div class="col-12 col-xl-9">
+        <!-- =====================================================
+             MAIN CREATE CARD
+             ====================================================== -->
 
-            <div class="card kucsa-card border-0 shadow-lg bg-white overflow-hidden">
+        <div class="ku-create-card">
 
-                <div class="card-header bg-white border-0 p-4 p-md-5 pb-0">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 56px; height: 56px;">
-                            <i class="bi bi-megaphone-fill fs-4"></i>
-                        </div>
-                        <div>
-                            <h3 class="fw-bold mb-1 text-dark">
-                                Create Announcement
-                            </h3>
-                            <p class="text-muted small mb-0">
-                                Broadcast important notices, news, or opportunities to KUCSA members.
-                            </p>
-                        </div>
+            <!-- =================================================
+                 HEADER
+                 ================================================== -->
+
+            <header class="ku-create-header">
+
+                <div class="ku-header-content">
+
+                    <div class="ku-header-icon">
+                        <i class="bi bi-megaphone-fill"></i>
                     </div>
-                </div>
 
-                <div class="card-body p-4 p-md-5">
+                    <div>
 
-                    <form method="post" enctype="multipart/form-data" novalidate id="kucsaCreateAnnouncementForm">
-
-                        {% csrf_token %}
-
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-exclamation-triangle-fill fs-4 me-2"></i>
-                                    <div>
-                                        <strong>Please check the form below:</strong>
-                                        <div class="mt-1 small">{{ form.non_field_errors }}</div>
-                                    </div>
-                                </div>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        {% endif %}
-
-
-                        {% for field in form %}
-                            <div class="mb-4">
-
-                                <label for="{{ field.id_for_label }}" class="form-label fw-semibold text-dark">
-                                    <i class="bi bi-dot text-primary fs-5"></i>{{ field.label }}
-                                    {% if field.field.required %}
-                                        <span class="text-danger" title="Required field">*</span>
-                                    {% endif %}
-                                </label>
-
-                                {{ field }}
-
-                                {% if field.help_text %}
-                                    <div class="form-text small text-muted mt-1">
-                                        <i class="bi bi-info-circle me-1"></i>{{ field.help_text }}
-                                    </div>
-                                {% endif %}
-
-                                {% if field.errors %}
-                                    <div class="text-danger small mt-2">
-                                        {% for error in field.errors %}
-                                            <div class="d-flex align-items-center">
-                                                <i class="bi bi-exclamation-circle me-1"></i>
-                                                <span>{{ error }}</span>
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-
-                            </div>
-                        {% endfor %}
-
-
-                        <div class="alert alert-light border shadow-sm my-4 rounded-3 p-3">
-                            <div class="d-flex align-items-start gap-3">
-                                <div class="text-primary fs-4 mt-1">
-                                    <i class="bi bi-lightbulb-fill"></i>
-                                </div>
-                                <div>
-                                    <h6 class="fw-bold mb-1 text-dark">Publishing Best Practices</h6>
-                                    <p class="small text-muted mb-0">
-                                        Ensure your target audience and priority level are correctly configured so members receive timely notifications according to your intentions.
-                                    </p>
-                                </div>
-                            </div>
+                        <div class="ku-eyebrow">
+                            KUCSA Communications
                         </div>
 
+                        <h1 class="ku-create-title">
+                            Create Announcement
+                        </h1>
 
-                        <div class="d-flex flex-column flex-sm-row justify-content-between gap-3 mt-4 pt-4 border-top">
-                            <a href="{% url 'announcements:list' %}" class="btn btn-outline-secondary px-4 shadow-sm">
-                                <i class="bi bi-x-circle me-1"></i>Cancel
-                            </a>
+                        <p class="ku-create-subtitle">
+                            Broadcast important notices, news, opportunities,
+                            and updates to KUCSA members.
+                        </p>
 
-                            <button type="submit" class="btn btn-primary px-5 shadow-sm fw-bold py-2">
-                                <i class="bi bi-check-circle-fill me-2"></i>Publish Announcement
-                            </button>
-                        </div>
-
-                    </form>
+                    </div>
 
                 </div>
+
+            </header>
+
+
+            <!-- =================================================
+                 FORM BODY
+                 ================================================== -->
+
+            <div class="ku-form-body">
+
+                <form
+                    method="post"
+                    enctype="multipart/form-data"
+                    novalidate
+                    id="kucsaCreateAnnouncementForm"
+                >
+
+                    {% csrf_token %}
+
+
+                    <!-- =========================================
+                         FORM ERRORS
+                         ========================================== -->
+
+                    {% if form.non_field_errors %}
+
+                        <div
+                            class="ku-error-summary"
+                            role="alert"
+                        >
+
+                            <div class="ku-error-icon">
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                            </div>
+
+                            <div>
+
+                                <strong class="d-block mb-1">
+                                    Please check the form below
+                                </strong>
+
+                                <div class="small text-muted">
+                                    {{ form.non_field_errors }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- =========================================
+                         DYNAMIC DJANGO FORM
+                         ========================================== -->
+
+                    {% for field in form %}
+
+                        <div
+                            class="ku-form-field {% if field.errors %}ku-has-error{% endif %}"
+                            data-field-wrapper
+                        >
+
+                            <label
+                                for="{{ field.id_for_label }}"
+                                class="ku-field-label"
+                            >
+
+                                <i
+                                    class="bi bi-dot text-primary"
+                                    aria-hidden="true"
+                                ></i>
+
+                                <span>
+                                    {{ field.label }}
+                                </span>
+
+                                {% if field.field.required %}
+                                    <span
+                                        class="ku-required"
+                                        title="Required field"
+                                        aria-label="Required"
+                                    >
+                                        *
+                                    </span>
+                                {% endif %}
+
+                            </label>
+
+
+                            {{ field }}
+
+
+                            {% if field.help_text %}
+
+                                <div class="form-text">
+
+                                    <i
+                                        class="bi bi-info-circle me-1"
+                                        aria-hidden="true"
+                                    ></i>
+
+                                    {{ field.help_text }}
+
+                                </div>
+
+                            {% endif %}
+
+
+                            {% if field.errors %}
+
+                                <div class="ku-field-errors">
+
+                                    {% for error in field.errors %}
+
+                                        <div class="ku-field-error">
+
+                                            <i
+                                                class="bi bi-exclamation-circle"
+                                                aria-hidden="true"
+                                            ></i>
+
+                                            <span>
+                                                {{ error }}
+                                            </span>
+
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    {% endfor %}
+
+
+                    <!-- =========================================
+                         PUBLISHING GUIDANCE
+                         ========================================== -->
+
+                    <div class="ku-guidance">
+
+                        <div class="ku-guidance-icon">
+                            <i
+                                class="bi bi-lightbulb-fill"
+                                aria-hidden="true"
+                            ></i>
+                        </div>
+
+                        <div>
+
+                            <h2 class="ku-guidance-title">
+                                Publishing Best Practices
+                            </h2>
+
+                            <p class="ku-guidance-text">
+                                Before publishing, make sure the announcement
+                                title, target audience, priority level, and
+                                publication details are correct. Clear and
+                                accurate announcements help KUCSA members
+                                understand important information quickly.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         FORM ACTIONS
+                         ========================================== -->
+
+                    <div class="ku-form-footer">
+
+                        <a
+                            href="{% url 'announcements:list' %}"
+                            class="btn btn-outline-secondary px-4"
+                        >
+                            <i class="bi bi-x-circle me-1"></i>
+                            Cancel
+                        </a>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary ku-submit-btn px-5"
+                            id="kucsaCreateSubmit"
+                        >
+                            <i
+                                class="bi bi-check-circle-fill me-2"
+                                aria-hidden="true"
+                            ></i>
+
+                            <span class="ku-submit-label">
+                                Publish Announcement
+                            </span>
+
+                        </button>
+
+                    </div>
+
+                </form>
 
             </div>
 
         </div>
+
     </div>
 
 </div>
 
+
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Automatically inject Bootstrap classes into rendered Django form elements
-        const textInputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="url"], input[type="number"], input[type="password"], input[type="datetime-local"], input[type="date"]');
-        const textAreas = document.querySelectorAll('textarea');
-        const selectInputs = document.querySelectorAll('select');
-        const fileInputs = document.querySelectorAll('input[type="file"]');
-        const checkboxInputs = document.querySelectorAll('input[type="checkbox"]');
+document.addEventListener("DOMContentLoaded", function () {
 
-        textInputs.forEach(el => {
-            if (!el.classList.contains('form-control')) el.classList.add('form-control');
-        });
+    /* =========================================================
+       FORM REFERENCES
+       ========================================================= */
 
-        textAreas.forEach(el => {
-            if (!el.classList.contains('form-control')) el.classList.add('form-control');
-        });
+    const page = document.querySelector(
+        ".kucsa-create-announcement"
+    );
 
-        selectInputs.forEach(el => {
-            if (!el.classList.contains('form-select')) el.classList.add('form-select');
-        });
+    const form = document.getElementById(
+        "kucsaCreateAnnouncementForm"
+    );
 
-        fileInputs.forEach(el => {
-            if (!el.classList.contains('form-control')) el.classList.add('form-control');
-        });
+    const submitButton = document.getElementById(
+        "kucsaCreateSubmit"
+    );
 
-        checkboxInputs.forEach(el => {
-            if (!el.classList.contains('form-check-input')) {
-                el.classList.add('form-check-input');
-                // Wrap in form-check div structure if not already styled by parent template
-                const parent = el.parentNode;
-                if (parent && !parent.classList.contains('form-check')) {
-                    parent.classList.add('form-check', 'form-switch', 'my-2');
-                }
-            }
-        });
+
+    if (!page || !form) {
+        return;
+    }
+
+
+    /* =========================================================
+       BOOTSTRAP FORM CONTROL ENHANCEMENT
+       Only affects controls inside this announcement form.
+       ========================================================= */
+
+    const textInputs = form.querySelectorAll(
+        'input[type="text"],' +
+        'input[type="email"],' +
+        'input[type="url"],' +
+        'input[type="number"],' +
+        'input[type="password"],' +
+        'input[type="datetime-local"],' +
+        'input[type="date"],' +
+        'input[type="time"]'
+    );
+
+    const textAreas = form.querySelectorAll("textarea");
+    const selectInputs = form.querySelectorAll("select");
+    const fileInputs = form.querySelectorAll('input[type="file"]');
+    const checkboxInputs = form.querySelectorAll(
+        'input[type="checkbox"]'
+    );
+
+
+    textInputs.forEach(function (element) {
+
+        if (
+            !element.classList.contains("form-control") &&
+            !element.classList.contains("form-check-input")
+        ) {
+            element.classList.add("form-control");
+        }
+
     });
+
+
+    textAreas.forEach(function (element) {
+
+        if (!element.classList.contains("form-control")) {
+            element.classList.add("form-control");
+        }
+
+    });
+
+
+    selectInputs.forEach(function (element) {
+
+        if (!element.classList.contains("form-select")) {
+            element.classList.add("form-select");
+        }
+
+    });
+
+
+    fileInputs.forEach(function (element) {
+
+        if (!element.classList.contains("form-control")) {
+            element.classList.add("form-control");
+        }
+
+    });
+
+
+    /* =========================================================
+       CHECKBOX ENHANCEMENT
+       ========================================================= */
+
+    checkboxInputs.forEach(function (checkbox) {
+
+        checkbox.classList.add("form-check-input");
+
+        const parent = checkbox.parentElement;
+
+        if (
+            parent &&
+            !parent.classList.contains("form-check")
+        ) {
+            parent.classList.add("form-check");
+        }
+
+    });
+
+
+    /* =========================================================
+       ADD ACCESSIBLE AUTOCOMPLETE / INPUT ATTRIBUTES
+       ========================================================= */
+
+    form.querySelectorAll(
+        'input[type="email"]'
+    ).forEach(function (input) {
+        input.setAttribute("autocomplete", "email");
+    });
+
+
+    /* =========================================================
+       FILE INPUT FEEDBACK
+       Shows the selected file name naturally using the browser
+       input itself without introducing new backend fields.
+       ========================================================= */
+
+    fileInputs.forEach(function (input) {
+
+        input.addEventListener("change", function () {
+
+            const wrapper = input.closest(
+                "[data-field-wrapper]"
+            );
+
+            if (!wrapper) {
+                return;
+            }
+
+            const existingFeedback =
+                wrapper.querySelector(
+                    "[data-file-feedback]"
+                );
+
+            if (existingFeedback) {
+                existingFeedback.remove();
+            }
+
+            if (!input.files || !input.files.length) {
+                return;
+            }
+
+            const file = input.files[0];
+
+            const feedback =
+                document.createElement("div");
+
+            feedback.setAttribute(
+                "data-file-feedback",
+                "true"
+            );
+
+            feedback.className =
+                "small text-success mt-2";
+
+            feedback.innerHTML =
+                '<i class="bi bi-check-circle me-1"></i>' +
+                'Selected: ' +
+                '<span class="fw-semibold"></span>';
+
+            feedback.querySelector("span").textContent =
+                file.name;
+
+            input.insertAdjacentElement(
+                "afterend",
+                feedback
+            );
+
+        });
+
+    });
+
+
+    /* =========================================================
+       CLIENT-SIDE IMAGE TYPE CHECK
+       Server-side validation remains authoritative.
+       ========================================================= */
+
+    fileInputs.forEach(function (input) {
+
+        input.addEventListener("change", function () {
+
+            if (!input.files || !input.files.length) {
+                return;
+            }
+
+            const file = input.files[0];
+
+            /*
+             * Only display a warning for obviously unsupported
+             * image files. The server remains responsible for
+             * final validation.
+             */
+            if (
+                file.type &&
+                file.type.startsWith("image/") &&
+                ![
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp",
+                    "image/gif"
+                ].includes(file.type)
+            ) {
+
+                const wrapper = input.closest(
+                    "[data-field-wrapper]"
+                );
+
+                if (wrapper) {
+
+                    const warning =
+                        document.createElement("div");
+
+                    warning.className =
+                        "small text-warning mt-2";
+
+                    warning.setAttribute(
+                        "data-file-warning",
+                        "true"
+                    );
+
+                    warning.innerHTML =
+                        '<i class="bi bi-exclamation-circle me-1"></i>' +
+                        'Please verify that this image format is supported by KUCSA.';
+
+                    const oldWarning =
+                        wrapper.querySelector(
+                            "[data-file-warning]"
+                        );
+
+                    if (!oldWarning) {
+                        input.insertAdjacentElement(
+                            "afterend",
+                            warning
+                        );
+                    }
+
+                }
+
+            }
+
+        });
+
+    });
+
+
+    /* =========================================================
+       VALIDATION ERROR SCROLLING
+       ========================================================= */
+
+    const firstError = page.querySelector(
+        ".ku-has-error"
+    );
+
+    if (firstError) {
+
+        setTimeout(function () {
+
+            firstError.scrollIntoView({
+                behavior: window.matchMedia(
+                    "(prefers-reduced-motion: reduce)"
+                ).matches
+                    ? "auto"
+                    : "smooth",
+                block: "center"
+            });
+
+            const focusable =
+                firstError.querySelector(
+                    "input, textarea, select"
+                );
+
+            if (focusable) {
+                focusable.focus({
+                    preventScroll: true
+                });
+            }
+
+        }, 120);
+
+    }
+
+
+    /* =========================================================
+       FORM SUBMISSION PROTECTION
+       Prevent accidental double submissions.
+       ========================================================= */
+
+    let formSubmitted = false;
+
+    form.addEventListener("submit", function () {
+
+        if (formSubmitted) {
+            return;
+        }
+
+        formSubmitted = true;
+
+
+        if (submitButton) {
+
+            submitButton.disabled = true;
+
+            submitButton.classList.add(
+                "ku-submit-loading"
+            );
+
+            submitButton.innerHTML =
+                '<span class="ku-spinner" aria-hidden="true"></span>' +
+                '<span>Publishing Announcement...</span>';
+
+        }
+
+
+        /*
+         * Disable the cancel button after successful submission
+         * attempt so users don't accidentally navigate away while
+         * the request is being processed.
+         */
+        const cancelButton =
+            form.querySelector(
+                'a[href*="announcements"]'
+            );
+
+        if (cancelButton) {
+            cancelButton.classList.add(
+                "disabled"
+            );
+            cancelButton.setAttribute(
+                "aria-disabled",
+                "true"
+            );
+        }
+
+    });
+
+
+    /* =========================================================
+       RESTORE FORM AFTER BROWSER BACK/FORWARD CACHE
+       ========================================================= */
+
+    window.addEventListener(
+        "pageshow",
+        function () {
+
+            formSubmitted = false;
+
+            if (submitButton) {
+
+                submitButton.disabled = false;
+
+                submitButton.classList.remove(
+                    "ku-submit-loading"
+                );
+
+                submitButton.innerHTML =
+                    '<i class="bi bi-check-circle-fill me-2" aria-hidden="true"></i>' +
+                    '<span class="ku-submit-label">Publish Announcement</span>';
+
+            }
+
+            const cancelButton =
+                form.querySelector(
+                    'a[href*="announcements"]'
+                );
+
+            if (cancelButton) {
+
+                cancelButton.classList.remove(
+                    "disabled"
+                );
+
+                cancelButton.removeAttribute(
+                    "aria-disabled"
+                );
+
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       KEYBOARD ACCESSIBILITY
+       ========================================================= */
+
+    form.querySelectorAll(
+        "input, textarea, select"
+    ).forEach(function (field) {
+
+        field.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Escape" &&
+                    document.activeElement === field
+                ) {
+                    field.blur();
+                }
+
+            }
+        );
+
+    });
+
+});
 </script>
 
 {% endblock %}

@@ -7,403 +7,2024 @@
 {% block content %}
 
 <style>
-    :root {
-        --kucsa-primary: #0d6efd;
-        --kucsa-primary-hover: #0b5ed7;
-        --kucsa-bg-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    }
+    /* =========================================================
+       KUCSA ANNOUNCEMENT DETAIL
+       Scoped page styling — does not modify global body styles
+       ========================================================= */
 
-    body {
-        background: var(--kucsa-bg-gradient);
-    }
+    .kucsa-announcement-detail {
+        --ku-primary: #0d6efd;
+        --ku-primary-dark: #0b5ed7;
+        --ku-primary-soft: rgba(13, 110, 253, 0.09);
 
-    .kucsa-card {
-        border-radius: 1rem;
-        transition: all 0.2s ease-in-out;
-    }
+        --ku-success: #198754;
+        --ku-warning: #ffc107;
+        --ku-danger: #dc3545;
+        --ku-info: #0dcaf0;
 
-    .announcement-content {
-        font-size: 1.05rem;
-        line-height: 1.8;
-        color: #212529;
-    }
+        --ku-dark: #172033;
+        --ku-text: #273142;
+        --ku-muted: #6c757d;
+        --ku-border: #e7ebf0;
+        --ku-surface: #ffffff;
+        --ku-soft: #f7f9fc;
+        --ku-soft-blue: #f4f8ff;
 
-    .announcement-content p {
-        margin-bottom: 1.25rem;
-    }
+        --ku-radius: 20px;
+        --ku-radius-md: 14px;
+        --ku-radius-sm: 10px;
 
-    .announcement-main-img {
-        max-height: 480px;
+        --ku-shadow:
+            0 18px 50px rgba(22, 34, 51, 0.08);
+
+        --ku-shadow-hover:
+            0 24px 65px rgba(22, 34, 51, 0.13);
+
+        --ku-transition:
+            180ms ease;
+
         width: 100%;
-        object-fit: cover;
-        border-radius: 0.75rem;
+        min-width: 0;
+        padding: 28px 0 56px;
+        color: var(--ku-text);
     }
 
-    .modal-content {
-        border-radius: 1rem;
-        border: none;
-        box-shadow: 0 1rem 3rem rgba(0,0,0,0.15);
+
+    /* =========================================================
+       PAGE CONTAINER
+       ========================================================= */
+
+    .kucsa-announcement-detail .announcement-shell {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+    }
+
+
+    /* =========================================================
+       TOP NAVIGATION
+       ========================================================= */
+
+    .kucsa-announcement-detail .back-navigation {
+        margin-bottom: 22px;
+    }
+
+    .kucsa-announcement-detail .back-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+
+        min-height: 42px;
+        padding: 9px 16px;
+
+        border: 1px solid var(--ku-border);
+        border-radius: 10px;
+
+        background: rgba(255, 255, 255, 0.92);
+        color: var(--ku-text);
+
+        font-size: 0.88rem;
+        font-weight: 700;
+
+        box-shadow: 0 5px 16px rgba(22, 34, 51, 0.05);
+
+        transition:
+            transform var(--ku-transition),
+            border-color var(--ku-transition),
+            background var(--ku-transition),
+            color var(--ku-transition),
+            box-shadow var(--ku-transition);
+    }
+
+    .kucsa-announcement-detail .back-btn:hover {
+        transform: translateY(-1px);
+        border-color: rgba(13, 110, 253, 0.25);
+        background: #fff;
+        color: var(--ku-primary);
+        box-shadow: 0 8px 22px rgba(22, 34, 51, 0.08);
+    }
+
+
+    /* =========================================================
+       MESSAGES
+       ========================================================= */
+
+    .kucsa-announcement-detail .announcement-message {
+        border: 0;
+        border-radius: 13px;
+        box-shadow: 0 8px 25px rgba(22, 34, 51, 0.06);
+        margin-bottom: 18px;
+    }
+
+
+    /* =========================================================
+       MAIN CARD
+       ========================================================= */
+
+    .kucsa-announcement-detail .announcement-card {
+        overflow: hidden;
+        border: 1px solid rgba(231, 235, 240, 0.9);
+        border-radius: var(--ku-radius);
+        background: var(--ku-surface);
+        box-shadow: var(--ku-shadow);
+
+        transition:
+            box-shadow var(--ku-transition),
+            transform var(--ku-transition);
+    }
+
+    .kucsa-announcement-detail .announcement-card:hover {
+        box-shadow: var(--ku-shadow-hover);
+    }
+
+
+    /* =========================================================
+       ANNOUNCEMENT HERO
+       ========================================================= */
+
+    .kucsa-announcement-detail .announcement-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 34px 38px 30px;
+
+        background:
+            radial-gradient(
+                circle at 100% 0%,
+                rgba(13, 110, 253, 0.10),
+                transparent 32%
+            ),
+            radial-gradient(
+                circle at 0% 100%,
+                rgba(13, 110, 253, 0.05),
+                transparent 28%
+            ),
+            #ffffff;
+    }
+
+    .kucsa-announcement-detail .announcement-hero::before {
+        content: "";
+        position: absolute;
+        top: -110px;
+        right: -100px;
+
+        width: 260px;
+        height: 260px;
+
+        border-radius: 50%;
+        background: rgba(13, 110, 253, 0.035);
+
+        pointer-events: none;
+    }
+
+    .kucsa-announcement-detail .announcement-hero-inner {
+        position: relative;
+        z-index: 1;
+
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 30px;
+    }
+
+    .kucsa-announcement-detail .announcement-heading {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+
+    /* =========================================================
+       BADGES
+       ========================================================= */
+
+    .kucsa-announcement-detail .announcement-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 18px;
+    }
+
+    .kucsa-announcement-detail .announcement-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+
+        min-height: 30px;
+        padding: 5px 10px;
+
+        border-radius: 999px;
+
+        font-size: 0.74rem;
+        font-weight: 800;
+        letter-spacing: 0.01em;
+
+        box-shadow: 0 3px 10px rgba(22, 34, 51, 0.06);
+    }
+
+
+    /* =========================================================
+       TITLE
+       ========================================================= */
+
+    .kucsa-announcement-detail .announcement-title {
+        max-width: 900px;
+        margin: 0 0 15px;
+
+        color: var(--ku-dark);
+
+        font-size: clamp(1.8rem, 4vw, 3rem);
+        font-weight: 800;
+        line-height: 1.14;
+        letter-spacing: -0.035em;
+
+        overflow-wrap: anywhere;
+    }
+
+    .kucsa-announcement-detail .announcement-summary {
+        max-width: 850px;
+        margin: 0;
+
+        color: var(--ku-muted);
+
+        font-size: clamp(1rem, 1.8vw, 1.18rem);
+        line-height: 1.7;
+    }
+
+
+    /* =========================================================
+       MANAGEMENT BUTTON
+       ========================================================= */
+
+    .kucsa-announcement-detail .management-area {
+        flex: 0 0 auto;
+    }
+
+    .kucsa-announcement-detail .manage-toggle {
+        min-height: 44px;
+        border-radius: 11px !important;
+
+        font-weight: 700;
+        white-space: nowrap;
+
+        box-shadow: 0 6px 18px rgba(13, 110, 253, 0.08);
+    }
+
+    .kucsa-announcement-detail .management-menu {
+        min-width: 235px;
+
+        padding: 7px;
+
+        border: 1px solid var(--ku-border);
+        border-radius: 13px;
+
+        background: #fff;
+
+        box-shadow: 0 18px 45px rgba(22, 34, 51, 0.13);
+    }
+
+    .kucsa-announcement-detail .management-menu .dropdown-item {
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+
+        border-radius: 8px;
+
+        font-size: 0.87rem;
+        font-weight: 600;
+
+        transition:
+            background var(--ku-transition),
+            color var(--ku-transition);
+    }
+
+    .kucsa-announcement-detail .management-menu .dropdown-item:hover,
+    .kucsa-announcement-detail .management-menu .dropdown-item:focus {
+        background: var(--ku-soft-blue);
+    }
+
+    .kucsa-announcement-detail .management-menu form {
+        margin: 0;
+    }
+
+
+    /* =========================================================
+       METADATA
+       ========================================================= */
+
+    .kucsa-announcement-detail .announcement-meta-wrap {
+        padding: 0 38px 24px;
+    }
+
+    .kucsa-announcement-detail .announcement-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+
+        padding: 13px 15px;
+
+        border: 1px solid var(--ku-border);
+        border-radius: 13px;
+
+        background: var(--ku-soft);
+    }
+
+    .kucsa-announcement-detail .meta-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+
+        min-height: 32px;
+        padding: 5px 9px;
+
+        border-radius: 8px;
+
+        color: var(--ku-muted);
+
+        font-size: 0.78rem;
+        font-weight: 600;
+
+        overflow-wrap: anywhere;
+    }
+
+    .kucsa-announcement-detail .meta-item i {
+        color: var(--ku-primary);
+        font-size: 0.9rem;
+    }
+
+    .kucsa-announcement-detail .meta-divider {
+        width: 1px;
+        align-self: stretch;
+        background: var(--ku-border);
+    }
+
+
+    /* =========================================================
+       DIVIDER
+       ========================================================= */
+
+    .kucsa-announcement-detail .announcement-divider {
+        height: 1px;
+        margin: 0 38px;
+
+        background: var(--ku-border);
+        opacity: 1;
+    }
+
+
+    /* =========================================================
+       IMAGE
+       ========================================================= */
+
+    .kucsa-announcement-detail .announcement-image-section {
+        padding: 28px 38px 8px;
+    }
+
+    .kucsa-announcement-detail .announcement-image-frame {
+        position: relative;
+        overflow: hidden;
+
+        padding: 7px;
+
+        border-radius: 17px;
+
+        background: #111827;
+        box-shadow: 0 16px 38px rgba(22, 34, 51, 0.12);
+    }
+
+    .kucsa-announcement-detail .announcement-main-img {
+        display: block;
+
+        width: 100%;
+        max-height: 560px;
+
+        object-fit: cover;
+        object-position: center;
+
+        border-radius: 12px;
+
+        transition: transform 500ms ease;
+    }
+
+    .kucsa-announcement-detail .announcement-image-frame:hover .announcement-main-img {
+        transform: scale(1.012);
+    }
+
+
+    /* =========================================================
+       CONTENT
+       ========================================================= */
+
+    .kucsa-announcement-detail .announcement-content-section {
+        padding: 30px 38px 18px;
+    }
+
+    .kucsa-announcement-detail .announcement-content {
+        max-width: 850px;
+        margin: 0 auto;
+
+        color: var(--ku-text);
+
+        font-size: 1.05rem;
+        line-height: 1.9;
+
+        overflow-wrap: anywhere;
+    }
+
+    .kucsa-announcement-detail .announcement-content p {
+        margin: 0 0 1.35rem;
+    }
+
+    .kucsa-announcement-detail .announcement-content p:last-child {
+        margin-bottom: 0;
+    }
+
+    .kucsa-announcement-detail .announcement-content strong {
+        color: var(--ku-dark);
+    }
+
+    .kucsa-announcement-detail .announcement-content a {
+        color: var(--ku-primary);
+        font-weight: 600;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 3px;
+    }
+
+    .kucsa-announcement-detail .announcement-content a:hover {
+        color: var(--ku-primary-dark);
+    }
+
+
+    /* =========================================================
+       DATE / STATUS INFORMATION
+       ========================================================= */
+
+    .kucsa-announcement-detail .schedule-section {
+        padding: 12px 38px 25px;
+    }
+
+    .kucsa-announcement-detail .schedule-card {
+        height: 100%;
+
+        padding: 17px;
+
+        border: 1px solid var(--ku-border);
+        border-radius: 14px;
+
+        background: linear-gradient(
+            145deg,
+            #ffffff,
+            #f8fafc
+        );
+
+        transition:
+            transform var(--ku-transition),
+            box-shadow var(--ku-transition);
+    }
+
+    .kucsa-announcement-detail .schedule-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 26px rgba(22, 34, 51, 0.06);
+    }
+
+    .kucsa-announcement-detail .schedule-label {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+
+        margin-bottom: 7px;
+
+        color: var(--ku-muted);
+
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .kucsa-announcement-detail .schedule-value {
+        color: var(--ku-dark);
+        font-size: 0.94rem;
+        font-weight: 800;
+        overflow-wrap: anywhere;
+    }
+
+
+    /* =========================================================
+       ATTACHMENT
+       ========================================================= */
+
+    .kucsa-announcement-detail .attachment-section {
+        padding: 0 38px 28px;
+    }
+
+    .kucsa-announcement-detail .attachment-card {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+
+        padding: 17px;
+
+        border: 1px solid rgba(13, 110, 253, 0.14);
+        border-radius: 15px;
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(13, 110, 253, 0.045),
+                rgba(13, 110, 253, 0.015)
+            );
+    }
+
+    .kucsa-announcement-detail .attachment-icon {
+        flex: 0 0 48px;
+
+        width: 48px;
+        height: 48px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 13px;
+
+        background: var(--ku-primary-soft);
+        color: var(--ku-primary);
+
+        font-size: 1.35rem;
+    }
+
+    .kucsa-announcement-detail .attachment-info {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .kucsa-announcement-detail .attachment-title {
+        margin-bottom: 3px;
+
+        color: var(--ku-dark);
+        font-size: 0.9rem;
+        font-weight: 800;
+    }
+
+    .kucsa-announcement-detail .attachment-name {
+        color: var(--ku-muted);
+        font-size: 0.78rem;
+
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .kucsa-announcement-detail .attachment-download {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+
+
+    /* =========================================================
+       FOOTER ACTIONS
+       ========================================================= */
+
+    .kucsa-announcement-detail .announcement-footer {
+        padding: 22px 38px;
+
+        border-top: 1px solid var(--ku-border);
+
+        background: #f8fafc;
+    }
+
+    .kucsa-announcement-detail .footer-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+    }
+
+    .kucsa-announcement-detail .footer-actions .btn {
+        min-height: 44px;
+        border-radius: 10px;
+
+        font-weight: 700;
+    }
+
+
+    /* =========================================================
+       MODALS
+       ========================================================= */
+
+    .kucsa-announcement-detail .modal-content {
+        overflow: hidden;
+
+        border: 0;
+        border-radius: 18px;
+
+        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.18);
+    }
+
+    .kucsa-announcement-detail .modal-header {
+        padding: 18px 22px;
+        border: 0;
+    }
+
+    .kucsa-announcement-detail .modal-body {
+        padding: 24px;
+    }
+
+    .kucsa-announcement-detail .modal-footer {
+        padding: 15px 22px;
+        border: 0;
+    }
+
+    .kucsa-announcement-detail .modal .form-control {
+        min-height: 44px;
+        border-radius: 10px;
+        border-color: var(--ku-border);
+    }
+
+    .kucsa-announcement-detail .modal .form-control:focus {
+        border-color: rgba(13, 110, 253, 0.55);
+        box-shadow: 0 0 0 0.22rem rgba(13, 110, 253, 0.10);
+    }
+
+    .kucsa-announcement-detail .modal-title {
+        font-size: 1rem;
+    }
+
+    .kucsa-announcement-detail .modal-confirm-title {
+        padding: 12px 14px;
+
+        border-left: 4px solid var(--ku-primary);
+
+        background: var(--ku-soft);
+        border-radius: 0 9px 9px 0;
+
+        overflow-wrap: anywhere;
+    }
+
+
+    /* =========================================================
+       BUTTON LOADING STATE
+       ========================================================= */
+
+    .kucsa-announcement-detail .ku-loading {
+        pointer-events: none;
+        opacity: 0.75;
+    }
+
+    .kucsa-announcement-detail .ku-spinner {
+        display: inline-block;
+
+        width: 0.9rem;
+        height: 0.9rem;
+
+        margin-right: 6px;
+
+        border: 2px solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+
+        animation: ku-spin 0.65s linear infinite;
+        vertical-align: -2px;
+    }
+
+    @keyframes ku-spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+
+    /* =========================================================
+       ACCESSIBILITY
+       ========================================================= */
+
+    .kucsa-announcement-detail a:focus-visible,
+    .kucsa-announcement-detail button:focus-visible,
+    .kucsa-announcement-detail input:focus-visible,
+    .kucsa-announcement-detail select:focus-visible {
+        outline: 3px solid rgba(13, 110, 253, 0.28);
+        outline-offset: 2px;
+    }
+
+
+    /* =========================================================
+       LARGE TABLETS / SMALL DESKTOP
+       ========================================================= */
+
+    @media (max-width: 991.98px) {
+
+        .kucsa-announcement-detail {
+            padding-top: 22px;
+        }
+
+        .kucsa-announcement-detail .announcement-hero {
+            padding: 28px 28px 25px;
+        }
+
+        .kucsa-announcement-detail .announcement-hero-inner {
+            gap: 22px;
+        }
+
+        .kucsa-announcement-detail .announcement-meta-wrap {
+            padding: 0 28px 22px;
+        }
+
+        .kucsa-announcement-detail .announcement-divider {
+            margin: 0 28px;
+        }
+
+        .kucsa-announcement-detail .announcement-image-section {
+            padding: 24px 28px 7px;
+        }
+
+        .kucsa-announcement-detail .announcement-content-section {
+            padding: 27px 28px 17px;
+        }
+
+        .kucsa-announcement-detail .schedule-section {
+            padding: 10px 28px 23px;
+        }
+
+        .kucsa-announcement-detail .attachment-section {
+            padding: 0 28px 25px;
+        }
+
+        .kucsa-announcement-detail .announcement-footer {
+            padding: 20px 28px;
+        }
+    }
+
+
+    /* =========================================================
+       TABLETS / MOBILE
+       ========================================================= */
+
+    @media (max-width: 767.98px) {
+
+        .kucsa-announcement-detail {
+            padding: 18px 0 38px;
+        }
+
+        .kucsa-announcement-detail .announcement-shell {
+            width: min(100% - 22px, 680px);
+        }
+
+        .kucsa-announcement-detail .announcement-card {
+            border-radius: 16px;
+        }
+
+        .kucsa-announcement-detail .announcement-hero {
+            padding: 24px 20px 22px;
+        }
+
+        .kucsa-announcement-detail .announcement-hero-inner {
+            display: block;
+        }
+
+        .kucsa-announcement-detail .announcement-heading {
+            width: 100%;
+        }
+
+        .kucsa-announcement-detail .announcement-title {
+            font-size: clamp(1.65rem, 7vw, 2.2rem);
+            line-height: 1.18;
+            letter-spacing: -0.025em;
+        }
+
+        .kucsa-announcement-detail .announcement-summary {
+            font-size: 0.98rem;
+            line-height: 1.65;
+        }
+
+        .kucsa-announcement-detail .management-area {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .kucsa-announcement-detail .manage-toggle {
+            width: 100%;
+        }
+
+        .kucsa-announcement-detail .management-menu {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .kucsa-announcement-detail .announcement-meta-wrap {
+            padding: 0 20px 18px;
+        }
+
+        .kucsa-announcement-detail .announcement-meta {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3px;
+            padding: 10px;
+        }
+
+        .kucsa-announcement-detail .meta-item {
+            width: 100%;
+            min-height: 36px;
+            padding: 6px 8px;
+        }
+
+        .kucsa-announcement-detail .meta-divider {
+            display: none;
+        }
+
+        .kucsa-announcement-detail .announcement-divider {
+            margin: 0 20px;
+        }
+
+        .kucsa-announcement-detail .announcement-image-section {
+            padding: 20px 20px 5px;
+        }
+
+        .kucsa-announcement-detail .announcement-image-frame {
+            padding: 5px;
+            border-radius: 13px;
+        }
+
+        .kucsa-announcement-detail .announcement-main-img {
+            max-height: 420px;
+            border-radius: 9px;
+        }
+
+        .kucsa-announcement-detail .announcement-content-section {
+            padding: 24px 20px 15px;
+        }
+
+        .kucsa-announcement-detail .announcement-content {
+            font-size: 1rem;
+            line-height: 1.82;
+        }
+
+        .kucsa-announcement-detail .schedule-section {
+            padding: 8px 20px 20px;
+        }
+
+        .kucsa-announcement-detail .attachment-section {
+            padding: 0 20px 20px;
+        }
+
+        .kucsa-announcement-detail .attachment-card {
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .kucsa-announcement-detail .attachment-info {
+            flex: 1 1 calc(100% - 70px);
+        }
+
+        .kucsa-announcement-detail .attachment-download {
+            width: 100%;
+        }
+
+        .kucsa-announcement-detail .attachment-download .btn {
+            width: 100%;
+        }
+
+        .kucsa-announcement-detail .announcement-footer {
+            padding: 18px 20px;
+        }
+
+        .kucsa-announcement-detail .footer-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .kucsa-announcement-detail .footer-actions .btn {
+            width: 100%;
+        }
+
+        .kucsa-announcement-detail .modal-body {
+            padding: 20px;
+        }
+    }
+
+
+    /* =========================================================
+       SMALL PHONES
+       ========================================================= */
+
+    @media (max-width: 575.98px) {
+
+        .kucsa-announcement-detail .announcement-shell {
+            width: calc(100% - 16px);
+        }
+
+        .kucsa-announcement-detail .back-navigation {
+            margin-bottom: 14px;
+        }
+
+        .kucsa-announcement-detail .back-btn {
+            width: 100%;
+        }
+
+        .kucsa-announcement-detail .announcement-badges {
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .kucsa-announcement-detail .announcement-badge {
+            font-size: 0.7rem;
+            min-height: 28px;
+            padding: 4px 8px;
+        }
+
+        .kucsa-announcement-detail .announcement-title {
+            font-size: 1.55rem;
+        }
+
+        .kucsa-announcement-detail .announcement-summary {
+            font-size: 0.93rem;
+        }
+
+        .kucsa-announcement-detail .announcement-content {
+            font-size: 0.96rem;
+        }
+
+        .kucsa-announcement-detail .schedule-card {
+            padding: 14px;
+        }
+
+        .kucsa-announcement-detail .attachment-card {
+            padding: 14px;
+        }
+
+        .kucsa-announcement-detail .attachment-icon {
+            flex-basis: 43px;
+            width: 43px;
+            height: 43px;
+        }
+
+        .kucsa-announcement-detail .modal-dialog {
+            margin: 10px;
+        }
+
+        .kucsa-announcement-detail .modal-header {
+            padding: 15px 17px;
+        }
+
+        .kucsa-announcement-detail .modal-footer {
+            padding: 12px 17px;
+        }
+
+        .kucsa-announcement-detail .modal-footer .btn {
+            flex: 1;
+        }
+    }
+
+
+    /* =========================================================
+       VERY SMALL DEVICES
+       ========================================================= */
+
+    @media (max-width: 359.98px) {
+
+        .kucsa-announcement-detail .announcement-hero {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+        .kucsa-announcement-detail .announcement-meta-wrap,
+        .kucsa-announcement-detail .announcement-image-section,
+        .kucsa-announcement-detail .announcement-content-section,
+        .kucsa-announcement-detail .schedule-section,
+        .kucsa-announcement-detail .attachment-section,
+        .kucsa-announcement-detail .announcement-footer {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+        .kucsa-announcement-detail .announcement-divider {
+            margin-left: 15px;
+            margin-right: 15px;
+        }
+
+        .kucsa-announcement-detail .announcement-title {
+            font-size: 1.4rem;
+        }
+    }
+
+
+    /* =========================================================
+       REDUCED MOTION
+       ========================================================= */
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .kucsa-announcement-detail *,
+        .kucsa-announcement-detail *::before,
+        .kucsa-announcement-detail *::after {
+            scroll-behavior: auto !important;
+            transition-duration: 0.01ms !important;
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+        }
     }
 </style>
 
-<div class="container py-4">
 
-    <div class="mb-4">
-        <a href="{% url 'announcements:list' %}" class="btn btn-outline-secondary btn-sm shadow-sm px-3">
-            <i class="bi bi-arrow-left me-1"></i>Back to Announcements
-        </a>
-    </div>
+<div class="kucsa-announcement-detail">
 
+    <div class="announcement-shell">
 
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-info-circle-fill me-2"></i>{{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
+        <!-- =====================================================
+             BACK NAVIGATION
+             ====================================================== -->
+        <div class="back-navigation">
+            <a href="{% url 'announcements:list' %}" class="back-btn">
+                <i class="bi bi-arrow-left"></i>
+                <span>Back to Announcements</span>
+            </a>
+        </div>
 
 
-    <div class="row justify-content-center">
-        <div class="col-12 col-xl-10">
+        <!-- =====================================================
+             SYSTEM MESSAGES
+             ====================================================== -->
+        {% if messages %}
+            {% for message in messages %}
+                <div
+                    class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show announcement-message"
+                    role="alert"
+                >
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    {{ message }}
 
-            <div class="card kucsa-card border-0 shadow-lg bg-white overflow-hidden">
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Close"
+                    ></button>
+                </div>
+            {% endfor %}
+        {% endif %}
 
-                <div class="card-header bg-white border-0 pt-4 px-4 px-md-5">
-                    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-start gap-3">
 
-                        <div class="flex-grow-1">
-                            <div class="d-flex flex-wrap gap-2 mb-3">
-                                {% if announcement.priority == "URGENT" %}
-                                    <span class="badge bg-danger shadow-sm"><i class="bi bi-exclamation-triangle me-1"></i>Urgent</span>
-                                {% elif announcement.priority == "HIGH" %}
-                                    <span class="badge bg-warning text-dark shadow-sm"><i class="bi bi-exclamation-circle me-1"></i>High Priority</span>
-                                {% elif announcement.priority == "LOW" %}
-                                    <span class="badge bg-secondary shadow-sm"><i class="bi bi-arrow-down-circle me-1"></i>Low Priority</span>
-                                {% else %}
-                                    <span class="badge bg-primary shadow-sm"><i class="bi bi-info-circle me-1"></i>Normal</span>
-                                {% endif %}
+        <!-- =====================================================
+             ANNOUNCEMENT CARD
+             ====================================================== -->
+        <article class="announcement-card">
 
-                                {% if announcement.status == "PUBLISHED" %}
-                                    <span class="badge bg-success shadow-sm"><i class="bi bi-check-circle me-1"></i>Published</span>
-                                {% elif announcement.status == "DRAFT" %}
-                                    <span class="badge bg-secondary shadow-sm"><i class="bi bi-pencil-square me-1"></i>Draft</span>
-                                {% elif announcement.status == "ARCHIVED" %}
-                                    <span class="badge bg-dark shadow-sm"><i class="bi bi-archive me-1"></i>Archived</span>
-                                {% endif %}
+            <!-- =================================================
+                 HERO / HEADER
+                 ================================================== -->
+            <header class="announcement-hero">
 
-                                {% if announcement.is_featured %}
-                                    <span class="badge bg-warning text-dark shadow-sm"><i class="bi bi-star-fill me-1"></i>Featured</span>
-                                {% endif %}
-                            </div>
+                <div class="announcement-hero-inner">
 
-                            <h1 class="fw-bold mb-3 text-dark display-6">
-                                {{ announcement.title }}
-                            </h1>
+                    <div class="announcement-heading">
 
-                            {% if announcement.summary %}
-                                <p class="lead text-muted mb-0 fs-5">
-                                    {{ announcement.summary }}
-                                </p>
+                        <!-- BADGES -->
+                        <div class="announcement-badges">
+
+                            {% if announcement.priority == "URGENT" %}
+                                <span class="announcement-badge bg-danger text-white">
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                    Urgent
+                                </span>
+
+                            {% elif announcement.priority == "HIGH" %}
+                                <span class="announcement-badge bg-warning text-dark">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    High Priority
+                                </span>
+
+                            {% elif announcement.priority == "LOW" %}
+                                <span class="announcement-badge bg-secondary text-white">
+                                    <i class="bi bi-arrow-down-circle"></i>
+                                    Low Priority
+                                </span>
+
+                            {% else %}
+                                <span class="announcement-badge bg-primary text-white">
+                                    <i class="bi bi-info-circle"></i>
+                                    Normal
+                                </span>
                             {% endif %}
+
+
+                            {% if announcement.status == "PUBLISHED" %}
+                                <span class="announcement-badge bg-success text-white">
+                                    <i class="bi bi-check-circle"></i>
+                                    Published
+                                </span>
+
+                            {% elif announcement.status == "DRAFT" %}
+                                <span class="announcement-badge bg-secondary text-white">
+                                    <i class="bi bi-pencil-square"></i>
+                                    Draft
+                                </span>
+
+                            {% elif announcement.status == "ARCHIVED" %}
+                                <span class="announcement-badge bg-dark text-white">
+                                    <i class="bi bi-archive"></i>
+                                    Archived
+                                </span>
+                            {% endif %}
+
+
+                            {% if announcement.is_featured %}
+                                <span class="announcement-badge bg-warning text-dark">
+                                    <i class="bi bi-star-fill"></i>
+                                    Featured
+                                </span>
+                            {% endif %}
+
                         </div>
 
-                        {% if can_manage %}
+
+                        <!-- TITLE -->
+                        <h1 class="announcement-title">
+                            {{ announcement.title }}
+                        </h1>
+
+
+                        <!-- SUMMARY -->
+                        {% if announcement.summary %}
+                            <p class="announcement-summary">
+                                {{ announcement.summary }}
+                            </p>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- MANAGEMENT -->
+                    {% if can_manage %}
+                        <div class="management-area">
+
                             <div class="dropdown">
-                                <button class="btn btn-outline-primary dropdown-toggle shadow-sm px-3 fw-semibold" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-gear-fill me-1"></i>Manage Notice
+
+                                <button
+                                    class="btn btn-outline-primary dropdown-toggle manage-toggle"
+                                    type="button"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                    aria-label="Manage this announcement"
+                                >
+                                    <i class="bi bi-gear-fill me-1"></i>
+                                    Manage Notice
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 py-2">
+
+
+                                <ul class="dropdown-menu dropdown-menu-end management-menu">
+
+                                    <!-- EDIT -->
                                     <li>
-                                        <a class="dropdown-item py-2" href="{% url 'announcements:edit' announcement.pk %}">
-                                            <i class="bi bi-pencil me-2 text-primary"></i>Edit Announcement
+                                        <a
+                                            class="dropdown-item py-2"
+                                            href="{% url 'announcements:edit' announcement.pk %}"
+                                        >
+                                            <i class="bi bi-pencil me-2 text-primary"></i>
+                                            Edit Announcement
                                         </a>
                                     </li>
-                                    <li><hr class="dropdown-divider"></li>
 
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+
+
+                                    <!-- PUBLISH -->
                                     {% if announcement.status == "DRAFT" %}
                                         <li>
-                                            <button type="button" class="dropdown-item py-2" data-bs-toggle="modal" data-bs-target="#publishModal">
-                                                <i class="bi bi-send me-2 text-success"></i>Publish
+                                            <button
+                                                type="button"
+                                                class="dropdown-item py-2"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#publishModal"
+                                            >
+                                                <i class="bi bi-send me-2 text-success"></i>
+                                                Publish
                                             </button>
                                         </li>
                                     {% endif %}
 
+
+                                    <!-- UNPUBLISH -->
                                     {% if announcement.status == "PUBLISHED" %}
                                         <li>
-                                            <form method="post" action="{% url 'announcements:unpublish' announcement.pk %}">
+                                            <form
+                                                method="post"
+                                                action="{% url 'announcements:unpublish' announcement.pk %}"
+                                                class="ku-post-form"
+                                            >
                                                 {% csrf_token %}
-                                                <button type="submit" class="dropdown-item py-2">
-                                                    <i class="bi bi-arrow-counterclockwise me-2 text-warning"></i>Unpublish
+
+                                                <button
+                                                    type="submit"
+                                                    class="dropdown-item py-2"
+                                                >
+                                                    <i class="bi bi-arrow-counterclockwise me-2 text-warning"></i>
+                                                    Unpublish
                                                 </button>
                                             </form>
                                         </li>
                                     {% endif %}
 
+
+                                    <!-- ARCHIVE -->
                                     {% if announcement.status != "ARCHIVED" %}
                                         <li>
-                                            <form method="post" action="{% url 'announcements:archive' announcement.pk %}">
+                                            <form
+                                                method="post"
+                                                action="{% url 'announcements:archive' announcement.pk %}"
+                                                class="ku-post-form"
+                                            >
                                                 {% csrf_token %}
-                                                <button type="submit" class="dropdown-item py-2">
-                                                    <i class="bi bi-archive me-2 text-secondary"></i>Archive
+
+                                                <button
+                                                    type="submit"
+                                                    class="dropdown-item py-2"
+                                                >
+                                                    <i class="bi bi-archive me-2 text-secondary"></i>
+                                                    Archive
                                                 </button>
                                             </form>
                                         </li>
                                     {% endif %}
 
+
+                                    <!-- RESTORE -->
                                     {% if announcement.status == "ARCHIVED" %}
                                         <li>
-                                            <form method="post" action="{% url 'announcements:restore' announcement.pk %}">
+                                            <form
+                                                method="post"
+                                                action="{% url 'announcements:restore' announcement.pk %}"
+                                                class="ku-post-form"
+                                            >
                                                 {% csrf_token %}
-                                                <button type="submit" class="dropdown-item py-2">
-                                                    <i class="bi bi-arrow-clockwise me-2 text-success"></i>Restore as Draft
+
+                                                <button
+                                                    type="submit"
+                                                    class="dropdown-item py-2"
+                                                >
+                                                    <i class="bi bi-arrow-clockwise me-2 text-success"></i>
+                                                    Restore as Draft
                                                 </button>
                                             </form>
                                         </li>
                                     {% endif %}
 
+
+                                    <!-- FEATURE / UNFEATURE -->
                                     {% if announcement.status == "PUBLISHED" %}
+
                                         {% if announcement.is_featured %}
+
                                             <li>
-                                                <form method="post" action="{% url 'announcements:unfeature' announcement.pk %}">
+                                                <form
+                                                    method="post"
+                                                    action="{% url 'announcements:unfeature' announcement.pk %}"
+                                                    class="ku-post-form"
+                                                >
                                                     {% csrf_token %}
-                                                    <button type="submit" class="dropdown-item py-2">
-                                                        <i class="bi bi-star me-2 text-warning"></i>Remove Featured
+
+                                                    <button
+                                                        type="submit"
+                                                        class="dropdown-item py-2"
+                                                    >
+                                                        <i class="bi bi-star me-2 text-warning"></i>
+                                                        Remove Featured
                                                     </button>
                                                 </form>
                                             </li>
+
                                         {% else %}
+
                                             <li>
-                                                <form method="post" action="{% url 'announcements:feature' announcement.pk %}">
+                                                <form
+                                                    method="post"
+                                                    action="{% url 'announcements:feature' announcement.pk %}"
+                                                    class="ku-post-form"
+                                                >
                                                     {% csrf_token %}
-                                                    <button type="submit" class="dropdown-item py-2">
-                                                        <i class="bi bi-star-fill me-2 text-warning"></i>Feature Announcement
+
+                                                    <button
+                                                        type="submit"
+                                                        class="dropdown-item py-2"
+                                                    >
+                                                        <i class="bi bi-star-fill me-2 text-warning"></i>
+                                                        Feature Announcement
                                                     </button>
                                                 </form>
                                             </li>
+
                                         {% endif %}
+
                                     {% endif %}
 
-                                    <li><hr class="dropdown-divider"></li>
 
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+
+
+                                    <!-- DELETE -->
                                     {% if user.is_superuser or user.role == "ADMIN" %}
                                         <li>
-                                            <button type="button" class="dropdown-item py-2 text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                                                <i class="bi bi-trash me-2"></i>Delete Permanently
+                                            <button
+                                                type="button"
+                                                class="dropdown-item py-2 text-danger"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#deleteModal"
+                                            >
+                                                <i class="bi bi-trash me-2"></i>
+                                                Delete Permanently
                                             </button>
                                         </li>
                                     {% endif %}
+
                                 </ul>
+
+                            </div>
+
+                        </div>
+                    {% endif %}
+
+                </div>
+
+            </header>
+
+
+            <!-- =================================================
+                 METADATA
+                 ================================================== -->
+            <div class="announcement-meta-wrap">
+
+                <div class="announcement-meta">
+
+                    {% if announcement.created_by %}
+                        <span class="meta-item">
+                            <i class="bi bi-person"></i>
+                            <span>
+                                {{ announcement.created_by.get_full_name|default:announcement.created_by.username }}
+                            </span>
+                        </span>
+                    {% endif %}
+
+
+                    <span class="meta-item">
+                        <i class="bi bi-calendar3"></i>
+                        <span>
+                            {{ announcement.created_at|date:"d M Y, H:i" }}
+                        </span>
+                    </span>
+
+
+                    {% if announcement.announcement_type %}
+                        <span class="meta-item">
+                            <i class="bi bi-megaphone"></i>
+                            <span>
+                                {{ announcement.get_announcement_type_display }}
+                            </span>
+                        </span>
+                    {% endif %}
+
+
+                    {% if announcement.target_audience %}
+                        <span class="meta-item">
+                            <i class="bi bi-people"></i>
+                            <span>
+                                {{ announcement.get_target_audience_display }}
+                            </span>
+                        </span>
+                    {% endif %}
+
+
+                    <span class="meta-item">
+                        <i class="bi bi-eye"></i>
+                        <span>
+                            {{ announcement.view_count|default:0 }}
+                            view{{ announcement.view_count|default:0|pluralize }}
+                        </span>
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="announcement-divider"></div>
+
+
+            <!-- =================================================
+                 ANNOUNCEMENT IMAGE
+                 ================================================== -->
+            {% if announcement.image %}
+                <div class="announcement-image-section">
+
+                    <div class="announcement-image-frame">
+
+                        <img
+                            src="{{ announcement.image.url }}"
+                            alt="{{ announcement.title }}"
+                            class="announcement-main-img img-fluid"
+                            loading="eager"
+                            decoding="async"
+                        >
+
+                    </div>
+
+                </div>
+            {% endif %}
+
+
+            <!-- =================================================
+                 CONTENT
+                 ================================================== -->
+            <section class="announcement-content-section">
+
+                <div class="announcement-content">
+                    {{ announcement.content|linebreaks }}
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 PUBLICATION / EXPIRY
+                 ================================================== -->
+            {% if announcement.published_at or announcement.expires_at %}
+
+                <section class="schedule-section">
+
+                    <div class="row g-3">
+
+                        {% if announcement.published_at %}
+                            <div class="col-12 col-md-6">
+
+                                <div class="schedule-card">
+
+                                    <div class="schedule-label">
+                                        <i class="bi bi-send text-success"></i>
+                                        Official Publication Time
+                                    </div>
+
+                                    <div class="schedule-value">
+                                        {{ announcement.published_at|date:"d M Y, H:i" }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        {% endif %}
+
+
+                        {% if announcement.expires_at %}
+                            <div class="col-12 col-md-6">
+
+                                <div class="schedule-card">
+
+                                    <div class="schedule-label">
+                                        <i class="bi bi-clock-history text-warning"></i>
+                                        Scheduled Expiry Time
+                                    </div>
+
+                                    <div class="schedule-value">
+                                        {{ announcement.expires_at|date:"d M Y, H:i" }}
+                                    </div>
+
+                                </div>
+
                             </div>
                         {% endif %}
 
                     </div>
-                </div>
+
+                </section>
+
+            {% endif %}
 
 
-                <div class="px-4 px-md-5 pb-3 pt-2">
-                    <div class="d-flex flex-wrap gap-3 text-muted small bg-light p-3 rounded-3 border">
-                        {% if announcement.created_by %}
-                            <span><i class="bi bi-person me-1 text-primary"></i>{{ announcement.created_by.get_full_name|default:announcement.created_by.username }}</span>
-                        {% endif %}
-                        <span><i class="bi bi-calendar3 me-1 text-primary"></i>{{ announcement.created_at|date:"d M Y, H:i" }}</span>
-                        {% if announcement.announcement_type %}
-                            <span><i class="bi bi-megaphone me-1 text-primary"></i>{{ announcement.get_announcement_type_display }}</span>
-                        {% endif %}
-                        {% if announcement.target_audience %}
-                            <span><i class="bi bi-people me-1 text-primary"></i>{{ announcement.get_target_audience_display }}</span>
-                        {% endif %}
-                        <span><i class="bi bi-eye me-1 text-primary"></i>{{ announcement.view_count|default:0 }} view{{ announcement.view_count|default:0|pluralize }}</span>
-                    </div>
-                </div>
+            <!-- =================================================
+                 ATTACHMENT
+                 ================================================== -->
+            {% if announcement.attachment %}
 
-                <hr class="mx-4 mx-md-5 text-muted opacity-25">
+                <section class="attachment-section">
 
+                    <div class="attachment-card">
 
-                {% if announcement.image %}
-                    <div class="px-4 px-md-5 pb-4">
-                        <div class="text-center bg-dark p-2 rounded-3 shadow-sm">
-                            <img src="{{ announcement.image.url }}" alt="{{ announcement.title }}" class="announcement-main-img img-fluid shadow-sm">
+                        <div class="attachment-icon">
+                            <i class="bi bi-paperclip"></i>
                         </div>
-                    </div>
-                {% endif %}
 
 
-                <div class="card-body px-4 px-md-5 py-3">
-                    <div class="announcement-content">
-                        {{ announcement.content|linebreaks }}
-                    </div>
-                </div>
+                        <div class="attachment-info">
 
-
-                {% if announcement.published_at or announcement.expires_at %}
-                    <div class="px-4 px-md-5 pb-4">
-                        <div class="row g-3">
-                            {% if announcement.published_at %}
-                                <div class="col-12 col-md-6">
-                                    <div class="border rounded-3 p-3 h-100 bg-light shadow-sm">
-                                        <div class="small text-muted mb-1 fw-semibold">
-                                            <i class="bi bi-send me-1 text-success"></i>Official Publication Time
-                                        </div>
-                                        <strong class="text-dark">{{ announcement.published_at|date:"d M Y, H:i" }}</strong>
-                                    </div>
-                                </div>
-                            {% endif %}
-
-                            {% if announcement.expires_at %}
-                                <div class="col-12 col-md-6">
-                                    <div class="border rounded-3 p-3 h-100 bg-light shadow-sm">
-                                        <div class="small text-muted mb-1 fw-semibold">
-                                            <i class="bi bi-clock-history me-1 text-warning"></i>Scheduled Expiry Time
-                                        </div>
-                                        <strong class="text-dark">{{ announcement.expires_at|date:"d M Y, H:i" }}</strong>
-                                    </div>
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                {% endif %}
-
-
-                {% if announcement.attachment %}
-                    <div class="px-4 px-md-5 pb-4">
-                        <div class="alert alert-light border shadow-sm mb-0 rounded-3 p-3">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="p-2 bg-primary bg-opacity-10 rounded text-primary">
-                                    <i class="bi bi-paperclip fs-3"></i>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <strong class="text-dark">Attached Document / Resource</strong>
-                                    <div class="small text-muted text-break">{{ announcement.attachment.name }}</div>
-                                </div>
-                                <div>
-                                    <a href="{{ announcement.attachment.url }}" class="btn btn-outline-primary btn-sm px-3 shadow-sm fw-semibold" target="_blank" rel="noopener noreferrer">
-                                        <i class="bi bi-download me-1"></i>Download
-                                    </a>
-                                </div>
+                            <div class="attachment-title">
+                                Attached Document / Resource
                             </div>
+
+                            <div class="attachment-name">
+                                {{ announcement.attachment.name }}
+                            </div>
+
                         </div>
+
+
+                        <div class="attachment-download">
+
+                            <a
+                                href="{{ announcement.attachment.url }}"
+                                class="btn btn-outline-primary btn-sm px-3 fw-bold"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <i class="bi bi-download me-1"></i>
+                                Download
+                            </a>
+
+                        </div>
+
                     </div>
-                {% endif %}
+
+                </section>
+
+            {% endif %}
 
 
-                <div class="card-footer bg-light border-0 p-4 px-md-5">
-                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-                        <a href="{% url 'announcements:list' %}" class="btn btn-outline-secondary shadow-sm px-4">
-                            <i class="bi bi-arrow-left me-1"></i>Back to All Announcements
+            <!-- =================================================
+                 FOOTER
+                 ================================================== -->
+            <footer class="announcement-footer">
+
+                <div class="footer-actions">
+
+                    <a
+                        href="{% url 'announcements:list' %}"
+                        class="btn btn-outline-secondary px-4"
+                    >
+                        <i class="bi bi-arrow-left me-1"></i>
+                        Back to All Announcements
+                    </a>
+
+
+                    {% if can_manage %}
+
+                        <a
+                            href="{% url 'announcements:edit' announcement.pk %}"
+                            class="btn btn-primary px-4"
+                        >
+                            <i class="bi bi-pencil me-1"></i>
+                            Edit Announcement
                         </a>
 
-                        {% if can_manage %}
-                            <a href="{% url 'announcements:edit' announcement.pk %}" class="btn btn-primary shadow-sm px-4 fw-bold">
-                                <i class="bi bi-pencil me-1"></i>Edit Announcement
-                            </a>
-                        {% endif %}
-                    </div>
+                    {% endif %}
+
                 </div>
 
-            </div>
+            </footer>
 
-        </div>
+        </article>
+
     </div>
 
 </div>
 
+
+<!-- =============================================================
+     PUBLISH MODAL
+     ============================================================= -->
 
 {% if can_manage and announcement.status == "DRAFT" %}
-<div class="modal fade" id="publishModal" tabindex="-1" aria-labelledby="publishModalLabel" aria-hidden="true">
+
+<div
+    class="modal fade"
+    id="publishModal"
+    tabindex="-1"
+    aria-labelledby="publishModalLabel"
+    aria-hidden="true"
+>
+
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content shadow-lg">
+
+        <div class="modal-content">
+
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title fw-bold" id="publishModalLabel">
-                    <i class="bi bi-send me-2"></i>Publish Announcement
+
+                <h5
+                    class="modal-title fw-bold"
+                    id="publishModalLabel"
+                >
+                    <i class="bi bi-send me-2"></i>
+                    Publish Announcement
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
             </div>
 
-            <form method="post" action="{% url 'announcements:publish' announcement.pk %}">
+
+            <form
+                method="post"
+                action="{% url 'announcements:publish' announcement.pk %}"
+                class="ku-publish-form"
+            >
+
                 {% csrf_token %}
-                <div class="modal-body p-4">
-                    <p class="text-muted small">You are about to publish the following announcement to the KUCSA platform:</p>
-                    <p class="fw-bold text-dark border-start border-primary border-4 ps-3 py-1 mb-4 bg-light rounded-end">
-                        "{{ announcement.title }}"
+
+                <div class="modal-body">
+
+                    <p class="text-muted small mb-3">
+                        You are about to publish the following announcement to the KUCSA platform:
                     </p>
 
-                    <div class="mb-3">
-                        <label for="published_at" class="form-label fw-semibold">Publication Date & Time</label>
-                        <input type="datetime-local" name="published_at" id="published_at" class="form-control">
+
+                    <div class="modal-confirm-title fw-bold text-dark mb-4">
+                        "{{ announcement.title }}"
                     </div>
 
+
                     <div class="mb-3">
-                        <label for="expires_at" class="form-label fw-semibold">Expiry Date & Time <span class="text-muted fw-normal">(Optional)</span></label>
-                        <input type="datetime-local" name="expires_at" id="expires_at" class="form-control">
+
+                        <label
+                            for="published_at"
+                            class="form-label fw-semibold"
+                        >
+                            Publication Date &amp; Time
+                        </label>
+
+                        <input
+                            type="datetime-local"
+                            name="published_at"
+                            id="published_at"
+                            class="form-control"
+                        >
+
                     </div>
+
+
+                    <div class="mb-3">
+
+                        <label
+                            for="expires_at"
+                            class="form-label fw-semibold"
+                        >
+                            Expiry Date &amp; Time
+                            <span class="text-muted fw-normal">
+                                (Optional)
+                            </span>
+                        </label>
+
+                        <input
+                            type="datetime-local"
+                            name="expires_at"
+                            id="expires_at"
+                            class="form-control"
+                        >
+
+                    </div>
+
 
                     <div class="form-check mt-3">
-                        <input type="checkbox" name="is_featured" value="true" class="form-check-input" id="is_featured">
-                        <label class="form-check-label fw-semibold text-secondary" for="is_featured">
+
+                        <input
+                            type="checkbox"
+                            name="is_featured"
+                            value="true"
+                            class="form-check-input"
+                            id="is_featured"
+                        >
+
+                        <label
+                            class="form-check-label fw-semibold text-secondary"
+                            for="is_featured"
+                        >
                             Feature this announcement prominently
                         </label>
+
                     </div>
+
                 </div>
+
 
                 <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-outline-secondary px-4 shadow-sm" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary px-4 shadow-sm fw-bold">
-                        <i class="bi bi-send me-1"></i>Publish Now
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary px-4"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancel
                     </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary px-4 fw-bold"
+                    >
+                        <i class="bi bi-send me-1"></i>
+                        <span class="submit-label">Publish Now</span>
+                    </button>
+
                 </div>
+
             </form>
+
         </div>
+
     </div>
+
 </div>
+
 {% endif %}
 
+
+<!-- =============================================================
+     DELETE MODAL
+     ============================================================= -->
 
 {% if can_manage and user.is_superuser or can_manage and user.role == "ADMIN" %}
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+
+<div
+    class="modal fade"
+    id="deleteModal"
+    tabindex="-1"
+    aria-labelledby="deleteModalLabel"
+    aria-hidden="true"
+>
+
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content shadow-lg">
+
+        <div class="modal-content">
+
             <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title fw-bold" id="deleteModalLabel">
-                    <i class="bi bi-exclamation-triangle me-2"></i>Delete Announcement
+
+                <h5
+                    class="modal-title fw-bold"
+                    id="deleteModalLabel"
+                >
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    Delete Announcement
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
             </div>
 
-            <div class="modal-body p-4">
-                <p class="text-danger fw-semibold">Are you sure you want to permanently delete this announcement?</p>
-                <p class="fw-bold text-dark border-start border-danger border-4 ps-3 py-1 mb-3 bg-light rounded-end">
-                    "{{ announcement.title }}"
+
+            <div class="modal-body">
+
+                <p class="text-danger fw-semibold mb-3">
+                    Are you sure you want to permanently delete this announcement?
                 </p>
-                <div class="alert alert-danger mb-0 py-2 small shadow-sm">
-                    <i class="bi bi-exclamation-circle me-1"></i>This action cannot be undone. All views and records associated will be wiped.
+
+
+                <div class="modal-confirm-title border-danger mb-3">
+                    "{{ announcement.title }}"
                 </div>
+
+
+                <div class="alert alert-danger mb-0 py-2 small">
+                    <i class="bi bi-exclamation-circle me-1"></i>
+                    This action cannot be undone. All views and records associated with this announcement will be wiped.
+                </div>
+
             </div>
+
 
             <div class="modal-footer bg-light">
-                <button type="button" class="btn btn-outline-secondary px-4 shadow-sm" data-bs-dismiss="modal">Cancel</button>
-                <form method="post" action="{% url 'announcements:delete' announcement.pk %}">
+
+                <button
+                    type="button"
+                    class="btn btn-outline-secondary px-4"
+                    data-bs-dismiss="modal"
+                >
+                    Cancel
+                </button>
+
+
+                <form
+                    method="post"
+                    action="{% url 'announcements:delete' announcement.pk %}"
+                    class="ku-delete-form"
+                >
+
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger px-4 shadow-sm fw-bold">
-                        <i class="bi bi-trash me-1"></i>Delete Permanently
+
+                    <button
+                        type="submit"
+                        class="btn btn-danger px-4 fw-bold"
+                    >
+                        <i class="bi bi-trash me-1"></i>
+                        <span class="submit-label">Delete Permanently</span>
                     </button>
+
                 </form>
+
             </div>
+
         </div>
+
     </div>
+
 </div>
+
 {% endif %}
 
+
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const modalInputs = document.querySelectorAll('.modal input[type="datetime-local"]');
-        modalInputs.forEach(input => {
-            if (!input.classList.contains('form-control')) {
-                input.classList.add('form-control');
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* =========================================================
+       MODAL INPUT ENHANCEMENT
+       ========================================================= */
+
+    const modalInputs = document.querySelectorAll(
+        ".kucsa-announcement-detail .modal input[type='datetime-local']"
+    );
+
+    modalInputs.forEach(function (input) {
+        input.classList.add("form-control");
+    });
+
+
+    /* =========================================================
+       POST FORM LOADING STATES
+       Prevent accidental double submissions.
+       ========================================================= */
+
+    const postForms = document.querySelectorAll(
+        ".kucsa-announcement-detail .ku-post-form"
+    );
+
+    postForms.forEach(function (form) {
+
+        form.addEventListener("submit", function () {
+
+            const button = form.querySelector("button[type='submit']");
+
+            if (!button) {
+                return;
             }
+
+            if (button.dataset.submitted === "true") {
+                return;
+            }
+
+            button.dataset.submitted = "true";
+            button.disabled = true;
+            button.classList.add("ku-loading");
+
+            const originalHTML = button.innerHTML;
+
+            button.innerHTML =
+                '<span class="ku-spinner" aria-hidden="true"></span>Processing...';
+
+            /*
+             * Store the original label in case the browser restores
+             * the page from its back-forward cache.
+             */
+            button.dataset.originalHtml = originalHTML;
         });
     });
+
+
+    /* =========================================================
+       PUBLISH FORM LOADING STATE
+       ========================================================= */
+
+    const publishForm = document.querySelector(".ku-publish-form");
+
+    if (publishForm) {
+
+        publishForm.addEventListener("submit", function () {
+
+            const button = publishForm.querySelector(
+                "button[type='submit']"
+            );
+
+            if (!button) {
+                return;
+            }
+
+            if (button.dataset.submitted === "true") {
+                return;
+            }
+
+            button.dataset.submitted = "true";
+            button.disabled = true;
+            button.classList.add("ku-loading");
+
+            button.innerHTML =
+                '<span class="ku-spinner" aria-hidden="true"></span>Publishing...';
+        });
+    }
+
+
+    /* =========================================================
+       DELETE FORM LOADING STATE
+       ========================================================= */
+
+    const deleteForm = document.querySelector(".ku-delete-form");
+
+    if (deleteForm) {
+
+        deleteForm.addEventListener("submit", function (event) {
+
+            const button = deleteForm.querySelector(
+                "button[type='submit']"
+            );
+
+            if (!button) {
+                return;
+            }
+
+            if (button.dataset.submitted === "true") {
+                event.preventDefault();
+                return;
+            }
+
+            button.dataset.submitted = "true";
+            button.disabled = true;
+            button.classList.add("ku-loading");
+
+            button.innerHTML =
+                '<span class="ku-spinner" aria-hidden="true"></span>Deleting...';
+        });
+    }
+
+
+    /* =========================================================
+       RESTORE BUTTONS AFTER BFCACHE
+       ========================================================= */
+
+    window.addEventListener("pageshow", function () {
+
+        document
+            .querySelectorAll(
+                ".kucsa-announcement-detail button[data-submitted='true']"
+            )
+            .forEach(function (button) {
+
+                button.disabled = false;
+                button.classList.remove("ku-loading");
+                delete button.dataset.submitted;
+
+                if (button.dataset.originalHtml) {
+                    button.innerHTML = button.dataset.originalHtml;
+                }
+            });
+
+    });
+
+
+    /* =========================================================
+       AUTOMATIC FOCUS FOR MODAL INPUT
+       Improves keyboard usability when the publish modal opens.
+       ========================================================= */
+
+    const publishModal = document.getElementById("publishModal");
+
+    if (publishModal) {
+
+        publishModal.addEventListener("shown.bs.modal", function () {
+
+            const publicationInput =
+                document.getElementById("published_at");
+
+            if (publicationInput) {
+                publicationInput.focus();
+            }
+
+        });
+    }
+
+
+    /* =========================================================
+       PREVENT EMPTY ACCIDENTAL DATETIME VALUES FROM LOOKING
+       INVALID IN SUPPORTED BROWSERS.
+       ========================================================= */
+
+    document
+        .querySelectorAll(
+            ".kucsa-announcement-detail input[type='datetime-local']"
+        )
+        .forEach(function (input) {
+
+            input.addEventListener("keydown", function (event) {
+
+                if (event.key === "Escape") {
+                    input.blur();
+                }
+
+            });
+
+        });
+
+});
 </script>
 
 {% endblock %}

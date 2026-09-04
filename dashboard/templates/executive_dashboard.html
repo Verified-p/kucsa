@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block title %}
@@ -7,59 +6,1205 @@ Executive Dashboard | KUCSA Platform
 
 {% block content %}
 
-<div class="container-fluid py-4">
+<style>
+    /* =========================================================
+       KUCSA EXECUTIVE DASHBOARD
+       Scoped styling only
+       ========================================================= */
 
-    <!-- =====================================================
-         WELCOME SECTION
-    ====================================================== -->
+    .kucsa-executive-dashboard {
+        --ked-primary: #0d6efd;
+        --ked-primary-dark: #0a58ca;
+        --ked-success: #198754;
+        --ked-danger: #dc3545;
+        --ked-warning: #f0ad00;
+        --ked-info: #0dcaf0;
+        --ked-dark: #172033;
+        --ked-text: #293548;
+        --ked-muted: #6c757d;
+        --ked-border: #e5e9f0;
+        --ked-bg: #f5f7fb;
+        --ked-white: #ffffff;
+        --ked-radius: 18px;
+        --ked-radius-sm: 13px;
+        --ked-shadow: 0 10px 30px rgba(20, 35, 60, 0.07);
+        --ked-shadow-hover: 0 16px 38px rgba(20, 35, 60, 0.12);
 
-    <div class="row mb-4">
-        <div class="col-12">
+        min-height: 100%;
+        padding: 28px 0 45px;
 
-            <div class="card border-0 shadow-sm">
+        background:
+            radial-gradient(
+                circle at 95% 0%,
+                rgba(13, 110, 253, 0.08),
+                transparent 26rem
+            ),
+            linear-gradient(
+                180deg,
+                #f8fafc 0%,
+                var(--ked-bg) 100%
+            );
+    }
 
-                <div class="card-body p-4">
+    .kucsa-executive-dashboard .ked-container {
+        width: min(100% - 32px, 1440px);
+        margin: 0 auto;
+    }
 
-                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+    /* =========================================================
+       WELCOME / HERO
+       ========================================================= */
 
-                        <div>
+    .kucsa-executive-dashboard .ked-hero {
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 24px;
+        border-radius: var(--ked-radius);
+        background:
+            radial-gradient(
+                circle at 100% 0%,
+                rgba(255,255,255,0.17),
+                transparent 25rem
+            ),
+            linear-gradient(
+                135deg,
+                #0b5ed7 0%,
+                #0d6efd 48%,
+                #287df1 100%
+            );
+        color: #fff;
+        box-shadow: 0 16px 40px rgba(13, 110, 253, 0.2);
+    }
 
-                            <h2 class="fw-bold mb-1">
-                                Welcome,
-                                {{ user.get_full_name|default:user.username }}
-                            </h2>
+    .kucsa-executive-dashboard .ked-hero::after {
+        content: "";
+        position: absolute;
+        width: 230px;
+        height: 230px;
+        right: -80px;
+        bottom: -110px;
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 50%;
+        box-shadow:
+            0 0 0 30px rgba(255,255,255,0.025),
+            0 0 0 60px rgba(255,255,255,0.02);
+        pointer-events: none;
+    }
 
-                            <p class="text-muted mb-0">
-                                KUCSA Executive Management Dashboard
-                            </p>
+    .kucsa-executive-dashboard .ked-hero-body {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 25px;
+        padding: 30px;
+    }
+
+    .kucsa-executive-dashboard .ked-hero-content {
+        min-width: 0;
+    }
+
+    .kucsa-executive-dashboard .ked-hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 8px;
+        padding: 5px 10px;
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: 999px;
+        background: rgba(255,255,255,0.09);
+        font-size: 0.72rem;
+        font-weight: 750;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .kucsa-executive-dashboard .ked-hero-title {
+        margin: 0;
+        font-size: clamp(1.6rem, 3vw, 2.3rem);
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        line-height: 1.15;
+    }
+
+    .kucsa-executive-dashboard .ked-hero-description {
+        max-width: 680px;
+        margin: 9px 0 0;
+        color: rgba(255,255,255,0.82);
+        font-size: 0.92rem;
+        line-height: 1.6;
+    }
+
+    .kucsa-executive-dashboard .ked-role-box {
+        flex: 0 0 auto;
+        min-width: 170px;
+        padding: 15px 17px;
+        border: 1px solid rgba(255,255,255,0.17);
+        border-radius: 14px;
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(8px);
+        text-align: center;
+    }
+
+    .kucsa-executive-dashboard .ked-role-label {
+        display: block;
+        margin-bottom: 7px;
+        color: rgba(255,255,255,0.68);
+        font-size: 0.68rem;
+        font-weight: 750;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+    }
+
+    .kucsa-executive-dashboard .ked-role {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        color: #fff;
+        font-size: 0.9rem;
+        font-weight: 750;
+    }
+
+    /* =========================================================
+       SECTION HEADINGS
+       ========================================================= */
+
+    .kucsa-executive-dashboard .ked-section {
+        margin-bottom: 25px;
+    }
+
+    .kucsa-executive-dashboard .ked-section-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 13px;
+    }
+
+    .kucsa-executive-dashboard .ked-section-title {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin: 0;
+        color: var(--ked-dark);
+        font-size: 1rem;
+        font-weight: 800;
+    }
+
+    .kucsa-executive-dashboard .ked-section-title i {
+        color: var(--ked-primary);
+    }
+
+    .kucsa-executive-dashboard .ked-section-description {
+        margin: 3px 0 0;
+        color: var(--ked-muted);
+        font-size: 0.78rem;
+    }
+
+    /* =========================================================
+       TREASURER ACCESS NOTICE
+       ========================================================= */
+
+    .kucsa-executive-dashboard .ked-finance-notice {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 25px;
+        padding: 18px 20px;
+        border: 1px solid #b7dfca;
+        border-radius: 15px;
+        background:
+            linear-gradient(
+                135deg,
+                #f0fff6,
+                #ffffff
+            );
+        box-shadow: var(--ked-shadow);
+    }
+
+    .kucsa-executive-dashboard .ked-finance-icon {
+        width: 45px;
+        height: 45px;
+        flex: 0 0 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 13px;
+        background: rgba(25,135,84,0.1);
+        color: var(--ked-success);
+        font-size: 1.25rem;
+    }
+
+    .kucsa-executive-dashboard .ked-finance-content {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .kucsa-executive-dashboard .ked-finance-title {
+        margin: 0 0 4px;
+        color: #146c43;
+        font-size: 0.92rem;
+        font-weight: 800;
+    }
+
+    .kucsa-executive-dashboard .ked-finance-text {
+        margin: 0;
+        color: var(--ked-muted);
+        font-size: 0.8rem;
+        line-height: 1.55;
+    }
+
+    .kucsa-executive-dashboard .ked-finance-action {
+        flex: 0 0 auto;
+    }
+
+    /* =========================================================
+       KPI CARDS
+       ========================================================= */
+
+    .kucsa-executive-dashboard .ked-kpi {
+        position: relative;
+        height: 100%;
+        overflow: hidden;
+        border: 1px solid var(--ked-border);
+        border-radius: var(--ked-radius);
+        background: var(--ked-white);
+        box-shadow: var(--ked-shadow);
+        transition:
+            transform 0.22s ease,
+            box-shadow 0.22s ease,
+            border-color 0.22s ease;
+    }
+
+    .kucsa-executive-dashboard .ked-kpi:hover {
+        transform: translateY(-4px);
+        border-color: rgba(13,110,253,0.15);
+        box-shadow: var(--ked-shadow-hover);
+    }
+
+    .kucsa-executive-dashboard .ked-kpi::after {
+        content: "";
+        position: absolute;
+        width: 90px;
+        height: 90px;
+        right: -35px;
+        bottom: -40px;
+        border-radius: 50%;
+        background: rgba(13,110,253,0.035);
+        pointer-events: none;
+    }
+
+    .kucsa-executive-dashboard .ked-kpi-body {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 20px;
+    }
+
+    .kucsa-executive-dashboard .ked-kpi-label {
+        margin-bottom: 5px;
+        color: var(--ked-muted);
+        font-size: 0.76rem;
+        font-weight: 650;
+    }
+
+    .kucsa-executive-dashboard .ked-kpi-value {
+        margin: 0;
+        color: var(--ked-dark);
+        font-size: clamp(1.45rem, 2.5vw, 1.85rem);
+        font-weight: 800;
+        letter-spacing: -0.025em;
+    }
+
+    .kucsa-executive-dashboard .ked-kpi-icon {
+        width: 49px;
+        height: 49px;
+        flex: 0 0 49px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        font-size: 1.35rem;
+    }
+
+    .kucsa-executive-dashboard .ked-icon-primary {
+        color: var(--ked-primary);
+        background: rgba(13,110,253,0.09);
+    }
+
+    .kucsa-executive-dashboard .ked-icon-success {
+        color: var(--ked-success);
+        background: rgba(25,135,84,0.09);
+    }
+
+    .kucsa-executive-dashboard .ked-icon-warning {
+        color: #9a7100;
+        background: rgba(255,193,7,0.13);
+    }
+
+    .kucsa-executive-dashboard .ked-icon-danger {
+        color: var(--ked-danger);
+        background: rgba(220,53,69,0.09);
+    }
+
+    .kucsa-executive-dashboard .ked-icon-info {
+        color: #087990;
+        background: rgba(13,202,240,0.11);
+    }
+
+    /* =========================================================
+       FINANCE PANEL
+       ========================================================= */
+
+    .kucsa-executive-dashboard .ked-finance-panel {
+        overflow: hidden;
+        border: 1px solid #d7e9df;
+        border-radius: var(--ked-radius);
+        background: #fff;
+        box-shadow: var(--ked-shadow);
+    }
+
+    .kucsa-executive-dashboard .ked-panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 17px 21px;
+        color: #fff;
+    }
+
+    .kucsa-executive-dashboard .ked-panel-header-success {
+        background: linear-gradient(
+            135deg,
+            #157347,
+            #198754
+        );
+    }
+
+    .kucsa-executive-dashboard .ked-panel-header-primary {
+        background: linear-gradient(
+            135deg,
+            #0b5ed7,
+            #0d6efd
+        );
+    }
+
+    .kucsa-executive-dashboard .ked-panel-heading {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: 750;
+    }
+
+    .kucsa-executive-dashboard .ked-panel-badge {
+        padding: 5px 10px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.95);
+        color: var(--ked-success);
+        font-size: 0.68rem;
+        font-weight: 800;
+    }
+
+    .kucsa-executive-dashboard .ked-panel-body {
+        padding: 21px;
+    }
+
+    .kucsa-executive-dashboard .ked-finance-card {
+        height: 100%;
+        padding: 18px;
+        border: 1px solid var(--ked-border);
+        border-radius: 14px;
+        background: #fff;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .kucsa-executive-dashboard .ked-finance-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 22px rgba(20,35,60,0.07);
+    }
+
+    .kucsa-executive-dashboard .ked-finance-card-soft {
+        background: #f8faf9;
+    }
+
+    .kucsa-executive-dashboard .ked-finance-label {
+        margin-bottom: 5px;
+        color: var(--ked-muted);
+        font-size: 0.75rem;
+        font-weight: 650;
+    }
+
+    .kucsa-executive-dashboard .ked-finance-value {
+        margin: 0;
+        color: var(--ked-dark);
+        font-size: clamp(1.15rem, 2vw, 1.5rem);
+        font-weight: 800;
+    }
+
+    .kucsa-executive-dashboard .ked-finance-icon-small {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        font-size: 1.1rem;
+    }
+
+    .kucsa-executive-dashboard .ked-subtext {
+        display: block;
+        margin-top: 7px;
+        color: var(--ked-muted);
+        font-size: 0.73rem;
+    }
+
+    .kucsa-executive-dashboard .ked-finance-actions-title {
+        margin: 23px 0 11px;
+        color: var(--ked-dark);
+        font-size: 0.84rem;
+        font-weight: 800;
+    }
+
+    .kucsa-executive-dashboard .ked-action {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 43px;
+        width: 100%;
+        border-radius: 10px;
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+
+    /* =========================================================
+       QUICK MANAGEMENT
+       ========================================================= */
+
+    .kucsa-executive-dashboard .ked-module {
+        height: 100%;
+        padding: 21px;
+        border: 1px solid var(--ked-border);
+        border-radius: var(--ked-radius);
+        background: #fff;
+        box-shadow: var(--ked-shadow);
+        text-align: center;
+        transition:
+            transform 0.22s ease,
+            box-shadow 0.22s ease;
+    }
+
+    .kucsa-executive-dashboard .ked-module:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--ked-shadow-hover);
+    }
+
+    .kucsa-executive-dashboard .ked-module-icon {
+        width: 62px;
+        height: 62px;
+        margin: 0 auto 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 17px;
+        font-size: 1.65rem;
+    }
+
+    .kucsa-executive-dashboard .ked-module-title {
+        margin: 0 0 7px;
+        color: var(--ked-dark);
+        font-size: 0.98rem;
+        font-weight: 800;
+    }
+
+    .kucsa-executive-dashboard .ked-module-description {
+        min-height: 56px;
+        margin: 0 0 15px;
+        color: var(--ked-muted);
+        font-size: 0.76rem;
+        line-height: 1.6;
+    }
+
+    .kucsa-executive-dashboard .ked-module-btn {
+        width: 100%;
+        min-height: 41px;
+        border-radius: 10px;
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+
+    /* =========================================================
+       SYSTEM MODULE STATISTICS
+       ========================================================= */
+
+    .kucsa-executive-dashboard .ked-mini-card {
+        height: 100%;
+        padding: 18px;
+        border: 1px solid var(--ked-border);
+        border-radius: 15px;
+        background: #fff;
+        box-shadow: var(--ked-shadow);
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .kucsa-executive-dashboard .ked-mini-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--ked-shadow-hover);
+    }
+
+    .kucsa-executive-dashboard .ked-mini-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .kucsa-executive-dashboard .ked-mini-label {
+        color: var(--ked-muted);
+        font-size: 0.75rem;
+        font-weight: 650;
+        line-height: 1.4;
+    }
+
+    .kucsa-executive-dashboard .ked-mini-value {
+        margin: 4px 0 0;
+        color: var(--ked-dark);
+        font-size: 1.4rem;
+        font-weight: 800;
+    }
+
+    .kucsa-executive-dashboard .ked-mini-icon {
+        font-size: 1.45rem;
+    }
+
+    /* =========================================================
+       ATTENDANCE CARDS
+       ========================================================= */
+
+    .kucsa-executive-dashboard .ked-attendance-card {
+        height: 100%;
+        padding: 18px;
+        border: 1px solid var(--ked-border);
+        border-radius: 15px;
+        background: #fff;
+        box-shadow: var(--ked-shadow);
+    }
+
+    .kucsa-executive-dashboard .ked-attendance-value {
+        margin-top: 4px;
+        font-size: 1.5rem;
+        font-weight: 800;
+    }
+
+    .kucsa-executive-dashboard .ked-attendance-progress {
+        height: 5px;
+        margin-top: 13px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #edf0f4;
+    }
+
+    .kucsa-executive-dashboard .ked-attendance-progress span {
+        display: block;
+        height: 100%;
+        width: 0;
+        border-radius: inherit;
+        transition: width 1s ease;
+    }
+
+    /* =========================================================
+       OVERVIEW / ACTIVITY
+       ========================================================= */
+
+    .kucsa-executive-dashboard .ked-content-card {
+        height: 100%;
+        overflow: hidden;
+        border: 1px solid var(--ked-border);
+        border-radius: var(--ked-radius);
+        background: #fff;
+        box-shadow: var(--ked-shadow);
+    }
+
+    .kucsa-executive-dashboard .ked-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .kucsa-executive-dashboard .ked-table {
+        min-width: 520px;
+        margin: 0;
+    }
+
+    .kucsa-executive-dashboard .ked-table tbody tr {
+        transition: background 0.15s ease;
+    }
+
+    .kucsa-executive-dashboard .ked-table tbody tr:hover {
+        background: #f8faff;
+    }
+
+    .kucsa-executive-dashboard .ked-table th,
+    .kucsa-executive-dashboard .ked-table td {
+        padding: 11px 17px;
+        border-color: #edf0f4;
+        font-size: 0.78rem;
+    }
+
+    .kucsa-executive-dashboard .ked-table th {
+        color: var(--ked-text);
+        font-weight: 650;
+    }
+
+    .kucsa-executive-dashboard .ked-table td {
+        color: var(--ked-dark);
+        font-weight: 750;
+    }
+
+    .kucsa-executive-dashboard .ked-empty-state {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 340px;
+        padding: 30px;
+        text-align: center;
+    }
+
+    .kucsa-executive-dashboard .ked-empty-icon {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+        background: #f1f4f8;
+        color: #8a94a3;
+        font-size: 1.8rem;
+    }
+
+    .kucsa-executive-dashboard .ked-empty-title {
+        margin: 0 0 5px;
+        color: var(--ked-dark);
+        font-size: 0.9rem;
+        font-weight: 800;
+    }
+
+    .kucsa-executive-dashboard .ked-empty-text {
+        max-width: 310px;
+        margin: 0 auto;
+        color: var(--ked-muted);
+        font-size: 0.76rem;
+        line-height: 1.6;
+    }
+
+    /* =========================================================
+       INFORMATION FOOTER CARDS
+       ========================================================= */
+
+    .kucsa-executive-dashboard .ked-info-box {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 17px;
+        border: 1px solid var(--ked-border);
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: var(--ked-shadow);
+    }
+
+    .kucsa-executive-dashboard .ked-info-icon {
+        flex: 0 0 auto;
+        color: var(--ked-primary);
+        font-size: 1.15rem;
+        margin-top: 1px;
+    }
+
+    .kucsa-executive-dashboard .ked-info-title {
+        margin: 0 0 4px;
+        color: var(--ked-dark);
+        font-size: 0.82rem;
+        font-weight: 800;
+    }
+
+    .kucsa-executive-dashboard .ked-info-text {
+        margin: 0;
+        color: var(--ked-muted);
+        font-size: 0.74rem;
+        line-height: 1.6;
+    }
+
+    /* =========================================================
+       BUTTONS
+       ========================================================= */
+
+    .kucsa-executive-dashboard .btn {
+        transition:
+            transform 0.18s ease,
+            box-shadow 0.18s ease;
+    }
+
+    .kucsa-executive-dashboard .btn:not(:disabled):hover {
+        transform: translateY(-1px);
+    }
+
+    .kucsa-executive-dashboard .btn:focus-visible {
+        outline: 3px solid rgba(13,110,253,0.2);
+        outline-offset: 2px;
+    }
+
+    /* =========================================================
+       RESPONSIVE — TABLETS
+       ========================================================= */
+
+    @media (max-width: 991.98px) {
+
+        .kucsa-executive-dashboard {
+            padding-top: 20px;
+        }
+
+        .kucsa-executive-dashboard .ked-hero-body {
+            padding: 24px;
+        }
+
+        .kucsa-executive-dashboard .ked-finance-notice {
+            align-items: flex-start;
+        }
+
+        .kucsa-executive-dashboard .ked-finance-action {
+            margin-left: auto;
+        }
+
+        .kucsa-executive-dashboard .ked-module-description {
+            min-height: auto;
+        }
+
+    }
+
+    /* =========================================================
+       RESPONSIVE — MOBILE
+       ========================================================= */
+
+    @media (max-width: 767.98px) {
+
+        .kucsa-executive-dashboard {
+            padding: 15px 0 32px;
+        }
+
+        .kucsa-executive-dashboard .ked-container {
+            width: min(100% - 20px, 680px);
+        }
+
+        .kucsa-executive-dashboard .ked-hero {
+            border-radius: 15px;
+        }
+
+        .kucsa-executive-dashboard .ked-hero-body {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 21px;
+        }
+
+        .kucsa-executive-dashboard .ked-role-box {
+            width: 100%;
+            text-align: left;
+        }
+
+        .kucsa-executive-dashboard .ked-role {
+            justify-content: flex-start;
+        }
+
+        .kucsa-executive-dashboard .ked-finance-notice {
+            flex-direction: column;
+            padding: 16px;
+        }
+
+        .kucsa-executive-dashboard .ked-finance-action {
+            width: 100%;
+            margin-left: 0;
+        }
+
+        .kucsa-executive-dashboard .ked-finance-action .btn {
+            width: 100%;
+        }
+
+        .kucsa-executive-dashboard .ked-panel-header {
+            padding: 15px 17px;
+        }
+
+        .kucsa-executive-dashboard .ked-panel-body {
+            padding: 17px;
+        }
+
+        .kucsa-executive-dashboard .ked-action {
+            min-height: 45px;
+        }
+
+        .kucsa-executive-dashboard .ked-content-card {
+            border-radius: 15px;
+        }
+
+        .kucsa-executive-dashboard .ked-empty-state {
+            min-height: 270px;
+        }
+
+    }
+
+    /* =========================================================
+       RESPONSIVE — SMALL PHONES
+       ========================================================= */
+
+    @media (max-width: 575.98px) {
+
+        .kucsa-executive-dashboard .ked-container {
+            width: calc(100% - 14px);
+        }
+
+        .kucsa-executive-dashboard .ked-hero-body {
+            padding: 17px;
+        }
+
+        .kucsa-executive-dashboard .ked-hero-title {
+            font-size: 1.45rem;
+        }
+
+        .kucsa-executive-dashboard .ked-hero-description {
+            font-size: 0.82rem;
+        }
+
+        .kucsa-executive-dashboard .ked-section-heading {
+            align-items: flex-start;
+        }
+
+        .kucsa-executive-dashboard .ked-kpi-body {
+            padding: 16px;
+        }
+
+        .kucsa-executive-dashboard .ked-kpi-icon {
+            width: 43px;
+            height: 43px;
+            flex-basis: 43px;
+            font-size: 1.15rem;
+        }
+
+        .kucsa-executive-dashboard .ked-kpi-value {
+            font-size: 1.4rem;
+        }
+
+        .kucsa-executive-dashboard .ked-mini-card,
+        .kucsa-executive-dashboard .ked-attendance-card {
+            padding: 15px;
+        }
+
+        .kucsa-executive-dashboard .ked-module {
+            padding: 18px;
+        }
+
+    }
+
+    /* =========================================================
+       EXTRA SMALL DEVICES
+       ========================================================= */
+
+    @media (max-width: 359.98px) {
+
+        .kucsa-executive-dashboard .ked-container {
+            width: calc(100% - 8px);
+        }
+
+        .kucsa-executive-dashboard .ked-hero-body {
+            padding: 14px;
+        }
+
+        .kucsa-executive-dashboard .ked-hero-title {
+            font-size: 1.28rem;
+        }
+
+        .kucsa-executive-dashboard .ked-kpi-body {
+            padding: 14px;
+        }
+
+        .kucsa-executive-dashboard .ked-panel-body {
+            padding: 13px;
+        }
+
+    }
+
+    /* =========================================================
+       REDUCED MOTION
+       ========================================================= */
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .kucsa-executive-dashboard *,
+        .kucsa-executive-dashboard *::before,
+        .kucsa-executive-dashboard *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            scroll-behavior: auto !important;
+            transition-duration: 0.01ms !important;
+        }
+
+    }
+</style>
+
+
+<div class="kucsa-executive-dashboard">
+
+    <div class="ked-container">
+
+        <!-- =====================================================
+             WELCOME HERO
+             ====================================================== -->
+
+        <section class="ked-hero">
+
+            <div class="ked-hero-body">
+
+                <div class="ked-hero-content">
+
+                    <span class="ked-hero-eyebrow">
+                        <i class="bi bi-speedometer2"></i>
+                        KUCSA Executive Portal
+                    </span>
+
+                    <h1 class="ked-hero-title">
+                        Welcome,
+                        {{ user.get_full_name|default:user.username }}
+                    </h1>
+
+                    <p class="ked-hero-description">
+                        Your central management dashboard for monitoring
+                        KUCSA membership, events, attendance, announcements,
+                        executive activities and platform operations.
+                    </p>
+
+                </div>
+
+
+                <!-- USER ROLE -->
+
+                <div class="ked-role-box">
+
+                    <span class="ked-role-label">
+                        Current Role
+                    </span>
+
+                    <div class="ked-role">
+
+                        <i class="bi bi-person-badge-fill"></i>
+
+                        {% if current_executive %}
+                            {{ current_executive.role }}
+                        {% else %}
+                            {{ user.get_role_display }}
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             TREASURER FINANCE NOTICE
+             ====================================================== -->
+
+        {% if is_treasurer %}
+
+        <section class="ked-finance-notice">
+
+            <div class="ked-finance-icon">
+                <i class="bi bi-wallet2"></i>
+            </div>
+
+            <div class="ked-finance-content">
+
+                <h2 class="ked-finance-title">
+                    Treasurer Finance Management
+                </h2>
+
+                <p class="ked-finance-text">
+                    You have Treasurer-level access to KUCSA financial
+                    management. Monitor income, expenses, transactions,
+                    reconciliation and financial records through the
+                    authorized Finance module.
+                </p>
+
+            </div>
+
+            <div class="ked-finance-action">
+
+                <a
+                    href="{% url 'finance:dashboard' %}"
+                    class="btn btn-success btn-sm px-3"
+                >
+                    <i class="bi bi-wallet2 me-1"></i>
+                    Open Finance Dashboard
+                </a>
+
+            </div>
+
+        </section>
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             MEMBERSHIP STATISTICS
+             ====================================================== -->
+
+        <section class="ked-section">
+
+            <div class="ked-section-heading">
+
+                <div>
+
+                    <h2 class="ked-section-title">
+                        <i class="bi bi-people-fill"></i>
+                        Membership Overview
+                    </h2>
+
+                    <p class="ked-section-description">
+                        Current KUCSA membership and executive statistics.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="row g-3">
+
+                <!-- TOTAL MEMBERS -->
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="ked-kpi">
+
+                        <div class="ked-kpi-body">
+
+                            <div>
+
+                                <div class="ked-kpi-label">
+                                    Total Members
+                                </div>
+
+                                <h3 class="ked-kpi-value">
+                                    {{ total_members|default:0 }}
+                                </h3>
+
+                            </div>
+
+                            <div class="ked-kpi-icon ked-icon-primary">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
 
                         </div>
 
-                        <!-- USER ROLE -->
+                    </div>
 
-                        <div>
+                </div>
 
-                            {% if current_executive %}
 
-                                <span class="badge bg-primary fs-6 px-3 py-2">
+                <!-- ACTIVE MEMBERS -->
 
-                                    <i class="bi bi-person-badge-fill me-1"></i>
+                <div class="col-xl-3 col-md-6">
 
-                                    {{ current_executive.role }}
+                    <div class="ked-kpi">
 
-                                </span>
+                        <div class="ked-kpi-body">
 
-                            {% else %}
+                            <div>
 
-                                <span class="badge bg-secondary fs-6 px-3 py-2">
+                                <div class="ked-kpi-label">
+                                    Active Members
+                                </div>
 
-                                    <i class="bi bi-shield-check me-1"></i>
+                                <h3 class="ked-kpi-value">
+                                    {{ verified_members|default:0 }}
+                                </h3>
 
-                                    {{ user.get_role_display }}
+                            </div>
 
-                                </span>
+                            <div class="ked-kpi-icon ked-icon-success">
+                                <i class="bi bi-person-check-fill"></i>
+                            </div>
 
-                            {% endif %}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PENDING MEMBERS -->
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="ked-kpi">
+
+                        <div class="ked-kpi-body">
+
+                            <div>
+
+                                <div class="ked-kpi-label">
+                                    Pending Members
+                                </div>
+
+                                <h3 class="ked-kpi-value">
+                                    {{ pending_members|default:0 }}
+                                </h3>
+
+                            </div>
+
+                            <div class="ked-kpi-icon ked-icon-warning">
+                                <i class="bi bi-hourglass-split"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- EXECUTIVE TEAM -->
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="ked-kpi">
+
+                        <div class="ked-kpi-body">
+
+                            <div>
+
+                                <div class="ked-kpi-label">
+                                    Executive Team
+                                </div>
+
+                                <h3 class="ked-kpi-value">
+                                    {{ executives|default:0 }}
+                                </h3>
+
+                            </div>
+
+                            <div class="ked-kpi-icon ked-icon-info">
+                                <i class="bi bi-person-badge-fill"></i>
+                            </div>
 
                         </div>
 
@@ -69,48 +1214,122 @@ Executive Dashboard | KUCSA Platform
 
             </div>
 
-        </div>
-    </div>
+        </section>
 
 
-    <!-- =====================================================
-         TREASURER FINANCE NOTICE
-         Visible only to Treasurer
-    ====================================================== -->
+        <!-- =====================================================
+             MEMBERSHIP STATUS
+             ====================================================== -->
 
-    {% if is_treasurer %}
+        <section class="ked-section">
 
-    <div class="row mb-4">
+            <div class="ked-section-heading">
 
-        <div class="col-12">
+                <div>
 
-            <div class="alert alert-success border-0 shadow-sm mb-0">
+                    <h2 class="ked-section-title">
+                        <i class="bi bi-activity"></i>
+                        Membership Status
+                    </h2>
 
-                <div class="d-flex align-items-start">
+                    <p class="ked-section-description">
+                        Additional membership and account verification indicators.
+                    </p>
 
-                    <i class="bi bi-wallet2 fs-4 me-3"></i>
+                </div>
 
-                    <div class="flex-grow-1">
+            </div>
 
-                        <h6 class="fw-bold mb-1">
-                            Treasurer Finance Management
-                        </h6>
 
-                        <p class="mb-2 small">
-                            You have Treasurer-level access to KUCSA financial
-                            management. Use the Finance module to monitor
-                            income, expenses, transactions, reconciliation
-                            and financial records.
-                        </p>
+            <div class="row g-3">
 
-                        <a
-                            href="{% url 'finance:dashboard' %}"
-                            class="btn btn-success btn-sm">
+                <!-- EXPIRED -->
 
-                            <i class="bi bi-wallet2 me-1"></i>
-                            Open Finance Dashboard
+                <div class="col-lg-4 col-md-6">
 
-                        </a>
+                    <div class="ked-mini-card">
+
+                        <div class="ked-mini-top">
+
+                            <div>
+
+                                <div class="ked-mini-label">
+                                    Expired Memberships
+                                </div>
+
+                                <div class="ked-mini-value text-danger">
+                                    {{ expired_members|default:0 }}
+                                </div>
+
+                            </div>
+
+                            <i class="bi bi-calendar-x-fill ked-mini-icon text-danger"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SUSPENDED -->
+
+                <div class="col-lg-4 col-md-6">
+
+                    <div class="ked-mini-card">
+
+                        <div class="ked-mini-top">
+
+                            <div>
+
+                                <div class="ked-mini-label">
+                                    Suspended Memberships
+                                </div>
+
+                                <div class="ked-mini-value text-danger">
+                                    {{ suspended_members|default:0 }}
+                                </div>
+
+                            </div>
+
+                            <i class="bi bi-slash-circle-fill ked-mini-icon text-danger"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- VERIFIED USERS -->
+
+                <div class="col-lg-4 col-md-12">
+
+                    <div class="ked-mini-card">
+
+                        <div class="ked-mini-top">
+
+                            <div>
+
+                                <div class="ked-mini-label">
+                                    Verified Users
+                                </div>
+
+                                <div class="ked-mini-value text-success">
+                                    {{ verified_users|default:0 }}
+                                </div>
+
+                                <small class="ked-subtext">
+                                    {{ pending_users|default:0 }}
+                                    user{{ pending_users|pluralize }}
+                                    awaiting verification.
+                                </small>
+
+                            </div>
+
+                            <i class="bi bi-patch-check-fill ked-mini-icon text-success"></i>
+
+                        </div>
 
                     </div>
 
@@ -118,337 +1337,64 @@ Executive Dashboard | KUCSA Platform
 
             </div>
 
-        </div>
-
-    </div>
-
-    {% endif %}
+        </section>
 
 
-    <!-- =====================================================
-         MEMBERSHIP STATISTICS
-    ====================================================== -->
+        <!-- =====================================================
+             TREASURER FINANCE OVERVIEW
+             ====================================================== -->
 
-    <div class="row g-4 mb-4">
+        {% if is_treasurer %}
 
-        <!-- TOTAL MEMBERS -->
+        <section class="ked-section">
 
-        <div class="col-lg-3 col-md-6">
+            <div class="ked-finance-panel">
 
-            <div class="card border-0 shadow-sm h-100">
+                <div class="ked-panel-header ked-panel-header-success">
 
-                <div class="card-body">
+                    <h2 class="ked-panel-heading">
 
-                    <div class="d-flex justify-content-between align-items-center">
+                        <i class="bi bi-wallet2"></i>
 
-                        <div>
+                        Finance Overview
 
-                            <h6 class="text-muted mb-2">
-                                Total Members
-                            </h6>
+                    </h2>
 
-                            <h3 class="fw-bold mb-0">
-                                {{ total_members|default:0 }}
-                            </h3>
-
-                        </div>
-
-                        <i class="bi bi-people-fill display-5 text-primary"></i>
-
-                    </div>
+                    <span class="ked-panel-badge">
+                        Treasurer
+                    </span>
 
                 </div>
 
-            </div>
 
-        </div>
-
-
-        <!-- ACTIVE MEMBERS -->
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between align-items-center">
-
-                        <div>
-
-                            <h6 class="text-muted mb-2">
-                                Active Members
-                            </h6>
-
-                            <h3 class="fw-bold mb-0">
-                                {{ verified_members|default:0 }}
-                            </h3>
-
-                        </div>
-
-                        <i class="bi bi-person-check-fill display-5 text-success"></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- PENDING MEMBERS -->
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between align-items-center">
-
-                        <div>
-
-                            <h6 class="text-muted mb-2">
-                                Pending Members
-                            </h6>
-
-                            <h3 class="fw-bold mb-0">
-                                {{ pending_members|default:0 }}
-                            </h3>
-
-                        </div>
-
-                        <i class="bi bi-hourglass-split display-5 text-warning"></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- EXECUTIVE TEAM -->
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between align-items-center">
-
-                        <div>
-
-                            <h6 class="text-muted mb-2">
-                                Executive Team
-                            </h6>
-
-                            <h3 class="fw-bold mb-0">
-                                {{ executives|default:0 }}
-                            </h3>
-
-                        </div>
-
-                        <i class="bi bi-person-badge-fill display-5 text-info"></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         ADDITIONAL MEMBERSHIP STATUS
-    ====================================================== -->
-
-    <div class="row g-4 mb-4">
-
-        <!-- EXPIRED -->
-
-        <div class="col-lg-4 col-md-6">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between align-items-center">
-
-                        <div>
-
-                            <h6 class="text-muted mb-1">
-                                Expired Memberships
-                            </h6>
-
-                            <h4 class="fw-bold mb-0">
-                                {{ expired_members|default:0 }}
-                            </h4>
-
-                        </div>
-
-                        <i class="bi bi-calendar-x-fill fs-2 text-danger"></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- SUSPENDED -->
-
-        <div class="col-lg-4 col-md-6">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between align-items-center">
-
-                        <div>
-
-                            <h6 class="text-muted mb-1">
-                                Suspended Memberships
-                            </h6>
-
-                            <h4 class="fw-bold mb-0">
-                                {{ suspended_members|default:0 }}
-                            </h4>
-
-                        </div>
-
-                        <i class="bi bi-slash-circle-fill fs-2 text-danger"></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- SYSTEM USERS -->
-
-        <div class="col-lg-4 col-md-12">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between align-items-center">
-
-                        <div>
-
-                            <h6 class="text-muted mb-1">
-                                Verified Users
-                            </h6>
-
-                            <h4 class="fw-bold mb-0">
-                                {{ verified_users|default:0 }}
-                            </h4>
-
-                        </div>
-
-                        <i class="bi bi-patch-check-fill fs-2 text-success"></i>
-
-                    </div>
-
-                    <small class="text-muted">
-
-                        {{ pending_users|default:0 }}
-                        user{{ pending_users|pluralize }}
-                        awaiting verification.
-
-                    </small>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         TREASURER FINANCE OVERVIEW
-         Visible only to Treasurer
-    ====================================================== -->
-
-    {% if is_treasurer %}
-
-    <div class="row mb-4">
-
-        <div class="col-12">
-
-            <div class="card border-0 shadow-sm">
-
-                <div class="card-header bg-success text-white py-3">
-
-                    <div class="d-flex justify-content-between align-items-center">
-
-                        <div class="d-flex align-items-center">
-
-                            <i class="bi bi-wallet2 me-2"></i>
-
-                            <span class="fw-semibold">
-                                Finance Overview
-                            </span>
-
-                        </div>
-
-                        <span class="badge bg-light text-success">
-                            Treasurer
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <div class="card-body">
+                <div class="ked-panel-body">
 
                     <!-- FINANCIAL SUMMARY -->
 
-                    <div class="row g-4 mb-4">
+                    <div class="row g-3">
 
                         <!-- TOTAL RECEIVED -->
 
                         <div class="col-xl-4 col-md-6">
 
-                            <div class="card border-0 bg-light h-100">
+                            <div class="ked-finance-card ked-finance-card-soft">
 
-                                <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center gap-3">
 
-                                    <div class="d-flex justify-content-between align-items-center">
+                                    <div>
 
-                                        <div>
-
-                                            <h6 class="text-muted mb-2">
-                                                Total Received Income
-                                            </h6>
-
-                                            <h3 class="fw-bold text-success mb-0">
-
-                                                KES
-                                                {{ total_received_income|default:"0.00" }}
-
-                                            </h3>
-
+                                        <div class="ked-finance-label">
+                                            Total Received Income
                                         </div>
 
-                                        <i class="bi bi-cash-stack fs-1 text-success"></i>
+                                        <h3 class="ked-finance-value text-success">
+                                            KES {{ total_received_income|default:"0.00" }}
+                                        </h3>
 
+                                    </div>
+
+                                    <div class="ked-finance-icon-small bg-success-subtle text-success">
+                                        <i class="bi bi-cash-stack"></i>
                                     </div>
 
                                 </div>
@@ -458,39 +1404,34 @@ Executive Dashboard | KUCSA Platform
                         </div>
 
 
-                        <!-- PENDING -->
+                        <!-- PENDING PAYMENTS -->
 
                         <div class="col-xl-4 col-md-6">
 
-                            <div class="card border-0 bg-light h-100">
+                            <div class="ked-finance-card ked-finance-card-soft">
 
-                                <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center gap-3">
 
-                                    <div class="d-flex justify-content-between align-items-center">
+                                    <div>
 
-                                        <div>
-
-                                            <h6 class="text-muted mb-2">
-                                                Pending Payments
-                                            </h6>
-
-                                            <h3 class="fw-bold text-warning mb-0">
-
-                                                KES
-                                                {{ pending_payment_amount|default:"0.00" }}
-
-                                            </h3>
-
+                                        <div class="ked-finance-label">
+                                            Pending Payments
                                         </div>
 
-                                        <i class="bi bi-hourglass-split fs-1 text-warning"></i>
+                                        <h3 class="ked-finance-value text-warning">
+                                            KES {{ pending_payment_amount|default:"0.00" }}
+                                        </h3>
+
+                                        <span class="ked-subtext">
+                                            {{ pending_payments|default:0 }}
+                                            pending payment{{ pending_payments|pluralize }}.
+                                        </span>
 
                                     </div>
 
-                                    <small class="text-muted">
-                                        {{ pending_payments|default:0 }}
-                                        pending payment{{ pending_payments|pluralize }}.
-                                    </small>
+                                    <div class="ked-finance-icon-small bg-warning-subtle text-warning">
+                                        <i class="bi bi-hourglass-split"></i>
+                                    </div>
 
                                 </div>
 
@@ -503,31 +1444,29 @@ Executive Dashboard | KUCSA Platform
 
                         <div class="col-xl-4 col-md-12">
 
-                            <div class="card border-0 bg-light h-100">
+                            <div class="ked-finance-card ked-finance-card-soft">
 
-                                <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center gap-3">
 
-                                    <div class="d-flex justify-content-between align-items-center">
+                                    <div>
 
-                                        <div>
-
-                                            <h6 class="text-muted mb-2">
-                                                Completed Payments
-                                            </h6>
-
-                                            <h3 class="fw-bold mb-0">
-                                                {{ completed_payments|default:0 }}
-                                            </h3>
-
+                                        <div class="ked-finance-label">
+                                            Completed Payments
                                         </div>
 
-                                        <i class="bi bi-check-circle-fill fs-1 text-success"></i>
+                                        <h3 class="ked-finance-value">
+                                            {{ completed_payments|default:0 }}
+                                        </h3>
+
+                                        <span class="ked-subtext">
+                                            Successfully completed payments.
+                                        </span>
 
                                     </div>
 
-                                    <small class="text-muted">
-                                        Successfully completed payments.
-                                    </small>
+                                    <div class="ked-finance-icon-small bg-success-subtle text-success">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                    </div>
 
                                 </div>
 
@@ -540,38 +1479,35 @@ Executive Dashboard | KUCSA Platform
 
                     <!-- PAYMENT CATEGORIES -->
 
-                    <div class="row g-4 mb-4">
+                    <div class="row g-3 mt-1">
 
                         <!-- MEMBERSHIP INCOME -->
 
                         <div class="col-lg-6">
 
-                            <div class="card border h-100">
+                            <div class="ked-finance-card">
 
-                                <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center gap-3">
 
-                                    <div class="d-flex justify-content-between align-items-center">
+                                    <div>
 
-                                        <div>
-
-                                            <h6 class="text-muted mb-2">
-                                                Membership Income
-                                            </h6>
-
-                                            <h4 class="fw-bold mb-1">
-                                                KES
-                                                {{ membership_income|default:"0.00" }}
-                                            </h4>
-
-                                            <small class="text-muted">
-                                                {{ membership_payment_count|default:0 }}
-                                                payment{{ membership_payment_count|pluralize }}
-                                            </small>
-
+                                        <div class="ked-finance-label">
+                                            Membership Income
                                         </div>
 
-                                        <i class="bi bi-person-badge fs-2 text-primary"></i>
+                                        <h3 class="ked-finance-value">
+                                            KES {{ membership_income|default:"0.00" }}
+                                        </h3>
 
+                                        <span class="ked-subtext">
+                                            {{ membership_payment_count|default:0 }}
+                                            payment{{ membership_payment_count|pluralize }}
+                                        </span>
+
+                                    </div>
+
+                                    <div class="ked-finance-icon-small bg-primary-subtle text-primary">
+                                        <i class="bi bi-person-badge"></i>
                                     </div>
 
                                 </div>
@@ -585,32 +1521,29 @@ Executive Dashboard | KUCSA Platform
 
                         <div class="col-lg-6">
 
-                            <div class="card border h-100">
+                            <div class="ked-finance-card">
 
-                                <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center gap-3">
 
-                                    <div class="d-flex justify-content-between align-items-center">
+                                    <div>
 
-                                        <div>
-
-                                            <h6 class="text-muted mb-2">
-                                                Support Income
-                                            </h6>
-
-                                            <h4 class="fw-bold mb-1">
-                                                KES
-                                                {{ support_income|default:"0.00" }}
-                                            </h4>
-
-                                            <small class="text-muted">
-                                                {{ support_payment_count|default:0 }}
-                                                payment{{ support_payment_count|pluralize }}
-                                            </small>
-
+                                        <div class="ked-finance-label">
+                                            Support Income
                                         </div>
 
-                                        <i class="bi bi-heart-fill fs-2 text-danger"></i>
+                                        <h3 class="ked-finance-value">
+                                            KES {{ support_income|default:"0.00" }}
+                                        </h3>
 
+                                        <span class="ked-subtext">
+                                            {{ support_payment_count|default:0 }}
+                                            payment{{ support_payment_count|pluralize }}
+                                        </span>
+
+                                    </div>
+
+                                    <div class="ked-finance-icon-small bg-danger-subtle text-danger">
+                                        <i class="bi bi-heart-fill"></i>
                                     </div>
 
                                 </div>
@@ -622,70 +1555,62 @@ Executive Dashboard | KUCSA Platform
                     </div>
 
 
-                    <!-- FINANCE QUICK ACTIONS -->
+                    <!-- FINANCE ACTIONS -->
 
-                    <div>
+                    <h3 class="ked-finance-actions-title">
+                        Finance Management
+                    </h3>
 
-                        <h6 class="fw-bold mb-3">
-                            Finance Management
-                        </h6>
+                    <div class="row g-2">
 
-                        <div class="row g-3">
+                        <div class="col-xl-3 col-md-6">
 
-                            <div class="col-xl-3 col-md-6">
+                            <a
+                                href="{% url 'finance:dashboard' %}"
+                                class="btn btn-success ked-action"
+                            >
+                                <i class="bi bi-speedometer2"></i>
+                                Finance Dashboard
+                            </a>
 
-                                <a
-                                    href="{% url 'finance:dashboard' %}"
-                                    class="btn btn-success w-100">
-
-                                    <i class="bi bi-speedometer2 me-1"></i>
-                                    Finance Dashboard
-
-                                </a>
-
-                            </div>
+                        </div>
 
 
-                            <div class="col-xl-3 col-md-6">
+                        <div class="col-xl-3 col-md-6">
 
-                                <a
-                                    href="{% url 'finance:income_list' %}"
-                                    class="btn btn-outline-success w-100">
+                            <a
+                                href="{% url 'finance:income_list' %}"
+                                class="btn btn-outline-success ked-action"
+                            >
+                                <i class="bi bi-arrow-down-circle"></i>
+                                Income
+                            </a>
 
-                                    <i class="bi bi-arrow-down-circle me-1"></i>
-                                    Income
-
-                                </a>
-
-                            </div>
-
-
-                            <div class="col-xl-3 col-md-6">
-
-                                <a
-                                    href="{% url 'finance:expense_list' %}"
-                                    class="btn btn-outline-danger w-100">
-
-                                    <i class="bi bi-arrow-up-circle me-1"></i>
-                                    Expenses
-
-                                </a>
-
-                            </div>
+                        </div>
 
 
-                            <div class="col-xl-3 col-md-6">
+                        <div class="col-xl-3 col-md-6">
 
-                                <a
-                                    href="{% url 'finance:transaction_list' %}"
-                                    class="btn btn-outline-primary w-100">
+                            <a
+                                href="{% url 'finance:expense_list' %}"
+                                class="btn btn-outline-danger ked-action"
+                            >
+                                <i class="bi bi-arrow-up-circle"></i>
+                                Expenses
+                            </a>
 
-                                    <i class="bi bi-arrow-left-right me-1"></i>
-                                    Transactions
+                        </div>
 
-                                </a>
 
-                            </div>
+                        <div class="col-xl-3 col-md-6">
+
+                            <a
+                                href="{% url 'finance:transaction_list' %}"
+                                class="btn btn-outline-primary ked-action"
+                            >
+                                <i class="bi bi-arrow-left-right"></i>
+                                Transactions
+                            </a>
 
                         </div>
 
@@ -695,772 +1620,769 @@ Executive Dashboard | KUCSA Platform
 
             </div>
 
-        </div>
+        </section>
 
-    </div>
+        {% endif %}
 
-    {% endif %}
 
+        <!-- =====================================================
+             QUICK MANAGEMENT
+             ====================================================== -->
 
-    <!-- =====================================================
-         QUICK MANAGEMENT
-    ====================================================== -->
+        <section class="ked-section">
 
-    <div class="row g-4 mb-4">
-
-        <!-- MEMBERS -->
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body text-center">
-
-                    <i class="bi bi-people display-4 text-primary"></i>
-
-                    <h5 class="fw-bold mt-3">
-                        Members
-                    </h5>
-
-                    <p class="text-muted small">
-                        Manage KUCSA members, membership
-                        records and profiles.
-                    </p>
-
-                    <button
-                        type="button"
-                        class="btn btn-primary w-100"
-                        disabled>
-
-                        <i class="bi bi-hourglass-split me-1"></i>
-                        Coming Soon
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- EVENTS -->
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body text-center">
-
-                    <i class="bi bi-calendar-event-fill display-4 text-success"></i>
-
-                    <h5 class="fw-bold mt-3">
-                        Events
-                    </h5>
-
-                    <p class="text-muted small">
-                        Organize workshops, meetings,
-                        training and KUCSA activities.
-                    </p>
-
-                    <a
-                        href="{% url 'events:list' %}"
-                        class="btn btn-success w-100">
-
-                        <i class="bi bi-calendar-event me-1"></i>
-                        Manage Events
-
-                    </a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- ATTENDANCE -->
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body text-center">
-
-                    <i class="bi bi-person-check-fill display-4 text-info"></i>
-
-                    <h5 class="fw-bold mt-3">
-                        Attendance
-                    </h5>
-
-                    <p class="text-muted small">
-                        Create attendance sessions,
-                        monitor member participation
-                        and manage attendance records.
-                    </p>
-
-                    <a
-                        href="{% url 'attendance:list' %}"
-                        class="btn btn-info text-white w-100">
-
-                        <i class="bi bi-clipboard-check me-1"></i>
-                        Manage Attendance
-
-                    </a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- ANALYTICS -->
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body text-center">
-
-                    <i class="bi bi-bar-chart-fill display-4 text-danger"></i>
-
-                    <h5 class="fw-bold mt-3">
-                        Analytics
-                    </h5>
-
-                    <p class="text-muted small">
-                        View KUCSA membership statistics,
-                        attendance and organizational analytics.
-                    </p>
-
-                    <a
-                        href="{% url 'dashboard:analytics' %}"
-                        class="btn btn-danger w-100">
-
-                        <i class="bi bi-graph-up me-1"></i>
-                        View Analytics
-
-                    </a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         PLATFORM MODULES
-    ====================================================== -->
-
-    <div class="row g-4 mb-4">
-
-        <!-- EVENTS -->
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between">
-
-                        <div>
-
-                            <h6 class="text-muted mb-2">
-                                Events
-                            </h6>
-
-                            <h3 class="fw-bold mb-0">
-                                {{ events|default:0 }}
-                            </h3>
-
-                        </div>
-
-                        <i class="bi bi-calendar-event fs-2 text-success"></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- ANNOUNCEMENTS -->
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between">
-
-                        <div>
-
-                            <h6 class="text-muted mb-2">
-                                Announcements
-                            </h6>
-
-                            <h3 class="fw-bold mb-0">
-                                {{ announcements|default:0 }}
-                            </h3>
-
-                        </div>
-
-                        <i class="bi bi-megaphone fs-2 text-warning"></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- ATTENDANCE SESSIONS -->
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between">
-
-                        <div>
-
-                            <h6 class="text-muted mb-2">
-                                Attendance Sessions
-                            </h6>
-
-                            <h3 class="fw-bold mb-0">
-                                {{ attendance_sessions|default:0 }}
-                            </h3>
-
-                        </div>
-
-                        <i class="bi bi-clipboard-check fs-2 text-info"></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- ATTENDANCE RATE -->
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between">
-
-                        <div>
-
-                            <h6 class="text-muted mb-2">
-                                Attendance Rate
-                            </h6>
-
-                            <h3 class="fw-bold mb-0">
-                                {{ attendance_percentage|default:0 }}%
-                            </h3>
-
-                        </div>
-
-                        <i class="bi bi-graph-up-arrow fs-2 text-success"></i>
-
-                    </div>
-
-                    <small class="text-muted">
-                        Based on present and absent records.
-                    </small>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         ATTENDANCE OVERVIEW
-    ====================================================== -->
-
-    <div class="row g-4 mb-4">
-
-        <!-- PRESENT -->
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between align-items-center">
-
-                        <div>
-
-                            <h6 class="text-muted mb-2">
-                                Present
-                            </h6>
-
-                            <h3 class="fw-bold mb-0 text-success">
-                                {{ attendance|default:0 }}
-                            </h3>
-
-                        </div>
-
-                        <i class="bi bi-check-circle-fill fs-2 text-success"></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- ABSENT -->
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between align-items-center">
-
-                        <div>
-
-                            <h6 class="text-muted mb-2">
-                                Absent
-                            </h6>
-
-                            <h3 class="fw-bold mb-0 text-danger">
-                                {{ absent_attendance|default:0 }}
-                            </h3>
-
-                        </div>
-
-                        <i class="bi bi-x-circle-fill fs-2 text-danger"></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- EXCUSED -->
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between align-items-center">
-
-                        <div>
-
-                            <h6 class="text-muted mb-2">
-                                Excused
-                            </h6>
-
-                            <h3 class="fw-bold mb-0 text-warning">
-                                {{ excused_attendance|default:0 }}
-                            </h3>
-
-                        </div>
-
-                        <i class="bi bi-info-circle-fill fs-2 text-warning"></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- PENDING -->
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between align-items-center">
-
-                        <div>
-
-                            <h6 class="text-muted mb-2">
-                                Pending
-                            </h6>
-
-                            <h3 class="fw-bold mb-0 text-secondary">
-                                {{ pending_attendance|default:0 }}
-                            </h3>
-
-                        </div>
-
-                        <i class="bi bi-hourglass-split fs-2 text-secondary"></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         SYSTEM OVERVIEW + RECENT ACTIVITY
-    ====================================================== -->
-
-    <div class="row g-4">
-
-        <!-- SYSTEM OVERVIEW -->
-
-        <div class="col-lg-8">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-header bg-primary text-white py-3">
-
-                    <div class="d-flex align-items-center">
-
-                        <i class="bi bi-speedometer2 me-2"></i>
-
-                        <span class="fw-semibold">
-                            System Overview
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <div class="card-body">
-
-                    <div class="table-responsive">
-
-                        <table class="table table-hover align-middle mb-0">
-
-                            <tbody>
-
-                                <tr>
-                                    <th>Total Members</th>
-
-                                    <td class="text-end fw-semibold">
-                                        {{ total_members|default:0 }}
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <th>Active Members</th>
-
-                                    <td class="text-end fw-semibold text-success">
-                                        {{ verified_members|default:0 }}
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <th>Pending Members</th>
-
-                                    <td class="text-end fw-semibold text-warning">
-                                        {{ pending_members|default:0 }}
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <th>Expired Memberships</th>
-
-                                    <td class="text-end fw-semibold text-danger">
-                                        {{ expired_members|default:0 }}
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <th>Suspended Memberships</th>
-
-                                    <td class="text-end fw-semibold text-danger">
-                                        {{ suspended_members|default:0 }}
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <th>Executive Team</th>
-
-                                    <td class="text-end fw-semibold">
-                                        {{ executives|default:0 }}
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <th>System Users</th>
-
-                                    <td class="text-end fw-semibold">
-                                        {{ total_users|default:0 }}
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <th>Verified Users</th>
-
-                                    <td class="text-end fw-semibold text-success">
-                                        {{ verified_users|default:0 }}
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <th>Pending User Verification</th>
-
-                                    <td class="text-end fw-semibold text-warning">
-                                        {{ pending_users|default:0 }}
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <th>Events</th>
-
-                                    <td class="text-end fw-semibold">
-                                        {{ events|default:0 }}
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <th>Announcements</th>
-
-                                    <td class="text-end fw-semibold">
-                                        {{ announcements|default:0 }}
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <th>Attendance Sessions</th>
-
-                                    <td class="text-end fw-semibold text-info">
-                                        {{ attendance_sessions|default:0 }}
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <th>Total Attendance Records</th>
-
-                                    <td class="text-end fw-semibold">
-                                        {{ attendance_records|default:0 }}
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <th>Present</th>
-
-                                    <td class="text-end fw-semibold text-success">
-                                        {{ attendance|default:0 }}
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <th>Absent</th>
-
-                                    <td class="text-end fw-semibold text-danger">
-                                        {{ absent_attendance|default:0 }}
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <th>Excused</th>
-
-                                    <td class="text-end fw-semibold text-warning">
-                                        {{ excused_attendance|default:0 }}
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <th>Pending</th>
-
-                                    <td class="text-end fw-semibold text-secondary">
-                                        {{ pending_attendance|default:0 }}
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <th>Attendance Rate</th>
-
-                                    <td class="text-end fw-semibold text-success">
-                                        {{ attendance_percentage|default:0 }}%
-                                    </td>
-                                </tr>
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- RECENT ACTIVITY -->
-
-        <div class="col-lg-4">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-header bg-success text-white py-3">
-
-                    <div class="d-flex align-items-center">
-
-                        <i class="bi bi-clock-history me-2"></i>
-
-                        <span class="fw-semibold">
-                            Recent Activity
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <div class="card-body">
-
-                    <div class="text-center py-5">
-
-                        <i class="bi bi-clock-history display-4 text-muted"></i>
-
-                        <p class="mt-3 text-muted mb-1">
-                            No recent activity available.
-                        </p>
-
-                        <small class="text-muted">
-
-                            Recent member registrations,
-                            attendance sessions, events,
-                            payments and announcements
-                            will appear here.
-
-                        </small>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         TREASURER FINANCE FOOTNOTE
-         Visible only to Treasurer
-    ====================================================== -->
-
-    {% if is_treasurer %}
-
-    <div class="row mt-4">
-
-        <div class="col-12">
-
-            <div class="alert alert-light border shadow-sm mb-0">
-
-                <div class="d-flex align-items-start">
-
-                    <i class="bi bi-shield-check text-success fs-5 me-2"></i>
-
-                    <div>
-
-                        <strong>
-                            Treasurer Finance Access
-                        </strong>
-
-                        <p class="mb-0 text-muted small">
-
-                            Finance management access is restricted by
-                            the Finance permission layer. Dashboard
-                            statistics are read-only; financial
-                            operations are performed through the
-                            authorized Finance module.
-
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    {% endif %}
-
-
-    <!-- =====================================================
-         DASHBOARD FOOTER
-    ====================================================== -->
-
-    <div class="mt-4">
-
-        <div class="alert alert-light border shadow-sm mb-0">
-
-            <div class="d-flex align-items-start">
-
-                <i class="bi bi-info-circle-fill text-primary fs-5 me-2"></i>
+            <div class="ked-section-heading">
 
                 <div>
 
-                    <strong>
-                        KUCSA Management Dashboard
-                    </strong>
+                    <h2 class="ked-section-title">
+                        <i class="bi bi-grid-1x2-fill"></i>
+                        Quick Management
+                    </h2>
 
-                    <p class="mb-0 text-muted small">
+                    <p class="ked-section-description">
+                        Frequently used KUCSA management modules.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="row g-3">
+
+                <!-- MEMBERS -->
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="ked-module">
+
+                        <div class="ked-module-icon ked-icon-primary">
+                            <i class="bi bi-people"></i>
+                        </div>
+
+                        <h3 class="ked-module-title">
+                            Members
+                        </h3>
+
+                        <p class="ked-module-description">
+                            Manage KUCSA members, membership records
+                            and profiles.
+                        </p>
+
+                        <button
+                            type="button"
+                            class="btn btn-outline-secondary ked-module-btn"
+                            disabled
+                        >
+                            <i class="bi bi-hourglass-split me-1"></i>
+                            Coming Soon
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- EVENTS -->
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="ked-module">
+
+                        <div class="ked-module-icon ked-icon-success">
+                            <i class="bi bi-calendar-event-fill"></i>
+                        </div>
+
+                        <h3 class="ked-module-title">
+                            Events
+                        </h3>
+
+                        <p class="ked-module-description">
+                            Organize workshops, meetings, training
+                            and KUCSA activities.
+                        </p>
+
+                        <a
+                            href="{% url 'events:list' %}"
+                            class="btn btn-success ked-module-btn"
+                        >
+                            <i class="bi bi-calendar-event me-1"></i>
+                            Manage Events
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ATTENDANCE -->
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="ked-module">
+
+                        <div class="ked-module-icon ked-icon-info">
+                            <i class="bi bi-person-check-fill"></i>
+                        </div>
+
+                        <h3 class="ked-module-title">
+                            Attendance
+                        </h3>
+
+                        <p class="ked-module-description">
+                            Create sessions, monitor participation
+                            and manage attendance records.
+                        </p>
+
+                        <a
+                            href="{% url 'attendance:list' %}"
+                            class="btn btn-info text-white ked-module-btn"
+                        >
+                            <i class="bi bi-clipboard-check me-1"></i>
+                            Manage Attendance
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ANALYTICS -->
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="ked-module">
+
+                        <div class="ked-module-icon ked-icon-danger">
+                            <i class="bi bi-bar-chart-fill"></i>
+                        </div>
+
+                        <h3 class="ked-module-title">
+                            Analytics
+                        </h3>
+
+                        <p class="ked-module-description">
+                            View KUCSA membership, attendance and
+                            organizational analytics.
+                        </p>
+
+                        <a
+                            href="{% url 'dashboard:analytics' %}"
+                            class="btn btn-danger ked-module-btn"
+                        >
+                            <i class="bi bi-graph-up me-1"></i>
+                            View Analytics
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             PLATFORM MODULE STATISTICS
+             ====================================================== -->
+
+        <section class="ked-section">
+
+            <div class="ked-section-heading">
+
+                <div>
+
+                    <h2 class="ked-section-title">
+                        <i class="bi bi-bar-chart-line-fill"></i>
+                        Platform Statistics
+                    </h2>
+
+                    <p class="ked-section-description">
+                        High-level activity across KUCSA platform modules.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="row g-3">
+
+                <!-- EVENTS -->
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="ked-mini-card">
+
+                        <div class="ked-mini-top">
+
+                            <div>
+
+                                <div class="ked-mini-label">
+                                    Events
+                                </div>
+
+                                <div class="ked-mini-value">
+                                    {{ events|default:0 }}
+                                </div>
+
+                            </div>
+
+                            <i class="bi bi-calendar-event ked-mini-icon text-success"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ANNOUNCEMENTS -->
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="ked-mini-card">
+
+                        <div class="ked-mini-top">
+
+                            <div>
+
+                                <div class="ked-mini-label">
+                                    Announcements
+                                </div>
+
+                                <div class="ked-mini-value">
+                                    {{ announcements|default:0 }}
+                                </div>
+
+                            </div>
+
+                            <i class="bi bi-megaphone ked-mini-icon text-warning"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ATTENDANCE SESSIONS -->
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="ked-mini-card">
+
+                        <div class="ked-mini-top">
+
+                            <div>
+
+                                <div class="ked-mini-label">
+                                    Attendance Sessions
+                                </div>
+
+                                <div class="ked-mini-value">
+                                    {{ attendance_sessions|default:0 }}
+                                </div>
+
+                            </div>
+
+                            <i class="bi bi-clipboard-check ked-mini-icon text-info"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ATTENDANCE RATE -->
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="ked-mini-card">
+
+                        <div class="ked-mini-top">
+
+                            <div>
+
+                                <div class="ked-mini-label">
+                                    Attendance Rate
+                                </div>
+
+                                <div class="ked-mini-value text-success">
+                                    {{ attendance_percentage|default:0 }}%
+                                </div>
+
+                                <small class="ked-subtext">
+                                    Based on present and absent records.
+                                </small>
+
+                            </div>
+
+                            <i class="bi bi-graph-up-arrow ked-mini-icon text-success"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             ATTENDANCE OVERVIEW
+             ====================================================== -->
+
+        <section class="ked-section">
+
+            <div class="ked-section-heading">
+
+                <div>
+
+                    <h2 class="ked-section-title">
+                        <i class="bi bi-clipboard-check-fill"></i>
+                        Attendance Overview
+                    </h2>
+
+                    <p class="ked-section-description">
+                        Current attendance record distribution.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="row g-3">
+
+                <!-- PRESENT -->
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="ked-attendance-card">
+
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <div>
+
+                                <div class="ked-mini-label">
+                                    Present
+                                </div>
+
+                                <div class="ked-attendance-value text-success">
+                                    {{ attendance|default:0 }}
+                                </div>
+
+                            </div>
+
+                            <i class="bi bi-check-circle-fill fs-3 text-success"></i>
+
+                        </div>
+
+                        <div class="ked-attendance-progress">
+                            <span
+                                class="bg-success"
+                                data-attendance-value="{{ attendance|default:0 }}"
+                            ></span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ABSENT -->
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="ked-attendance-card">
+
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <div>
+
+                                <div class="ked-mini-label">
+                                    Absent
+                                </div>
+
+                                <div class="ked-attendance-value text-danger">
+                                    {{ absent_attendance|default:0 }}
+                                </div>
+
+                            </div>
+
+                            <i class="bi bi-x-circle-fill fs-3 text-danger"></i>
+
+                        </div>
+
+                        <div class="ked-attendance-progress">
+                            <span
+                                class="bg-danger"
+                                data-attendance-value="{{ absent_attendance|default:0 }}"
+                            ></span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- EXCUSED -->
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="ked-attendance-card">
+
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <div>
+
+                                <div class="ked-mini-label">
+                                    Excused
+                                </div>
+
+                                <div class="ked-attendance-value text-warning">
+                                    {{ excused_attendance|default:0 }}
+                                </div>
+
+                            </div>
+
+                            <i class="bi bi-info-circle-fill fs-3 text-warning"></i>
+
+                        </div>
+
+                        <div class="ked-attendance-progress">
+                            <span
+                                class="bg-warning"
+                                data-attendance-value="{{ excused_attendance|default:0 }}"
+                            ></span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PENDING -->
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="ked-attendance-card">
+
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <div>
+
+                                <div class="ked-mini-label">
+                                    Pending
+                                </div>
+
+                                <div class="ked-attendance-value text-secondary">
+                                    {{ pending_attendance|default:0 }}
+                                </div>
+
+                            </div>
+
+                            <i class="bi bi-hourglass-split fs-3 text-secondary"></i>
+
+                        </div>
+
+                        <div class="ked-attendance-progress">
+                            <span
+                                class="bg-secondary"
+                                data-attendance-value="{{ pending_attendance|default:0 }}"
+                            ></span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             SYSTEM OVERVIEW + RECENT ACTIVITY
+             ====================================================== -->
+
+        <section class="ked-section">
+
+            <div class="row g-3">
+
+                <!-- SYSTEM OVERVIEW -->
+
+                <div class="col-xl-8">
+
+                    <div class="ked-content-card">
+
+                        <div class="ked-panel-header ked-panel-header-primary">
+
+                            <h2 class="ked-panel-heading">
+
+                                <i class="bi bi-speedometer2"></i>
+
+                                System Overview
+
+                            </h2>
+
+                        </div>
+
+
+                        <div class="ked-table-wrapper">
+
+                            <table class="table ked-table align-middle">
+
+                                <tbody>
+
+                                    <tr>
+                                        <th>Total Members</th>
+                                        <td class="text-end">
+                                            {{ total_members|default:0 }}
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Active Members</th>
+                                        <td class="text-end text-success">
+                                            {{ verified_members|default:0 }}
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Pending Members</th>
+                                        <td class="text-end text-warning">
+                                            {{ pending_members|default:0 }}
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Expired Memberships</th>
+                                        <td class="text-end text-danger">
+                                            {{ expired_members|default:0 }}
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Suspended Memberships</th>
+                                        <td class="text-end text-danger">
+                                            {{ suspended_members|default:0 }}
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Executive Team</th>
+                                        <td class="text-end">
+                                            {{ executives|default:0 }}
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>System Users</th>
+                                        <td class="text-end">
+                                            {{ total_users|default:0 }}
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Verified Users</th>
+                                        <td class="text-end text-success">
+                                            {{ verified_users|default:0 }}
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Pending User Verification</th>
+                                        <td class="text-end text-warning">
+                                            {{ pending_users|default:0 }}
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Events</th>
+                                        <td class="text-end">
+                                            {{ events|default:0 }}
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Announcements</th>
+                                        <td class="text-end">
+                                            {{ announcements|default:0 }}
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Attendance Sessions</th>
+                                        <td class="text-end text-info">
+                                            {{ attendance_sessions|default:0 }}
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Total Attendance Records</th>
+                                        <td class="text-end">
+                                            {{ attendance_records|default:0 }}
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Present</th>
+                                        <td class="text-end text-success">
+                                            {{ attendance|default:0 }}
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Absent</th>
+                                        <td class="text-end text-danger">
+                                            {{ absent_attendance|default:0 }}
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Excused</th>
+                                        <td class="text-end text-warning">
+                                            {{ excused_attendance|default:0 }}
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Pending</th>
+                                        <td class="text-end text-secondary">
+                                            {{ pending_attendance|default:0 }}
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Attendance Rate</th>
+                                        <td class="text-end text-success">
+                                            {{ attendance_percentage|default:0 }}%
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RECENT ACTIVITY -->
+
+                <div class="col-xl-4">
+
+                    <div class="ked-content-card">
+
+                        <div class="ked-panel-header ked-panel-header-success">
+
+                            <h2 class="ked-panel-heading">
+
+                                <i class="bi bi-clock-history"></i>
+
+                                Recent Activity
+
+                            </h2>
+
+                        </div>
+
+
+                        <div class="ked-empty-state">
+
+                            <div>
+
+                                <div class="ked-empty-icon">
+                                    <i class="bi bi-clock-history"></i>
+                                </div>
+
+                                <h3 class="ked-empty-title">
+                                    No Recent Activity
+                                </h3>
+
+                                <p class="ked-empty-text">
+                                    Recent member registrations, attendance
+                                    sessions, events, payments and announcements
+                                    will appear here.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             TREASURER FINANCE FOOTNOTE
+             ====================================================== -->
+
+        {% if is_treasurer %}
+
+        <section class="mb-3">
+
+            <div class="ked-info-box">
+
+                <div class="ked-info-icon text-success">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+
+                <div>
+
+                    <h3 class="ked-info-title">
+                        Treasurer Finance Access
+                    </h3>
+
+                    <p class="ked-info-text">
+                        Finance management access is restricted by the Finance
+                        permission layer. Dashboard statistics are read-only;
+                        financial operations are performed through the
+                        authorized Finance module.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             DASHBOARD FOOTER
+             ====================================================== -->
+
+        <section>
+
+            <div class="ked-info-box">
+
+                <div class="ked-info-icon">
+                    <i class="bi bi-info-circle-fill"></i>
+                </div>
+
+                <div>
+
+                    <h3 class="ked-info-title">
+                        KUCSA Management Dashboard
+                    </h3>
+
+                    <p class="ked-info-text">
 
                         Use this dashboard to monitor membership,
                         executive activities, attendance sessions,
@@ -1480,10 +2402,226 @@ Executive Dashboard | KUCSA Platform
 
             </div>
 
-        </div>
+        </section>
 
     </div>
 
 </div>
+
+
+<!-- =============================================================
+     DASHBOARD JAVASCRIPT
+     ============================================================= -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const dashboard =
+        document.querySelector(".kucsa-executive-dashboard");
+
+    if (!dashboard) {
+        return;
+    }
+
+
+    /* =========================================================
+       ATTENDANCE VISUAL BARS
+       ========================================================= */
+
+    const attendanceBars =
+        dashboard.querySelectorAll(
+            "[data-attendance-value]"
+        );
+
+    let attendanceValues = [];
+
+    attendanceBars.forEach(function (bar) {
+
+        const value =
+            parseFloat(
+                bar.getAttribute("data-attendance-value")
+            ) || 0;
+
+        attendanceValues.push(value);
+
+    });
+
+
+    const maxAttendance =
+        Math.max(...attendanceValues, 1);
+
+
+    attendanceBars.forEach(function (bar) {
+
+        const value =
+            parseFloat(
+                bar.getAttribute("data-attendance-value")
+            ) || 0;
+
+        let percentage =
+            (value / maxAttendance) * 100;
+
+        percentage =
+            Math.max(percentage, value > 0 ? 6 : 0);
+
+        percentage =
+            Math.min(percentage, 100);
+
+        setTimeout(function () {
+
+            bar.style.width =
+                percentage + "%";
+
+        }, 120);
+
+    });
+
+
+    /* =========================================================
+       ADD SUBTLE NUMBER ANIMATION
+       Only for numeric KPI elements.
+       ========================================================= */
+
+    const numericElements =
+        dashboard.querySelectorAll(
+            ".ked-kpi-value, .ked-mini-value"
+        );
+
+
+    numericElements.forEach(function (element) {
+
+        const originalText =
+            element.textContent.trim();
+
+        const match =
+            originalText.match(/^(\d+(?:\.\d+)?)(.*)$/);
+
+        if (!match) {
+            return;
+        }
+
+        const target =
+            parseFloat(match[1]);
+
+        const suffix =
+            match[2] || "";
+
+        if (
+            !Number.isFinite(target) ||
+            target === 0
+        ) {
+            return;
+        }
+
+        let startTime = null;
+
+        const duration = 500;
+
+        function animateNumber(timestamp) {
+
+            if (!startTime) {
+                startTime = timestamp;
+            }
+
+            const progress =
+                Math.min(
+                    (timestamp - startTime) / duration,
+                    1
+                );
+
+            const eased =
+                1 - Math.pow(1 - progress, 3);
+
+            const current =
+                Math.round(target * eased);
+
+            element.textContent =
+                current.toLocaleString() + suffix;
+
+            if (progress < 1) {
+                requestAnimationFrame(
+                    animateNumber
+                );
+            }
+
+        }
+
+        requestAnimationFrame(
+            animateNumber
+        );
+
+    });
+
+
+    /* =========================================================
+       PREVENT ACCIDENTAL DOUBLE CLICK ON ACTION LINKS
+       ========================================================= */
+
+    const actionLinks =
+        dashboard.querySelectorAll(
+            "a.btn"
+        );
+
+    actionLinks.forEach(function (link) {
+
+        link.addEventListener(
+            "click",
+            function () {
+
+                if (
+                    link.dataset.clicked === "true"
+                ) {
+                    return;
+                }
+
+                link.dataset.clicked = "true";
+
+                setTimeout(function () {
+
+                    link.dataset.clicked = "false";
+
+                }, 1200);
+
+            }
+        );
+
+    });
+
+
+    /* =========================================================
+       MOBILE TABLE SCROLL INDICATOR
+       ========================================================= */
+
+    const tableWrappers =
+        dashboard.querySelectorAll(
+            ".ked-table-wrapper"
+        );
+
+    tableWrappers.forEach(function (wrapper) {
+
+        wrapper.addEventListener(
+            "scroll",
+            function () {
+
+                if (
+                    wrapper.scrollLeft > 5
+                ) {
+                    wrapper.classList.add(
+                        "is-scrolled"
+                    );
+                } else {
+                    wrapper.classList.remove(
+                        "is-scrolled"
+                    );
+                }
+
+            },
+            { passive: true }
+        );
+
+    });
+
+});
+</script>
 
 {% endblock %}

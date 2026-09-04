@@ -1,388 +1,1602 @@
-
 {% extends "base.html" %}
-
 
 {% block title %}
 Dashboard Analytics | KUCSA Platform
 {% endblock %}
 
-
 {% block content %}
 
-<div class="container-fluid">
+<style>
+    /* =========================================================
+       KUCSA ANALYTICS — SCOPED DESIGN SYSTEM
+    ========================================================== */
+
+    .kucsa-analytics-page {
+        --ka-primary: #0d6efd;
+        --ka-primary-dark: #0b5ed7;
+        --ka-success: #198754;
+        --ka-warning: #d99a00;
+        --ka-danger: #dc3545;
+        --ka-info: #0891b2;
+        --ka-dark: #172033;
+        --ka-text: #253044;
+        --ka-muted: #718096;
+        --ka-border: #e7ebf0;
+        --ka-surface: #ffffff;
+        --ka-background: #f6f8fb;
+
+        --ka-radius-sm: 10px;
+        --ka-radius-md: 15px;
+        --ka-radius-lg: 20px;
+
+        --ka-shadow-sm: 0 5px 20px rgba(23, 32, 51, 0.055);
+        --ka-shadow-md: 0 10px 30px rgba(23, 32, 51, 0.075);
+        --ka-shadow-lg: 0 18px 45px rgba(23, 32, 51, 0.11);
+
+        width: 100%;
+        min-width: 0;
+        padding: 1.25rem 0 2rem;
+        color: var(--ka-text);
+    }
+
+    .kucsa-analytics-page *,
+    .kucsa-analytics-page *::before,
+    .kucsa-analytics-page *::after {
+        box-sizing: border-box;
+    }
+
+    /* =========================================================
+       PAGE HEADER
+    ========================================================== */
+
+    .kucsa-analytics-header {
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+        padding: 1.5rem 1.6rem;
+        background:
+            radial-gradient(circle at 92% 20%, rgba(13, 110, 253, 0.10), transparent 26%),
+            radial-gradient(circle at 8% 110%, rgba(8, 145, 178, 0.07), transparent 28%),
+            #ffffff;
+        border: 1px solid var(--ka-border);
+        border-radius: var(--ka-radius-lg);
+        box-shadow: var(--ka-shadow-sm);
+    }
+
+    .kucsa-analytics-header::after {
+        content: "";
+        position: absolute;
+        width: 150px;
+        height: 150px;
+        right: -65px;
+        bottom: -85px;
+        border-radius: 50%;
+        background: rgba(13, 110, 253, 0.045);
+        pointer-events: none;
+    }
+
+    .kucsa-analytics-header-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+    }
+
+    .kucsa-analytics-heading {
+        min-width: 0;
+    }
+
+    .kucsa-analytics-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        margin-bottom: 0.55rem;
+        color: var(--ka-primary);
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+    }
+
+    .kucsa-analytics-eyebrow i {
+        font-size: 0.9rem;
+    }
+
+    .kucsa-analytics-title {
+        margin: 0;
+        color: var(--ka-dark);
+        font-size: clamp(1.45rem, 2.5vw, 2rem);
+        font-weight: 800;
+        line-height: 1.2;
+        letter-spacing: -0.025em;
+    }
+
+    .kucsa-analytics-subtitle {
+        max-width: 720px;
+        margin: 0.45rem 0 0;
+        color: var(--ka-muted);
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    .kucsa-back-btn {
+        position: relative;
+        z-index: 3;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.45rem;
+        min-height: 42px;
+        padding: 0.65rem 1rem;
+        white-space: nowrap;
+        border: 1px solid rgba(13, 110, 253, 0.22);
+        border-radius: 11px;
+        background: rgba(13, 110, 253, 0.055);
+        color: var(--ka-primary);
+        font-size: 0.82rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition:
+            transform 0.2s ease,
+            background-color 0.2s ease,
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .kucsa-back-btn:hover {
+        color: #ffffff;
+        background: var(--ka-primary);
+        border-color: var(--ka-primary);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(13, 110, 253, 0.20);
+    }
+
+    .kucsa-back-btn:focus-visible {
+        outline: 3px solid rgba(13, 110, 253, 0.20);
+        outline-offset: 3px;
+    }
+
+    /* =========================================================
+       SECTION HEADERS
+    ========================================================== */
+
+    .kucsa-section-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 0.9rem;
+    }
+
+    .kucsa-section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin: 0;
+        color: var(--ka-dark);
+        font-size: 0.88rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.055em;
+    }
+
+    .kucsa-section-title::before {
+        content: "";
+        width: 4px;
+        height: 20px;
+        border-radius: 999px;
+        background: var(--ka-primary);
+    }
+
+    .kucsa-section-description {
+        margin: 0;
+        color: var(--ka-muted);
+        font-size: 0.76rem;
+    }
+
+    /* =========================================================
+       STATISTICS CARDS
+    ========================================================== */
+
+    .kucsa-analytics-stat-card {
+        position: relative;
+        height: 100%;
+        min-height: 160px;
+        padding: 1.25rem;
+        overflow: hidden;
+        background: var(--ka-surface);
+        border: 1px solid var(--ka-border);
+        border-radius: var(--ka-radius-md);
+        box-shadow: var(--ka-shadow-sm);
+        transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease,
+            border-color 0.25s ease;
+    }
+
+    .kucsa-analytics-stat-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(13, 110, 253, 0.16);
+        box-shadow: var(--ka-shadow-md);
+    }
+
+    .kucsa-analytics-stat-top {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .kucsa-analytics-stat-label {
+        margin-bottom: 0.5rem;
+        color: var(--ka-muted);
+        font-size: 0.72rem;
+        font-weight: 800;
+        line-height: 1.3;
+        text-transform: uppercase;
+        letter-spacing: 0.055em;
+    }
+
+    .kucsa-analytics-stat-value {
+        margin: 0;
+        color: var(--ka-dark);
+        font-size: clamp(1.7rem, 3vw, 2.15rem);
+        font-weight: 850;
+        line-height: 1;
+        letter-spacing: -0.045em;
+    }
+
+    .kucsa-analytics-stat-caption {
+        display: block;
+        margin-top: 0.65rem;
+        color: #98a2b1;
+        font-size: 0.7rem;
+        line-height: 1.4;
+    }
+
+    .kucsa-stat-icon {
+        width: 50px;
+        height: 50px;
+        flex: 0 0 50px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        font-size: 1.3rem;
+        transition: transform 0.25s ease;
+    }
+
+    .kucsa-analytics-stat-card:hover .kucsa-stat-icon {
+        transform: scale(1.08) rotate(-3deg);
+    }
+
+    .kucsa-stat-primary .kucsa-stat-icon {
+        color: var(--ka-primary);
+        background: rgba(13, 110, 253, 0.10);
+    }
+
+    .kucsa-stat-success .kucsa-stat-icon {
+        color: var(--ka-success);
+        background: rgba(25, 135, 84, 0.10);
+    }
+
+    .kucsa-stat-warning .kucsa-stat-icon {
+        color: var(--ka-warning);
+        background: rgba(255, 193, 7, 0.13);
+    }
+
+    .kucsa-stat-info .kucsa-stat-icon {
+        color: var(--ka-info);
+        background: rgba(8, 145, 178, 0.10);
+    }
+
+    .kucsa-stat-success .kucsa-analytics-stat-value {
+        color: var(--ka-success);
+    }
+
+    .kucsa-stat-warning .kucsa-analytics-stat-value {
+        color: #b27c00;
+    }
+
+    .kucsa-stat-info .kucsa-analytics-stat-value {
+        color: var(--ka-info);
+    }
+
+    .kucsa-stat-decoration {
+        position: absolute;
+        right: -42px;
+        bottom: -42px;
+        width: 105px;
+        height: 105px;
+        border-radius: 50%;
+        pointer-events: none;
+        transition: transform 0.35s ease;
+    }
+
+    .kucsa-analytics-stat-card:hover .kucsa-stat-decoration {
+        transform: scale(1.2);
+    }
+
+    .kucsa-stat-primary .kucsa-stat-decoration {
+        background: rgba(13, 110, 253, 0.045);
+    }
+
+    .kucsa-stat-success .kucsa-stat-decoration {
+        background: rgba(25, 135, 84, 0.045);
+    }
+
+    .kucsa-stat-warning .kucsa-stat-decoration {
+        background: rgba(255, 193, 7, 0.065);
+    }
+
+    .kucsa-stat-info .kucsa-stat-decoration {
+        background: rgba(8, 145, 178, 0.045);
+    }
+
+    .kucsa-stat-accent {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+    }
+
+    .kucsa-stat-primary .kucsa-stat-accent {
+        background: var(--ka-primary);
+    }
+
+    .kucsa-stat-success .kucsa-stat-accent {
+        background: var(--ka-success);
+    }
+
+    .kucsa-stat-warning .kucsa-stat-accent {
+        background: #ffc107;
+    }
+
+    .kucsa-stat-info .kucsa-stat-accent {
+        background: var(--ka-info);
+    }
+
+    /* =========================================================
+       ANALYTICS CARDS
+    ========================================================== */
+
+    .kucsa-analytics-card {
+        height: 100%;
+        overflow: hidden;
+        background: var(--ka-surface);
+        border: 1px solid var(--ka-border);
+        border-radius: var(--ka-radius-lg);
+        box-shadow: var(--ka-shadow-sm);
+    }
+
+    .kucsa-analytics-card-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        min-height: 58px;
+        padding: 0.95rem 1.2rem;
+        border-bottom: 1px solid var(--ka-border);
+        background: #ffffff;
+    }
+
+    .kucsa-card-header-icon {
+        width: 35px;
+        height: 35px;
+        flex: 0 0 35px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        font-size: 0.95rem;
+    }
+
+    .kucsa-card-header-icon-primary {
+        color: var(--ka-primary);
+        background: rgba(13, 110, 253, 0.09);
+    }
+
+    .kucsa-card-header-icon-info {
+        color: var(--ka-info);
+        background: rgba(8, 145, 178, 0.09);
+    }
+
+    .kucsa-card-header-icon-success {
+        color: var(--ka-success);
+        background: rgba(25, 135, 84, 0.09);
+    }
+
+    .kucsa-card-header-icon-dark {
+        color: var(--ka-dark);
+        background: rgba(23, 32, 51, 0.08);
+    }
+
+    .kucsa-card-title {
+        margin: 0;
+        color: var(--ka-dark);
+        font-size: 0.88rem;
+        font-weight: 800;
+    }
+
+    .kucsa-card-subtitle {
+        margin: 0.12rem 0 0;
+        color: var(--ka-muted);
+        font-size: 0.69rem;
+    }
+
+    .kucsa-analytics-card-body {
+        padding: 1.25rem;
+    }
+
+    /* =========================================================
+       MEMBERSHIP PROGRESS
+    ========================================================== */
+
+    .kucsa-progress-item {
+        margin-bottom: 1.35rem;
+    }
+
+    .kucsa-progress-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .kucsa-progress-label-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 0.55rem;
+    }
+
+    .kucsa-progress-label {
+        color: var(--ka-text);
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+
+    .kucsa-progress-number {
+        color: var(--ka-dark);
+        font-size: 0.8rem;
+        font-weight: 800;
+    }
+
+    .kucsa-progress-track {
+        position: relative;
+        height: 8px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #edf0f4;
+    }
+
+    .kucsa-progress-bar {
+        height: 100%;
+        width: 0;
+        border-radius: inherit;
+        transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .kucsa-progress-success {
+        background: var(--ka-success);
+    }
+
+    .kucsa-progress-warning {
+        background: #ffc107;
+    }
+
+    .kucsa-progress-secondary {
+        background: #8a94a4;
+    }
+
+    .kucsa-progress-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        margin-top: 0.45rem;
+        color: var(--ka-muted);
+        font-size: 0.67rem;
+    }
+
+    .kucsa-percentage-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.22rem 0.48rem;
+        border-radius: 999px;
+        background: #f3f5f8;
+        color: #687487;
+        font-size: 0.63rem;
+        font-weight: 800;
+    }
+
+    /* =========================================================
+       EXECUTIVE OVERVIEW
+    ========================================================== */
+
+    .kucsa-executive-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.85rem;
+    }
+
+    .kucsa-executive-item {
+        position: relative;
+        min-width: 0;
+        padding: 1rem;
+        overflow: hidden;
+        border: 1px solid var(--ka-border);
+        border-radius: 14px;
+        background: #fbfcfd;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .kucsa-executive-item:hover {
+        transform: translateY(-3px);
+        border-color: rgba(13, 110, 253, 0.14);
+        box-shadow: var(--ka-shadow-sm);
+    }
+
+    .kucsa-executive-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        margin-bottom: 0.65rem;
+        border-radius: 11px;
+        font-size: 1rem;
+    }
+
+    .kucsa-icon-info {
+        color: var(--ka-info);
+        background: rgba(8, 145, 178, 0.10);
+    }
+
+    .kucsa-icon-success {
+        color: var(--ka-success);
+        background: rgba(25, 135, 84, 0.10);
+    }
+
+    .kucsa-icon-danger {
+        color: var(--ka-danger);
+        background: rgba(220, 53, 69, 0.09);
+    }
+
+    .kucsa-icon-primary {
+        color: var(--ka-primary);
+        background: rgba(13, 110, 253, 0.09);
+    }
+
+    .kucsa-executive-value {
+        margin: 0;
+        color: var(--ka-dark);
+        font-size: 1.45rem;
+        font-weight: 850;
+        line-height: 1;
+    }
+
+    .kucsa-executive-label {
+        display: block;
+        margin-top: 0.42rem;
+        color: var(--ka-muted);
+        font-size: 0.66rem;
+        line-height: 1.35;
+    }
+
+    /* =========================================================
+       DATA TABLES
+    ========================================================== */
+
+    .kucsa-analytics-table {
+        width: 100%;
+        margin: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .kucsa-analytics-table tbody tr {
+        transition: background-color 0.18s ease;
+    }
+
+    .kucsa-analytics-table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .kucsa-analytics-table th,
+    .kucsa-analytics-table td {
+        padding: 0.85rem 0.2rem;
+        border-bottom: 1px solid #eef1f4;
+        vertical-align: middle;
+        font-size: 0.78rem;
+    }
+
+    .kucsa-analytics-table tr:last-child th,
+    .kucsa-analytics-table tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .kucsa-analytics-table th {
+        color: #596579;
+        font-weight: 650;
+    }
+
+    .kucsa-analytics-table td {
+        color: var(--ka-dark);
+        font-weight: 800;
+    }
+
+    .kucsa-table-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+    }
+
+    .kucsa-table-dot {
+        width: 7px;
+        height: 7px;
+        flex: 0 0 7px;
+        border-radius: 50%;
+        background: #c7ced8;
+    }
+
+    .kucsa-dot-primary {
+        background: var(--ka-primary);
+    }
+
+    .kucsa-dot-success {
+        background: var(--ka-success);
+    }
+
+    .kucsa-dot-warning {
+        background: #ffc107;
+    }
+
+    .kucsa-dot-info {
+        background: var(--ka-info);
+    }
+
+    .kucsa-value-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 38px;
+        padding: 0.28rem 0.5rem;
+        border-radius: 8px;
+        background: #f3f5f8;
+        color: var(--ka-dark);
+        font-size: 0.7rem;
+        font-weight: 800;
+    }
+
+    .kucsa-value-success {
+        background: rgba(25, 135, 84, 0.09);
+        color: var(--ka-success);
+    }
+
+    .kucsa-value-warning {
+        background: rgba(255, 193, 7, 0.14);
+        color: #9b7000;
+    }
+
+    /* =========================================================
+       REPORTING SECTION
+    ========================================================== */
+
+    .kucsa-reporting-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .kucsa-report-item {
+        position: relative;
+        padding: 1.35rem 1.2rem;
+        text-align: center;
+        transition:
+            background-color 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .kucsa-report-item + .kucsa-report-item {
+        border-left: 1px solid var(--ka-border);
+    }
+
+    .kucsa-report-item:hover {
+        background: #fbfcfd;
+        transform: translateY(-2px);
+    }
+
+    .kucsa-report-icon {
+        width: 50px;
+        height: 50px;
+        margin: 0 auto 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        font-size: 1.35rem;
+    }
+
+    .kucsa-report-primary {
+        color: var(--ka-primary);
+        background: rgba(13, 110, 253, 0.09);
+    }
+
+    .kucsa-report-success {
+        color: var(--ka-success);
+        background: rgba(25, 135, 84, 0.09);
+    }
+
+    .kucsa-report-warning {
+        color: #b27c00;
+        background: rgba(255, 193, 7, 0.13);
+    }
+
+    .kucsa-report-danger {
+        color: var(--ka-danger);
+        background: rgba(220, 53, 69, 0.09);
+    }
+
+    .kucsa-report-title {
+        margin: 0 0 0.35rem;
+        color: var(--ka-dark);
+        font-size: 0.78rem;
+        font-weight: 800;
+    }
+
+    .kucsa-report-description {
+        max-width: 220px;
+        margin: 0 auto;
+        color: var(--ka-muted);
+        font-size: 0.68rem;
+        line-height: 1.55;
+    }
+
+    /* =========================================================
+       SECTION SPACING
+    ========================================================== */
+
+    .kucsa-analytics-section {
+        margin-bottom: 1.5rem;
+    }
+
+    /* =========================================================
+       RESPONSIVE — LARGE TABLETS / SMALL DESKTOP
+    ========================================================== */
+
+    @media (max-width: 1199.98px) {
+        .kucsa-analytics-page {
+            padding-top: 1rem;
+        }
+
+        .kucsa-reporting-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .kucsa-report-item:nth-child(3) {
+            border-left: 0;
+            border-top: 1px solid var(--ka-border);
+        }
+
+        .kucsa-report-item:nth-child(4) {
+            border-top: 1px solid var(--ka-border);
+        }
+    }
+
+    /* =========================================================
+       RESPONSIVE — TABLETS
+    ========================================================== */
+
+    @media (max-width: 991.98px) {
+        .kucsa-analytics-header {
+            padding: 1.3rem;
+        }
+
+        .kucsa-analytics-header-content {
+            align-items: flex-start;
+        }
+
+        .kucsa-analytics-stat-card {
+            min-height: 145px;
+        }
+
+        .kucsa-analytics-card-body {
+            padding: 1.1rem;
+        }
+    }
+
+    /* =========================================================
+       RESPONSIVE — MOBILE
+    ========================================================== */
+
+    @media (max-width: 767.98px) {
+        .kucsa-analytics-page {
+            padding: 0.65rem 0 1.5rem;
+        }
+
+        .kucsa-analytics-header {
+            margin-bottom: 1.1rem;
+            padding: 1.1rem;
+            border-radius: 16px;
+        }
+
+        .kucsa-analytics-header-content {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .kucsa-analytics-title {
+            font-size: 1.4rem;
+        }
+
+        .kucsa-analytics-subtitle {
+            font-size: 0.78rem;
+        }
+
+        .kucsa-back-btn {
+            width: 100%;
+        }
+
+        .kucsa-section-heading {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .kucsa-section-title {
+            font-size: 0.8rem;
+        }
+
+        .kucsa-section-description {
+            padding-left: 0.6rem;
+        }
+
+        .kucsa-analytics-stat-card {
+            min-height: 132px;
+            padding: 1rem;
+            border-radius: 14px;
+        }
+
+        .kucsa-stat-icon {
+            width: 43px;
+            height: 43px;
+            flex-basis: 43px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+        }
+
+        .kucsa-analytics-stat-value {
+            font-size: 1.55rem;
+        }
+
+        .kucsa-analytics-stat-label {
+            font-size: 0.65rem;
+        }
+
+        .kucsa-analytics-stat-caption {
+            font-size: 0.62rem;
+        }
+
+        .kucsa-analytics-card {
+            border-radius: 15px;
+        }
+
+        .kucsa-analytics-card-header {
+            min-height: 54px;
+            padding: 0.8rem 0.95rem;
+        }
+
+        .kucsa-analytics-card-body {
+            padding: 0.95rem;
+        }
+
+        .kucsa-card-title {
+            font-size: 0.82rem;
+        }
+
+        .kucsa-card-subtitle {
+            font-size: 0.64rem;
+        }
+
+        .kucsa-reporting-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .kucsa-report-item {
+            padding: 1.05rem 0.75rem;
+        }
+
+        .kucsa-report-item:nth-child(odd) {
+            border-left: 0;
+        }
+
+        .kucsa-report-item:nth-child(n + 3) {
+            border-top: 1px solid var(--ka-border);
+        }
+
+        .kucsa-report-icon {
+            width: 43px;
+            height: 43px;
+            margin-bottom: 0.65rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+        }
+
+        .kucsa-report-title {
+            font-size: 0.7rem;
+        }
+
+        .kucsa-report-description {
+            font-size: 0.62rem;
+        }
+
+        .kucsa-analytics-table th,
+        .kucsa-analytics-table td {
+            padding: 0.75rem 0.15rem;
+            font-size: 0.71rem;
+        }
+    }
+
+    /* =========================================================
+       RESPONSIVE — SMALL PHONES
+    ========================================================== */
+
+    @media (max-width: 575.98px) {
+        .kucsa-analytics-header {
+            padding: 1rem;
+        }
+
+        .kucsa-analytics-eyebrow {
+            font-size: 0.63rem;
+        }
+
+        .kucsa-analytics-title {
+            font-size: 1.25rem;
+        }
+
+        .kucsa-analytics-subtitle {
+            font-size: 0.73rem;
+            line-height: 1.5;
+        }
+
+        .kucsa-analytics-stat-card {
+            min-height: 122px;
+            padding: 0.85rem;
+        }
+
+        .kucsa-analytics-stat-value {
+            font-size: 1.35rem;
+        }
+
+        .kucsa-stat-icon {
+            width: 38px;
+            height: 38px;
+            flex-basis: 38px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+        }
+
+        .kucsa-analytics-stat-caption {
+            margin-top: 0.45rem;
+        }
+
+        .kucsa-executive-grid {
+            gap: 0.65rem;
+        }
+
+        .kucsa-executive-item {
+            padding: 0.8rem;
+        }
+
+        .kucsa-executive-icon {
+            width: 34px;
+            height: 34px;
+            margin-bottom: 0.5rem;
+            border-radius: 9px;
+            font-size: 0.85rem;
+        }
+
+        .kucsa-executive-value {
+            font-size: 1.2rem;
+        }
+
+        .kucsa-executive-label {
+            font-size: 0.6rem;
+        }
+
+        .kucsa-progress-label,
+        .kucsa-progress-number {
+            font-size: 0.72rem;
+        }
+
+        .kucsa-progress-meta {
+            font-size: 0.61rem;
+        }
+
+        .kucsa-value-badge {
+            min-width: 34px;
+            padding: 0.24rem 0.4rem;
+            font-size: 0.64rem;
+        }
+    }
+
+    /* =========================================================
+       VERY SMALL DEVICES
+    ========================================================== */
+
+    @media (max-width: 359.98px) {
+        .kucsa-analytics-stat-card {
+            min-height: 112px;
+            padding: 0.75rem;
+        }
+
+        .kucsa-analytics-stat-label {
+            font-size: 0.57rem;
+        }
+
+        .kucsa-analytics-stat-value {
+            font-size: 1.2rem;
+        }
+
+        .kucsa-stat-icon {
+            width: 34px;
+            height: 34px;
+            flex-basis: 34px;
+            font-size: 0.85rem;
+        }
+
+        .kucsa-report-item {
+            padding-left: 0.55rem;
+            padding-right: 0.55rem;
+        }
+    }
+
+    /* =========================================================
+       ACCESSIBILITY / REDUCED MOTION
+    ========================================================== */
+
+    .kucsa-analytics-page a:focus-visible,
+    .kucsa-analytics-page button:focus-visible {
+        outline: 3px solid rgba(13, 110, 253, 0.22);
+        outline-offset: 3px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .kucsa-analytics-page *,
+        .kucsa-analytics-page *::before,
+        .kucsa-analytics-page *::after {
+            scroll-behavior: auto !important;
+            transition: none !important;
+            animation: none !important;
+        }
+
+        .kucsa-progress-bar {
+            transition: none !important;
+        }
+    }
+</style>
+
+
+<div class="kucsa-analytics-page">
 
     <!-- =====================================================
          PAGE HEADER
     ====================================================== -->
 
-    <div class="row mb-4">
+    <section class="kucsa-analytics-header" aria-labelledby="analyticsPageTitle">
 
-        <div class="col-md-8">
+        <div class="kucsa-analytics-header-content">
 
-            <h2 class="fw-bold mb-1">
-                Dashboard Analytics
-            </h2>
+            <div class="kucsa-analytics-heading">
 
-            <p class="text-muted mb-0">
-                Overview of KUCSA membership, executive,
-                and platform statistics.
-            </p>
+                <div class="kucsa-analytics-eyebrow">
+                    <i class="bi bi-bar-chart-line-fill"></i>
+                    KUCSA Insights
+                </div>
 
-        </div>
+                <h1 id="analyticsPageTitle" class="kucsa-analytics-title">
+                    Dashboard Analytics
+                </h1>
 
-        <div class="col-md-4 text-md-end">
+                <p class="kucsa-analytics-subtitle">
+                    Get a clear overview of KUCSA membership,
+                    executive leadership, accounts, events,
+                    attendance, announcements, and platform activity.
+                </p>
+
+            </div>
 
             <a
                 href="{% url 'dashboard:dashboard' %}"
-                class="btn btn-outline-primary"
+                class="kucsa-back-btn"
             >
-
-                <i class="bi bi-arrow-left-circle me-1"></i>
-
-                Back to Dashboard
-
+                <i class="bi bi-arrow-left-circle"></i>
+                <span>Back to Dashboard</span>
             </a>
 
         </div>
 
-    </div>
+    </section>
 
 
     <!-- =====================================================
          KEY STATISTICS
     ====================================================== -->
 
-    <div class="row g-4 mb-4">
+    <section class="kucsa-analytics-section">
 
-        <!-- Total Members -->
+        <div class="kucsa-section-heading">
 
-        <div class="col-lg-3 col-md-6">
+            <div>
+                <h2 class="kucsa-section-title">
+                    Key Statistics
+                </h2>
+            </div>
 
-            <div class="card border-0 shadow-sm h-100">
+            <p class="kucsa-section-description">
+                Current KUCSA platform snapshot
+            </p>
 
-                <div class="card-body text-center">
+        </div>
 
-                    <i class="bi bi-people-fill display-5 text-primary"></i>
+        <div class="row g-3 g-lg-4">
 
-                    <h2 class="mt-3 fw-bold">
-                        {{ total_members|default:"0" }}
-                    </h2>
+            <!-- Total Members -->
 
-                    <p class="text-muted mb-0">
-                        Total Members
-                    </p>
+            <div class="col-6 col-lg-3">
 
-                </div>
+                <article
+                    class="kucsa-analytics-stat-card kucsa-stat-primary"
+                    aria-label="Total Members"
+                >
+
+                    <div class="kucsa-stat-accent"></div>
+
+                    <div class="kucsa-analytics-stat-top">
+
+                        <div>
+                            <div class="kucsa-analytics-stat-label">
+                                Total Members
+                            </div>
+
+                            <h3
+                                class="kucsa-analytics-stat-value"
+                                data-counter="{{ total_members|default:'0' }}"
+                            >
+                                {{ total_members|default:"0" }}
+                            </h3>
+
+                            <span class="kucsa-analytics-stat-caption">
+                                Registered members
+                            </span>
+                        </div>
+
+                        <div class="kucsa-stat-icon" aria-hidden="true">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+
+                    </div>
+
+                    <div class="kucsa-stat-decoration" aria-hidden="true"></div>
+
+                </article>
+
+            </div>
+
+
+            <!-- Active Members -->
+
+            <div class="col-6 col-lg-3">
+
+                <article
+                    class="kucsa-analytics-stat-card kucsa-stat-success"
+                    aria-label="Active Members"
+                >
+
+                    <div class="kucsa-stat-accent"></div>
+
+                    <div class="kucsa-analytics-stat-top">
+
+                        <div>
+                            <div class="kucsa-analytics-stat-label">
+                                Active Members
+                            </div>
+
+                            <h3
+                                class="kucsa-analytics-stat-value"
+                                data-counter="{{ active_members|default:'0' }}"
+                            >
+                                {{ active_members|default:"0" }}
+                            </h3>
+
+                            <span class="kucsa-analytics-stat-caption">
+                                Active membership
+                            </span>
+                        </div>
+
+                        <div class="kucsa-stat-icon" aria-hidden="true">
+                            <i class="bi bi-person-check-fill"></i>
+                        </div>
+
+                    </div>
+
+                    <div class="kucsa-stat-decoration" aria-hidden="true"></div>
+
+                </article>
+
+            </div>
+
+
+            <!-- Pending Members -->
+
+            <div class="col-6 col-lg-3">
+
+                <article
+                    class="kucsa-analytics-stat-card kucsa-stat-warning"
+                    aria-label="Pending Members"
+                >
+
+                    <div class="kucsa-stat-accent"></div>
+
+                    <div class="kucsa-analytics-stat-top">
+
+                        <div>
+                            <div class="kucsa-analytics-stat-label">
+                                Pending Members
+                            </div>
+
+                            <h3
+                                class="kucsa-analytics-stat-value"
+                                data-counter="{{ pending_members|default:'0' }}"
+                            >
+                                {{ pending_members|default:"0" }}
+                            </h3>
+
+                            <span class="kucsa-analytics-stat-caption">
+                                Awaiting approval
+                            </span>
+                        </div>
+
+                        <div class="kucsa-stat-icon" aria-hidden="true">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
+
+                    </div>
+
+                    <div class="kucsa-stat-decoration" aria-hidden="true"></div>
+
+                </article>
+
+            </div>
+
+
+            <!-- Executives -->
+
+            <div class="col-6 col-lg-3">
+
+                <article
+                    class="kucsa-analytics-stat-card kucsa-stat-info"
+                    aria-label="Executives"
+                >
+
+                    <div class="kucsa-stat-accent"></div>
+
+                    <div class="kucsa-analytics-stat-top">
+
+                        <div>
+                            <div class="kucsa-analytics-stat-label">
+                                Executives
+                            </div>
+
+                            <h3
+                                class="kucsa-analytics-stat-value"
+                                data-counter="{{ executive_count|default:'0' }}"
+                            >
+                                {{ executive_count|default:"0" }}
+                            </h3>
+
+                            <span class="kucsa-analytics-stat-caption">
+                                Current executive team
+                            </span>
+                        </div>
+
+                        <div class="kucsa-stat-icon" aria-hidden="true">
+                            <i class="bi bi-person-badge-fill"></i>
+                        </div>
+
+                    </div>
+
+                    <div class="kucsa-stat-decoration" aria-hidden="true"></div>
+
+                </article>
 
             </div>
 
         </div>
 
-
-        <!-- Active Members -->
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body text-center">
-
-                    <i class="bi bi-person-check-fill display-5 text-success"></i>
-
-                    <h2 class="mt-3 fw-bold text-success">
-                        {{ active_members|default:"0" }}
-                    </h2>
-
-                    <p class="text-muted mb-0">
-                        Active Members
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- Pending Members -->
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body text-center">
-
-                    <i class="bi bi-hourglass-split display-5 text-warning"></i>
-
-                    <h2 class="mt-3 fw-bold text-warning">
-                        {{ pending_members|default:"0" }}
-                    </h2>
-
-                    <p class="text-muted mb-0">
-                        Pending Members
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- Executives -->
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body text-center">
-
-                    <i class="bi bi-person-badge-fill display-5 text-info"></i>
-
-                    <h2 class="mt-3 fw-bold text-info">
-                        {{ executive_count|default:"0" }}
-                    </h2>
-
-                    <p class="text-muted mb-0">
-                        Executives
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
+    </section>
 
 
     <!-- =====================================================
-         MEMBERSHIP OVERVIEW
+         MEMBERSHIP + EXECUTIVE OVERVIEW
     ====================================================== -->
 
-    <div class="row g-4 mb-4">
+    <section class="kucsa-analytics-section">
 
-        <div class="col-lg-6">
+        <div class="row g-3 g-lg-4">
 
-            <div class="card border-0 shadow-sm h-100">
+            <!-- MEMBERSHIP OVERVIEW -->
 
-                <div class="card-header bg-primary text-white">
+            <div class="col-lg-6">
 
-                    <i class="bi bi-people-fill me-1"></i>
+                <article class="kucsa-analytics-card">
 
-                    Membership Overview
+                    <header class="kucsa-analytics-card-header">
 
-                </div>
-
-                <div class="card-body">
-
-                    <!-- Active Members -->
-
-                    <div class="mb-4">
-
-                        <div class="d-flex justify-content-between">
-
-                            <span>
-                                Active Members
-                            </span>
-
-                            <strong>
-                                {{ active_members|default:"0" }}
-                            </strong>
-
+                        <div class="kucsa-card-header-icon kucsa-card-header-icon-primary">
+                            <i class="bi bi-people-fill"></i>
                         </div>
 
-                        <div class="progress mt-2">
+                        <div>
+                            <h2 class="kucsa-card-title">
+                                Membership Overview
+                            </h2>
 
-                            <div
-                                class="progress-bar bg-success"
-                                role="progressbar"
-                                style="width: {{ active_percentage|default:0 }}%;"
-                                aria-valuenow="{{ active_percentage|default:0 }}"
-                                aria-valuemin="0"
-                                aria-valuemax="100"
-                            >
+                            <p class="kucsa-card-subtitle">
+                                Current membership distribution
+                            </p>
+                        </div>
+
+                    </header>
+
+                    <div class="kucsa-analytics-card-body">
+
+                        <!-- Active Members -->
+
+                        <div class="kucsa-progress-item">
+
+                            <div class="kucsa-progress-label-row">
+
+                                <span class="kucsa-progress-label">
+                                    Active Members
+                                </span>
+
+                                <strong class="kucsa-progress-number">
+                                    {{ active_members|default:"0" }}
+                                </strong>
+
+                            </div>
+
+                            <div class="kucsa-progress-track">
+
+                                <div
+                                    class="kucsa-progress-bar kucsa-progress-success"
+                                    data-progress="{{ active_percentage|default:0 }}"
+                                    role="progressbar"
+                                    aria-valuenow="{{ active_percentage|default:0 }}"
+                                    aria-valuemin="0"
+                                    aria-valuemax="100"
+                                    aria-label="Active members percentage"
+                                ></div>
+
+                            </div>
+
+                            <div class="kucsa-progress-meta">
+
+                                <span>
+                                    Active membership
+                                </span>
+
+                                <span class="kucsa-percentage-pill">
+                                    {{ active_percentage|default:0 }}%
+                                </span>
+
                             </div>
 
                         </div>
 
-                        <small class="text-muted">
-                            {{ active_percentage|default:0 }}% of registered members
-                        </small>
 
-                    </div>
+                        <!-- Pending Members -->
 
+                        <div class="kucsa-progress-item">
 
-                    <!-- Pending Members -->
+                            <div class="kucsa-progress-label-row">
 
-                    <div class="mb-4">
+                                <span class="kucsa-progress-label">
+                                    Pending Members
+                                </span>
 
-                        <div class="d-flex justify-content-between">
+                                <strong class="kucsa-progress-number">
+                                    {{ pending_members|default:"0" }}
+                                </strong>
 
-                            <span>
-                                Pending Members
-                            </span>
+                            </div>
 
-                            <strong>
-                                {{ pending_members|default:"0" }}
-                            </strong>
+                            <div class="kucsa-progress-track">
 
-                        </div>
+                                <div
+                                    class="kucsa-progress-bar kucsa-progress-warning"
+                                    data-progress="{{ pending_percentage|default:0 }}"
+                                    role="progressbar"
+                                    aria-valuenow="{{ pending_percentage|default:0 }}"
+                                    aria-valuemin="0"
+                                    aria-valuemax="100"
+                                    aria-label="Pending members percentage"
+                                ></div>
 
-                        <div class="progress mt-2">
+                            </div>
 
-                            <div
-                                class="progress-bar bg-warning"
-                                role="progressbar"
-                                style="width: {{ pending_percentage|default:0 }}%;"
-                                aria-valuenow="{{ pending_percentage|default:0 }}"
-                                aria-valuemin="0"
-                                aria-valuemax="100"
-                            >
+                            <div class="kucsa-progress-meta">
+
+                                <span>
+                                    Awaiting approval
+                                </span>
+
+                                <span class="kucsa-percentage-pill">
+                                    {{ pending_percentage|default:0 }}%
+                                </span>
+
                             </div>
 
                         </div>
 
-                        <small class="text-muted">
-                            {{ pending_percentage|default:0 }}% of registered members
-                        </small>
 
-                    </div>
+                        <!-- Other / Inactive -->
 
+                        <div class="kucsa-progress-item">
 
-                    <!-- Other / Inactive -->
+                            <div class="kucsa-progress-label-row">
 
-                    <div>
+                                <span class="kucsa-progress-label">
+                                    Other / Inactive
+                                </span>
 
-                        <div class="d-flex justify-content-between">
+                                <strong class="kucsa-progress-number">
+                                    {{ inactive_members|default:"0" }}
+                                </strong>
 
-                            <span>
-                                Other / Inactive
-                            </span>
+                            </div>
 
-                            <strong>
-                                {{ inactive_members|default:"0" }}
-                            </strong>
+                            <div class="kucsa-progress-track">
 
-                        </div>
+                                <div
+                                    class="kucsa-progress-bar kucsa-progress-secondary"
+                                    data-progress="{{ inactive_percentage|default:0 }}"
+                                    role="progressbar"
+                                    aria-valuenow="{{ inactive_percentage|default:0 }}"
+                                    aria-valuemin="0"
+                                    aria-valuemax="100"
+                                    aria-label="Inactive members percentage"
+                                ></div>
 
-                        <div class="progress mt-2">
+                            </div>
 
-                            <div
-                                class="progress-bar bg-secondary"
-                                role="progressbar"
-                                style="width: {{ inactive_percentage|default:0 }}%;"
-                                aria-valuenow="{{ inactive_percentage|default:0 }}"
-                                aria-valuemin="0"
-                                aria-valuemax="100"
-                            >
+                            <div class="kucsa-progress-meta">
+
+                                <span>
+                                    Other or inactive
+                                </span>
+
+                                <span class="kucsa-percentage-pill">
+                                    {{ inactive_percentage|default:0 }}%
+                                </span>
+
                             </div>
 
                         </div>
 
-                        <small class="text-muted">
-                            {{ inactive_percentage|default:0 }}% of registered members
-                        </small>
-
                     </div>
 
-                </div>
+                </article>
 
             </div>
 
-        </div>
 
+            <!-- EXECUTIVE OVERVIEW -->
 
-        <!-- =================================================
-             EXECUTIVE OVERVIEW
-        ================================================== -->
+            <div class="col-lg-6">
 
-        <div class="col-lg-6">
+                <article class="kucsa-analytics-card">
 
-            <div class="card border-0 shadow-sm h-100">
+                    <header class="kucsa-analytics-card-header">
 
-                <div class="card-header bg-info text-white">
+                        <div class="kucsa-card-header-icon kucsa-card-header-icon-info">
+                            <i class="bi bi-person-badge-fill"></i>
+                        </div>
 
-                    <i class="bi bi-person-badge-fill me-1"></i>
+                        <div>
+                            <h2 class="kucsa-card-title">
+                                Executive Overview
+                            </h2>
 
-                    Executive Overview
+                            <p class="kucsa-card-subtitle">
+                                Leadership and committee statistics
+                            </p>
+                        </div>
 
-                </div>
+                    </header>
 
-                <div class="card-body">
+                    <div class="kucsa-analytics-card-body">
 
-                    <div class="row text-center g-4">
+                        <div class="kucsa-executive-grid">
 
-                        <div class="col-6">
+                            <!-- Total Executives -->
 
-                            <div class="border rounded p-3">
+                            <div class="kucsa-executive-item">
 
-                                <i class="bi bi-people display-6 text-info"></i>
+                                <div class="kucsa-executive-icon kucsa-icon-info">
+                                    <i class="bi bi-people"></i>
+                                </div>
 
-                                <h3 class="fw-bold mt-2 mb-1">
+                                <h3 class="kucsa-executive-value">
                                     {{ executive_count|default:"0" }}
                                 </h3>
 
-                                <small class="text-muted">
+                                <span class="kucsa-executive-label">
                                     Total Executives
-                                </small>
+                                </span>
 
                             </div>
 
-                        </div>
 
+                            <!-- Active Executives -->
 
-                        <div class="col-6">
+                            <div class="kucsa-executive-item">
 
-                            <div class="border rounded p-3">
+                                <div class="kucsa-executive-icon kucsa-icon-success">
+                                    <i class="bi bi-person-check"></i>
+                                </div>
 
-                                <i class="bi bi-person-check display-6 text-success"></i>
-
-                                <h3 class="fw-bold mt-2 mb-1">
+                                <h3 class="kucsa-executive-value">
                                     {{ active_executives|default:"0" }}
                                 </h3>
 
-                                <small class="text-muted">
+                                <span class="kucsa-executive-label">
                                     Active Executives
-                                </small>
+                                </span>
 
                             </div>
 
-                        </div>
 
+                            <!-- Inactive Executives -->
 
-                        <div class="col-6">
+                            <div class="kucsa-executive-item">
 
-                            <div class="border rounded p-3">
+                                <div class="kucsa-executive-icon kucsa-icon-danger">
+                                    <i class="bi bi-person-x"></i>
+                                </div>
 
-                                <i class="bi bi-person-x display-6 text-danger"></i>
-
-                                <h3 class="fw-bold mt-2 mb-1">
+                                <h3 class="kucsa-executive-value">
                                     {{ inactive_executives|default:"0" }}
                                 </h3>
 
-                                <small class="text-muted">
+                                <span class="kucsa-executive-label">
                                     Inactive Executives
-                                </small>
+                                </span>
 
                             </div>
 
-                        </div>
 
+                            <!-- Committees -->
 
-                        <div class="col-6">
+                            <div class="kucsa-executive-item">
 
-                            <div class="border rounded p-3">
+                                <div class="kucsa-executive-icon kucsa-icon-primary">
+                                    <i class="bi bi-diagram-3"></i>
+                                </div>
 
-                                <i class="bi bi-diagram-3 display-6 text-primary"></i>
-
-                                <h3 class="fw-bold mt-2 mb-1">
+                                <h3 class="kucsa-executive-value">
                                     {{ committees|default:"0" }}
                                 </h3>
 
-                                <small class="text-muted">
+                                <span class="kucsa-executive-label">
                                     Committees
-                                </small>
+                                </span>
 
                             </div>
 
@@ -390,281 +1604,576 @@ Dashboard Analytics | KUCSA Platform
 
                     </div>
 
-                </div>
+                </article>
 
             </div>
 
         </div>
 
-    </div>
+    </section>
 
 
     <!-- =====================================================
-         PLATFORM ACTIVITY
+         PLATFORM ACTIVITY + ACCOUNT STATISTICS
     ====================================================== -->
 
-    <div class="row g-4 mb-4">
+    <section class="kucsa-analytics-section">
 
-        <div class="col-lg-6">
+        <div class="row g-3 g-lg-4">
 
-            <div class="card border-0 shadow-sm h-100">
+            <!-- PLATFORM ACTIVITY -->
 
-                <div class="card-header bg-success text-white">
+            <div class="col-lg-6">
 
-                    <i class="bi bi-activity me-1"></i>
+                <article class="kucsa-analytics-card">
 
-                    Platform Activity
+                    <header class="kucsa-analytics-card-header">
 
-                </div>
+                        <div class="kucsa-card-header-icon kucsa-card-header-icon-success">
+                            <i class="bi bi-activity"></i>
+                        </div>
 
-                <div class="card-body">
+                        <div>
+                            <h2 class="kucsa-card-title">
+                                Platform Activity
+                            </h2>
 
-                    <table class="table table-borderless align-middle mb-0">
+                            <p class="kucsa-card-subtitle">
+                                Activity across KUCSA services
+                            </p>
+                        </div>
 
-                        <tbody>
+                    </header>
 
-                            <tr>
+                    <div class="kucsa-analytics-card-body">
 
-                                <th>
-                                    Events
-                                </th>
+                        <table class="kucsa-analytics-table">
 
-                                <td class="text-end fw-bold">
-                                    {{ events|default:"0" }}
-                                </td>
+                            <tbody>
 
-                            </tr>
+                                <tr>
+                                    <th>
+                                        <span class="kucsa-table-label">
+                                            <span class="kucsa-table-dot kucsa-dot-primary"></span>
+                                            Events
+                                        </span>
+                                    </th>
 
-                            <tr>
+                                    <td class="text-end">
+                                        <span class="kucsa-value-badge">
+                                            {{ events|default:"0" }}
+                                        </span>
+                                    </td>
+                                </tr>
 
-                                <th>
-                                    Announcements
-                                </th>
+                                <tr>
+                                    <th>
+                                        <span class="kucsa-table-label">
+                                            <span class="kucsa-table-dot kucsa-dot-info"></span>
+                                            Announcements
+                                        </span>
+                                    </th>
 
-                                <td class="text-end fw-bold">
-                                    {{ announcements|default:"0" }}
-                                </td>
+                                    <td class="text-end">
+                                        <span class="kucsa-value-badge">
+                                            {{ announcements|default:"0" }}
+                                        </span>
+                                    </td>
+                                </tr>
 
-                            </tr>
+                                <tr>
+                                    <th>
+                                        <span class="kucsa-table-label">
+                                            <span class="kucsa-table-dot kucsa-dot-success"></span>
+                                            Attendance Records
+                                        </span>
+                                    </th>
 
-                            <tr>
+                                    <td class="text-end">
+                                        <span class="kucsa-value-badge">
+                                            {{ attendance|default:"0" }}
+                                        </span>
+                                    </td>
+                                </tr>
 
-                                <th>
-                                    Attendance Records
-                                </th>
+                                <tr>
+                                    <th>
+                                        <span class="kucsa-table-label">
+                                            <span class="kucsa-table-dot kucsa-dot-warning"></span>
+                                            Payments
+                                        </span>
+                                    </th>
 
-                                <td class="text-end fw-bold">
-                                    {{ attendance|default:"0" }}
-                                </td>
+                                    <td class="text-end">
+                                        <span class="kucsa-value-badge">
+                                            {{ payments|default:"0" }}
+                                        </span>
+                                    </td>
+                                </tr>
 
-                            </tr>
+                            </tbody>
 
-                            <tr>
+                        </table>
 
-                                <th>
-                                    Payments
-                                </th>
+                    </div>
 
-                                <td class="text-end fw-bold">
-                                    {{ payments|default:"0" }}
-                                </td>
+                </article>
 
-                            </tr>
+            </div>
 
-                        </tbody>
 
-                    </table>
+            <!-- ACCOUNT STATISTICS -->
 
-                </div>
+            <div class="col-lg-6">
+
+                <article class="kucsa-analytics-card">
+
+                    <header class="kucsa-analytics-card-header">
+
+                        <div class="kucsa-card-header-icon kucsa-card-header-icon-dark">
+                            <i class="bi bi-person-lines-fill"></i>
+                        </div>
+
+                        <div>
+                            <h2 class="kucsa-card-title">
+                                Account Statistics
+                            </h2>
+
+                            <p class="kucsa-card-subtitle">
+                                User account and profile status
+                            </p>
+                        </div>
+
+                    </header>
+
+                    <div class="kucsa-analytics-card-body">
+
+                        <table class="kucsa-analytics-table">
+
+                            <tbody>
+
+                                <tr>
+                                    <th>
+                                        <span class="kucsa-table-label">
+                                            <span class="kucsa-table-dot kucsa-dot-primary"></span>
+                                            Total Accounts
+                                        </span>
+                                    </th>
+
+                                    <td class="text-end">
+                                        <span class="kucsa-value-badge">
+                                            {{ total_users|default:"0" }}
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>
+                                        <span class="kucsa-table-label">
+                                            <span class="kucsa-table-dot kucsa-dot-success"></span>
+                                            Verified Accounts
+                                        </span>
+                                    </th>
+
+                                    <td class="text-end">
+                                        <span class="kucsa-value-badge kucsa-value-success">
+                                            {{ verified_users|default:"0" }}
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>
+                                        <span class="kucsa-table-label">
+                                            <span class="kucsa-table-dot kucsa-dot-warning"></span>
+                                            Unverified Accounts
+                                        </span>
+                                    </th>
+
+                                    <td class="text-end">
+                                        <span class="kucsa-value-badge kucsa-value-warning">
+                                            {{ unverified_users|default:"0" }}
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>
+                                        <span class="kucsa-table-label">
+                                            <span class="kucsa-table-dot kucsa-dot-info"></span>
+                                            Completed Profiles
+                                        </span>
+                                    </th>
+
+                                    <td class="text-end">
+                                        <span class="kucsa-value-badge">
+                                            {{ completed_profiles|default:"0" }}
+                                        </span>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </article>
 
             </div>
 
         </div>
 
-
-        <!-- =================================================
-             ACCOUNT STATISTICS
-        ================================================== -->
-
-        <div class="col-lg-6">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-header bg-dark text-white">
-
-                    <i class="bi bi-person-lines-fill me-1"></i>
-
-                    Account Statistics
-
-                </div>
-
-                <div class="card-body">
-
-                    <table class="table table-borderless align-middle mb-0">
-
-                        <tbody>
-
-                            <tr>
-
-                                <th>
-                                    Total Accounts
-                                </th>
-
-                                <td class="text-end fw-bold">
-                                    {{ total_users|default:"0" }}
-                                </td>
-
-                            </tr>
-
-                            <tr>
-
-                                <th>
-                                    Verified Accounts
-                                </th>
-
-                                <td class="text-end fw-bold text-success">
-                                    {{ verified_users|default:"0" }}
-                                </td>
-
-                            </tr>
-
-                            <tr>
-
-                                <th>
-                                    Unverified Accounts
-                                </th>
-
-                                <td class="text-end fw-bold text-warning">
-                                    {{ unverified_users|default:"0" }}
-                                </td>
-
-                            </tr>
-
-                            <tr>
-
-                                <th>
-                                    Completed Profiles
-                                </th>
-
-                                <td class="text-end fw-bold">
-                                    {{ completed_profiles|default:"0" }}
-                                </td>
-
-                            </tr>
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
+    </section>
 
 
     <!-- =====================================================
          ANALYTICS & REPORTING
     ====================================================== -->
 
-    <div class="row mt-2">
+    <section class="kucsa-analytics-section">
 
-        <div class="col-12">
+        <article class="kucsa-analytics-card">
 
-            <div class="card border-0 shadow-sm">
+            <header class="kucsa-analytics-card-header">
 
-                <div class="card-header bg-dark text-white">
+                <div class="kucsa-card-header-icon kucsa-card-header-icon-dark">
+                    <i class="bi bi-bar-chart-line"></i>
+                </div>
 
-                    <i class="bi bi-bar-chart-line me-1"></i>
+                <div>
+                    <h2 class="kucsa-card-title">
+                        Analytics & Reporting
+                    </h2>
 
-                    Analytics & Reporting
+                    <p class="kucsa-card-subtitle">
+                        Areas available for deeper platform analysis
+                    </p>
+                </div>
+
+            </header>
+
+            <div class="kucsa-reporting-grid">
+
+                <!-- Membership Growth -->
+
+                <div class="kucsa-report-item">
+
+                    <div class="kucsa-report-icon kucsa-report-primary">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+
+                    <h3 class="kucsa-report-title">
+                        Membership Growth
+                    </h3>
+
+                    <p class="kucsa-report-description">
+                        Track KUCSA membership growth and changes over time.
+                    </p>
 
                 </div>
 
-                <div class="card-body">
 
-                    <div class="row text-center">
+                <!-- Event Statistics -->
 
-                        <!-- Membership Growth -->
+                <div class="kucsa-report-item">
 
-                        <div class="col-md-3 mb-4 mb-md-0">
-
-                            <i class="bi bi-graph-up-arrow display-5 text-primary"></i>
-
-                            <h6 class="mt-2">
-                                Membership Growth
-                            </h6>
-
-                            <p class="text-muted small mb-0">
-                                Track KUCSA membership growth over time.
-                            </p>
-
-                        </div>
-
-
-                        <!-- Event Statistics -->
-
-                        <div class="col-md-3 mb-4 mb-md-0">
-
-                            <i class="bi bi-calendar-event display-5 text-success"></i>
-
-                            <h6 class="mt-2">
-                                Event Statistics
-                            </h6>
-
-                            <p class="text-muted small mb-0">
-                                Monitor events and member participation.
-                            </p>
-
-                        </div>
-
-
-                        <!-- Attendance -->
-
-                        <div class="col-md-3 mb-4 mb-md-0">
-
-                            <i class="bi bi-person-check display-5 text-warning"></i>
-
-                            <h6 class="mt-2">
-                                Attendance Reports
-                            </h6>
-
-                            <p class="text-muted small mb-0">
-                                Analyze attendance and participation trends.
-                            </p>
-
-                        </div>
-
-
-                        <!-- Payments -->
-
-                        <div class="col-md-3">
-
-                            <i class="bi bi-cash-stack display-5 text-danger"></i>
-
-                            <h6 class="mt-2">
-                                Payment Reports
-                            </h6>
-
-                            <p class="text-muted small mb-0">
-                                Monitor membership payment activity.
-                            </p>
-
-                        </div>
-
+                    <div class="kucsa-report-icon kucsa-report-success">
+                        <i class="bi bi-calendar-event"></i>
                     </div>
+
+                    <h3 class="kucsa-report-title">
+                        Event Statistics
+                    </h3>
+
+                    <p class="kucsa-report-description">
+                        Monitor events, registrations, and member participation.
+                    </p>
+
+                </div>
+
+
+                <!-- Attendance -->
+
+                <div class="kucsa-report-item">
+
+                    <div class="kucsa-report-icon kucsa-report-warning">
+                        <i class="bi bi-person-check"></i>
+                    </div>
+
+                    <h3 class="kucsa-report-title">
+                        Attendance Reports
+                    </h3>
+
+                    <p class="kucsa-report-description">
+                        Analyze attendance patterns and participation trends.
+                    </p>
+
+                </div>
+
+
+                <!-- Payments -->
+
+                <div class="kucsa-report-item">
+
+                    <div class="kucsa-report-icon kucsa-report-danger">
+                        <i class="bi bi-cash-stack"></i>
+                    </div>
+
+                    <h3 class="kucsa-report-title">
+                        Payment Reports
+                    </h3>
+
+                    <p class="kucsa-report-description">
+                        Monitor membership payments and financial activity.
+                    </p>
 
                 </div>
 
             </div>
 
-        </div>
+        </article>
 
-    </div>
+    </section>
 
 </div>
 
-{% endblock %}
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const analyticsPage = document.querySelector(".kucsa-analytics-page");
+
+    if (!analyticsPage) {
+        return;
+    }
+
+    const reduceMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+
+    /* =========================================================
+       ANIMATED STATISTICS
+    ========================================================== */
+
+    const counters = analyticsPage.querySelectorAll("[data-counter]");
+
+    counters.forEach(function (counter) {
+
+        const rawValue = counter.dataset.counter || "0";
+        const target = Number(
+            String(rawValue).replace(/,/g, "")
+        );
+
+        if (!Number.isFinite(target)) {
+            return;
+        }
+
+        if (reduceMotion || target <= 0) {
+            counter.textContent = target.toLocaleString();
+            return;
+        }
+
+        const duration = 750;
+        const startValue = 0;
+        let startTime = null;
+
+        function animateCounter(timestamp) {
+
+            if (!startTime) {
+                startTime = timestamp;
+            }
+
+            const elapsed = timestamp - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+
+            const easedProgress =
+                1 - Math.pow(1 - progress, 3);
+
+            const currentValue = Math.floor(
+                startValue +
+                (target - startValue) * easedProgress
+            );
+
+            counter.textContent =
+                currentValue.toLocaleString();
+
+            if (progress < 1) {
+                window.requestAnimationFrame(
+                    animateCounter
+                );
+            } else {
+                counter.textContent =
+                    target.toLocaleString();
+            }
+        }
+
+        window.setTimeout(function () {
+            window.requestAnimationFrame(
+                animateCounter
+            );
+        }, 120);
+
+    });
+
+
+    /* =========================================================
+       PROGRESS BAR ANIMATION
+    ========================================================== */
+
+    const progressBars =
+        analyticsPage.querySelectorAll(
+            "[data-progress]"
+        );
+
+    function animateProgressBars() {
+
+        progressBars.forEach(function (bar) {
+
+            let value = Number(
+                bar.dataset.progress || 0
+            );
+
+            if (!Number.isFinite(value)) {
+                value = 0;
+            }
+
+            value = Math.max(
+                0,
+                Math.min(100, value)
+            );
+
+            if (reduceMotion) {
+                bar.style.width = value + "%";
+                return;
+            }
+
+            window.setTimeout(function () {
+                bar.style.width = value + "%";
+            }, 180);
+
+        });
+    }
+
+
+    /* =========================================================
+       INTERSECTION OBSERVER
+       Animate progress only when analytics section appears.
+    ========================================================== */
+
+    if (
+        "IntersectionObserver" in window &&
+        !reduceMotion
+    ) {
+
+        const observer =
+            new IntersectionObserver(
+                function (entries, observerInstance) {
+
+                    entries.forEach(function (entry) {
+
+                        if (entry.isIntersecting) {
+
+                            animateProgressBars();
+
+                            observerInstance.unobserve(
+                                entry.target
+                            );
+                        }
+
+                    });
+
+                },
+                {
+                    threshold: 0.15
+                }
+            );
+
+        progressBars.forEach(function (bar) {
+            observer.observe(bar);
+        });
+
+    } else {
+        animateProgressBars();
+    }
+
+
+    /* =========================================================
+       TOOLTIP-LIKE ACCESSIBILITY FEEDBACK
+    ========================================================== */
+
+    const interactiveCards =
+        analyticsPage.querySelectorAll(
+            ".kucsa-analytics-stat-card, " +
+            ".kucsa-executive-item, " +
+            ".kucsa-report-item"
+        );
+
+    interactiveCards.forEach(function (card) {
+
+        card.addEventListener(
+            "mouseenter",
+            function () {
+                card.setAttribute(
+                    "data-hovered",
+                    "true"
+                );
+            }
+        );
+
+        card.addEventListener(
+            "mouseleave",
+            function () {
+                card.removeAttribute(
+                    "data-hovered"
+                );
+            }
+        );
+
+    });
+
+
+    /* =========================================================
+       RESPONSIVE BACK BUTTON LABEL
+    ========================================================== */
+
+    const backButton =
+        analyticsPage.querySelector(
+            ".kucsa-back-btn"
+        );
+
+    function adaptBackButton() {
+
+        if (!backButton) {
+            return;
+        }
+
+        const label =
+            backButton.querySelector("span");
+
+        if (!label) {
+            return;
+        }
+
+        if (window.innerWidth <= 359) {
+            label.textContent = "Dashboard";
+        } else {
+            label.textContent = "Back to Dashboard";
+        }
+    }
+
+    adaptBackButton();
+
+    window.addEventListener(
+        "resize",
+        adaptBackButton,
+        {
+            passive: true
+        }
+    );
+
+});
+</script>
+
+{% endblock %}

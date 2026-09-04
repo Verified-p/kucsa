@@ -1,159 +1,725 @@
+<!-- =========================================================
+     KUCSA DASHBOARD STATISTICS WIDGET
+========================================================== -->
 
-<div class="row g-4 mb-4">
+<style>
+    .kucsa-stats-widget {
+        --kucsa-widget-primary: #0d6efd;
+        --kucsa-widget-success: #198754;
+        --kucsa-widget-warning: #f0ad00;
+        --kucsa-widget-info: #0891b2;
+        --kucsa-widget-dark: #172033;
+        --kucsa-widget-muted: #718096;
+        --kucsa-widget-border: #e7ebf0;
+        --kucsa-widget-radius: 18px;
+        --kucsa-widget-shadow: 0 8px 28px rgba(23, 32, 51, 0.07);
+        --kucsa-widget-shadow-hover: 0 14px 35px rgba(23, 32, 51, 0.12);
+    }
 
-    <!-- =====================================================
-         TOTAL MEMBERS
-    ====================================================== -->
+    .kucsa-stats-widget *,
+    .kucsa-stats-widget *::before,
+    .kucsa-stats-widget *::after {
+        box-sizing: border-box;
+    }
 
-    <div class="col-lg-3 col-md-6">
+    /* =====================================================
+       STAT CARD
+    ====================================================== */
 
-        <div class="card border-0 shadow-sm h-100">
+    .kucsa-stat-widget-card {
+        position: relative;
+        height: 100%;
+        min-height: 145px;
+        padding: 1.35rem;
+        overflow: hidden;
 
-            <div class="card-body">
+        background: #ffffff;
+        border: 1px solid var(--kucsa-widget-border);
+        border-radius: var(--kucsa-widget-radius);
+        box-shadow: var(--kucsa-widget-shadow);
 
-                <div class="d-flex justify-content-between align-items-center">
+        transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease,
+            border-color 0.25s ease;
+    }
 
-                    <div>
+    .kucsa-stat-widget-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(13, 110, 253, 0.14);
+        box-shadow: var(--kucsa-widget-shadow-hover);
+    }
 
-                        <h6 class="text-muted mb-2">
+    /* =====================================================
+       TOP CONTENT
+    ====================================================== */
+
+    .kucsa-stat-widget-content {
+        position: relative;
+        z-index: 2;
+
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+
+        height: 100%;
+    }
+
+    .kucsa-stat-widget-info {
+        min-width: 0;
+    }
+
+    .kucsa-stat-widget-label {
+        margin-bottom: 0.5rem;
+
+        color: var(--kucsa-widget-muted);
+        font-size: 0.74rem;
+        font-weight: 700;
+        line-height: 1.35;
+
+        text-transform: uppercase;
+        letter-spacing: 0.055em;
+    }
+
+    .kucsa-stat-widget-value {
+        margin: 0;
+
+        color: var(--kucsa-widget-dark);
+        font-size: clamp(1.7rem, 2.5vw, 2.05rem);
+        font-weight: 800;
+        line-height: 1;
+
+        letter-spacing: -0.035em;
+    }
+
+    .kucsa-stat-widget-description {
+        display: block;
+        margin-top: 0.55rem;
+
+        color: #9aa4b2;
+        font-size: 0.69rem;
+        line-height: 1.4;
+    }
+
+    /* =====================================================
+       ICON
+    ====================================================== */
+
+    .kucsa-stat-widget-icon {
+        width: 52px;
+        height: 52px;
+        flex: 0 0 52px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 15px;
+
+        font-size: 1.4rem;
+
+        transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease;
+    }
+
+    .kucsa-stat-widget-card:hover .kucsa-stat-widget-icon {
+        transform: scale(1.06) rotate(-2deg);
+    }
+
+    /* =====================================================
+       COLOR VARIANTS
+    ====================================================== */
+
+    .kucsa-stat-widget-primary .kucsa-stat-widget-icon {
+        color: var(--kucsa-widget-primary);
+        background: rgba(13, 110, 253, 0.10);
+    }
+
+    .kucsa-stat-widget-primary .kucsa-stat-widget-value {
+        color: var(--kucsa-widget-dark);
+    }
+
+    .kucsa-stat-widget-success .kucsa-stat-widget-icon {
+        color: var(--kucsa-widget-success);
+        background: rgba(25, 135, 84, 0.10);
+    }
+
+    .kucsa-stat-widget-success .kucsa-stat-widget-value {
+        color: var(--kucsa-widget-success);
+    }
+
+    .kucsa-stat-widget-warning .kucsa-stat-widget-icon {
+        color: var(--kucsa-widget-warning);
+        background: rgba(255, 193, 7, 0.14);
+    }
+
+    .kucsa-stat-widget-warning .kucsa-stat-widget-value {
+        color: #b27c00;
+    }
+
+    .kucsa-stat-widget-info .kucsa-stat-widget-icon {
+        color: var(--kucsa-widget-info);
+        background: rgba(13, 202, 240, 0.11);
+    }
+
+    .kucsa-stat-widget-info .kucsa-stat-widget-value {
+        color: var(--kucsa-widget-info);
+    }
+
+    /* =====================================================
+       DECORATIVE BACKGROUND
+    ====================================================== */
+
+    .kucsa-stat-widget-decoration {
+        position: absolute;
+
+        width: 105px;
+        height: 105px;
+
+        right: -48px;
+        bottom: -48px;
+
+        border-radius: 50%;
+
+        pointer-events: none;
+
+        transition:
+            transform 0.35s ease,
+            opacity 0.35s ease;
+    }
+
+    .kucsa-stat-widget-card:hover .kucsa-stat-widget-decoration {
+        transform: scale(1.18);
+    }
+
+    .kucsa-stat-widget-primary .kucsa-stat-widget-decoration {
+        background: rgba(13, 110, 253, 0.045);
+    }
+
+    .kucsa-stat-widget-success .kucsa-stat-widget-decoration {
+        background: rgba(25, 135, 84, 0.045);
+    }
+
+    .kucsa-stat-widget-warning .kucsa-stat-widget-decoration {
+        background: rgba(255, 193, 7, 0.065);
+    }
+
+    .kucsa-stat-widget-info .kucsa-stat-widget-decoration {
+        background: rgba(13, 202, 240, 0.05);
+    }
+
+    /* =====================================================
+       SUBTLE TOP ACCENT
+    ====================================================== */
+
+    .kucsa-stat-widget-card::before {
+        content: "";
+
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        width: 100%;
+        height: 3px;
+
+        opacity: 0;
+
+        transition: opacity 0.25s ease;
+    }
+
+    .kucsa-stat-widget-card:hover::before {
+        opacity: 1;
+    }
+
+    .kucsa-stat-widget-primary::before {
+        background: var(--kucsa-widget-primary);
+    }
+
+    .kucsa-stat-widget-success::before {
+        background: var(--kucsa-widget-success);
+    }
+
+    .kucsa-stat-widget-warning::before {
+        background: var(--kucsa-widget-warning);
+    }
+
+    .kucsa-stat-widget-info::before {
+        background: var(--kucsa-widget-info);
+    }
+
+    /* =====================================================
+       RESPONSIVE — TABLETS
+    ====================================================== */
+
+    @media (max-width: 991.98px) {
+
+        .kucsa-stat-widget-card {
+            min-height: 140px;
+            padding: 1.2rem;
+        }
+
+        .kucsa-stat-widget-icon {
+            width: 48px;
+            height: 48px;
+            flex-basis: 48px;
+            border-radius: 14px;
+            font-size: 1.25rem;
+        }
+
+        .kucsa-stat-widget-value {
+            font-size: 1.75rem;
+        }
+    }
+
+    /* =====================================================
+       RESPONSIVE — MOBILE
+    ====================================================== */
+
+    @media (max-width: 767.98px) {
+
+        .kucsa-stats-widget .row {
+            --bs-gutter-y: 0.85rem;
+        }
+
+        .kucsa-stat-widget-card {
+            min-height: 132px;
+            border-radius: 15px;
+            padding: 1rem;
+        }
+
+        .kucsa-stat-widget-label {
+            font-size: 0.68rem;
+        }
+
+        .kucsa-stat-widget-value {
+            font-size: 1.55rem;
+        }
+
+        .kucsa-stat-widget-description {
+            font-size: 0.65rem;
+        }
+
+        .kucsa-stat-widget-icon {
+            width: 44px;
+            height: 44px;
+            flex-basis: 44px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+        }
+    }
+
+    /* =====================================================
+       RESPONSIVE — SMALL PHONES
+    ====================================================== */
+
+    @media (max-width: 575.98px) {
+
+        .kucsa-stat-widget-card {
+            min-height: 124px;
+            padding: 0.9rem;
+        }
+
+        .kucsa-stat-widget-label {
+            margin-bottom: 0.4rem;
+            font-size: 0.63rem;
+        }
+
+        .kucsa-stat-widget-value {
+            font-size: 1.42rem;
+        }
+
+        .kucsa-stat-widget-description {
+            margin-top: 0.4rem;
+            font-size: 0.61rem;
+        }
+
+        .kucsa-stat-widget-icon {
+            width: 40px;
+            height: 40px;
+            flex-basis: 40px;
+            border-radius: 11px;
+            font-size: 1rem;
+        }
+    }
+
+    /* =====================================================
+       VERY SMALL DEVICES
+    ====================================================== */
+
+    @media (max-width: 359.98px) {
+
+        .kucsa-stat-widget-card {
+            min-height: 115px;
+            padding: 0.8rem;
+        }
+
+        .kucsa-stat-widget-label {
+            font-size: 0.58rem;
+        }
+
+        .kucsa-stat-widget-value {
+            font-size: 1.28rem;
+        }
+
+        .kucsa-stat-widget-description {
+            font-size: 0.57rem;
+        }
+
+        .kucsa-stat-widget-icon {
+            width: 36px;
+            height: 36px;
+            flex-basis: 36px;
+            font-size: 0.9rem;
+        }
+    }
+
+    /* =====================================================
+       ACCESSIBILITY
+    ====================================================== */
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .kucsa-stats-widget *,
+        .kucsa-stats-widget *::before,
+        .kucsa-stats-widget *::after {
+            transition: none !important;
+            animation: none !important;
+        }
+    }
+</style>
+
+
+<div class="kucsa-stats-widget">
+
+    <div class="row g-3 g-lg-4 mb-4">
+
+        <!-- =================================================
+             TOTAL MEMBERS
+        ================================================== -->
+
+        <div class="col-6 col-lg-3">
+
+            <article
+                class="kucsa-stat-widget-card kucsa-stat-widget-primary"
+                aria-label="Total Members">
+
+                <div class="kucsa-stat-widget-content">
+
+                    <div class="kucsa-stat-widget-info">
+
+                        <div class="kucsa-stat-widget-label">
                             Total Members
-                        </h6>
+                        </div>
 
-                        <h2 class="fw-bold mb-0">
+                        <h2
+                            class="kucsa-stat-widget-value"
+                            data-stat-value="{{ total_members|default:'0' }}">
+
                             {{ total_members|default:"0" }}
+
                         </h2>
+
+                        <span class="kucsa-stat-widget-description">
+                            Registered members
+                        </span>
 
                     </div>
 
-                    <div class="text-primary">
+                    <div
+                        class="kucsa-stat-widget-icon"
+                        aria-hidden="true">
 
-                        <i class="bi bi-people-fill display-5"></i>
+                        <i class="bi bi-people-fill"></i>
 
                     </div>
 
                 </div>
 
-            </div>
+                <div
+                    class="kucsa-stat-widget-decoration"
+                    aria-hidden="true">
+                </div>
+
+            </article>
 
         </div>
 
-    </div>
 
+        <!-- =================================================
+             ACTIVE MEMBERS
+        ================================================== -->
 
-    <!-- =====================================================
-         ACTIVE MEMBERS
-    ====================================================== -->
+        <div class="col-6 col-lg-3">
 
-    <div class="col-lg-3 col-md-6">
+            <article
+                class="kucsa-stat-widget-card kucsa-stat-widget-success"
+                aria-label="Active Members">
 
-        <div class="card border-0 shadow-sm h-100">
+                <div class="kucsa-stat-widget-content">
 
-            <div class="card-body">
+                    <div class="kucsa-stat-widget-info">
 
-                <div class="d-flex justify-content-between align-items-center">
-
-                    <div>
-
-                        <h6 class="text-muted mb-2">
+                        <div class="kucsa-stat-widget-label">
                             Active Members
-                        </h6>
+                        </div>
 
-                        <h2 class="fw-bold text-success mb-0">
+                        <h2
+                            class="kucsa-stat-widget-value"
+                            data-stat-value="{{ active_members|default:'0' }}">
+
                             {{ active_members|default:"0" }}
+
                         </h2>
+
+                        <span class="kucsa-stat-widget-description">
+                            Active membership
+                        </span>
 
                     </div>
 
-                    <div class="text-success">
+                    <div
+                        class="kucsa-stat-widget-icon"
+                        aria-hidden="true">
 
-                        <i class="bi bi-person-check-fill display-5"></i>
+                        <i class="bi bi-person-check-fill"></i>
 
                     </div>
 
                 </div>
 
-            </div>
+                <div
+                    class="kucsa-stat-widget-decoration"
+                    aria-hidden="true">
+                </div>
+
+            </article>
 
         </div>
 
-    </div>
 
+        <!-- =================================================
+             PENDING MEMBERS
+        ================================================== -->
 
-    <!-- =====================================================
-         PENDING MEMBERS
-    ====================================================== -->
+        <div class="col-6 col-lg-3">
 
-    <div class="col-lg-3 col-md-6">
+            <article
+                class="kucsa-stat-widget-card kucsa-stat-widget-warning"
+                aria-label="Pending Members">
 
-        <div class="card border-0 shadow-sm h-100">
+                <div class="kucsa-stat-widget-content">
 
-            <div class="card-body">
+                    <div class="kucsa-stat-widget-info">
 
-                <div class="d-flex justify-content-between align-items-center">
-
-                    <div>
-
-                        <h6 class="text-muted mb-2">
+                        <div class="kucsa-stat-widget-label">
                             Pending Members
-                        </h6>
+                        </div>
 
-                        <h2 class="fw-bold text-warning mb-0">
+                        <h2
+                            class="kucsa-stat-widget-value"
+                            data-stat-value="{{ pending_members|default:'0' }}">
+
                             {{ pending_members|default:"0" }}
+
                         </h2>
+
+                        <span class="kucsa-stat-widget-description">
+                            Awaiting approval
+                        </span>
 
                     </div>
 
-                    <div class="text-warning">
+                    <div
+                        class="kucsa-stat-widget-icon"
+                        aria-hidden="true">
 
-                        <i class="bi bi-hourglass-split display-5"></i>
+                        <i class="bi bi-hourglass-split"></i>
 
                     </div>
 
                 </div>
 
-            </div>
+                <div
+                    class="kucsa-stat-widget-decoration"
+                    aria-hidden="true">
+                </div>
+
+            </article>
 
         </div>
 
-    </div>
 
+        <!-- =================================================
+             EXECUTIVE TEAM
+        ================================================== -->
 
-    <!-- =====================================================
-         EXECUTIVE TEAM
-    ====================================================== -->
+        <div class="col-6 col-lg-3">
 
-    <div class="col-lg-3 col-md-6">
+            <article
+                class="kucsa-stat-widget-card kucsa-stat-widget-info"
+                aria-label="Executive Team">
 
-        <div class="card border-0 shadow-sm h-100">
+                <div class="kucsa-stat-widget-content">
 
-            <div class="card-body">
+                    <div class="kucsa-stat-widget-info">
 
-                <div class="d-flex justify-content-between align-items-center">
-
-                    <div>
-
-                        <h6 class="text-muted mb-2">
+                        <div class="kucsa-stat-widget-label">
                             Executive Team
-                        </h6>
+                        </div>
 
-                        <h2 class="fw-bold text-info mb-0">
+                        <h2
+                            class="kucsa-stat-widget-value"
+                            data-stat-value="{{ executives|default:'0' }}">
+
                             {{ executives|default:"0" }}
+
                         </h2>
+
+                        <span class="kucsa-stat-widget-description">
+                            Current executives
+                        </span>
 
                     </div>
 
-                    <div class="text-info">
+                    <div
+                        class="kucsa-stat-widget-icon"
+                        aria-hidden="true">
 
-                        <i class="bi bi-person-badge-fill display-5"></i>
+                        <i class="bi bi-person-badge-fill"></i>
 
                     </div>
 
                 </div>
 
-            </div>
+                <div
+                    class="kucsa-stat-widget-decoration"
+                    aria-hidden="true">
+                </div>
+
+            </article>
 
         </div>
 
     </div>
 
 </div>
+
+
+<!-- =========================================================
+     WIDGET JAVASCRIPT
+========================================================== -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const widget = document.querySelector(".kucsa-stats-widget");
+
+    if (!widget) {
+        return;
+    }
+
+    /* ---------------------------------------------------------
+       Respect reduced motion
+    ---------------------------------------------------------- */
+
+    const reduceMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+
+    /* ---------------------------------------------------------
+       Number counter animation
+    ---------------------------------------------------------- */
+
+    const counters = widget.querySelectorAll(
+        "[data-stat-value]"
+    );
+
+
+    counters.forEach(function (counter) {
+
+        const targetText = counter.dataset.statValue || "0";
+
+        /*
+         * Only animate simple numeric values.
+         * If the backend ever provides a non-numeric value,
+         * leave it untouched.
+         */
+        const target = Number(
+            String(targetText).replace(/,/g, "")
+        );
+
+        if (
+            !Number.isFinite(target) ||
+            reduceMotion ||
+            target < 1
+        ) {
+            return;
+        }
+
+
+        let startTime = null;
+
+        const duration = 700;
+
+
+        function animateCounter(timestamp) {
+
+            if (!startTime) {
+                startTime = timestamp;
+            }
+
+            const elapsed = timestamp - startTime;
+
+            const progress = Math.min(
+                elapsed / duration,
+                1
+            );
+
+            /*
+             * Smooth ease-out curve.
+             */
+            const easedProgress =
+                1 - Math.pow(1 - progress, 3);
+
+            const currentValue = Math.floor(
+                target * easedProgress
+            );
+
+            counter.textContent =
+                currentValue.toLocaleString();
+
+            if (progress < 1) {
+
+                window.requestAnimationFrame(
+                    animateCounter
+                );
+
+            } else {
+
+                counter.textContent =
+                    target.toLocaleString();
+
+            }
+
+        }
+
+
+        /*
+         * Start animation shortly after the dashboard
+         * becomes visible.
+         */
+        window.setTimeout(function () {
+
+            window.requestAnimationFrame(
+                animateCounter
+            );
+
+        }, 120);
+
+    });
+
+});
+</script>

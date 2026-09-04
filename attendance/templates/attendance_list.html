@@ -1,7 +1,7 @@
+```html
 {# attendance/templates/attendance/attendance_list.html #}
 
 {% extends "base.html" %}
-
 {% load static %}
 
 {% block title %}
@@ -11,113 +11,895 @@
 {% block content %}
 
 <style>
-    :root {
+    /* =========================================================
+       KUCSA ATTENDANCE — PAGE STYLING
+       ========================================================= */
+
+    .attendance-page {
         --kucsa-primary: #0d6efd;
-        --kucsa-primary-hover: #0b5ed7;
-        --kucsa-bg-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        --kucsa-success: #198754;
+        --kucsa-info: #0dcaf0;
+        --kucsa-warning: #ffc107;
+        --kucsa-dark: #212529;
+        --kucsa-muted: #6c757d;
+        --kucsa-border: rgba(0, 0, 0, 0.08);
+        --kucsa-shadow: 0 8px 25px rgba(0, 0, 0, 0.055);
+        --kucsa-radius: 18px;
     }
 
-    body {
-        background: var(--kucsa-bg-gradient);
+    /* =========================================================
+       PAGE HEADER
+       ========================================================= */
+
+    .attendance-header {
+        position: relative;
+        overflow: hidden;
+        border-radius: 22px;
+        padding: 28px;
+        margin-bottom: 24px;
+        background:
+            linear-gradient(
+                135deg,
+                rgba(13, 110, 253, 0.10),
+                rgba(13, 202, 240, 0.04)
+            );
+        border: 1px solid rgba(13, 110, 253, 0.08);
     }
 
-    .kucsa-card {
-        border-radius: 1rem;
-        transition: all 0.2s ease-in-out;
+    .attendance-header::after {
+        content: "";
+        position: absolute;
+        width: 180px;
+        height: 180px;
+        right: -60px;
+        top: -70px;
+        border-radius: 50%;
+        background: rgba(13, 110, 253, 0.06);
+        pointer-events: none;
     }
 
-    .metric-card {
-        border-radius: 1rem;
-        border: none;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    .attendance-header-content {
+        position: relative;
+        z-index: 2;
     }
 
-    .metric-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08) !important;
+    .attendance-header h1 {
+        font-size: clamp(1.45rem, 3vw, 2rem);
+        font-weight: 750;
+        letter-spacing: -0.5px;
     }
 
-    .table-hover tbody tr {
-        transition: background-color 0.15s ease-in-out;
+    .attendance-header p {
+        max-width: 720px;
+        line-height: 1.6;
     }
 
-    .dropdown-menu {
-        border-radius: 0.75rem;
-        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
-        border: none;
+    .create-session-btn {
+        border-radius: 12px;
+        padding: 11px 17px;
+        font-weight: 600;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .create-session-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(13, 110, 253, 0.22);
+    }
+
+    /* =========================================================
+       SUMMARY CARDS
+       ========================================================= */
+
+    .summary-card {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--kucsa-border);
+        border-radius: var(--kucsa-radius);
+        background: var(--bs-body-bg, #fff);
+        box-shadow: var(--kucsa-shadow);
+        transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease;
+    }
+
+    .summary-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 32px rgba(0, 0, 0, 0.09);
+    }
+
+    .summary-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: var(--card-accent, var(--kucsa-primary));
+    }
+
+    .summary-card-body {
+        padding: 21px;
+    }
+
+    .summary-label {
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--kucsa-muted);
+    }
+
+    .summary-value {
+        font-size: 1.8rem;
+        font-weight: 750;
+        line-height: 1;
+        margin-top: 7px;
+    }
+
+    .summary-icon {
+        width: 52px;
+        height: 52px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+        font-size: 1.35rem;
+    }
+
+    .summary-primary {
+        --card-accent: #0d6efd;
+    }
+
+    .summary-success {
+        --card-accent: #198754;
+    }
+
+    .summary-dark {
+        --card-accent: #495057;
+    }
+
+    .summary-info {
+        --card-accent: #0dcaf0;
+    }
+
+    .history-btn {
+        border-radius: 9px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        margin-top: 8px;
+    }
+
+    /* =========================================================
+       ACTIVE ALERT
+       ========================================================= */
+
+    .active-alert {
+        border: 0;
+        border-radius: 17px;
+        padding: 17px 20px;
+        background:
+            linear-gradient(
+                135deg,
+                rgba(25, 135, 84, 0.12),
+                rgba(25, 135, 84, 0.045)
+            );
+        color: inherit;
+        box-shadow: var(--kucsa-shadow);
+    }
+
+    .pulse-dot {
+        width: 11px;
+        height: 11px;
+        display: inline-block;
+        border-radius: 50%;
+        background: #198754;
+        box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.45);
+        animation: attendancePulse 1.8s infinite;
+    }
+
+    @keyframes attendancePulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.45);
+        }
+
+        70% {
+            box-shadow: 0 0 0 9px rgba(25, 135, 84, 0);
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(25, 135, 84, 0);
+        }
+    }
+
+    .active-view-btn {
+        border-radius: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    /* =========================================================
+       FILTER CARD
+       ========================================================= */
+
+    .filter-card,
+    .sessions-card {
+        border: 1px solid var(--kucsa-border);
+        border-radius: var(--kucsa-radius);
+        box-shadow: var(--kucsa-shadow);
+        overflow: hidden;
+    }
+
+    .filter-header,
+    .sessions-header {
+        padding: 18px 21px;
+        border-bottom: 1px solid var(--kucsa-border);
+        background: transparent;
+    }
+
+    .section-title {
+        font-weight: 700;
+        font-size: 1rem;
+    }
+
+    .filter-icon {
+        width: 35px;
+        height: 35px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: rgba(13, 110, 253, 0.09);
+        color: var(--kucsa-primary);
+    }
+
+    .filter-card .form-control,
+    .filter-card .form-select {
+        min-height: 45px;
+        border-radius: 11px;
+        border-color: rgba(0, 0, 0, 0.11);
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .filter-card .form-control:focus,
+    .filter-card .form-select:focus {
+        border-color: rgba(13, 110, 253, 0.55);
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.09);
+    }
+
+    .filter-btn,
+    .reset-btn {
+        min-height: 45px;
+        border-radius: 11px;
+        font-weight: 600;
+    }
+
+    /* =========================================================
+       SESSION DESKTOP TABLE
+       ========================================================= */
+
+    .sessions-header-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+    }
+
+    .session-count {
+        font-size: 0.8rem;
+        color: var(--kucsa-muted);
+    }
+
+    .new-session-btn {
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+    .attendance-table {
+        margin: 0;
+        min-width: 850px;
+    }
+
+    .attendance-table thead th {
+        padding: 15px 14px;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.45px;
+        font-weight: 700;
+        color: var(--kucsa-muted);
+        border-bottom: 1px solid var(--kucsa-border);
+        white-space: nowrap;
+    }
+
+    .attendance-table tbody td {
+        padding: 17px 14px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.055);
+        vertical-align: middle;
+    }
+
+    .attendance-table tbody tr {
+        transition: background 0.2s ease;
+    }
+
+    .attendance-table tbody tr:hover {
+        background: rgba(13, 110, 253, 0.025);
+    }
+
+    .attendance-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .session-title {
+        font-weight: 700;
+        font-size: 0.92rem;
+        color: inherit;
+    }
+
+    .session-description {
+        max-width: 280px;
+        margin-top: 3px;
+        font-size: 0.76rem;
+        color: var(--kucsa-muted);
+    }
+
+    .date-value {
+        font-size: 0.82rem;
+        font-weight: 600;
+    }
+
+    .time-value {
+        font-size: 0.73rem;
+        color: var(--kucsa-muted);
+        margin-top: 2px;
+    }
+
+    /* =========================================================
+       STATUS BADGES
+       ========================================================= */
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 9px;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .status-draft {
+        background: rgba(108, 117, 125, 0.11);
+        color: #6c757d;
+    }
+
+    .status-open {
+        background: rgba(25, 135, 84, 0.12);
+        color: #198754;
+    }
+
+    .status-closed {
+        background: rgba(33, 37, 41, 0.10);
+        color: #343a40;
+    }
+
+    .status-expired {
+        background: rgba(255, 193, 7, 0.18);
+        color: #8a6500;
+    }
+
+    /* =========================================================
+       ACTION BUTTON
+       ========================================================= */
+
+    .action-btn {
+        border-radius: 9px;
+        font-size: 0.78rem;
+        font-weight: 600;
+    }
+
+    .session-dropdown .dropdown-menu {
+        min-width: 210px;
+        border: 1px solid var(--kucsa-border);
+        border-radius: 13px;
+        padding: 7px;
+        box-shadow: 0 14px 35px rgba(0, 0, 0, 0.11);
+    }
+
+    .session-dropdown .dropdown-item {
+        border-radius: 8px;
+        padding: 9px 11px;
+        font-size: 0.82rem;
+        transition:
+            background 0.15s ease,
+            transform 0.15s ease;
+    }
+
+    .session-dropdown .dropdown-item:hover {
+        transform: translateX(2px);
+    }
+
+    /* =========================================================
+       MOBILE SESSION CARDS
+       ========================================================= */
+
+    .mobile-session-list {
+        display: none;
+    }
+
+    .mobile-session-card {
+        position: relative;
+        padding: 17px;
+        border-bottom: 1px solid var(--kucsa-border);
+        transition: background 0.2s ease;
+    }
+
+    .mobile-session-card:last-child {
+        border-bottom: 0;
+    }
+
+    .mobile-session-card:hover {
+        background: rgba(13, 110, 253, 0.025);
+    }
+
+    .mobile-session-title {
+        font-size: 0.95rem;
+        font-weight: 700;
+        line-height: 1.4;
+    }
+
+    .mobile-session-description {
+        font-size: 0.77rem;
+        color: var(--kucsa-muted);
+        line-height: 1.5;
+        margin-top: 4px;
+    }
+
+    .mobile-session-meta {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .mobile-meta-box {
+        padding: 10px;
+        border-radius: 11px;
+        background: rgba(0, 0, 0, 0.025);
+    }
+
+    .mobile-meta-label {
+        display: block;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        color: var(--kucsa-muted);
+        font-weight: 700;
+        margin-bottom: 3px;
+    }
+
+    .mobile-meta-value {
+        display: block;
+        font-size: 0.76rem;
+        font-weight: 600;
+    }
+
+    .mobile-session-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    /* =========================================================
+       COUNTDOWN
+       ========================================================= */
+
+    .live-countdown {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        margin-left: 7px;
+        padding: 4px 7px;
+        border-radius: 7px;
+        background: rgba(25, 135, 84, 0.09);
+        color: #198754;
+        font-size: 0.68rem;
+        font-weight: 700;
+    }
+
+    /* =========================================================
+       EMPTY STATE
+       ========================================================= */
+
+    .empty-state {
+        padding: 65px 25px;
+        text-align: center;
+    }
+
+    .empty-icon {
+        width: 82px;
+        height: 82px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 25px;
+        background: rgba(108, 117, 125, 0.08);
+        color: var(--kucsa-muted);
+        font-size: 2.2rem;
+        margin-bottom: 18px;
+    }
+
+    .empty-state h5 {
+        font-weight: 700;
+    }
+
+    .empty-state p {
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+        color: var(--kucsa-muted);
+        line-height: 1.6;
+    }
+
+    /* =========================================================
+       QUICK ACTIONS
+       ========================================================= */
+
+    .quick-action {
+        display: block;
+        height: 100%;
+        color: inherit;
+        text-decoration: none;
     }
 
     .quick-action-card {
-        border-radius: 1rem;
-        transition: all 0.2s ease-in-out;
+        height: 100%;
+        padding: 19px;
+        border: 1px solid var(--kucsa-border);
+        border-radius: 16px;
+        box-shadow: var(--kucsa-shadow);
+        transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease,
+            border-color 0.25s ease;
     }
 
-    .quick-action-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1) !important;
+    .quick-action:hover .quick-action-card {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.09);
+        border-color: rgba(13, 110, 253, 0.16);
+    }
+
+    .quick-action-icon {
+        width: 47px;
+        height: 47px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 13px;
+        margin-right: 13px;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .quick-action-title {
+        font-size: 0.88rem;
+        font-weight: 700;
+        margin-bottom: 3px;
+    }
+
+    .quick-action-description {
+        font-size: 0.74rem;
+        line-height: 1.5;
+        color: var(--kucsa-muted);
+    }
+
+    /* =========================================================
+       ANIMATIONS
+       ========================================================= */
+
+    .attendance-page .animate-card {
+        animation: cardAppear 0.45s ease both;
+    }
+
+    .attendance-page .animate-card:nth-child(2) {
+        animation-delay: 0.05s;
+    }
+
+    .attendance-page .animate-card:nth-child(3) {
+        animation-delay: 0.1s;
+    }
+
+    .attendance-page .animate-card:nth-child(4) {
+        animation-delay: 0.15s;
+    }
+
+    @keyframes cardAppear {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* =========================================================
+       DARK MODE COMPATIBILITY
+       ========================================================= */
+
+    [data-bs-theme="dark"] .attendance-page .attendance-header {
+        background:
+            linear-gradient(
+                135deg,
+                rgba(13, 110, 253, 0.15),
+                rgba(13, 202, 240, 0.06)
+            );
+        border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    [data-bs-theme="dark"] .attendance-page .summary-card,
+    [data-bs-theme="dark"] .attendance-page .filter-card,
+    [data-bs-theme="dark"] .attendance-page .sessions-card,
+    [data-bs-theme="dark"] .attendance-page .quick-action-card {
+        border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    [data-bs-theme="dark"] .attendance-page .attendance-table thead {
+        background: rgba(255, 255, 255, 0.035);
+    }
+
+    [data-bs-theme="dark"] .attendance-page .attendance-table tbody td {
+        border-color: rgba(255, 255, 255, 0.06);
+    }
+
+    [data-bs-theme="dark"] .attendance-page .attendance-table tbody tr:hover,
+    [data-bs-theme="dark"] .attendance-page .mobile-session-card:hover {
+        background: rgba(255, 255, 255, 0.025);
+    }
+
+    [data-bs-theme="dark"] .attendance-page .mobile-meta-box {
+        background: rgba(255, 255, 255, 0.035);
+    }
+
+    [data-bs-theme="dark"] .attendance-page .session-dropdown .dropdown-menu {
+        border-color: rgba(255, 255, 255, 0.09);
+    }
+
+    /* =========================================================
+       TABLET
+       ========================================================= */
+
+    @media (max-width: 991.98px) {
+        .attendance-header {
+            padding: 23px;
+        }
+
+        .attendance-table {
+            min-width: 780px;
+        }
+    }
+
+    /* =========================================================
+       MOBILE
+       ========================================================= */
+
+    @media (max-width: 767.98px) {
+        .attendance-page {
+            padding-bottom: 20px;
+        }
+
+        .attendance-header {
+            padding: 20px;
+            border-radius: 17px;
+        }
+
+        .attendance-header .d-flex {
+            align-items: flex-start !important;
+        }
+
+        .attendance-header .create-session-btn {
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        .summary-card-body {
+            padding: 17px;
+        }
+
+        .summary-value {
+            font-size: 1.55rem;
+        }
+
+        .summary-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+        }
+
+        .active-alert {
+            padding: 15px;
+        }
+
+        .active-alert .active-view-btn {
+            width: 100%;
+        }
+
+        .filter-header,
+        .sessions-header {
+            padding: 16px;
+        }
+
+        .filter-card .card-body {
+            padding: 16px !important;
+        }
+
+        .filter-btn,
+        .reset-btn {
+            width: 100%;
+        }
+
+        .sessions-header .new-session-btn {
+            width: 100%;
+        }
+
+        .desktop-session-table {
+            display: none;
+        }
+
+        .mobile-session-list {
+            display: block;
+        }
+
+        .empty-state {
+            padding: 48px 18px;
+        }
+
+        .quick-action-card {
+            padding: 16px;
+        }
+    }
+
+    /* =========================================================
+       SMALL PHONES
+       ========================================================= */
+
+    @media (max-width: 420px) {
+        .attendance-header h1 {
+            font-size: 1.35rem;
+        }
+
+        .attendance-header p {
+            font-size: 0.82rem;
+        }
+
+        .mobile-session-meta {
+            grid-template-columns: 1fr;
+        }
+
+        .mobile-session-footer {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .mobile-session-footer .action-btn {
+            width: 100%;
+        }
+
+        .summary-card-body {
+            padding: 15px;
+        }
+    }
+
+    /* =========================================================
+       REDUCED MOTION
+       ========================================================= */
+
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
     }
 </style>
 
 
-<div class="container-fluid py-4">
+<div class="container-fluid py-3 py-md-4 attendance-page">
 
     <!-- =====================================================
          PAGE HEADER
-    ====================================================== -->
+         ===================================================== -->
 
-    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div class="attendance-header animate-card">
 
-        <div>
-            <h1 class="h3 mb-1">
-                Attendance Sessions
-            </h1>
+        <div class="attendance-header-content">
 
-            <p class="text-muted mb-0">
-                Create, monitor and manage KUCSA member attendance sessions.
-            </p>
+            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+
+                <div>
+
+                    <div class="d-flex align-items-center gap-2 mb-2">
+
+                        <span class="badge rounded-pill text-bg-primary px-3 py-2">
+                            <i class="bi bi-calendar-check me-1"></i>
+                            KUCSA Attendance
+                        </span>
+
+                    </div>
+
+                    <h1 class="mb-1">
+                        Attendance Sessions
+                    </h1>
+
+                    <p class="text-muted mb-0">
+                        Create, monitor and manage attendance sessions for KUCSA members.
+                    </p>
+
+                </div>
+
+
+                {% if can_manage %}
+
+                    <div class="flex-shrink-0">
+
+                        <a href="{% url 'attendance:create' %}"
+                           class="btn btn-primary create-session-btn">
+
+                            <i class="bi bi-plus-circle me-1"></i>
+                            Create Attendance Session
+
+                        </a>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
         </div>
-
-        {% if can_manage %}
-            <a href="{% url 'attendance:create' %}"
-               class="btn btn-primary">
-
-                <i class="bi bi-plus-circle me-1"></i>
-                Create Attendance Session
-
-            </a>
-        {% endif %}
 
     </div>
 
 
     <!-- =====================================================
          SUMMARY CARDS
-    ====================================================== -->
+         ===================================================== -->
 
     <div class="row g-3 mb-4">
 
         <!-- Total Sessions -->
 
-        <div class="col-12 col-sm-6 col-xl-3">
+        <div class="col-12 col-sm-6 col-xl-3 animate-card">
 
-            <div class="card border-0 shadow-sm h-100">
+            <div class="summary-card summary-primary h-100">
 
-                <div class="card-body">
+                <div class="summary-card-body">
 
                     <div class="d-flex justify-content-between align-items-center">
 
                         <div>
-                            <p class="text-muted small mb-1">
-                                Total Sessions
-                            </p>
 
-                            <h3 class="mb-0">
+                            <div class="summary-label">
+                                Total Sessions
+                            </div>
+
+                            <div class="summary-value">
                                 {{ total_sessions|default:0 }}
-                            </h3>
+                            </div>
+
                         </div>
 
-                        <div class="bg-primary bg-opacity-10 rounded-circle p-3">
-                            <i class="bi bi-calendar-check text-primary fs-4"></i>
+                        <div class="summary-icon bg-primary bg-opacity-10 text-primary">
+                            <i class="bi bi-calendar-check"></i>
                         </div>
 
                     </div>
@@ -129,28 +911,30 @@
         </div>
 
 
-        <!-- Active Sessions -->
+        <!-- Open Sessions -->
 
-        <div class="col-12 col-sm-6 col-xl-3">
+        <div class="col-12 col-sm-6 col-xl-3 animate-card">
 
-            <div class="card border-0 shadow-sm h-100">
+            <div class="summary-card summary-success h-100">
 
-                <div class="card-body">
+                <div class="summary-card-body">
 
                     <div class="d-flex justify-content-between align-items-center">
 
                         <div>
-                            <p class="text-muted small mb-1">
-                                Open Sessions
-                            </p>
 
-                            <h3 class="mb-0">
+                            <div class="summary-label">
+                                Open Sessions
+                            </div>
+
+                            <div class="summary-value">
                                 {{ open_sessions|default:0 }}
-                            </h3>
+                            </div>
+
                         </div>
 
-                        <div class="bg-success bg-opacity-10 rounded-circle p-3">
-                            <i class="bi bi-broadcast text-success fs-4"></i>
+                        <div class="summary-icon bg-success bg-opacity-10 text-success">
+                            <i class="bi bi-broadcast"></i>
                         </div>
 
                     </div>
@@ -164,26 +948,28 @@
 
         <!-- Closed Sessions -->
 
-        <div class="col-12 col-sm-6 col-xl-3">
+        <div class="col-12 col-sm-6 col-xl-3 animate-card">
 
-            <div class="card border-0 shadow-sm h-100">
+            <div class="summary-card summary-dark h-100">
 
-                <div class="card-body">
+                <div class="summary-card-body">
 
                     <div class="d-flex justify-content-between align-items-center">
 
                         <div>
-                            <p class="text-muted small mb-1">
-                                Closed Sessions
-                            </p>
 
-                            <h3 class="mb-0">
+                            <div class="summary-label">
+                                Closed Sessions
+                            </div>
+
+                            <div class="summary-value">
                                 {{ closed_sessions|default:0 }}
-                            </h3>
+                            </div>
+
                         </div>
 
-                        <div class="bg-secondary bg-opacity-10 rounded-circle p-3">
-                            <i class="bi bi-lock text-secondary fs-4"></i>
+                        <div class="summary-icon bg-secondary bg-opacity-10 text-secondary">
+                            <i class="bi bi-lock"></i>
                         </div>
 
                     </div>
@@ -197,29 +983,32 @@
 
         <!-- My Attendance -->
 
-        <div class="col-12 col-sm-6 col-xl-3">
+        <div class="col-12 col-sm-6 col-xl-3 animate-card">
 
-            <div class="card border-0 shadow-sm h-100">
+            <div class="summary-card summary-info h-100">
 
-                <div class="card-body">
+                <div class="summary-card-body">
 
                     <div class="d-flex justify-content-between align-items-center">
 
                         <div>
-                            <p class="text-muted small mb-1">
+
+                            <div class="summary-label">
                                 My Attendance
-                            </p>
+                            </div>
 
                             <a href="{% url 'attendance:my_attendance' %}"
-                               class="btn btn-sm btn-outline-primary mt-1">
+                               class="btn btn-sm btn-outline-primary history-btn">
 
+                                <i class="bi bi-clock-history me-1"></i>
                                 View History
 
                             </a>
+
                         </div>
 
-                        <div class="bg-info bg-opacity-10 rounded-circle p-3">
-                            <i class="bi bi-person-check text-info fs-4"></i>
+                        <div class="summary-icon bg-info bg-opacity-10 text-info">
+                            <i class="bi bi-person-check"></i>
                         </div>
 
                     </div>
@@ -235,38 +1024,46 @@
 
     <!-- =====================================================
          ACTIVE ATTENDANCE ALERT
-    ====================================================== -->
+         ===================================================== -->
 
     {% if active_sessions %}
 
-        <div class="alert alert-success border-0 shadow-sm mb-4">
+        <div class="active-alert mb-4">
 
-            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
 
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-start gap-3">
 
-                    <i class="bi bi-broadcast-pin fs-4 me-3"></i>
+                    <div class="pt-1">
+                        <span class="pulse-dot"></span>
+                    </div>
 
                     <div>
 
-                        <strong>
-                            Attendance is currently open.
-                        </strong>
+                        <div class="fw-bold">
 
-                        <div class="small">
+                            Attendance is currently open.
+
+                        </div>
+
+                        <div class="small text-muted mt-1">
+
                             {{ active_sessions|length }}
-                            active attendance session{{ active_sessions|length|pluralize }} available.
+                            active attendance session{{ active_sessions|length|pluralize }}
+                            available for members.
+
                         </div>
 
                     </div>
 
                 </div>
 
+
                 <a href="{% url 'attendance:active' %}"
-                   class="btn btn-success">
+                   class="btn btn-success active-view-btn">
 
+                    <i class="bi bi-broadcast-pin me-1"></i>
                     View Active Attendance
-
                     <i class="bi bi-arrow-right ms-1"></i>
 
                 </a>
@@ -280,25 +1077,36 @@
 
     <!-- =====================================================
          FILTERS
-    ====================================================== -->
+         ===================================================== -->
 
-    <div class="card border-0 shadow-sm mb-4">
+    <div class="filter-card mb-4">
 
-        <div class="card-header bg-transparent border-0 py-3">
+        <div class="filter-header">
 
-            <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center gap-2">
 
-                <i class="bi bi-funnel me-2"></i>
+                <span class="filter-icon">
+                    <i class="bi bi-funnel"></i>
+                </span>
 
-                <h5 class="mb-0">
-                    Filter Attendance Sessions
-                </h5>
+                <div>
+
+                    <div class="section-title">
+                        Filter Attendance Sessions
+                    </div>
+
+                    <small class="text-muted">
+                        Search and filter available sessions.
+                    </small>
+
+                </div>
 
             </div>
 
         </div>
 
-        <div class="card-body">
+
+        <div class="card-body p-3 p-md-4">
 
             <form method="get">
 
@@ -309,18 +1117,20 @@
                     <div class="col-12 col-md-5">
 
                         <label for="{{ form.search.id_for_label }}"
-                               class="form-label">
+                               class="form-label fw-semibold small">
 
-                            Search
+                            Search Sessions
 
                         </label>
 
                         {{ form.search }}
 
                         {% if form.search.errors %}
+
                             <div class="text-danger small mt-1">
                                 {{ form.search.errors|striptags }}
                             </div>
+
                         {% endif %}
 
                     </div>
@@ -331,7 +1141,7 @@
                     <div class="col-12 col-md-3">
 
                         <label for="{{ form.status.id_for_label }}"
-                               class="form-label">
+                               class="form-label fw-semibold small">
 
                             Status
 
@@ -340,9 +1150,11 @@
                         {{ form.status }}
 
                         {% if form.status.errors %}
+
                             <div class="text-danger small mt-1">
                                 {{ form.status.errors|striptags }}
                             </div>
+
                         {% endif %}
 
                     </div>
@@ -350,23 +1162,31 @@
 
                     <!-- Buttons -->
 
-                    <div class="col-12 col-md-4 d-flex align-items-end gap-2">
+                    <div class="col-12 col-md-4">
 
-                        <button type="submit"
-                                class="btn btn-primary">
+                        <label class="form-label fw-semibold small d-none d-md-block">
+                            &nbsp;
+                        </label>
 
-                            <i class="bi bi-search me-1"></i>
-                            Filter
+                        <div class="d-flex flex-column flex-sm-row gap-2">
 
-                        </button>
+                            <button type="submit"
+                                    class="btn btn-primary filter-btn flex-grow-1">
 
-                        <a href="{% url 'attendance:list' %}"
-                           class="btn btn-outline-secondary">
+                                <i class="bi bi-search me-1"></i>
+                                Filter
 
-                            <i class="bi bi-arrow-counterclockwise me-1"></i>
-                            Reset
+                            </button>
 
-                        </a>
+                            <a href="{% url 'attendance:list' %}"
+                               class="btn btn-outline-secondary reset-btn flex-grow-1">
+
+                                <i class="bi bi-arrow-counterclockwise me-1"></i>
+                                Reset
+
+                            </a>
+
+                        </div>
 
                     </div>
 
@@ -380,33 +1200,40 @@
 
 
     <!-- =====================================================
-         ATTENDANCE SESSIONS
-    ====================================================== -->
+         SESSIONS CARD
+         ===================================================== -->
 
-    <div class="card border-0 shadow-sm">
+    <div class="sessions-card">
 
-        <div class="card-header bg-transparent border-0 py-3">
+        <!-- Header -->
 
-            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div class="sessions-header">
+
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
 
                 <div>
 
-                    <h5 class="mb-1">
+                    <div class="sessions-header-title">
                         Attendance Sessions
-                    </h5>
+                    </div>
 
-                    <small class="text-muted">
+                    <div class="session-count mt-1">
+
+                        <i class="bi bi-list-check me-1"></i>
+
                         {{ session_count|default:0 }}
                         session{{ session_count|default:0|pluralize }}
                         found
-                    </small>
+
+                    </div>
 
                 </div>
+
 
                 {% if can_manage %}
 
                     <a href="{% url 'attendance:create' %}"
-                       class="btn btn-sm btn-primary">
+                       class="btn btn-sm btn-primary new-session-btn">
 
                         <i class="bi bi-plus-circle me-1"></i>
                         New Session
@@ -420,374 +1247,739 @@
         </div>
 
 
-        <div class="card-body p-0">
+        <!-- =================================================
+             SESSION CONTENT
+             ================================================= -->
 
-            {% if sessions %}
+        {% if sessions %}
 
-                <div class="table-responsive">
 
-                    <table class="table table-hover align-middle mb-0">
+            <!-- =================================================
+                 DESKTOP TABLE
+                 ================================================= -->
 
-                        <thead class="table-light">
+            <div class="desktop-session-table table-responsive">
+
+                <table class="table attendance-table align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th class="ps-4">
+                                #
+                            </th>
+
+                            <th>
+                                Attendance Session
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Opens
+                            </th>
+
+                            <th>
+                                Closes
+                            </th>
+
+                            <th>
+                                Created
+                            </th>
+
+                            <th class="text-end pe-4">
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for session in sessions %}
 
                             <tr>
 
-                                <th class="px-3">
-                                    #
-                                </th>
+                                <!-- Number -->
 
-                                <th>
-                                    Attendance Session
-                                </th>
+                                <td class="ps-4">
 
-                                <th>
-                                    Status
-                                </th>
+                                    <span class="text-muted small fw-semibold">
+                                        {{ forloop.counter }}
+                                    </span>
 
-                                <th>
-                                    Opens
-                                </th>
-
-                                <th>
-                                    Closes
-                                </th>
-
-                                <th>
-                                    Created
-                                </th>
-
-                                <th class="text-end px-3">
-                                    Action
-                                </th>
-
-                            </tr>
-
-                        </thead>
+                                </td>
 
 
-                        <tbody>
+                                <!-- Session -->
 
-                            {% for session in sessions %}
+                                <td>
 
-                                <tr>
+                                    <div class="session-title">
+                                        {{ session.title }}
+                                    </div>
 
-                                    <!-- Number -->
+                                    {% if session.description %}
 
-                                    <td class="px-3">
+                                        <div class="session-description text-truncate">
 
-                                        <span class="text-muted">
-                                            {{ forloop.counter }}
-                                        </span>
-
-                                    </td>
-
-
-                                    <!-- Session -->
-
-                                    <td>
-
-                                        <div class="fw-semibold">
-
-                                            {{ session.title }}
+                                            {{ session.description }}
 
                                         </div>
 
-                                        {% if session.description %}
+                                    {% endif %}
 
-                                            <div class="small text-muted text-truncate"
-                                                 style="max-width: 320px;">
-
-                                                {{ session.description }}
-
-                                            </div>
-
-                                        {% endif %}
-
-                                    </td>
+                                </td>
 
 
-                                    <!-- Status -->
+                                <!-- Status -->
 
-                                    <td>
+                                <td>
 
-                                        {% if session.status == "DRAFT" %}
+                                    {% if session.status == "DRAFT" %}
 
-                                            <span class="badge bg-secondary">
-                                                <i class="bi bi-pencil me-1"></i>
-                                                Draft
-                                            </span>
+                                        <span class="status-badge status-draft">
 
-                                        {% elif session.status == "OPEN" %}
+                                            <i class="bi bi-pencil"></i>
+                                            Draft
 
-                                            <span class="badge bg-success">
-                                                <i class="bi bi-broadcast me-1"></i>
-                                                Open
-                                            </span>
+                                        </span>
 
-                                        {% elif session.status == "CLOSED" %}
+                                    {% elif session.status == "OPEN" %}
 
-                                            <span class="badge bg-dark">
-                                                <i class="bi bi-lock me-1"></i>
-                                                Closed
-                                            </span>
+                                        <span class="status-badge status-open">
 
-                                        {% elif session.status == "EXPIRED" %}
+                                            <span class="pulse-dot"
+                                                  style="width:7px;height:7px;"></span>
 
-                                            <span class="badge bg-warning text-dark">
-                                                <i class="bi bi-clock-history me-1"></i>
-                                                Expired
-                                            </span>
+                                            Open
 
-                                        {% else %}
+                                        </span>
 
-                                            <span class="badge bg-secondary">
-                                                {{ session.get_status_display }}
-                                            </span>
+                                    {% elif session.status == "CLOSED" %}
 
-                                        {% endif %}
+                                        <span class="status-badge status-closed">
 
-                                    </td>
+                                            <i class="bi bi-lock"></i>
+                                            Closed
 
+                                        </span>
 
-                                    <!-- Opening -->
+                                    {% elif session.status == "EXPIRED" %}
 
-                                    <td>
+                                        <span class="status-badge status-expired">
 
-                                        {% if session.opens_at %}
+                                            <i class="bi bi-clock-history"></i>
+                                            Expired
 
-                                            <div>
-                                                {{ session.opens_at|date:"d M Y" }}
-                                            </div>
+                                        </span>
 
-                                            <small class="text-muted">
-                                                {{ session.opens_at|time:"H:i" }}
-                                            </small>
+                                    {% else %}
 
-                                        {% else %}
+                                        <span class="status-badge status-draft">
 
-                                            <span class="text-muted">
-                                                —
-                                            </span>
+                                            {{ session.get_status_display }}
 
-                                        {% endif %}
+                                        </span>
 
-                                    </td>
+                                    {% endif %}
+
+                                </td>
 
 
-                                    <!-- Closing -->
+                                <!-- Opens -->
 
-                                    <td>
+                                <td>
 
-                                        {% if session.closes_at %}
+                                    {% if session.opens_at %}
 
-                                            <div>
-                                                {{ session.closes_at|date:"d M Y" }}
-                                            </div>
+                                        <div class="date-value">
+                                            {{ session.opens_at|date:"d M Y" }}
+                                        </div>
 
-                                            <small class="text-muted">
-                                                {{ session.closes_at|time:"H:i" }}
-                                            </small>
+                                        <div class="time-value">
+                                            <i class="bi bi-clock me-1"></i>
+                                            {{ session.opens_at|time:"H:i" }}
+                                        </div>
 
-                                        {% else %}
+                                    {% else %}
 
-                                            <span class="text-muted">
-                                                —
-                                            </span>
+                                        <span class="text-muted">
+                                            —
+                                        </span>
 
-                                        {% endif %}
+                                    {% endif %}
 
-                                    </td>
-
-
-                                    <!-- Created -->
-
-                                    <td>
-
-                                        {% if session.created_at %}
-
-                                            <div>
-                                                {{ session.created_at|date:"d M Y" }}
-                                            </div>
-
-                                            <small class="text-muted">
-                                                {{ session.created_at|time:"H:i" }}
-                                            </small>
-
-                                        {% else %}
-
-                                            <span class="text-muted">
-                                                —
-                                            </span>
-
-                                        {% endif %}
-
-                                    </td>
+                                </td>
 
 
-                                    <!-- Action -->
+                                <!-- Closes -->
 
-                                    <td class="text-end px-3">
+                                <td>
 
-                                        <div class="dropdown">
+                                    {% if session.closes_at %}
 
-                                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
-                                                    type="button"
-                                                    data-bs-toggle="dropdown"
-                                                    aria-expanded="false">
+                                        <div class="date-value">
+                                            {{ session.closes_at|date:"d M Y" }}
+                                        </div>
 
-                                                Actions
+                                        <div class="time-value">
 
-                                            </button>
+                                            <i class="bi bi-clock me-1"></i>
+
+                                            {{ session.closes_at|time:"H:i" }}
+
+                                            {% if session.attendance_is_open %}
+
+                                                <span class="live-countdown"
+                                                      data-closes="{{ session.closes_at|date:'c' }}">
+
+                                                    <i class="bi bi-hourglass-split"></i>
+
+                                                    <span class="countdown-text">
+                                                        Live
+                                                    </span>
+
+                                                </span>
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    {% else %}
+
+                                        <span class="text-muted">
+                                            —
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
 
 
-                                            <ul class="dropdown-menu dropdown-menu-end">
+                                <!-- Created -->
+
+                                <td>
+
+                                    {% if session.created_at %}
+
+                                        <div class="date-value">
+                                            {{ session.created_at|date:"d M Y" }}
+                                        </div>
+
+                                        <div class="time-value">
+                                            <i class="bi bi-clock me-1"></i>
+                                            {{ session.created_at|time:"H:i" }}
+                                        </div>
+
+                                    {% else %}
+
+                                        <span class="text-muted">
+                                            —
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- Actions -->
+
+                                <td class="text-end pe-4">
+
+                                    <div class="dropdown session-dropdown">
+
+                                        <button class="btn btn-sm btn-outline-secondary action-btn dropdown-toggle"
+                                                type="button"
+                                                data-bs-toggle="dropdown"
+                                                data-bs-auto-close="true"
+                                                aria-expanded="false">
+
+                                            <i class="bi bi-three-dots-vertical me-1"></i>
+                                            Actions
+
+                                        </button>
+
+
+                                        <ul class="dropdown-menu dropdown-menu-end">
+
+                                            <li>
+
+                                                <a class="dropdown-item"
+                                                   href="{% url 'attendance:detail' session.pk %}">
+
+                                                    <i class="bi bi-eye me-2 text-primary"></i>
+                                                    View Attendance
+
+                                                </a>
+
+                                            </li>
+
+
+                                            {% if session.status == "DRAFT" and can_manage %}
 
                                                 <li>
 
                                                     <a class="dropdown-item"
-                                                       href="{% url 'attendance:detail' session.pk %}">
+                                                       href="{% url 'attendance:update_timing' session.pk %}">
 
-                                                        <i class="bi bi-eye me-2"></i>
-                                                        View Attendance
+                                                        <i class="bi bi-clock me-2 text-warning"></i>
+                                                        Set Timing
 
                                                     </a>
 
                                                 </li>
 
-
-                                                {% if session.status == "DRAFT" and can_manage %}
-
-                                                    <li>
-
-                                                        <a class="dropdown-item"
-                                                           href="{% url 'attendance:update_timing' session.pk %}">
-
-                                                            <i class="bi bi-clock me-2"></i>
-                                                            Set Timing
-
-                                                        </a>
-
-                                                    </li>
-
-                                                {% endif %}
+                                            {% endif %}
 
 
-                                                {% if session.attendance_is_open %}
+                                            {% if session.attendance_is_open %}
 
-                                                    <li>
+                                                <li>
 
-                                                        <a class="dropdown-item"
-                                                           href="{% url 'attendance:active_status' session.pk %}">
+                                                    <a class="dropdown-item"
+                                                       href="{% url 'attendance:active_status' session.pk %}">
 
-                                                            <i class="bi bi-broadcast me-2"></i>
-                                                            Active Session
+                                                        <i class="bi bi-broadcast me-2 text-success"></i>
+                                                        Active Session
 
-                                                        </a>
+                                                    </a>
 
-                                                    </li>
+                                                </li>
 
-                                                {% endif %}
+                                            {% endif %}
 
-                                            </ul>
+                                        </ul>
 
-                                        </div>
+                                    </div>
 
-                                    </td>
+                                </td>
 
-                                </tr>
+                            </tr>
 
-                            {% endfor %}
+                        {% endfor %}
 
-                        </tbody>
+                    </tbody>
 
-                    </table>
+                </table>
 
-                </div>
+            </div>
 
-            {% else %}
 
-                <!-- =================================================
-                     EMPTY STATE
-                ================================================== -->
+            <!-- =================================================
+                 MOBILE SESSION CARDS
+                 ================================================= -->
 
-                <div class="text-center py-5 px-3">
+            <div class="mobile-session-list">
 
-                    <div class="mb-3">
+                {% for session in sessions %}
 
-                        <div class="bg-light rounded-circle d-inline-flex p-4">
+                    <div class="mobile-session-card">
 
-                            <i class="bi bi-calendar-x text-muted fs-1"></i>
+                        <div class="d-flex justify-content-between align-items-start gap-3">
+
+                            <div class="flex-grow-1">
+
+                                <div class="mobile-session-title">
+                                    {{ session.title }}
+                                </div>
+
+                                {% if session.description %}
+
+                                    <div class="mobile-session-description">
+
+                                        {{ session.description }}
+
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="flex-shrink-0">
+
+                                {% if session.status == "DRAFT" %}
+
+                                    <span class="status-badge status-draft">
+
+                                        <i class="bi bi-pencil"></i>
+                                        Draft
+
+                                    </span>
+
+                                {% elif session.status == "OPEN" %}
+
+                                    <span class="status-badge status-open">
+
+                                        <span class="pulse-dot"
+                                              style="width:7px;height:7px;"></span>
+
+                                        Open
+
+                                    </span>
+
+                                {% elif session.status == "CLOSED" %}
+
+                                    <span class="status-badge status-closed">
+
+                                        <i class="bi bi-lock"></i>
+                                        Closed
+
+                                    </span>
+
+                                {% elif session.status == "EXPIRED" %}
+
+                                    <span class="status-badge status-expired">
+
+                                        <i class="bi bi-clock-history"></i>
+                                        Expired
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="status-badge status-draft">
+                                        {{ session.get_status_display }}
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Mobile Metadata -->
+
+                        <div class="mobile-session-meta">
+
+                            <!-- Opens -->
+
+                            <div class="mobile-meta-box">
+
+                                <span class="mobile-meta-label">
+                                    <i class="bi bi-play-circle me-1"></i>
+                                    Opens
+                                </span>
+
+                                {% if session.opens_at %}
+
+                                    <span class="mobile-meta-value">
+
+                                        {{ session.opens_at|date:"d M Y" }}
+                                        ·
+                                        {{ session.opens_at|time:"H:i" }}
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="mobile-meta-value text-muted">
+                                        Not set
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- Closes -->
+
+                            <div class="mobile-meta-box">
+
+                                <span class="mobile-meta-label">
+                                    <i class="bi bi-stop-circle me-1"></i>
+                                    Closes
+                                </span>
+
+                                {% if session.closes_at %}
+
+                                    <span class="mobile-meta-value">
+
+                                        {{ session.closes_at|date:"d M Y" }}
+                                        ·
+                                        {{ session.closes_at|time:"H:i" }}
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="mobile-meta-value text-muted">
+                                        Not set
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- Created -->
+
+                            <div class="mobile-meta-box">
+
+                                <span class="mobile-meta-label">
+                                    <i class="bi bi-calendar-plus me-1"></i>
+                                    Created
+                                </span>
+
+                                {% if session.created_at %}
+
+                                    <span class="mobile-meta-value">
+
+                                        {{ session.created_at|date:"d M Y" }}
+                                        ·
+                                        {{ session.created_at|time:"H:i" }}
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="mobile-meta-value text-muted">
+                                        —
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- Session Number -->
+
+                            <div class="mobile-meta-box">
+
+                                <span class="mobile-meta-label">
+                                    <i class="bi bi-hash me-1"></i>
+                                    Session
+                                </span>
+
+                                <span class="mobile-meta-value">
+                                    #{{ forloop.counter }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Mobile Footer -->
+
+                        <div class="mobile-session-footer">
+
+                            {% if session.attendance_is_open %}
+
+                                <span class="live-countdown"
+                                      data-closes="{{ session.closes_at|date:'c' }}"
+                                      style="margin-left:0;">
+
+                                    <i class="bi bi-hourglass-split"></i>
+
+                                    <span class="countdown-text">
+                                        Attendance is live
+                                    </span>
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="small text-muted">
+
+                                    {% if session.status == "DRAFT" %}
+
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        Timing can be configured
+
+                                    {% elif session.status == "CLOSED" %}
+
+                                        <i class="bi bi-lock me-1"></i>
+                                        Session closed
+
+                                    {% elif session.status == "EXPIRED" %}
+
+                                        <i class="bi bi-clock-history me-1"></i>
+                                        Session expired
+
+                                    {% endif %}
+
+                                </span>
+
+                            {% endif %}
+
+
+                            <div class="dropdown session-dropdown">
+
+                                <button class="btn btn-sm btn-outline-secondary action-btn dropdown-toggle"
+                                        type="button"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+
+                                    <i class="bi bi-three-dots me-1"></i>
+                                    Actions
+
+                                </button>
+
+
+                                <ul class="dropdown-menu dropdown-menu-end">
+
+                                    <li>
+
+                                        <a class="dropdown-item"
+                                           href="{% url 'attendance:detail' session.pk %}">
+
+                                            <i class="bi bi-eye me-2 text-primary"></i>
+                                            View Attendance
+
+                                        </a>
+
+                                    </li>
+
+
+                                    {% if session.status == "DRAFT" and can_manage %}
+
+                                        <li>
+
+                                            <a class="dropdown-item"
+                                               href="{% url 'attendance:update_timing' session.pk %}">
+
+                                                <i class="bi bi-clock me-2 text-warning"></i>
+                                                Set Timing
+
+                                            </a>
+
+                                        </li>
+
+                                    {% endif %}
+
+
+                                    {% if session.attendance_is_open %}
+
+                                        <li>
+
+                                            <a class="dropdown-item"
+                                               href="{% url 'attendance:active_status' session.pk %}">
+
+                                                <i class="bi bi-broadcast me-2 text-success"></i>
+                                                Active Session
+
+                                            </a>
+
+                                        </li>
+
+                                    {% endif %}
+
+                                </ul>
+
+                            </div>
 
                         </div>
 
                     </div>
 
-                    <h5>
-                        No Attendance Sessions Found
-                    </h5>
+                {% endfor %}
 
-                    <p class="text-muted mb-4">
+            </div>
 
-                        There are currently no attendance sessions
-                        matching your search criteria.
 
-                    </p>
+        {% else %}
 
-                    {% if can_manage %}
 
-                        <a href="{% url 'attendance:create' %}"
-                           class="btn btn-primary">
+            <!-- =================================================
+                 EMPTY STATE
+                 ================================================= -->
 
-                            <i class="bi bi-plus-circle me-1"></i>
-                            Create First Attendance Session
+            <div class="empty-state">
 
-                        </a>
+                <div class="empty-icon">
 
-                    {% endif %}
+                    <i class="bi bi-calendar-x"></i>
 
                 </div>
 
-            {% endif %}
+                <h5>
+                    No Attendance Sessions Found
+                </h5>
 
-        </div>
+                <p class="mb-4">
+
+                    There are currently no attendance sessions
+                    matching your search or filter criteria.
+
+                </p>
+
+
+                {% if can_manage %}
+
+                    <a href="{% url 'attendance:create' %}"
+                       class="btn btn-primary create-session-btn">
+
+                        <i class="bi bi-plus-circle me-1"></i>
+                        Create First Attendance Session
+
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
 
     </div>
 
 
     <!-- =====================================================
          QUICK ACTIONS
-    ====================================================== -->
+         ===================================================== -->
 
     {% if can_manage %}
 
-        <div class="row g-3 mt-4">
+        <div class="mt-4">
 
-            <div class="col-12 col-md-4">
+            <div class="mb-3">
 
-                <a href="{% url 'attendance:create' %}"
-                   class="text-decoration-none">
+                <h6 class="fw-bold mb-1">
+                    Quick Actions
+                </h6>
 
-                    <div class="card border-0 shadow-sm h-100">
+                <small class="text-muted">
+                    Frequently used attendance management tools.
+                </small>
 
-                        <div class="card-body">
+            </div>
+
+
+            <div class="row g-3">
+
+                <!-- Create Session -->
+
+                <div class="col-12 col-md-4">
+
+                    <a href="{% url 'attendance:create' %}"
+                       class="quick-action">
+
+                        <div class="quick-action-card">
 
                             <div class="d-flex align-items-center">
 
-                                <div class="bg-primary bg-opacity-10 rounded p-3 me-3">
+                                <div class="quick-action-icon bg-primary bg-opacity-10 text-primary">
 
-                                    <i class="bi bi-plus-circle text-primary fs-4"></i>
+                                    <i class="bi bi-plus-circle"></i>
 
                                 </div>
 
                                 <div>
 
-                                    <h6 class="mb-1">
+                                    <div class="quick-action-title">
                                         Create Session
-                                    </h6>
+                                    </div>
 
-                                    <small class="text-muted">
+                                    <div class="quick-action-description">
                                         Start a new member attendance session.
-                                    </small>
+                                    </div>
 
                                 </div>
 
@@ -795,39 +1987,37 @@
 
                         </div>
 
-                    </div>
+                    </a>
 
-                </a>
-
-            </div>
+                </div>
 
 
-            <div class="col-12 col-md-4">
+                <!-- Active Attendance -->
 
-                <a href="{% url 'attendance:active' %}"
-                   class="text-decoration-none">
+                <div class="col-12 col-md-4">
 
-                    <div class="card border-0 shadow-sm h-100">
+                    <a href="{% url 'attendance:active' %}"
+                       class="quick-action">
 
-                        <div class="card-body">
+                        <div class="quick-action-card">
 
                             <div class="d-flex align-items-center">
 
-                                <div class="bg-success bg-opacity-10 rounded p-3 me-3">
+                                <div class="quick-action-icon bg-success bg-opacity-10 text-success">
 
-                                    <i class="bi bi-broadcast text-success fs-4"></i>
+                                    <i class="bi bi-broadcast"></i>
 
                                 </div>
 
                                 <div>
 
-                                    <h6 class="mb-1">
+                                    <div class="quick-action-title">
                                         Active Attendance
-                                    </h6>
+                                    </div>
 
-                                    <small class="text-muted">
-                                        Monitor currently open sessions.
-                                    </small>
+                                    <div class="quick-action-description">
+                                        Monitor currently open attendance sessions.
+                                    </div>
 
                                 </div>
 
@@ -835,39 +2025,37 @@
 
                         </div>
 
-                    </div>
+                    </a>
 
-                </a>
-
-            </div>
+                </div>
 
 
-            <div class="col-12 col-md-4">
+                <!-- Reports -->
 
-                <a href="{% url 'attendance:report' %}"
-                   class="text-decoration-none">
+                <div class="col-12 col-md-4">
 
-                    <div class="card border-0 shadow-sm h-100">
+                    <a href="{% url 'attendance:report' %}"
+                       class="quick-action">
 
-                        <div class="card-body">
+                        <div class="quick-action-card">
 
                             <div class="d-flex align-items-center">
 
-                                <div class="bg-info bg-opacity-10 rounded p-3 me-3">
+                                <div class="quick-action-icon bg-info bg-opacity-10 text-info">
 
-                                    <i class="bi bi-bar-chart text-info fs-4"></i>
+                                    <i class="bi bi-bar-chart"></i>
 
                                 </div>
 
                                 <div>
 
-                                    <h6 class="mb-1">
+                                    <div class="quick-action-title">
                                         Attendance Reports
-                                    </h6>
+                                    </div>
 
-                                    <small class="text-muted">
+                                    <div class="quick-action-description">
                                         Analyze and export attendance records.
-                                    </small>
+                                    </div>
 
                                 </div>
 
@@ -875,9 +2063,9 @@
 
                         </div>
 
-                    </div>
+                    </a>
 
-                </a>
+                </div>
 
             </div>
 
@@ -886,18 +2074,256 @@
     {% endif %}
 
 </div>
+
+
+<!-- =========================================================
+     INLINE JAVASCRIPT
+     ========================================================= -->
+
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const textInputs = document.querySelectorAll('input[type="text"], input[type="search"], input[type="email"], input[type="url"], input[type="number"]');
-        const selectInputs = document.querySelectorAll('select');
+(function () {
 
-        textInputs.forEach(el => {
-            if (!el.classList.contains('form-control')) el.classList.add('form-control', 'shadow-sm');
+    "use strict";
+
+    /* =========================================================
+       LIVE COUNTDOWN
+       Updates open attendance sessions automatically.
+       ========================================================= */
+
+    function updateCountdowns() {
+
+        const countdowns = document.querySelectorAll(
+            ".live-countdown[data-closes]"
+        );
+
+        if (!countdowns.length) {
+            return;
+        }
+
+        const now = new Date();
+
+        countdowns.forEach(function (element) {
+
+            const closeValue = element.getAttribute("data-closes");
+
+            if (!closeValue) {
+                return;
+            }
+
+            const closeTime = new Date(closeValue);
+
+            if (isNaN(closeTime.getTime())) {
+                return;
+            }
+
+            const difference = closeTime.getTime() - now.getTime();
+
+            const textElement = element.querySelector(".countdown-text");
+
+            if (!textElement) {
+                return;
+            }
+
+            if (difference <= 0) {
+
+                textElement.textContent = "Session ending";
+
+                element.style.background =
+                    "rgba(255, 193, 7, 0.14)";
+
+                element.style.color = "#8a6500";
+
+                return;
+            }
+
+            const totalSeconds =
+                Math.floor(difference / 1000);
+
+            const hours =
+                Math.floor(totalSeconds / 3600);
+
+            const minutes =
+                Math.floor((totalSeconds % 3600) / 60);
+
+            const seconds =
+                totalSeconds % 60;
+
+
+            let countdownText = "";
+
+            if (hours > 0) {
+
+                countdownText =
+                    hours + "h " +
+                    String(minutes).padStart(2, "0") +
+                    "m remaining";
+
+            } else if (minutes > 0) {
+
+                countdownText =
+                    minutes + "m " +
+                    String(seconds).padStart(2, "0") +
+                    "s remaining";
+
+            } else {
+
+                countdownText =
+                    seconds + "s remaining";
+
+            }
+
+            textElement.textContent = countdownText;
+
         });
 
-        selectInputs.forEach(el => {
-            if (!el.classList.contains('form-select')) el.classList.add('form-select', 'shadow-sm');
+    }
+
+
+    updateCountdowns();
+
+    setInterval(updateCountdowns, 1000);
+
+
+    /* =========================================================
+       FILTER FORM — SUBMIT FEEDBACK
+       ========================================================= */
+
+    const filterForms =
+        document.querySelectorAll(".filter-card form");
+
+    filterForms.forEach(function (form) {
+
+        form.addEventListener("submit", function () {
+
+            const submitButton =
+                form.querySelector('button[type="submit"]');
+
+            if (!submitButton) {
+                return;
+            }
+
+            submitButton.disabled = true;
+
+            submitButton.innerHTML =
+                '<span class="spinner-border spinner-border-sm me-2" ' +
+                'role="status" aria-hidden="true"></span>' +
+                'Filtering...';
+
         });
+
     });
+
+
+    /* =========================================================
+       DROPDOWN ACCESSIBILITY
+       ========================================================= */
+
+    const dropdownButtons =
+        document.querySelectorAll(
+            '.session-dropdown [data-bs-toggle="dropdown"]'
+        );
+
+    dropdownButtons.forEach(function (button) {
+
+        button.addEventListener("keydown", function (event) {
+
+            if (event.key === "Escape") {
+
+                if (typeof bootstrap !== "undefined") {
+
+                    const dropdown =
+                        bootstrap.Dropdown.getInstance(button);
+
+                    if (dropdown) {
+                        dropdown.hide();
+                    }
+
+                }
+
+                button.focus();
+
+            }
+
+        });
+
+    });
+
+
+    /* =========================================================
+       PREVENT DOUBLE CLICK ON CREATE BUTTONS
+       ========================================================= */
+
+    const actionLinks =
+        document.querySelectorAll(
+            'a[href*="attendance:create"]'
+        );
+
+    actionLinks.forEach(function (link) {
+
+        link.addEventListener("click", function () {
+
+            if (link.dataset.clicked === "true") {
+                return;
+            }
+
+            link.dataset.clicked = "true";
+
+            const originalHTML =
+                link.innerHTML;
+
+            link.innerHTML =
+                '<span class="spinner-border spinner-border-sm me-2" ' +
+                'role="status" aria-hidden="true"></span>' +
+                'Opening...';
+
+            setTimeout(function () {
+
+                link.innerHTML = originalHTML;
+                link.dataset.clicked = "false";
+
+            }, 2500);
+
+        });
+
+    });
+
+
+    /* =========================================================
+       TOUCH FRIENDLY INTERACTION
+       ========================================================= */
+
+    const quickActions =
+        document.querySelectorAll(".quick-action");
+
+    quickActions.forEach(function (item) {
+
+        item.addEventListener("touchstart", function () {
+
+            const card =
+                item.querySelector(".quick-action-card");
+
+            if (card) {
+                card.style.transform = "translateY(-2px)";
+            }
+
+        }, { passive: true });
+
+
+        item.addEventListener("touchend", function () {
+
+            const card =
+                item.querySelector(".quick-action-card");
+
+            if (card) {
+                card.style.transform = "";
+            }
+
+        }, { passive: true });
+
+    });
+
+
+})();
 </script>
+
 {% endblock %}

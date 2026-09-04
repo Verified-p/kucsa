@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 
 {% block title %}
@@ -8,156 +9,832 @@
     {% endif %}
 {% endblock %}
 
-
 {% block content %}
 
-<!-- Custom Styling Injection matching the KUCSA Design System -->
 <style>
-    :root {
-        --kucsa-primary: #0d6efd;
-        --kucsa-primary-hover: #0b5ed7;
-        --kucsa-bg-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    /* =========================================================
+       KUCSA ATTENDANCE SESSION FORM
+       Modern responsive inline styling
+       ========================================================= */
+
+    .attendance-form-page {
+        --primary: #0d6efd;
+        --success: #198754;
+        --info: #0dcaf0;
+        --warning: #ffc107;
+        --danger: #dc3545;
+        --muted: #6c757d;
+        --border: rgba(0, 0, 0, 0.08);
+        --shadow: 0 8px 28px rgba(0, 0, 0, 0.055);
+        --radius: 18px;
     }
 
-    body {
-        background: var(--kucsa-bg-gradient);
+    /* =========================================================
+       PAGE HEADER
+       ========================================================= */
+
+    .form-page-header {
+        position: relative;
+        overflow: hidden;
+        padding: 25px;
+        border-radius: 21px;
+        margin-bottom: 24px;
+        background:
+            linear-gradient(
+                135deg,
+                rgba(13, 110, 253, 0.09),
+                rgba(13, 202, 240, 0.035)
+            );
+        border: 1px solid rgba(13, 110, 253, 0.08);
     }
 
-    .kucsa-card {
-        border-radius: 1rem;
-        transition: all 0.2s ease-in-out;
+    .form-page-header::after {
+        content: "";
+        position: absolute;
+        width: 210px;
+        height: 210px;
+        right: -80px;
+        top: -95px;
+        border-radius: 50%;
+        background: rgba(13, 110, 253, 0.055);
+        pointer-events: none;
     }
 
-    textarea.form-control {
-        min-height: 130px;
+    .form-page-header-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .back-button {
+        width: 39px;
+        height: 39px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 11px;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .back-button:hover {
+        transform: translateX(-2px);
+        box-shadow: 0 5px 14px rgba(0, 0, 0, 0.08);
+    }
+
+    .page-title {
+        font-size: clamp(1.4rem, 3vw, 1.95rem);
+        font-weight: 750;
+        letter-spacing: -0.5px;
+    }
+
+    .page-description {
+        max-width: 720px;
+        line-height: 1.6;
+    }
+
+    .session-status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 13px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    /* =========================================================
+       MAIN FORM CARD
+       ========================================================= */
+
+    .form-card,
+    .info-card {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+    }
+
+    .form-card-header {
+        padding: 21px 23px;
+        border-bottom: 1px solid var(--border);
+        background: transparent;
+    }
+
+    .form-header-icon {
+        width: 52px;
+        height: 52px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+        background: rgba(13, 110, 253, 0.10);
+        color: var(--primary);
+        font-size: 1.3rem;
+        flex-shrink: 0;
+    }
+
+    .form-card-title {
+        font-size: 1rem;
+        font-weight: 750;
+    }
+
+    .form-card-subtitle {
+        font-size: 0.77rem;
+        color: var(--muted);
+        line-height: 1.5;
+    }
+
+    .form-card-body {
+        padding: 23px;
+    }
+
+    /* =========================================================
+       FORM FIELDS
+       ========================================================= */
+
+    .form-label-modern {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 8px;
+        font-size: 0.82rem;
+        font-weight: 700;
+    }
+
+    .required-marker {
+        color: var(--danger);
+        font-weight: 800;
+    }
+
+    .optional-marker {
+        color: var(--muted);
+        font-size: 0.72rem;
+        font-weight: 500;
+    }
+
+    .field-wrapper {
+        position: relative;
+    }
+
+    .field-wrapper input,
+    .field-wrapper textarea,
+    .field-wrapper select {
+        width: 100%;
+        min-height: 47px;
+        border-radius: 11px;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        padding: 10px 13px;
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            background-color 0.2s ease;
+    }
+
+    .field-wrapper textarea {
+        min-height: 125px;
+        resize: vertical;
+        line-height: 1.55;
+    }
+
+    .field-wrapper input:focus,
+    .field-wrapper textarea:focus,
+    .field-wrapper select:focus {
+        border-color: rgba(13, 110, 253, 0.55);
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.09);
+        outline: none;
+    }
+
+    .field-wrapper input:hover,
+    .field-wrapper textarea:hover,
+    .field-wrapper select:hover {
+        border-color: rgba(13, 110, 253, 0.3);
+    }
+
+    .form-help-modern {
+        display: flex;
+        gap: 6px;
+        margin-top: 7px;
+        font-size: 0.72rem;
+        color: var(--muted);
+        line-height: 1.5;
+    }
+
+    .field-error {
+        display: flex;
+        align-items: flex-start;
+        gap: 5px;
+        margin-top: 7px;
+        color: var(--danger);
+        font-size: 0.74rem;
+        line-height: 1.45;
+    }
+
+    .field-error ul {
+        margin: 0;
+        padding-left: 17px;
+    }
+
+    /* =========================================================
+       CHARACTER COUNTER
+       ========================================================= */
+
+    .character-counter {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 5px;
+        font-size: 0.68rem;
+        color: var(--muted);
+    }
+
+    /* =========================================================
+       TIMING SECTION
+       ========================================================= */
+
+    .timing-section {
+        position: relative;
+        padding: 20px;
+        border-radius: 15px;
+        border: 1px solid rgba(13, 202, 240, 0.18);
+        background:
+            linear-gradient(
+                135deg,
+                rgba(13, 202, 240, 0.045),
+                rgba(13, 110, 253, 0.025)
+            );
+    }
+
+    .timing-header-icon {
+        width: 42px;
+        height: 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: rgba(13, 202, 240, 0.12);
+        color: #0891b2;
+        flex-shrink: 0;
+    }
+
+    .timing-title {
+        font-size: 0.9rem;
+        font-weight: 750;
+    }
+
+    .timing-description {
+        font-size: 0.74rem;
+        color: var(--muted);
+        line-height: 1.5;
+    }
+
+    .timing-field {
+        position: relative;
+    }
+
+    .timing-field-icon {
+        position: absolute;
+        left: 13px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--muted);
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    .timing-field input {
+        padding-left: 38px;
+    }
+
+    .duration-preview {
+        display: none;
+        margin-top: 15px;
+        padding: 12px 14px;
+        border-radius: 11px;
+        background: rgba(13, 110, 253, 0.07);
+        border: 1px solid rgba(13, 110, 253, 0.10);
+        font-size: 0.75rem;
+    }
+
+    .duration-preview.show {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .duration-preview i {
+        color: var(--primary);
+    }
+
+    /* =========================================================
+       INFORMATION ALERT
+       ========================================================= */
+
+    .how-it-works {
+        border: 0;
+        border-radius: 15px;
+        padding: 17px;
+        background:
+            linear-gradient(
+                135deg,
+                rgba(13, 202, 240, 0.10),
+                rgba(13, 110, 253, 0.035)
+            );
+    }
+
+    .how-it-works-icon {
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 11px;
+        background: rgba(13, 202, 240, 0.12);
+        color: #087990;
+        flex-shrink: 0;
+    }
+
+    .how-it-works-title {
+        font-size: 0.82rem;
+        font-weight: 750;
+    }
+
+    .how-it-works-list {
+        margin-bottom: 0;
+        padding-left: 19px;
+    }
+
+    .how-it-works-list li {
+        margin-bottom: 6px;
+        font-size: 0.74rem;
+        line-height: 1.5;
+    }
+
+    .how-it-works-list li:last-child {
+        margin-bottom: 0;
+    }
+
+    /* =========================================================
+       FORM ACTIONS
+       ========================================================= */
+
+    .form-actions {
+        padding-top: 19px;
+        border-top: 1px solid var(--border);
+    }
+
+    .form-action-btn {
+        min-height: 45px;
+        border-radius: 11px;
+        font-weight: 650;
+        padding: 9px 16px;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .form-action-btn:hover {
+        transform: translateY(-1px);
+    }
+
+    .submit-button {
+        min-width: 190px;
+    }
+
+    /* =========================================================
+       SIDE INFORMATION
+       ========================================================= */
+
+    .info-card-header {
+        padding: 17px 19px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .info-card-body {
+        padding: 19px;
+    }
+
+    .info-title {
+        font-size: 0.85rem;
+        font-weight: 750;
+    }
+
+    .info-description {
+        font-size: 0.75rem;
+        color: var(--muted);
+        line-height: 1.6;
+    }
+
+    .info-item {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 17px;
+    }
+
+    .info-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .info-item-icon {
+        width: 38px;
+        height: 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 11px;
+        flex-shrink: 0;
+    }
+
+    .info-item-title {
+        font-size: 0.76rem;
+        font-weight: 700;
+        margin-bottom: 2px;
+    }
+
+    .info-item-text {
+        font-size: 0.7rem;
+        color: var(--muted);
+        line-height: 1.5;
+    }
+
+    /* =========================================================
+       CURRENT SESSION CARD
+       ========================================================= */
+
+    .session-status-box {
+        padding: 14px;
+        border-radius: 12px;
+        background: rgba(0, 0, 0, 0.025);
+        margin-bottom: 10px;
+    }
+
+    .session-status-label {
+        font-size: 0.66rem;
+        text-transform: uppercase;
+        letter-spacing: 0.45px;
+        color: var(--muted);
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .session-status-value {
+        font-size: 0.78rem;
+        font-weight: 650;
+    }
+
+    /* =========================================================
+       SECURITY NOTICE
+       ========================================================= */
+
+    .security-card {
+        padding: 17px;
+        border-radius: 15px;
+        background:
+            linear-gradient(
+                135deg,
+                rgba(255, 193, 7, 0.09),
+                rgba(255, 193, 7, 0.035)
+            );
+        border: 1px solid rgba(255, 193, 7, 0.12);
+    }
+
+    .security-icon {
+        width: 43px;
+        height: 43px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: rgba(255, 193, 7, 0.14);
+        color: #997404;
+        flex-shrink: 0;
+    }
+
+    /* =========================================================
+       ANIMATIONS
+       ========================================================= */
+
+    .form-animate {
+        animation: formAppear 0.45s ease both;
+    }
+
+    .form-animate-delay {
+        animation: formAppear 0.45s ease 0.08s both;
+    }
+
+    @keyframes formAppear {
+        from {
+            opacity: 0;
+            transform: translateY(9px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* =========================================================
+       DARK MODE
+       ========================================================= */
+
+    [data-bs-theme="dark"] .attendance-form-page .form-page-header {
+        background:
+            linear-gradient(
+                135deg,
+                rgba(13, 110, 253, 0.15),
+                rgba(13, 202, 240, 0.05)
+            );
+        border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    [data-bs-theme="dark"] .attendance-form-page .form-card,
+    [data-bs-theme="dark"] .attendance-form-page .info-card {
+        border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    [data-bs-theme="dark"] .attendance-form-page .field-wrapper input,
+    [data-bs-theme="dark"] .attendance-form-page .field-wrapper textarea,
+    [data-bs-theme="dark"] .attendance-form-page .field-wrapper select {
+        border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    [data-bs-theme="dark"] .attendance-form-page .timing-section {
+        border-color: rgba(13, 202, 240, 0.18);
+    }
+
+    [data-bs-theme="dark"] .attendance-form-page .session-status-box {
+        background: rgba(255, 255, 255, 0.035);
+    }
+
+    /* =========================================================
+       TABLET
+       ========================================================= */
+
+    @media (max-width: 991.98px) {
+        .form-page-header {
+            padding: 21px;
+        }
+
+        .form-card-body {
+            padding: 20px;
+        }
+    }
+
+    /* =========================================================
+       MOBILE
+       ========================================================= */
+
+    @media (max-width: 767.98px) {
+
+        .attendance-form-page {
+            padding-bottom: 20px;
+        }
+
+        .form-page-header {
+            padding: 18px;
+            border-radius: 17px;
+        }
+
+        .form-page-header .page-title {
+            font-size: 1.35rem;
+        }
+
+        .form-page-header .page-description {
+            font-size: 0.78rem;
+        }
+
+        .form-page-header .session-status-badge {
+            align-self: flex-start;
+        }
+
+        .form-card,
+        .info-card {
+            border-radius: 16px;
+        }
+
+        .form-card-header {
+            padding: 17px;
+        }
+
+        .form-card-body {
+            padding: 17px;
+        }
+
+        .form-header-icon {
+            width: 46px;
+            height: 46px;
+        }
+
+        .timing-section {
+            padding: 16px;
+        }
+
+        .form-actions {
+            gap: 9px;
+        }
+
+        .form-actions .form-action-btn {
+            width: 100%;
+        }
+
+        .submit-button {
+            min-width: 0;
+        }
+
+        .security-card {
+            margin-bottom: 5px;
+        }
+    }
+
+    /* =========================================================
+       SMALL PHONES
+       ========================================================= */
+
+    @media (max-width: 420px) {
+
+        .form-page-header {
+            padding: 16px;
+        }
+
+        .form-card-body {
+            padding: 15px;
+        }
+
+        .timing-section {
+            padding: 14px;
+        }
+
+        .form-action-btn {
+            font-size: 0.8rem;
+        }
+    }
+
+    /* =========================================================
+       REDUCED MOTION
+       ========================================================= */
+
+    @media (prefers-reduced-motion: reduce) {
+
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
     }
 </style>
 
-<div class="container-fluid py-4">
+
+<div class="container-fluid py-3 py-md-4 attendance-form-page">
 
     <!-- =====================================================
          PAGE HEADER
-    ====================================================== -->
-    <div class="d-flex flex-column flex-md-row
-                justify-content-between
-                align-items-md-center
-                gap-3
-                mb-4">
+         ===================================================== -->
 
-        <div>
+    <div class="form-page-header form-animate">
 
-            <div class="d-flex align-items-center gap-2 mb-1">
+        <div class="form-page-header-content">
 
-                <a href="{% url 'attendance:list' %}"
-                   class="btn btn-sm btn-outline-secondary">
+            <div class="d-flex flex-column flex-md-row
+                        justify-content-between
+                        align-items-md-center
+                        gap-3">
 
-                    <i class="bi bi-arrow-left"></i>
+                <div class="d-flex align-items-start gap-3">
 
-                </a>
+                    <a href="{% url 'attendance:list' %}"
+                       class="btn btn-outline-secondary back-button flex-shrink-0"
+                       aria-label="Back to attendance sessions"
+                       title="Back to Attendance Sessions">
 
-                <h1 class="h3 fw-bold mb-0">
+                        <i class="bi bi-arrow-left"></i>
 
-                    {% if session %}
-                        Edit Attendance Session
-                    {% else %}
-                        Create Attendance Session
-                    {% endif %}
+                    </a>
 
-                </h1>
+                    <div>
 
-            </div>
+                        <h1 class="page-title mb-1">
 
-            <p class="text-muted mb-0">
+                            {% if session %}
+                                Edit Attendance Session
+                            {% else %}
+                                Create Attendance Session
+                            {% endif %}
+
+                        </h1>
+
+                        <p class="page-description text-muted mb-0">
+
+                            {% if session %}
+                                Update the details and attendance window
+                                for this session.
+                            {% else %}
+                                Create a general KUCSA attendance session
+                                for members and students.
+                            {% endif %}
+
+                        </p>
+
+                    </div>
+
+                </div>
+
 
                 {% if session %}
-                    Update the details and attendance window
-                    for this session.
-                {% else %}
-                    Create a general KUCSA attendance session
-                    for members and students.
-                {% endif %}
 
-            </p>
+                    <div>
 
-        </div>
+                        {% if session.status == "DRAFT" %}
 
+                            <span class="session-status-badge bg-secondary-subtle text-secondary-emphasis">
 
-        {% if session %}
+                                <i class="bi bi-pencil-square"></i>
+                                Draft
 
-            <div class="d-flex align-items-center gap-2">
+                            </span>
 
-                {% if session.status == "DRAFT" %}
+                        {% elif session.status == "OPEN" %}
 
-                    <span class="badge text-bg-secondary px-3 py-2">
-                        <i class="bi bi-pencil-square me-1"></i>
-                        Draft
-                    </span>
+                            <span class="session-status-badge bg-success-subtle text-success">
 
-                {% elif session.status == "OPEN" %}
+                                <i class="bi bi-broadcast"></i>
+                                Open
 
-                    <span class="badge text-bg-success px-3 py-2">
-                        <i class="bi bi-broadcast me-1"></i>
-                        Open
-                    </span>
+                            </span>
 
-                {% elif session.status == "CLOSED" %}
+                        {% elif session.status == "CLOSED" %}
 
-                    <span class="badge text-bg-dark px-3 py-2">
-                        <i class="bi bi-lock me-1"></i>
-                        Closed
-                    </span>
+                            <span class="session-status-badge bg-dark-subtle text-dark">
 
-                {% elif session.status == "EXPIRED" %}
+                                <i class="bi bi-lock"></i>
+                                Closed
 
-                    <span class="badge text-bg-warning px-3 py-2">
-                        <i class="bi bi-clock-history me-1"></i>
-                        Expired
-                    </span>
+                            </span>
 
-                {% else %}
+                        {% elif session.status == "EXPIRED" %}
 
-                    <span class="badge text-bg-secondary px-3 py-2">
-                        {{ session.get_status_display }}
-                    </span>
+                            <span class="session-status-badge bg-warning-subtle text-warning-emphasis">
+
+                                <i class="bi bi-clock-history"></i>
+                                Expired
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="session-status-badge bg-secondary-subtle text-secondary-emphasis">
+
+                                {{ session.get_status_display }}
+
+                            </span>
+
+                        {% endif %}
+
+                    </div>
 
                 {% endif %}
 
             </div>
 
-        {% endif %}
+        </div>
 
     </div>
 
 
     <!-- =====================================================
          MAIN CONTENT
-    ====================================================== -->
+         ===================================================== -->
+
     <div class="row g-4">
 
+
         <!-- =================================================
-             FORM
-        ================================================== -->
-        <div class="col-12 col-lg-8">
+             MAIN FORM
+             ================================================= -->
 
-            <div class="card border-0 shadow-sm">
+        <div class="col-12 col-lg-8 form-animate">
 
-                <!-- CARD HEADER -->
-                <div class="card-header bg-transparent border-bottom">
+
+            <div class="form-card">
+
+                <!-- HEADER -->
+
+                <div class="form-card-header">
 
                     <div class="d-flex align-items-center gap-3">
 
-                        <div class="rounded-circle
-                                    bg-primary-subtle
-                                    p-3">
+                        <div class="form-header-icon">
 
-                            <i class="bi bi-calendar-check
-                                      text-primary fs-5"></i>
+                            <i class="bi bi-calendar-check"></i>
 
                         </div>
 
                         <div>
 
-                            <h5 class="fw-bold mb-1">
+                            <div class="form-card-title">
 
                                 {% if session %}
                                     Session Details
@@ -165,15 +842,14 @@
                                     New Attendance Session
                                 {% endif %}
 
-                            </h5>
+                            </div>
 
-                            <p class="text-muted small mb-0">
+                            <div class="form-card-subtitle">
 
-                                Define the attendance session
-                                members will use to record
-                                their presence.
+                                Define the information members will see
+                                when using this attendance session.
 
-                            </p>
+                            </div>
 
                         </div>
 
@@ -183,24 +859,30 @@
 
 
                 <!-- FORM BODY -->
-                <div class="card-body">
+
+                <div class="form-card-body">
+
+
+                    <!-- NON-FIELD ERRORS -->
 
                     {% if form.non_field_errors %}
 
-                        <div class="alert alert-danger">
+                        <div class="alert alert-danger border-0 rounded-3 mb-4">
 
-                            <div class="d-flex gap-2">
+                            <div class="d-flex gap-3">
 
-                                <i class="bi bi-exclamation-triangle-fill"></i>
+                                <i class="bi bi-exclamation-triangle-fill fs-5"></i>
 
                                 <div>
 
-                                    <strong>
+                                    <strong class="small">
                                         Please correct the following:
                                     </strong>
 
-                                    <div class="mt-1">
+                                    <div class="small mt-1">
+
                                         {{ form.non_field_errors }}
+
                                     </div>
 
                                 </div>
@@ -213,143 +895,169 @@
 
 
                     <form method="post"
-                          novalidate>
+                          novalidate
+                          id="attendanceSessionForm">
 
                         {% csrf_token %}
 
 
-                        <!-- =================================
+                        <!-- =====================================
                              SESSION TITLE
-                        ================================== -->
+                        ====================================== -->
+
                         <div class="mb-4">
 
                             <label for="{{ form.title.id_for_label }}"
-                                   class="form-label fw-semibold">
+                                   class="form-label-modern">
 
                                 Attendance Session Title
 
-                                <span class="text-danger">
-                                    *
-                                </span>
+                                <span class="required-marker">*</span>
 
                             </label>
 
-                            {{ form.title }}
+
+                            <div class="field-wrapper">
+
+                                {{ form.title }}
+
+                            </div>
+
 
                             {% if form.title.errors %}
 
-                                <div class="text-danger small mt-1">
+                                <div class="field-error">
 
-                                    {{ form.title.errors }}
+                                    <i class="bi bi-exclamation-circle"></i>
 
-                                </div>
-
-                            {% endif %}
-
-                            {% if form.title.help_text %}
-
-                                <div class="form-text">
-
-                                    {{ form.title.help_text }}
-
-                                </div>
-
-                            {% else %}
-
-                                <div class="form-text">
-
-                                    Give this attendance session
-                                    a clear and recognizable name.
+                                    <div>
+                                        {{ form.title.errors }}
+                                    </div>
 
                                 </div>
 
                             {% endif %}
+
+
+                            <div class="form-help-modern">
+
+                                <i class="bi bi-lightbulb"></i>
+
+                                <span>
+
+                                    {% if form.title.help_text %}
+                                        {{ form.title.help_text }}
+                                    {% else %}
+                                        Give this session a clear and recognizable name,
+                                        such as "KUCSA First-Year Orientation".
+                                    {% endif %}
+
+                                </span>
+
+                            </div>
 
                         </div>
 
 
-                        <!-- =================================
+                        <!-- =====================================
                              DESCRIPTION
-                        ================================== -->
+                        ====================================== -->
+
                         <div class="mb-4">
 
-                            <label for="{{ form.description.id_for_label }}"
-                                   class="form-label fw-semibold">
+                            <div class="d-flex justify-content-between align-items-center">
 
-                                Description
+                                <label for="{{ form.description.id_for_label }}"
+                                       class="form-label-modern mb-0">
 
-                                <span class="text-muted fw-normal">
-                                    (Optional)
-                                </span>
+                                    Description
 
-                            </label>
+                                    <span class="optional-marker">
+                                        Optional
+                                    </span>
 
-                            {{ form.description }}
+                                </label>
+
+                            </div>
+
+
+                            <div class="field-wrapper mt-2">
+
+                                {{ form.description }}
+
+                            </div>
+
 
                             {% if form.description.errors %}
 
-                                <div class="text-danger small mt-1">
+                                <div class="field-error">
 
-                                    {{ form.description.errors }}
+                                    <i class="bi bi-exclamation-circle"></i>
 
-                                </div>
-
-                            {% endif %}
-
-                            {% if form.description.help_text %}
-
-                                <div class="form-text">
-
-                                    {{ form.description.help_text }}
-
-                                </div>
-
-                            {% else %}
-
-                                <div class="form-text">
-
-                                    Add instructions or information
-                                    that members should know before
-                                    marking attendance.
+                                    <div>
+                                        {{ form.description.errors }}
+                                    </div>
 
                                 </div>
 
                             {% endif %}
+
+
+                            <div class="form-help-modern">
+
+                                <i class="bi bi-info-circle"></i>
+
+                                <span>
+
+                                    {% if form.description.help_text %}
+                                        {{ form.description.help_text }}
+                                    {% else %}
+                                        Add instructions or information that members
+                                        should know before marking attendance.
+                                    {% endif %}
+
+                                </span>
+
+                            </div>
+
+
+                            <div class="character-counter">
+
+                                <span id="descriptionCounter">
+                                    0 characters
+                                </span>
+
+                            </div>
 
                         </div>
 
 
-                        <!-- =================================
-                             TIMING SECTION
-                        ================================== -->
-                        <div class="border rounded-3 p-3 p-md-4 mb-4">
+                        <!-- =====================================
+                             TIMING
+                        ====================================== -->
 
-                            <div class="d-flex
-                                        align-items-start
-                                        gap-3
-                                        mb-4">
+                        <div class="timing-section mb-4">
 
-                                <div class="rounded-circle
-                                            bg-info-subtle
-                                            p-2">
+                            <div class="d-flex align-items-start gap-3 mb-4">
 
-                                    <i class="bi bi-clock
-                                              text-info"></i>
+                                <div class="timing-header-icon">
+
+                                    <i class="bi bi-clock"></i>
 
                                 </div>
 
                                 <div>
 
-                                    <h6 class="fw-bold mb-1">
+                                    <div class="timing-title">
                                         Attendance Window
-                                    </h6>
+                                    </div>
 
-                                    <p class="text-muted small mb-0">
+                                    <div class="timing-description mt-1">
 
-                                        Define when members can
-                                        mark their attendance.
+                                        Define when members can mark
+                                        their attendance.
 
-                                    </p>
+                                    </div>
 
                                 </div>
 
@@ -358,123 +1066,167 @@
 
                             <div class="row g-3">
 
+
                                 <!-- OPENING TIME -->
+
                                 <div class="col-12 col-md-6">
 
                                     <label for="{{ form.opens_at.id_for_label }}"
-                                           class="form-label fw-semibold">
+                                           class="form-label-modern">
 
                                         Opening Time
 
-                                        <span class="text-muted fw-normal">
-                                            (Optional)
+                                        <span class="optional-marker">
+                                            Optional
                                         </span>
 
                                     </label>
 
-                                    {{ form.opens_at }}
+
+                                    <div class="timing-field field-wrapper">
+
+                                        <i class="bi bi-play-circle timing-field-icon"></i>
+
+                                        {{ form.opens_at }}
+
+                                    </div>
+
 
                                     {% if form.opens_at.errors %}
 
-                                        <div class="text-danger small mt-1">
+                                        <div class="field-error">
 
-                                            {{ form.opens_at.errors }}
+                                            <i class="bi bi-exclamation-circle"></i>
 
-                                        </div>
-
-                                    {% endif %}
-
-                                    {% if form.opens_at.help_text %}
-
-                                        <div class="form-text">
-
-                                            {{ form.opens_at.help_text }}
-
-                                        </div>
-
-                                    {% else %}
-
-                                        <div class="form-text">
-
-                                            When attendance should
-                                            become available.
+                                            <div>
+                                                {{ form.opens_at.errors }}
+                                            </div>
 
                                         </div>
 
                                     {% endif %}
+
+
+                                    <div class="form-help-modern">
+
+                                        <i class="bi bi-info-circle"></i>
+
+                                        <span>
+
+                                            {% if form.opens_at.help_text %}
+                                                {{ form.opens_at.help_text }}
+                                            {% else %}
+                                                When attendance should become available.
+                                            {% endif %}
+
+                                        </span>
+
+                                    </div>
 
                                 </div>
 
 
                                 <!-- CLOSING TIME -->
+
                                 <div class="col-12 col-md-6">
 
                                     <label for="{{ form.closes_at.id_for_label }}"
-                                           class="form-label fw-semibold">
+                                           class="form-label-modern">
 
                                         Closing Time
 
-                                        <span class="text-muted fw-normal">
-                                            (Optional)
+                                        <span class="optional-marker">
+                                            Optional
                                         </span>
 
                                     </label>
 
-                                    {{ form.closes_at }}
+
+                                    <div class="timing-field field-wrapper">
+
+                                        <i class="bi bi-stop-circle timing-field-icon"></i>
+
+                                        {{ form.closes_at }}
+
+                                    </div>
+
 
                                     {% if form.closes_at.errors %}
 
-                                        <div class="text-danger small mt-1">
+                                        <div class="field-error">
 
-                                            {{ form.closes_at.errors }}
+                                            <i class="bi bi-exclamation-circle"></i>
 
-                                        </div>
-
-                                    {% endif %}
-
-                                    {% if form.closes_at.help_text %}
-
-                                        <div class="form-text">
-
-                                            {{ form.closes_at.help_text }}
-
-                                        </div>
-
-                                    {% else %}
-
-                                        <div class="form-text">
-
-                                            When attendance should
-                                            stop accepting member
-                                            submissions.
+                                            <div>
+                                                {{ form.closes_at.errors }}
+                                            </div>
 
                                         </div>
 
                                     {% endif %}
+
+
+                                    <div class="form-help-modern">
+
+                                        <i class="bi bi-info-circle"></i>
+
+                                        <span>
+
+                                            {% if form.closes_at.help_text %}
+                                                {{ form.closes_at.help_text }}
+                                            {% else %}
+                                                When attendance should stop accepting
+                                                member submissions.
+                                            {% endif %}
+
+                                        </span>
+
+                                    </div>
 
                                 </div>
+
+                            </div>
+
+
+                            <!-- DYNAMIC DURATION -->
+
+                            <div id="durationPreview"
+                                 class="duration-preview">
+
+                                <i class="bi bi-hourglass-split"></i>
+
+                                <span id="durationText">
+                                    Attendance window duration will appear here.
+                                </span>
 
                             </div>
 
                         </div>
 
 
-                        <!-- =================================
-                             SESSION INFORMATION
-                        ================================== -->
-                        <div class="alert alert-info border-0">
+                        <!-- =====================================
+                             HOW ATTENDANCE WORKS
+                        ====================================== -->
 
-                            <div class="d-flex gap-3">
+                        <div class="how-it-works mb-4">
 
-                                <i class="bi bi-info-circle-fill fs-5"></i>
+                            <div class="d-flex align-items-start gap-3">
+
+                                <div class="how-it-works-icon">
+
+                                    <i class="bi bi-info-circle-fill"></i>
+
+                                </div>
 
                                 <div>
 
-                                    <h6 class="fw-bold mb-1">
-                                        How attendance works
-                                    </h6>
+                                    <div class="how-it-works-title mb-2">
 
-                                    <ul class="small mb-0 ps-3">
+                                        How attendance works
+
+                                    </div>
+
+                                    <ul class="how-it-works-list">
 
                                         <li>
                                             A new session starts as
@@ -482,32 +1234,28 @@
                                         </li>
 
                                         <li>
-                                            A management user opens
-                                            the session when attendance
-                                            should begin.
+                                            A management user opens the session
+                                            when attendance should begin.
                                         </li>
 
                                         <li>
-                                            Members can mark themselves
-                                            present while the session
-                                            is open.
+                                            Members can mark themselves present
+                                            while the session is open.
                                         </li>
 
                                         <li>
-                                            Each member receives an
-                                            attendance record for the
-                                            session.
+                                            Each member receives an attendance
+                                            record for the session.
                                         </li>
 
                                         <li>
-                                            Management can review and
-                                            correct attendance records.
+                                            Management can review and correct
+                                            attendance records.
                                         </li>
 
                                         <li>
-                                            The session can be closed
-                                            manually or become expired
-                                            after its attendance window.
+                                            The session can be closed manually
+                                            or become expired after its window.
                                         </li>
 
                                     </ul>
@@ -519,44 +1267,47 @@
                         </div>
 
 
-                        <!-- =================================
+                        <!-- =====================================
                              FORM ACTIONS
-                        ================================== -->
-                        <div class="d-flex
-                                    flex-column flex-sm-row
-                                    justify-content-between
-                                    gap-2
-                                    pt-3
-                                    border-top">
+                        ====================================== -->
 
-                            <a href="{% if session %}{% url 'attendance:detail' session.pk %}{% else %}{% url 'attendance:list' %}{% endif %}"
-                               class="btn btn-outline-secondary">
+                        <div class="form-actions">
 
-                                <i class="bi bi-x-circle me-1"></i>
+                            <div class="d-flex flex-column flex-sm-row
+                                        justify-content-between
+                                        gap-2">
 
-                                Cancel
+                                <a href="{% if session %}{% url 'attendance:detail' session.pk %}{% else %}{% url 'attendance:list' %}{% endif %}"
+                                   class="btn btn-outline-secondary form-action-btn">
 
-                            </a>
+                                    <i class="bi bi-x-circle me-1"></i>
+                                    Cancel
+
+                                </a>
 
 
-                            <button type="submit"
-                                    class="btn btn-primary">
+                                <button type="submit"
+                                        class="btn btn-primary form-action-btn submit-button"
+                                        id="submitSessionButton">
 
-                                {% if session %}
+                                    {% if session %}
 
-                                    <i class="bi bi-save me-1"></i>
-                                    Save Changes
+                                        <i class="bi bi-save me-1"></i>
+                                        Save Changes
 
-                                {% else %}
+                                    {% else %}
 
-                                    <i class="bi bi-plus-circle me-1"></i>
-                                    Create Attendance Session
+                                        <i class="bi bi-plus-circle me-1"></i>
+                                        Create Attendance Session
 
-                                {% endif %}
+                                    {% endif %}
 
-                            </button>
+                                </button>
+
+                            </div>
 
                         </div>
+
 
                     </form>
 
@@ -569,58 +1320,60 @@
 
         <!-- =================================================
              SIDE INFORMATION
-        ================================================== -->
-        <div class="col-12 col-lg-4">
+             ================================================= -->
+
+        <div class="col-12 col-lg-4 form-animate-delay">
+
 
             <!-- =============================================
-                 SESSION PURPOSE
+                 PURPOSE CARD
             ============================================== -->
-            <div class="card border-0 shadow-sm mb-4">
 
-                <div class="card-header bg-transparent border-bottom">
+            <div class="info-card mb-4">
 
-                    <h6 class="fw-bold mb-0">
+                <div class="info-card-header">
 
-                        <i class="bi bi-question-circle
-                                  text-primary me-2"></i>
+                    <div class="d-flex align-items-center gap-2">
 
-                        Attendance Session
+                        <i class="bi bi-question-circle text-primary"></i>
 
-                    </h6>
+                        <div class="info-title">
+                            Attendance Session
+                        </div>
+
+                    </div>
 
                 </div>
 
-                <div class="card-body">
 
-                    <p class="text-muted small">
+                <div class="info-card-body">
 
-                        An attendance session represents a
-                        specific period during which KUCSA
-                        members can record their presence.
+                    <p class="info-description mb-4">
+
+                        An attendance session represents a specific
+                        period during which KUCSA members can record
+                        their presence.
 
                     </p>
 
-                    <div class="d-flex gap-3 mb-3">
 
-                        <div class="rounded-circle
-                                    bg-primary-subtle
-                                    p-2
-                                    flex-shrink-0">
+                    <div class="info-item">
 
-                            <i class="bi bi-people
-                                      text-primary"></i>
+                        <div class="info-item-icon bg-primary-subtle text-primary">
+
+                            <i class="bi bi-people"></i>
 
                         </div>
 
                         <div>
 
-                            <div class="fw-semibold small">
+                            <div class="info-item-title">
                                 Members
                             </div>
 
-                            <div class="text-muted small">
-                                Members identify themselves
-                                and mark their attendance.
+                            <div class="info-item-text">
+                                Members identify themselves and
+                                mark their attendance.
                             </div>
 
                         </div>
@@ -628,27 +1381,23 @@
                     </div>
 
 
-                    <div class="d-flex gap-3 mb-3">
+                    <div class="info-item">
 
-                        <div class="rounded-circle
-                                    bg-success-subtle
-                                    p-2
-                                    flex-shrink-0">
+                        <div class="info-item-icon bg-success-subtle text-success">
 
-                            <i class="bi bi-check-circle
-                                      text-success"></i>
+                            <i class="bi bi-check-circle"></i>
 
                         </div>
 
                         <div>
 
-                            <div class="fw-semibold small">
+                            <div class="info-item-title">
                                 Attendance Records
                             </div>
 
-                            <div class="text-muted small">
-                                Each attendance action is
-                                stored against the member.
+                            <div class="info-item-text">
+                                Attendance actions are stored
+                                against each member.
                             </div>
 
                         </div>
@@ -656,27 +1405,23 @@
                     </div>
 
 
-                    <div class="d-flex gap-3">
+                    <div class="info-item">
 
-                        <div class="rounded-circle
-                                    bg-warning-subtle
-                                    p-2
-                                    flex-shrink-0">
+                        <div class="info-item-icon bg-warning-subtle text-warning-emphasis">
 
-                            <i class="bi bi-bar-chart
-                                      text-warning"></i>
+                            <i class="bi bi-bar-chart"></i>
 
                         </div>
 
                         <div>
 
-                            <div class="fw-semibold small">
+                            <div class="info-item-title">
                                 Reports
                             </div>
 
-                            <div class="text-muted small">
-                                Management can analyze
-                                attendance trends and records.
+                            <div class="info-item-text">
+                                Management can analyze attendance
+                                trends and records.
                             </div>
 
                         </div>
@@ -689,77 +1434,95 @@
 
 
             <!-- =============================================
-                 SESSION STATUS
+                 CURRENT SESSION
             ============================================== -->
+
             {% if session %}
 
-                <div class="card border-0 shadow-sm mb-4">
+                <div class="info-card mb-4">
 
-                    <div class="card-header bg-transparent border-bottom">
+                    <div class="info-card-header">
 
-                        <h6 class="fw-bold mb-0">
+                        <div class="d-flex align-items-center gap-2">
 
-                            <i class="bi bi-activity
-                                      text-success me-2"></i>
+                            <i class="bi bi-activity text-success"></i>
 
-                            Current Session
+                            <div class="info-title">
+                                Current Session
+                            </div>
 
-                        </h6>
+                        </div>
 
                     </div>
 
-                    <div class="card-body">
 
-                        <div class="mb-3">
+                    <div class="info-card-body">
 
-                            <div class="text-muted small mb-1">
+
+                        <!-- STATUS -->
+
+                        <div class="session-status-box">
+
+                            <div class="session-status-label">
                                 Status
                             </div>
 
-                            {% if session.status == "DRAFT" %}
+                            <div class="session-status-value">
 
-                                <span class="badge text-bg-secondary">
-                                    Draft
-                                </span>
+                                {% if session.status == "DRAFT" %}
 
-                            {% elif session.status == "OPEN" %}
+                                    <span class="badge text-bg-secondary">
+                                        <i class="bi bi-pencil me-1"></i>
+                                        Draft
+                                    </span>
 
-                                <span class="badge text-bg-success">
-                                    Open
-                                </span>
+                                {% elif session.status == "OPEN" %}
 
-                            {% elif session.status == "CLOSED" %}
+                                    <span class="badge text-bg-success">
+                                        <i class="bi bi-broadcast me-1"></i>
+                                        Open
+                                    </span>
 
-                                <span class="badge text-bg-dark">
-                                    Closed
-                                </span>
+                                {% elif session.status == "CLOSED" %}
 
-                            {% elif session.status == "EXPIRED" %}
+                                    <span class="badge text-bg-dark">
+                                        <i class="bi bi-lock me-1"></i>
+                                        Closed
+                                    </span>
 
-                                <span class="badge text-bg-warning">
-                                    Expired
-                                </span>
+                                {% elif session.status == "EXPIRED" %}
 
-                            {% else %}
+                                    <span class="badge text-bg-warning">
+                                        <i class="bi bi-clock-history me-1"></i>
+                                        Expired
+                                    </span>
 
-                                <span class="badge text-bg-secondary">
-                                    {{ session.get_status_display }}
-                                </span>
+                                {% else %}
 
-                            {% endif %}
+                                    <span class="badge text-bg-secondary">
+                                        {{ session.get_status_display }}
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
 
                         </div>
 
 
+                        <!-- OPENING -->
+
                         {% if session.opens_at %}
 
-                            <div class="mb-3">
+                            <div class="session-status-box">
 
-                                <div class="text-muted small mb-1">
+                                <div class="session-status-label">
                                     Opens
                                 </div>
 
-                                <div class="fw-semibold">
+                                <div class="session-status-value">
+
+                                    <i class="bi bi-play-circle text-success me-1"></i>
 
                                     {{ session.opens_at|date:"d M Y, H:i" }}
 
@@ -770,15 +1533,19 @@
                         {% endif %}
 
 
+                        <!-- CLOSING -->
+
                         {% if session.closes_at %}
 
-                            <div class="mb-3">
+                            <div class="session-status-box">
 
-                                <div class="text-muted small mb-1">
+                                <div class="session-status-label">
                                     Closes
                                 </div>
 
-                                <div class="fw-semibold">
+                                <div class="session-status-value">
+
+                                    <i class="bi bi-stop-circle text-danger me-1"></i>
 
                                     {{ session.closes_at|date:"d M Y, H:i" }}
 
@@ -789,15 +1556,19 @@
                         {% endif %}
 
 
+                        <!-- CREATED -->
+
                         {% if session.created_at %}
 
-                            <div>
+                            <div class="session-status-box mb-0">
 
-                                <div class="text-muted small mb-1">
+                                <div class="session-status-label">
                                     Created
                                 </div>
 
-                                <div class="fw-semibold">
+                                <div class="session-status-value">
+
+                                    <i class="bi bi-calendar-plus text-primary me-1"></i>
 
                                     {{ session.created_at|date:"d M Y, H:i" }}
 
@@ -815,39 +1586,32 @@
 
 
             <!-- =============================================
-                 IMPORTANT NOTICE
+                 SECURITY / SYSTEM NOTICE
             ============================================== -->
-            <div class="card border-0 shadow-sm">
 
-                <div class="card-body">
+            <div class="security-card">
 
-                    <div class="d-flex gap-3">
+                <div class="d-flex align-items-start gap-3">
 
-                        <div class="rounded-circle
-                                    bg-warning-subtle
-                                    p-3
-                                    flex-shrink-0">
+                    <div class="security-icon">
 
-                            <i class="bi bi-shield-check
-                                      text-warning fs-5"></i>
+                        <i class="bi bi-shield-check"></i>
 
+                    </div>
+
+                    <div>
+
+                        <div class="fw-bold small mb-1">
+                            Attendance Integrity
                         </div>
 
-                        <div>
+                        <div class="text-muted"
+                             style="font-size:0.72rem; line-height:1.55;">
 
-                            <h6 class="fw-bold">
-                                Important
-                            </h6>
-
-                            <p class="text-muted small mb-0">
-
-                                Attendance permissions,
-                                session state changes and
-                                member eligibility are handled
-                                by the attendance system's
-                                service layer.
-
-                            </p>
+                            Attendance permissions, session state
+                            changes and member eligibility are
+                            handled by the attendance system's
+                            service layer.
 
                         </div>
 
@@ -857,31 +1621,407 @@
 
             </div>
 
+
         </div>
 
     </div>
 
 </div>
 
+
+<!-- =========================================================
+     INLINE JAVASCRIPT
+     ========================================================= -->
+
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const textInputs = document.querySelectorAll('input[type="text"], input[type="datetime-local"], input[type="date"]');
-        const textAreas = document.querySelectorAll('textarea');
-        const selectInputs = document.querySelectorAll('select');
+(function () {
 
-        textInputs.forEach(el => {
-            if (!el.classList.contains('form-control')) el.classList.add('form-control', 'shadow-sm');
-        });
+    "use strict";
 
-        textAreas.forEach(el => {
-            if (!el.classList.contains('form-control')) el.classList.add('form-control', 'shadow-sm');
-        });
 
-        selectInputs.forEach(el => {
-            if (!el.classList.contains('form-select')) el.classList.add('form-select', 'shadow-sm');
-        });
-    });
+    /* =========================================================
+       ELEMENT REFERENCES
+       ========================================================= */
+
+    const form =
+        document.getElementById("attendanceSessionForm");
+
+    const submitButton =
+        document.getElementById("submitSessionButton");
+
+    const description =
+        document.getElementById(
+            "{{ form.description.id_for_label }}"
+        );
+
+    const descriptionCounter =
+        document.getElementById("descriptionCounter");
+
+    const openingInput =
+        document.getElementById(
+            "{{ form.opens_at.id_for_label }}"
+        );
+
+    const closingInput =
+        document.getElementById(
+            "{{ form.closes_at.id_for_label }}"
+        );
+
+    const durationPreview =
+        document.getElementById("durationPreview");
+
+    const durationText =
+        document.getElementById("durationText");
+
+
+    /* =========================================================
+       DESCRIPTION CHARACTER COUNTER
+       ========================================================= */
+
+    function updateDescriptionCounter() {
+
+        if (!description || !descriptionCounter) {
+            return;
+        }
+
+        const length =
+            description.value.length;
+
+        descriptionCounter.textContent =
+            length + (length === 1
+                ? " character"
+                : " characters");
+
+    }
+
+
+    if (description) {
+
+        updateDescriptionCounter();
+
+        description.addEventListener(
+            "input",
+            updateDescriptionCounter
+        );
+
+    }
+
+
+    /* =========================================================
+       ATTENDANCE WINDOW DURATION
+       ========================================================= */
+
+    function parseDateTime(value) {
+
+        if (!value) {
+            return null;
+        }
+
+        const date =
+            new Date(value);
+
+        if (isNaN(date.getTime())) {
+            return null;
+        }
+
+        return date;
+
+    }
+
+
+    function formatDuration(milliseconds) {
+
+        const totalMinutes =
+            Math.floor(
+                milliseconds / (1000 * 60)
+            );
+
+        if (totalMinutes <= 0) {
+            return null;
+        }
+
+        const hours =
+            Math.floor(totalMinutes / 60);
+
+        const minutes =
+            totalMinutes % 60;
+
+        if (hours > 0 && minutes > 0) {
+
+            return (
+                hours +
+                (hours === 1 ? " hour " : " hours ") +
+                minutes +
+                (minutes === 1 ? " minute" : " minutes")
+            );
+
+        }
+
+        if (hours > 0) {
+
+            return (
+                hours +
+                (hours === 1 ? " hour" : " hours")
+            );
+
+        }
+
+        return (
+            minutes +
+            (minutes === 1 ? " minute" : " minutes")
+        );
+
+    }
+
+
+    function updateDurationPreview() {
+
+        if (
+            !openingInput ||
+            !closingInput ||
+            !durationPreview ||
+            !durationText
+        ) {
+            return;
+        }
+
+        const opening =
+            parseDateTime(openingInput.value);
+
+        const closing =
+            parseDateTime(closingInput.value);
+
+
+        if (!opening || !closing) {
+
+            durationPreview.classList.remove("show");
+
+            return;
+
+        }
+
+
+        const difference =
+            closing.getTime() -
+            opening.getTime();
+
+
+        if (difference <= 0) {
+
+            durationPreview.classList.add("show");
+
+            durationText.textContent =
+                "The closing time must be later than the opening time.";
+
+            durationPreview.style.background =
+                "rgba(220, 53, 69, 0.07)";
+
+            durationPreview.style.borderColor =
+                "rgba(220, 53, 69, 0.12)";
+
+            durationPreview.style.color =
+                "#b02a37";
+
+            return;
+
+        }
+
+
+        const duration =
+            formatDuration(difference);
+
+
+        if (!duration) {
+            durationPreview.classList.remove("show");
+            return;
+        }
+
+
+        durationPreview.classList.add("show");
+
+        durationText.textContent =
+            "Attendance window: " + duration;
+
+        durationPreview.style.background =
+            "rgba(13, 110, 253, 0.07)";
+
+        durationPreview.style.borderColor =
+            "rgba(13, 110, 253, 0.10)";
+
+        durationPreview.style.color =
+            "";
+
+    }
+
+
+    if (openingInput) {
+
+        openingInput.addEventListener(
+            "change",
+            updateDurationPreview
+        );
+
+        openingInput.addEventListener(
+            "input",
+            updateDurationPreview
+        );
+
+    }
+
+
+    if (closingInput) {
+
+        closingInput.addEventListener(
+            "change",
+            updateDurationPreview
+        );
+
+        closingInput.addEventListener(
+            "input",
+            updateDurationPreview
+        );
+
+    }
+
+
+    updateDurationPreview();
+
+
+    /* =========================================================
+       FORM SUBMISSION FEEDBACK
+       ========================================================= */
+
+    if (form && submitButton) {
+
+        form.addEventListener(
+            "submit",
+            function () {
+
+                /*
+                 * Allow the browser/Django to perform the
+                 * actual form submission. We only change the
+                 * visual state of the button.
+                 */
+
+                submitButton.disabled = true;
+
+                submitButton.innerHTML =
+                    '<span class="spinner-border ' +
+                    'spinner-border-sm me-2" ' +
+                    'role="status" ' +
+                    'aria-hidden="true"></span>' +
+                    '{% if session %}' +
+                    'Saving changes...' +
+                    '{% else %}' +
+                    'Creating session...' +
+                    '{% endif %}';
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       FOCUS FIRST INVALID FIELD
+       ========================================================= */
+
+    const firstError =
+        document.querySelector(
+            ".field-error"
+        );
+
+    if (firstError) {
+
+        const errorField =
+            firstError.parentElement
+                ? firstError.parentElement.querySelector(
+                    "input, textarea, select"
+                )
+                : null;
+
+        if (errorField) {
+
+            setTimeout(
+                function () {
+                    errorField.focus();
+                },
+                150
+            );
+
+        }
+
+    }
+
+
+    /* =========================================================
+       PREVENT ACCIDENTAL MULTIPLE SUBMISSIONS
+       ========================================================= */
+
+    let submitting = false;
+
+    if (form) {
+
+        form.addEventListener(
+            "submit",
+            function (event) {
+
+                if (submitting) {
+
+                    event.preventDefault();
+
+                    return;
+
+                }
+
+                submitting = true;
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       MOBILE TOUCH FEEDBACK
+       ========================================================= */
+
+    const actionButtons =
+        document.querySelectorAll(
+            ".form-action-btn"
+        );
+
+    actionButtons.forEach(
+        function (button) {
+
+            button.addEventListener(
+                "touchstart",
+                function () {
+
+                    button.style.transform =
+                        "translateY(-1px)";
+
+                },
+                { passive: true }
+            );
+
+
+            button.addEventListener(
+                "touchend",
+                function () {
+
+                    button.style.transform =
+                        "";
+
+                },
+                { passive: true }
+            );
+
+        }
+    );
+
+
+})();
 </script>
-
 
 {% endblock %}

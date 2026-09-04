@@ -24,1824 +24,424 @@ u = User.objects.create_user(
 
 
 
+{% extends "base.html" %}
 
+{% load static %}
 
+{% block title %}My Attendance | KUCSA Platform{% endblock %}
 
-<!-- =========================================================
-     KUCSA SIDEBAR
-     ========================================================= -->
+{% block content %}
 
 <style>
-    /* =========================================================
-       SIDEBAR BASE
-       ========================================================= */
-
-    .kucsa-sidebar {
-        background: #212529;
-        color: #fff;
-        min-height: 100%;
-        overflow-x: hidden;
-        overflow-y: auto;
+    :root {
+        --kucsa-primary: #0d6efd;
+        --kucsa-primary-hover: #0b5ed7;
+        --kucsa-bg-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     }
 
-    .kucsa-sidebar * {
-        box-sizing: border-box;
+    body {
+        background: var(--kucsa-bg-gradient);
     }
 
-
-    /* =========================================================
-       PROFILE HEADER
-       ========================================================= */
-
-    .kucsa-sidebar .sidebar-header {
-        padding: 1.5rem 1rem;
-        text-align: center;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    .kucsa-card {
+        border-radius: 1rem;
+        transition: all 0.2s ease-in-out;
     }
 
-    .kucsa-sidebar .sidebar-profile-picture {
-        width: 82px;
-        height: 82px;
-        object-fit: cover;
-        border-radius: 50%;
-        border: 3px solid rgba(255, 255, 255, 0.25);
+    .metric-card {
+        border-radius: 1rem;
+        border: none;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .kucsa-sidebar .sidebar-default-avatar {
-        display: inline-block;
-        font-size: 4.5rem;
-        line-height: 1;
-        color: rgba(255, 255, 255, 0.9);
+    .metric-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08) !important;
     }
 
-    .kucsa-sidebar .sidebar-user-name {
-        color: #fff;
-        font-size: 1rem;
-        font-weight: 600;
-        margin-top: 0.75rem;
-        margin-bottom: 0.2rem;
-    }
-
-    .kucsa-sidebar .sidebar-user-role {
-        color: rgba(255, 255, 255, 0.65);
-        font-size: 0.8rem;
-    }
-
-    .kucsa-sidebar .sidebar-membership-number {
-        color: rgba(255, 255, 255, 0.45);
-        font-size: 0.68rem;
-        margin-top: 0.3rem;
-    }
-
-
-    /* =========================================================
-       STATUS BADGES
-       ========================================================= */
-
-    .kucsa-sidebar .sidebar-status {
-        margin-top: 0.75rem;
-    }
-
-    .kucsa-sidebar .sidebar-status .badge {
-        font-size: 0.68rem;
-        font-weight: 500;
-        padding: 0.4rem 0.65rem;
-    }
-
-
-    /* =========================================================
-       NAVIGATION
-       ========================================================= */
-
-    .kucsa-sidebar .sidebar-nav {
-        padding: 0.75rem 0;
-        margin: 0;
-    }
-
-    .kucsa-sidebar .nav-item {
-        list-style: none;
-    }
-
-    .kucsa-sidebar .nav-link {
-        display: flex;
-        align-items: center;
-        min-height: 44px;
-        margin: 2px 8px;
-        padding: 0.65rem 0.85rem;
-        border-radius: 7px;
-        color: rgba(255, 255, 255, 0.88) !important;
-        text-decoration: none;
-        font-size: 0.88rem;
-        font-weight: 400;
-        transition:
-            background-color 0.18s ease,
-            color 0.18s ease,
-            transform 0.18s ease;
-    }
-
-    .kucsa-sidebar .nav-link i {
-        width: 22px;
-        min-width: 22px;
-        margin-right: 0.65rem;
-        color: rgba(255, 255, 255, 0.78);
-        font-size: 1rem;
-        text-align: center;
-    }
-
-    .kucsa-sidebar .nav-link span {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .kucsa-sidebar .nav-link:hover {
-        background: rgba(255, 255, 255, 0.09);
-        color: #fff !important;
-        transform: translateX(2px);
-    }
-
-    .kucsa-sidebar .nav-link:hover i {
-        color: #fff;
-    }
-
-    .kucsa-sidebar .nav-link.active {
-        background: rgba(255, 255, 255, 0.15);
-        color: #fff !important;
-        font-weight: 600;
-    }
-
-    .kucsa-sidebar .nav-link.active i {
-        color: #fff;
-    }
-
-
-    /* =========================================================
-       SECTION TITLES
-       ========================================================= */
-
-    .kucsa-sidebar .sidebar-section {
-        margin-top: 1rem;
-        margin-bottom: 0.25rem;
-        padding: 0 1rem;
-    }
-
-    .kucsa-sidebar .sidebar-section-title {
-        display: block;
-        color: rgba(255, 255, 255, 0.48) !important;
-        font-size: 0.66rem;
-        font-weight: 700;
-        letter-spacing: 0.09em;
-        text-transform: uppercase;
-    }
-
-
-    /* =========================================================
-       DIVIDERS
-       ========================================================= */
-
-    .kucsa-sidebar .sidebar-divider {
-        margin: 0.8rem 1rem;
-        border: 0;
-        border-top: 1px solid rgba(255, 255, 255, 0.12);
-    }
-
-
-    /* =========================================================
-       PAYMENT NOTICES
-       ========================================================= */
-
-    .kucsa-sidebar .payment-required-box,
-    .kucsa-sidebar .payment-pending-box {
-        margin: 0.75rem;
-        padding: 0.8rem;
-        border-radius: 8px;
-        font-size: 0.75rem;
-        line-height: 1.5;
-        color: rgba(255, 255, 255, 0.85);
-    }
-
-    .kucsa-sidebar .payment-required-box {
-        background: rgba(255, 193, 7, 0.10);
-        border: 1px solid rgba(255, 193, 7, 0.25);
-    }
-
-    .kucsa-sidebar .payment-required-box strong {
-        display: block;
-        color: #ffc107;
-        margin-bottom: 0.3rem;
-    }
-
-    .kucsa-sidebar .payment-pending-box {
-        background: rgba(13, 202, 240, 0.08);
-        border: 1px solid rgba(13, 202, 240, 0.25);
-    }
-
-    .kucsa-sidebar .payment-pending-box strong {
-        display: block;
-        color: #0dcaf0;
-        margin-bottom: 0.3rem;
-    }
-
-
-    /* =========================================================
-       ACCOUNT STATUS
-       ========================================================= */
-
-    .kucsa-sidebar .account-state-box {
-        margin: 0.75rem;
-        padding: 0.7rem 0.8rem;
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 8px;
-        font-size: 0.72rem;
-    }
-
-    .kucsa-sidebar .account-state-label {
-        color: rgba(255, 255, 255, 0.45);
-        display: block;
-        margin-bottom: 0.15rem;
-    }
-
-    .kucsa-sidebar .account-state-value {
-        color: rgba(255, 255, 255, 0.85);
-        font-weight: 500;
-    }
-
-
-    /* =========================================================
-       LOGOUT
-       ========================================================= */
-
-    .kucsa-sidebar .logout-link {
-        color: #ff7676 !important;
-    }
-
-    .kucsa-sidebar .logout-link i {
-        color: #ff7676 !important;
-    }
-
-    .kucsa-sidebar .logout-link:hover {
-        background: rgba(220, 53, 69, 0.14);
-        color: #ff7676 !important;
-    }
-
-
-    /* =========================================================
-       MOBILE
-       ========================================================= */
-
-    @media (max-width: 767.98px) {
-
-        .kucsa-sidebar .sidebar-header {
-            padding: 1.25rem 0.75rem;
-        }
-
-        .kucsa-sidebar .sidebar-profile-picture {
-            width: 68px;
-            height: 68px;
-        }
-
-        .kucsa-sidebar .sidebar-default-avatar {
-            font-size: 3.8rem;
-        }
-
-        .kucsa-sidebar .nav-link {
-            margin-left: 5px;
-            margin-right: 5px;
-        }
+    .table-hover tbody tr {
+        transition: background-color 0.15s ease-in-out;
     }
 </style>
 
+<div class="container-fluid py-4">
 
-<div class="kucsa-sidebar">
-
-    <!-- =====================================================
-         USER PROFILE
-         ===================================================== -->
-
-    <div class="sidebar-header">
-
-        {% if user.profile_picture %}
-
-            <img
-                src="{{ user.profile_picture.url }}"
-                class="sidebar-profile-picture"
-                alt="{{ user.full_name|default:user.username }}"
-            >
-
-        {% else %}
-
-            <i class="bi bi-person-circle sidebar-default-avatar"></i>
-
-        {% endif %}
-
-
-        <div class="sidebar-user-name">
-
-            {{ user.full_name|default:user.username }}
-
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+        <div>
+            <h1 class="h3 fw-bold mb-1 text-dark">
+                <i class="bi bi-person-check-fill text-primary me-2"></i>My Attendance History
+            </h1>
+            <p class="text-muted mb-0">
+                Track your participation records and engagement metrics across KUCSA sessions.
+            </p>
         </div>
 
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{% url 'attendance:active' %}" class="btn btn-primary shadow-sm px-4 fw-bold">
+                <i class="bi bi-broadcast me-1"></i>Active Attendance
+            </a>
 
-        {% if user.get_role_display %}
-
-            <div class="sidebar-user-role">
-
-                {{ user.get_role_display }}
-
-            </div>
-
-        {% endif %}
-
-
-        {% if user.membership_number %}
-
-            <div class="sidebar-membership-number">
-
-                Membership No. {{ user.membership_number }}
-
-            </div>
-
-        {% endif %}
-
-
-        <!-- MEMBERSHIP STATUS -->
-
-        <div class="sidebar-status">
-
-            {% if user.is_kucsa_admin %}
-
-                <span class="badge bg-primary">
-
-                    <i class="bi bi-shield-check me-1"></i>
-                    Administrator
-
-                </span>
-
-            {% elif user.has_platform_access %}
-
-                <span class="badge bg-success">
-
-                    <i class="bi bi-check-circle me-1"></i>
-                    Active Membership
-
-                </span>
-
-            {% elif user.payment_state == "PENDING" %}
-
-                <span class="badge bg-info text-dark">
-
-                    <i class="bi bi-hourglass-split me-1"></i>
-                    Payment Pending
-
-                </span>
-
-            {% elif user.payment_state == "SUSPENDED" %}
-
-                <span class="badge bg-danger">
-
-                    <i class="bi bi-slash-circle me-1"></i>
-                    Membership Suspended
-
-                </span>
-
-            {% elif user.payment_state == "EXPIRED" %}
-
-                <span class="badge bg-secondary">
-
-                    <i class="bi bi-calendar-x me-1"></i>
-                    Membership Expired
-
-                </span>
-
-            {% else %}
-
-                <span class="badge bg-warning text-dark">
-
-                    <i class="bi bi-credit-card me-1"></i>
-                    Payment Required
-
-                </span>
-
+            {% if can_manage %}
+                <a href="{% url 'attendance:list' %}" class="btn btn-outline-primary shadow-sm fw-semibold">
+                    <i class="bi bi-clipboard-check me-1"></i>Manage Attendance
+                </a>
             {% endif %}
+        </div>
+    </div>
 
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card metric-card shadow-sm h-100 bg-white">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1 small fw-semibold text-uppercase tracking-wider">Total Records</p>
+                            <h2 class="fw-bold mb-0 text-dark">{{ total|default:0 }}</h2>
+                        </div>
+                        <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center" style="width: 52px; height: 52px;">
+                            <i class="bi bi-clipboard-data fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card metric-card shadow-sm h-100 bg-white">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1 small fw-semibold text-uppercase tracking-wider">Present</p>
+                            <h2 class="fw-bold text-success mb-0">{{ present|default:0 }}</h2>
+                        </div>
+                        <div class="rounded-circle bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center" style="width: 52px; height: 52px;">
+                            <i class="bi bi-check-circle fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card metric-card shadow-sm h-100 bg-white">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1 small fw-semibold text-uppercase tracking-wider">Absent</p>
+                            <h2 class="fw-bold text-danger mb-0">{{ absent|default:0 }}</h2>
+                        </div>
+                        <div class="rounded-circle bg-danger bg-opacity-10 text-danger d-flex align-items-center justify-content-center" style="width: 52px; height: 52px;">
+                            <i class="bi bi-x-circle fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card metric-card shadow-sm h-100 bg-white">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1 small fw-semibold text-uppercase tracking-wider">Attendance Rate</p>
+                            <h2 class="fw-bold text-primary mb-0">{{ attendance_percentage|default:0 }}%</h2>
+                        </div>
+                        <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center" style="width: 52px; height: 52px;">
+                            <i class="bi bi-graph-up-arrow fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
 
 
-    <!-- =====================================================
-         NAVIGATION
-         ===================================================== -->
+    <div class="row g-4 mb-4">
 
-    <ul class="nav flex-column sidebar-nav">
-
-
-        <!-- =================================================
-             ACCOUNT
-             ================================================= -->
-
-        <li class="sidebar-section">
-
-            <span class="sidebar-section-title">
-                Account
-            </span>
-
-        </li>
-
-
-        <li class="nav-item">
-
-            <a
-                href="{% url 'accounts:profile' %}"
-                class="nav-link {% if request.resolver_match.app_name == 'accounts' and request.resolver_match.url_name == 'profile' %}active{% endif %}"
-            >
-
-                <i class="bi bi-person"></i>
-
-                <span>
-                    My Profile
-                </span>
-
-            </a>
-
-        </li>
-
-
-        <!-- =================================================
-             PAYMENT GATE
-             ================================================= -->
-
-        {% if not user.is_kucsa_admin and not user.has_platform_access %}
-
-            <li>
-                <hr class="sidebar-divider">
-            </li>
-
-
-            <li class="sidebar-section">
-
-                <span class="sidebar-section-title">
-                    Membership
-                </span>
-
-            </li>
-
-
-            {% if user.payment_state == "REQUIRED" %}
-
-                <li class="nav-item">
-
-                    <div class="payment-required-box">
-
-                        <strong>
-
-                            <i class="bi bi-exclamation-circle me-1"></i>
-                            Membership Payment Required
-
-                        </strong>
-
-                        Complete your KUCSA membership payment
-                        to unlock the platform.
-
+        <div class="col-12 col-md-4">
+            <div class="card kucsa-card border-0 shadow-sm h-100 bg-white">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-warning bg-opacity-10 text-warning d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px;">
+                            <i class="bi bi-exclamation-circle fs-5"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block text-uppercase fw-semibold tracking-wider">Excused</small>
+                            <strong class="fs-5 text-dark">{{ excused|default:0 }}</strong>
+                        </div>
                     </div>
+                </div>
+            </div>
+        </div>
 
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'payments:payment_create' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'payments' and request.resolver_match.url_name == 'payment_create' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-phone"></i>
-
-                        <span>
-                            Make Membership Payment
-                        </span>
-
-                    </a>
-
-                </li>
-
-            {% endif %}
-
-
-            {% if user.payment_state == "PENDING" %}
-
-                <li class="nav-item">
-
-                    <div class="payment-pending-box">
-
-                        <strong>
-
-                            <i class="bi bi-hourglass-split me-1"></i>
-                            Payment Pending
-
-                        </strong>
-
-                        Your M-Pesa payment is awaiting
-                        confirmation.
-
+        <div class="col-12 col-md-4">
+            <div class="card kucsa-card border-0 shadow-sm h-100 bg-white">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-secondary bg-opacity-10 text-secondary d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px;">
+                            <i class="bi bi-hourglass-split fs-5"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block text-uppercase fw-semibold tracking-wider">Pending</small>
+                            <strong class="fs-5 text-dark">{{ pending|default:0 }}</strong>
+                        </div>
                     </div>
+                </div>
+            </div>
+        </div>
 
-                </li>
+        <div class="col-12 col-md-4">
+            <div class="card kucsa-card border-0 shadow-sm h-100 bg-white">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-info bg-opacity-10 text-info d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px;">
+                            <i class="bi bi-check2-all fs-5"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block text-uppercase fw-semibold tracking-wider">Finalized Records</small>
+                            <strong class="fs-5 text-dark">{{ finalized|default:0 }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 
 
-                {% if user.member and user.member.has_pending_payment %}
+    {% if active_sessions %}
+        <div class="alert alert-success border-0 shadow-sm mb-4 rounded-3 p-4 bg-success bg-opacity-10 text-success border-start border-success border-5">
+            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                <div class="d-flex align-items-start gap-3">
+                    <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px;">
+                        <i class="bi bi-broadcast fs-5"></i>
+                    </div>
+                    <div>
+                        <h2 class="h6 fw-bold mb-1 text-dark">Active Attendance Session Open!</h2>
+                        <p class="text-secondary small mb-0">
+                            There {% if active_sessions|length == 1 %}is{% else %}are{% style %} currently {{ active_sessions|length }} active attendance session{% if active_sessions|length > 1 %}s{% endif %} available for check-in.
+                        </p>
+                    </div>
+                </div>
+                <a href="{% url 'attendance:active' %}" class="btn btn-success shadow-sm px-4 fw-bold">
+                    <i class="bi bi-check2-circle me-1"></i>Mark Attendance
+                </a>
+            </div>
+        </div>
+    {% endif %}
 
-                    {% with pending_payment=user.member.payments.all|first %}
 
-                        {% if pending_payment %}
+    <div class="card kucsa-card border-0 shadow-sm mb-4 bg-white">
+        <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="h5 fw-bold mb-1 text-dark">Filter Attendance History</h2>
+                    <p class="text-muted small mb-0">Narrow records by date or participation status.</p>
+                </div>
+                <i class="bi bi-funnel-fill text-primary fs-4"></i>
+            </div>
+        </div>
 
-                            <li class="nav-item">
-
-                                <a
-                                    href="{% url 'payments:payment_pending' payment_id=pending_payment.id %}"
-                                    class="nav-link"
-                                >
-
-                                    <i class="bi bi-clock-history"></i>
-
-                                    <span>
-                                        Payment Status
-                                    </span>
-
-                                </a>
-
-                            </li>
-
+        <div class="card-body px-4 pb-4 pt-3">
+            <form method="get">
+                <div class="row g-3">
+                    <div class="col-12 col-md-4">
+                        <label for="{{ form.status.id_for_label }}" class="form-label fw-semibold small text-muted">Status</label>
+                        {{ form.status }}
+                        {% if form.status.errors %}
+                            <div class="text-danger small mt-1">{{ form.status.errors }}</div>
                         {% endif %}
+                    </div>
 
-                    {% endwith %}
+                    <div class="col-12 col-md-4">
+                        <label for="{{ form.start_date.id_for_label }}" class="form-label fw-semibold small text-muted">From Date</label>
+                        {{ form.start_date }}
+                        {% if form.start_date.errors %}
+                            <div class="text-danger small mt-1">{{ form.start_date.errors }}</div>
+                        {% endif %}
+                    </div>
 
-                {% endif %}
+                    <div class="col-12 col-md-4">
+                        <label for="{{ form.end_date.id_for_label }}" class="form-label fw-semibold small text-muted">To Date</label>
+                        {{ form.end_date }}
+                        {% if form.end_date.errors %}
+                            <div class="text-danger small mt-1">{{ form.end_date.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-12 pt-2">
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="submit" class="btn btn-primary shadow-sm px-4 fw-semibold">
+                                <i class="bi bi-funnel me-1"></i>Apply Filters
+                            </button>
+                            <a href="{% url 'attendance:my_attendance' %}" class="btn btn-outline-secondary shadow-sm">
+                                <i class="bi bi-arrow-counterclockwise me-1"></i>Clear Filters
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="card kucsa-card border-0 shadow-sm bg-white overflow-hidden">
+        <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+                <div>
+                    <h2 class="h5 fw-bold mb-1 text-dark">Attendance Records</h2>
+                    <p class="text-muted small mb-0">Your verified personal log of past session activities.</p>
+                </div>
+                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 fw-bold fs-7">
+                    {{ attendance_records|length }} Record{% if attendance_records|length != 1 %}s{% endif %} Found
+                </span>
+            </div>
+        </div>
+
+        <div class="card-body p-0 pt-3">
+            {% if attendance_records %}
+
+                <div class="table-responsive d-none d-md-block">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light text-uppercase fs-7 text-muted">
+                            <tr>
+                                <th class="ps-4 py-3">Attendance Session</th>
+                                <th class="py-3">Date</th>
+                                <th class="py-3">Opening Time</th>
+                                <th class="py-3">Status</th>
+                                <th class="pe-4 py-3">Marked At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in attendance_records %}
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold text-dark">{{ record.session.title }}</div>
+                                        {% if record.session.description %}
+                                            <small class="text-muted d-block text-truncate" style="max-width: 340px;">
+                                                {{ record.session.description }}
+                                            </small>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        {% if record.session.opens_at %}
+                                            <span class="fw-semibold text-dark">{{ record.session.opens_at|date:"M d, Y" }}</span>
+                                        {% else %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        {% if record.session.opens_at %}
+                                            <span class="text-muted">{{ record.session.opens_at|date:"H:i" }}</span>
+                                        {% else %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        {% if record.status == "PRESENT" %}
+                                            <span class="badge bg-success bg-opacity-10 text-success px-3 py-2"><i class="bi bi-check-circle me-1"></i>Present</span>
+                                        {% elif record.status == "ABSENT" %}
+                                            <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2"><i class="bi bi-x-circle me-1"></i>Absent</span>
+                                        {% elif record.status == "EXCUSED" %}
+                                            <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2"><i class="bi bi-exclamation-circle me-1"></i>Excused</span>
+                                        {% elif record.status == "PENDING" %}
+                                            <span class="badge bg-secondary bg-opacity-10 text-secondary px-3 py-2"><i class="bi bi-hourglass-split me-1"></i>Pending</span>
+                                        {% else %}
+                                            <span class="badge bg-light text-dark px-3 py-2">{{ record.get_status_display }}</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td class="pe-4">
+                                        {% if record.attendance_time %}
+                                            <span class="fw-semibold text-dark">{{ record.attendance_time|date:"M d, Y H:i" }}</span>
+                                        {% elif record.marked_at %}
+                                            <span class="text-muted">{{ record.marked_at|date:"M d, Y H:i" }}</span>
+                                        {% else %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-md-none p-3">
+                    {% for record in attendance_records %}
+                        <div class="card border mb-3 rounded-3 shadow-sm">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                                    <div>
+                                        <h3 class="h6 fw-bold mb-1 text-dark">{{ record.session.title }}</h3>
+                                        {% if record.session.opens_at %}
+                                            <small class="text-muted d-flex align-items-center">
+                                                <i class="bi bi-calendar3 me-1 text-primary"></i>{{ record.session.opens_at|date:"M d, Y H:i" }}
+                                            </small>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        {% if record.status == "PRESENT" %}
+                                            <span class="badge bg-success bg-opacity-10 text-success">Present</span>
+                                        {% elif record.status == "ABSENT" %}
+                                            <span class="badge bg-danger bg-opacity-10 text-danger">Absent</span>
+                                        {% elif record.status == "EXCUSED" %}
+                                            <span class="badge bg-warning bg-opacity-10 text-warning">Excused</span>
+                                        {% elif record.status == "PENDING" %}
+                                            <span class="badge bg-secondary bg-opacity-10 text-secondary">Pending</span>
+                                        {% else %}
+                                            <span class="badge bg-light text-dark">{{ record.get_status_display }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% if record.attendance_time %}
+                                    <div class="small text-muted border-top pt-2 mt-2">
+                                        <i class="bi bi-clock me-1 text-primary"></i>Marked: {{ record.attendance_time|date:"M d, Y H:i" }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+            {% else %}
+
+                <div class="text-center py-5 px-4">
+                    <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mb-3 text-muted shadow-sm" style="width: 80px; height: 80px;">
+                        <i class="bi bi-clipboard-x fs-1"></i>
+                    </div>
+                    <h3 class="h5 fw-bold text-dark">No Attendance Records Found</h3>
+                    <p class="text-muted mb-4">You do not have any attendance records matching your filter parameters.</p>
+                    <a href="{% url 'attendance:active' %}" class="btn btn-primary shadow-sm px-4 fw-bold">
+                        <i class="bi bi-broadcast me-1"></i>Check Active Attendance
+                    </a>
+                </div>
 
             {% endif %}
-
-
-            <li class="nav-item">
-
-                <a
-                    href="{% url 'payments:payment_list' %}"
-                    class="nav-link {% if request.resolver_match.app_name == 'payments' and request.resolver_match.url_name == 'payment_list' %}active{% endif %}"
-                >
-
-                    <i class="bi bi-wallet2"></i>
-
-                    <span>
-                        My Payments
-                    </span>
-
-                </a>
-
-            </li>
-
-        {% endif %}
-
-
-        <!-- =================================================
-             PLATFORM ACCESS
-             ================================================= -->
-
-        {% if user.is_kucsa_admin or user.has_platform_access %}
-
-            <li>
-                <hr class="sidebar-divider">
-            </li>
-
-
-            <li class="sidebar-section">
-
-                <span class="sidebar-section-title">
-                    KUCSA Platform
-                </span>
-
-            </li>
-
-
-            <!-- =================================================
-                 DASHBOARD
-                 ================================================= -->
-
-            <li class="nav-item">
-
-                {% if user.is_kucsa_admin %}
-
-                    <a
-                        href="{% url 'executives:dashboard' %}"
-                        class="nav-link"
-                    >
-
-                        <i class="bi bi-speedometer2"></i>
-
-                        <span>
-                            Administration Dashboard
-                        </span>
-
-                    </a>
-
-                {% elif user.is_executive %}
-
-                    <a
-                        href="{% url 'executives:dashboard' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-speedometer2"></i>
-
-                        <span>
-                            Executive Dashboard
-                        </span>
-
-                    </a>
-
-                {% else %}
-
-                    <a
-                        href="{% url 'dashboard:student_dashboard' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'dashboard' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-speedometer2"></i>
-
-                        <span>
-                            Dashboard
-                        </span>
-
-                    </a>
-
-                {% endif %}
-
-            </li>
-
-
-            <!-- =================================================
-                 MEMBER SERVICES
-                 ================================================= -->
-
-            {% if not user.is_kucsa_admin %}
-
-                <li class="sidebar-section">
-
-                    <span class="sidebar-section-title">
-                        Membership
-                    </span>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'members:profile' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'members' and request.resolver_match.url_name == 'profile' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-person-badge"></i>
-
-                        <span>
-                            My Membership
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'members:membership_status' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'members' and request.resolver_match.url_name == 'membership_status' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-card-checklist"></i>
-
-                        <span>
-                            Membership Status
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'members:technical_domains' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'members' and request.resolver_match.url_name == 'technical_domains' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-code-slash"></i>
-
-                        <span>
-                            Technical Domains
-                        </span>
-
-                    </a>
-
-                </li>
-
-            {% endif %}
-
-
-            <!-- =================================================
-                 PAYMENTS
-                 ================================================= -->
-
-            <li class="sidebar-section">
-
-                <span class="sidebar-section-title">
-                    Payments
-                </span>
-
-            </li>
-
-
-            <li class="nav-item">
-
-                <a
-                    href="{% url 'payments:payment_list' %}"
-                    class="nav-link {% if request.resolver_match.app_name == 'payments' %}active{% endif %}"
-                >
-
-                    <i class="bi bi-wallet2"></i>
-
-                    <span>
-                        My Payments
-                    </span>
-
-                </a>
-
-            </li>
-
-
-            <!-- =================================================
-                 EVENTS
-                 ================================================= -->
-
-            <li class="sidebar-section">
-
-                <span class="sidebar-section-title">
-                    Events
-                </span>
-
-            </li>
-
-
-            <li class="nav-item">
-
-                <a
-                    href="{% url 'events:list' %}"
-                    class="nav-link {% if request.resolver_match.app_name == 'events' and request.resolver_match.url_name == 'list' %}active{% endif %}"
-                >
-
-                    <i class="bi bi-calendar-event"></i>
-
-                    <span>
-                        Browse Events
-                    </span>
-
-                </a>
-
-            </li>
-
-
-            <li class="nav-item">
-
-                <a
-                    href="{% url 'events:my_events' %}"
-                    class="nav-link {% if request.resolver_match.app_name == 'events' and request.resolver_match.url_name == 'my_events' %}active{% endif %}"
-                >
-
-                    <i class="bi bi-calendar-check"></i>
-
-                    <span>
-                        My Events
-                    </span>
-
-                </a>
-
-            </li>
-
-
-            <!-- =================================================
-                 MEMBER ATTENDANCE
-                 ================================================= -->
-
-            {% if not user.is_kucsa_admin and not user.is_executive %}
-
-                <li class="sidebar-section">
-
-                    <span class="sidebar-section-title">
-                        Attendance
-                    </span>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'attendance:active' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'active' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-broadcast-pin"></i>
-
-                        <span>
-                            Active Attendance
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'attendance:my_attendance' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'my_attendance' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-person-check"></i>
-
-                        <span>
-                            My Attendance
-                        </span>
-
-                    </a>
-
-                </li>
-
-            {% endif %}
-
-
-            <!-- =================================================
-                 COMMUNICATION
-                 ================================================= -->
-
-            <li class="sidebar-section">
-
-                <span class="sidebar-section-title">
-                    Communication
-                </span>
-
-            </li>
-
-
-            <li class="nav-item">
-
-                <a
-                    href="{% url 'announcements:list' %}"
-                    class="nav-link {% if request.resolver_match.app_name == 'announcements' %}active{% endif %}"
-                >
-
-                    <i class="bi bi-megaphone"></i>
-
-                    <span>
-                        Announcements
-                    </span>
-
-                </a>
-
-            </li>
-
-
-            <!-- =================================================
-                 EXECUTIVE AREA
-                 ================================================= -->
-
-            {% if user.is_executive %}
-
-                <li>
-                    <hr class="sidebar-divider">
-                </li>
-
-
-                <li class="sidebar-section">
-
-                    <span class="sidebar-section-title">
-                        Executive
-                    </span>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'executives:dashboard' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-speedometer2"></i>
-
-                        <span>
-                            Executive Dashboard
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'executives:board' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'board' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-diagram-3"></i>
-
-                        <span>
-                            Executive Board
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'executives:profile' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'profile' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-person-vcard"></i>
-
-                        <span>
-                            My Executive Profile
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'executives:edit_profile' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'edit_profile' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-pencil-square"></i>
-
-                        <span>
-                            Edit Executive Profile
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'executives:list' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'list' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-people"></i>
-
-                        <span>
-                            Executive Directory
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'executives:search' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'search' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-search"></i>
-
-                        <span>
-                            Search Executives
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <!-- =================================================
-                     EXECUTIVE MEMBER MANAGEMENT
-                     ================================================= -->
-
-                <li class="sidebar-section">
-
-                    <span class="sidebar-section-title">
-                        Member Management
-                    </span>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'members:list' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'members' and request.resolver_match.url_name == 'list' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-people-fill"></i>
-
-                        <span>
-                            Members
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <!-- =================================================
-                     EXECUTIVE EVENT MANAGEMENT
-                     ================================================= -->
-
-                <li class="sidebar-section">
-
-                    <span class="sidebar-section-title">
-                        Event Management
-                    </span>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'events:list' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'events' and request.resolver_match.url_name == 'list' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-calendar-event"></i>
-
-                        <span>
-                            Manage Events
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'events:create' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'events' and request.resolver_match.url_name == 'create' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-calendar-plus"></i>
-
-                        <span>
-                            Create Event
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <!-- =================================================
-                     EXECUTIVE ATTENDANCE MANAGEMENT
-                     ================================================= -->
-
-                <li class="sidebar-section">
-
-                    <span class="sidebar-section-title">
-                        Attendance Management
-                    </span>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'attendance:list' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'list' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-check2-square"></i>
-
-                        <span>
-                            Attendance Management
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'attendance:active' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'active' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-broadcast-pin"></i>
-
-                        <span>
-                            Active Sessions
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'attendance:report' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'report' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-file-earmark-bar-graph"></i>
-
-                        <span>
-                            Attendance Reports
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <!-- =================================================
-                     EXECUTIVE FINANCE MANAGEMENT
-                     ================================================= -->
-
-                <li class="sidebar-section">
-
-                    <span class="sidebar-section-title">
-                        Finance Management
-                    </span>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'finance:dashboard' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-cash-stack"></i>
-
-                        <span>
-                            Finance Dashboard
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'finance:income' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'income_list' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-arrow-down-circle"></i>
-
-                        <span>
-                            Income
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'finance:expenses' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'expense_list' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-arrow-up-circle"></i>
-
-                        <span>
-                            Expenses
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'finance:transactions' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'transaction_list' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-receipt"></i>
-
-                        <span>
-                            Transactions
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'finance:categories' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'category_list' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-tags"></i>
-
-                        <span>
-                            Categories
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'finance:reconciliation' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'reconciliation' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-check2-circle"></i>
-
-                        <span>
-                            Reconciliation
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'finance:audit_logs' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'audit_logs' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-journal-text"></i>
-
-                        <span>
-                            Audit Logs
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <!-- =================================================
-                     EXECUTIVE ANNOUNCEMENTS
-                     ================================================= -->
-
-                <li class="sidebar-section">
-
-                    <span class="sidebar-section-title">
-                        Announcements
-                    </span>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'announcements:list' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'announcements' and request.resolver_match.url_name == 'list' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-megaphone"></i>
-
-                        <span>
-                            Manage Announcements
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'announcements:create' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'announcements' and request.resolver_match.url_name == 'create' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-megaphone-fill"></i>
-
-                        <span>
-                            Create Announcement
-                        </span>
-
-                    </a>
-
-                </li>
-
-            {% endif %}
-
-
-            <!-- =================================================
-                 ADMINISTRATION
-                 ================================================= -->
-
-            {% if user.is_kucsa_admin %}
-
-                <li>
-                    <hr class="sidebar-divider">
-                </li>
-
-
-                <li class="sidebar-section">
-
-                    <span class="sidebar-section-title">
-                        Administration
-                    </span>
-
-                </li>
-
-
-                <!-- MEMBERS -->
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'members:list' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'members' and request.resolver_match.url_name == 'list' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-people-fill"></i>
-
-                        <span>
-                            All Members
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <!-- EXECUTIVES -->
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'executives:list' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'list' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-person-badge"></i>
-
-                        <span>
-                            Executive Management
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'executives:assign_role' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'assign_role' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-person-plus-fill"></i>
-
-                        <span>
-                            Assign Executive Role
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <!-- EVENTS -->
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'events:list' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'events' and request.resolver_match.url_name == 'list' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-calendar-event"></i>
-
-                        <span>
-                            All Events
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'events:create' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'events' and request.resolver_match.url_name == 'create' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-calendar-plus"></i>
-
-                        <span>
-                            Create Event
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <!-- =================================================
-                     ADMIN ATTENDANCE
-                     ================================================= -->
-
-                <li class="sidebar-section">
-
-                    <span class="sidebar-section-title">
-                        Attendance Administration
-                    </span>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'attendance:list' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'list' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-check2-square"></i>
-
-                        <span>
-                            Attendance Management
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'attendance:active' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'active' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-broadcast-pin"></i>
-
-                        <span>
-                            Active Sessions
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'attendance:report' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'report' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-file-earmark-bar-graph"></i>
-
-                        <span>
-                            Attendance Reports
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <!-- =================================================
-                     ADMIN FINANCE
-                     ================================================= -->
-
-                <li class="sidebar-section">
-
-                    <span class="sidebar-section-title">
-                        Finance Administration
-                    </span>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'finance:dashboard' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-cash-stack"></i>
-
-                        <span>
-                            Finance Dashboard
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'finance:income' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'income_list' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-arrow-down-circle"></i>
-
-                        <span>
-                            Income
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'finance:expenses' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'expense_list' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-arrow-up-circle"></i>
-
-                        <span>
-                            Expenses
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'finance:transactions' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'transaction_list' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-receipt"></i>
-
-                        <span>
-                            Transactions
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'finance:categories' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'category_list' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-tags"></i>
-
-                        <span>
-                            Categories
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'finance:reconciliation' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'reconciliation' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-check2-circle"></i>
-
-                        <span>
-                            Reconciliation
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'finance:audit_logs' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'audit_logs' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-journal-text"></i>
-
-                        <span>
-                            Audit Logs
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <!-- =================================================
-                     ADMIN ANNOUNCEMENTS
-                     ================================================= -->
-
-                <li class="sidebar-section">
-
-                    <span class="sidebar-section-title">
-                        Announcements
-                    </span>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'announcements:list' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'announcements' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-megaphone"></i>
-
-                        <span>
-                            All Announcements
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'announcements:create' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'announcements' and request.resolver_match.url_name == 'create' %}active{% endif %}"
-                    >
-
-                        <i class="bi bi-megaphone-fill"></i>
-
-                        <span>
-                            Create Announcement
-                        </span>
-
-                    </a>
-
-                </li>
-
-
-                <!-- =================================================
-                     SYSTEM
-                     ================================================= -->
-
-                <li class="sidebar-section">
-
-                    <span class="sidebar-section-title">
-                        System
-                    </span>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a
-                        href="{% url 'executives:dashboard' %}"
-                        class="nav-link"
-                    >
-
-                        <i class="bi bi-shield-lock"></i>
-
-                        <span>
-                            System Administration
-                        </span>
-
-                    </a>
-
-                </li>
-
-            {% endif %}
-
-        {% endif %}
-
-
-        <!-- =================================================
-             ACCOUNT ACTIONS
-             ================================================= -->
-
-        <li>
-            <hr class="sidebar-divider">
-        </li>
-
-
-        <li class="sidebar-section">
-
-            <span class="sidebar-section-title">
-                Account
-            </span>
-
-        </li>
-
-
-        <!-- CHANGE PASSWORD -->
-
-        <li class="nav-item">
-
-            <a
-                href="{% url 'accounts:change_password' %}"
-                class="nav-link {% if request.resolver_match.app_name == 'accounts' and request.resolver_match.url_name == 'change_password' %}active{% endif %}"
-            >
-
-                <i class="bi bi-key"></i>
-
-                <span>
-                    Change Password
-                </span>
-
-            </a>
-
-        </li>
-
-
-        <!-- LOGOUT -->
-
-        <li class="nav-item">
-
-            <a
-                href="{% url 'accounts:logout' %}"
-                class="nav-link logout-link"
-            >
-
-                <i class="bi bi-box-arrow-right"></i>
-
-                <span>
-                    Logout
-                </span>
-
-            </a>
-
-        </li>
-
-    </ul>
+        </div>
+    </div>
 
 </div>
 
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const textInputs = document.querySelectorAll('input[type="text"], input[type="date"], input[type="datetime-local"]');
+        const selectInputs = document.querySelectorAll('select');
+
+        textInputs.forEach(el => {
+            if (!el.classList.contains('form-control')) el.classList.add('form-control', 'shadow-sm');
+        });
+
+        selectInputs.forEach(el => {
+            if (!el.classList.contains('form-select')) el.classList.add('form-select', 'shadow-sm');
+        });
+    });
+</script>
+
+{% endblock %}

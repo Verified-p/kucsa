@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block title %}
@@ -7,1223 +6,575 @@
 
 {% block content %}
 
-<div class="container-fluid py-4">
+<!-- Custom Styling Injection matching the KUCSA Design System -->
+<style>
+    :root {
+        --kucsa-primary: #0d6efd;
+        --kucsa-primary-hover: #0b5ed7;
+        --kucsa-bg-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    body {
+        background: var(--kucsa-bg-gradient);
+    }
+
+    .kucsa-card {
+        border-radius: 1rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .kucsa-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .form-control, .form-select {
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        border-radius: 0.50rem;
+        border: 1px solid #ced4da;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--kucsa-primary);
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    }
+
+    .stat-card {
+        border-radius: 0.75rem;
+        border: none;
+        transition: all 0.2s ease;
+    }
+
+    .stat-card:hover {
+        background-color: #f8f9fa;
+    }
+
+    .announcement-img {
+        height: 200px;
+        object-fit: cover;
+        border-top-left-radius: 1rem;
+        border-top-right-radius: 1rem;
+    }
+</style>
+
+<div class="container-fluid py-4 px-lg-5">
 
     <!-- ========================================================= -->
     <!-- PAGE HEADER -->
     <!-- ========================================================= -->
-
-    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
-
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4 pb-2 border-bottom">
         <div>
-            <h2 class="fw-bold mb-1">
-                <i class="bi bi-megaphone-fill me-2"></i>
+            <h2 class="fw-bold mb-1 text-dark">
+                <i class="bi bi-megaphone-fill me-2 text-primary"></i>
                 {{ page_title|default:"Announcements" }}
             </h2>
-
             <p class="text-muted mb-0">
-                Stay updated with the latest KUCSA news, notices,
-                opportunities, and important information.
+                Stay updated with the latest KUCSA news, notices, opportunities, and campus events.
             </p>
         </div>
 
         {% if can_manage %}
-
             <div class="d-flex flex-wrap gap-2">
-
-                <a
-                    href="{% url 'announcements:management' %}"
-                    class="btn btn-outline-secondary">
-
-                    <i class="bi bi-speedometer2 me-1"></i>
-                    Management
-
+                <a href="{% url 'announcements:management' %}" class="btn btn-outline-secondary shadow-sm">
+                    <i class="bi bi-speedometer2 me-1"></i>Management Portal
                 </a>
-
-                <a
-                    href="{% url 'announcements:create' %}"
-                    class="btn btn-primary">
-
-                    <i class="bi bi-plus-circle me-1"></i>
-                    New Announcement
-
+                <a href="{% url 'announcements:create' %}" class="btn btn-primary shadow-sm fw-bold">
+                    <i class="bi bi-plus-circle me-1"></i>New Announcement
                 </a>
-
             </div>
-
         {% endif %}
-
     </div>
 
 
     <!-- ========================================================= -->
     <!-- MESSAGES -->
     <!-- ========================================================= -->
-
     {% if messages %}
-
         {% for message in messages %}
-
-            <div
-                class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show"
-                role="alert">
-
-                {{ message }}
-
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert"
-                    aria-label="Close">
-                </button>
-
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show shadow-sm" role="alert">
+                <i class="bi bi-info-circle-fill me-2"></i>{{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-
         {% endfor %}
-
     {% endif %}
 
 
     <!-- ========================================================= -->
     <!-- MANAGEMENT STATISTICS -->
     <!-- ========================================================= -->
-
     {% if can_manage and statistics %}
-
         <div class="row g-3 mb-4">
-
             <!-- Total -->
-
             <div class="col-6 col-md-4 col-xl-2">
-
-                <div class="card border-0 shadow-sm h-100">
-
+                <div class="card stat-card shadow-sm h-100 bg-white">
                     <div class="card-body">
-
                         <div class="d-flex justify-content-between align-items-center">
-
                             <div>
-
-                                <small class="text-muted d-block">
-                                    Total
-                                </small>
-
-                                <h4 class="fw-bold mb-0">
-                                    {{ statistics.total|default:0 }}
-                                </h4>
-
+                                <small class="text-muted d-block fw-semibold">Total</small>
+                                <h4 class="fw-bold mb-0 text-dark">{{ statistics.total|default:0 }}</h4>
                             </div>
-
-                            <i class="bi bi-megaphone text-primary fs-3"></i>
-
+                            <i class="bi bi-megaphone text-primary fs-3 opacity-75"></i>
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
 
             <!-- Drafts -->
-
             <div class="col-6 col-md-4 col-xl-2">
-
-                <div class="card border-0 shadow-sm h-100">
-
+                <div class="card stat-card shadow-sm h-100 bg-white">
                     <div class="card-body">
-
                         <div class="d-flex justify-content-between align-items-center">
-
                             <div>
-
-                                <small class="text-muted d-block">
-                                    Drafts
-                                </small>
-
-                                <h4 class="fw-bold mb-0">
-                                    {{ statistics.drafts|default:0 }}
-                                </h4>
-
+                                <small class="text-muted d-block fw-semibold">Drafts</small>
+                                <h4 class="fw-bold mb-0 text-secondary">{{ statistics.drafts|default:0 }}</h4>
                             </div>
-
-                            <i class="bi bi-file-earmark-text text-secondary fs-3"></i>
-
+                            <i class="bi bi-file-earmark-text text-secondary fs-3 opacity-75"></i>
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
 
             <!-- Published -->
-
             <div class="col-6 col-md-4 col-xl-2">
-
-                <div class="card border-0 shadow-sm h-100">
-
+                <div class="card stat-card shadow-sm h-100 bg-white">
                     <div class="card-body">
-
                         <div class="d-flex justify-content-between align-items-center">
-
                             <div>
-
-                                <small class="text-muted d-block">
-                                    Published
-                                </small>
-
-                                <h4 class="fw-bold mb-0">
-                                    {{ statistics.published|default:0 }}
-                                </h4>
-
+                                <small class="text-muted d-block fw-semibold">Published</small>
+                                <h4 class="fw-bold mb-0 text-success">{{ statistics.published|default:0 }}</h4>
                             </div>
-
-                            <i class="bi bi-check-circle text-success fs-3"></i>
-
+                            <i class="bi bi-check-circle text-success fs-3 opacity-75"></i>
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
 
             <!-- Archived -->
-
             <div class="col-6 col-md-4 col-xl-2">
-
-                <div class="card border-0 shadow-sm h-100">
-
+                <div class="card stat-card shadow-sm h-100 bg-white">
                     <div class="card-body">
-
                         <div class="d-flex justify-content-between align-items-center">
-
                             <div>
-
-                                <small class="text-muted d-block">
-                                    Archived
-                                </small>
-
-                                <h4 class="fw-bold mb-0">
-                                    {{ statistics.archived|default:0 }}
-                                </h4>
-
+                                <small class="text-muted d-block fw-semibold">Archived</small>
+                                <h4 class="fw-bold mb-0 text-warning">{{ statistics.archived|default:0 }}</h4>
                             </div>
-
-                            <i class="bi bi-archive text-warning fs-3"></i>
-
+                            <i class="bi bi-archive text-warning fs-3 opacity-75"></i>
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
 
             <!-- Featured -->
-
             <div class="col-6 col-md-4 col-xl-2">
-
-                <div class="card border-0 shadow-sm h-100">
-
+                <div class="card stat-card shadow-sm h-100 bg-white">
                     <div class="card-body">
-
                         <div class="d-flex justify-content-between align-items-center">
-
                             <div>
-
-                                <small class="text-muted d-block">
-                                    Featured
-                                </small>
-
-                                <h4 class="fw-bold mb-0">
-                                    {{ statistics.featured|default:0 }}
-                                </h4>
-
+                                <small class="text-muted d-block fw-semibold">Featured</small>
+                                <h4 class="fw-bold mb-0 text-warning">{{ statistics.featured|default:0 }}</h4>
                             </div>
-
-                            <i class="bi bi-star-fill text-warning fs-3"></i>
-
+                            <i class="bi bi-star-fill text-warning fs-3 opacity-75"></i>
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
 
             <!-- Views -->
-
             <div class="col-6 col-md-4 col-xl-2">
-
-                <div class="card border-0 shadow-sm h-100">
-
+                <div class="card stat-card shadow-sm h-100 bg-white">
                     <div class="card-body">
-
                         <div class="d-flex justify-content-between align-items-center">
-
                             <div>
-
-                                <small class="text-muted d-block">
-                                    Total Views
-                                </small>
-
-                                <h4 class="fw-bold mb-0">
-                                    {{ statistics.total_views|default:0 }}
-                                </h4>
-
+                                <small class="text-muted d-block fw-semibold">Total Views</small>
+                                <h4 class="fw-bold mb-0 text-info">{{ statistics.total_views|default:0 }}</h4>
                             </div>
-
-                            <i class="bi bi-eye text-info fs-3"></i>
-
+                            <i class="bi bi-eye text-info fs-3 opacity-75"></i>
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
     {% endif %}
 
 
     <!-- ========================================================= -->
     <!-- FILTERS -->
     <!-- ========================================================= -->
-
     {% if form %}
-
-        <div class="card border-0 shadow-sm mb-4">
-
-            <div class="card-body">
-
-                <form
-                    method="get"
-                    action="{% url 'announcements:list' %}">
-
+        <div class="card kucsa-card border-0 shadow-sm mb-4 bg-white">
+            <div class="card-body p-4">
+                <form method="get" action="{% url 'announcements:list' %}">
                     <div class="row g-3 align-items-end">
-
                         <!-- Search -->
-
                         <div class="col-12 col-lg-4">
-
-                            <label
-                                for="{{ form.search.id_for_label }}"
-                                class="form-label fw-semibold">
-
-                                Search
-
-                            </label>
-
+                            <label for="{{ form.search.id_for_label }}" class="form-label fw-semibold text-secondary">Search</label>
                             {{ form.search }}
-
                         </div>
-
 
                         <!-- Type -->
-
                         <div class="col-6 col-md-4 col-lg-2">
-
-                            <label
-                                for="{{ form.announcement_type.id_for_label }}"
-                                class="form-label fw-semibold">
-
-                                Type
-
-                            </label>
-
+                            <label for="{{ form.announcement_type.id_for_label }}" class="form-label fw-semibold text-secondary">Type</label>
                             {{ form.announcement_type }}
-
                         </div>
-
 
                         <!-- Priority -->
-
                         <div class="col-6 col-md-4 col-lg-2">
-
-                            <label
-                                for="{{ form.priority.id_for_label }}"
-                                class="form-label fw-semibold">
-
-                                Priority
-
-                            </label>
-
+                            <label for="{{ form.priority.id_for_label }}" class="form-label fw-semibold text-secondary">Priority</label>
                             {{ form.priority }}
-
                         </div>
-
 
                         <!-- Audience -->
-
                         <div class="col-6 col-md-4 col-lg-2">
-
-                            <label
-                                for="{{ form.target_audience.id_for_label }}"
-                                class="form-label fw-semibold">
-
-                                Audience
-
-                            </label>
-
+                            <label for="{{ form.target_audience.id_for_label }}" class="form-label fw-semibold text-secondary">Audience</label>
                             {{ form.target_audience }}
-
                         </div>
-
 
                         <!-- Status -->
-
                         {% if can_manage %}
-
                             <div class="col-6 col-md-4 col-lg-2">
-
-                                <label
-                                    for="{{ form.status.id_for_label }}"
-                                    class="form-label fw-semibold">
-
-                                    Status
-
-                                </label>
-
+                                <label for="{{ form.status.id_for_label }}" class="form-label fw-semibold text-secondary">Status</label>
                                 {{ form.status }}
-
                             </div>
-
                         {% endif %}
-
 
                         <!-- Featured -->
-
                         <div class="col-6 col-md-4 col-lg-2">
-
-                            <label
-                                for="{{ form.featured.id_for_label }}"
-                                class="form-label fw-semibold">
-
-                                Featured
-
-                            </label>
-
+                            <label for="{{ form.featured.id_for_label }}" class="form-label fw-semibold text-secondary">Featured</label>
                             {{ form.featured }}
-
                         </div>
-
 
                         <!-- Buttons -->
-
                         <div class="col-12 col-lg-auto">
-
                             <div class="d-flex gap-2">
-
-                                <button
-                                    type="submit"
-                                    class="btn btn-primary">
-
-                                    <i class="bi bi-search me-1"></i>
-                                    Filter
-
+                                <button type="submit" class="btn btn-primary px-4 shadow-sm fw-bold">
+                                    <i class="bi bi-search me-1"></i>Filter
                                 </button>
-
-                                <a
-                                    href="{% url 'announcements:list' %}"
-                                    class="btn btn-outline-secondary">
-
-                                    <i class="bi bi-arrow-counterclockwise me-1"></i>
-                                    Reset
-
+                                <a href="{% url 'announcements:list' %}" class="btn btn-outline-secondary px-3 shadow-sm">
+                                    <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
                                 </a>
-
                             </div>
-
                         </div>
-
                     </div>
-
                 </form>
-
             </div>
-
         </div>
-
     {% endif %}
 
 
     <!-- ========================================================= -->
-    <!-- FEATURED ANNOUNCEMENTS -->
+    <!-- FEATURED ANNOUNCEMENTS SECTION -->
     <!-- ========================================================= -->
-
     {% if featured_announcements and not request.GET %}
-
         <div class="d-flex justify-content-between align-items-center mb-3">
-
             <div>
-
-                <h4 class="fw-bold mb-1">
-                    <i class="bi bi-star-fill text-warning me-2"></i>
-                    Featured Announcements
+                <h4 class="fw-bold mb-1 text-dark">
+                    <i class="bi bi-star-fill text-warning me-2"></i>Featured Announcements
                 </h4>
-
-                <p class="text-muted small mb-0">
-                    Important announcements highlighted by KUCSA.
-                </p>
-
+                <p class="text-muted small mb-0">High-priority notices handpicked by KUCSA leadership.</p>
             </div>
-
-            <a
-                href="{% url 'announcements:featured' %}"
-                class="btn btn-sm btn-outline-primary">
-
-                View All
-                <i class="bi bi-arrow-right ms-1"></i>
-
+            <a href="{% url 'announcements:featured' %}" class="btn btn-sm btn-outline-primary fw-semibold shadow-sm">
+                View All <i class="bi bi-arrow-right ms-1"></i>
             </a>
-
         </div>
-
 
         <div class="row g-4 mb-5">
-
             {% for announcement in featured_announcements %}
-
                 <div class="col-12 col-md-6 col-xl-4">
-
-                    <div class="card h-100 border-0 shadow-sm">
-
+                    <div class="card kucsa-card h-100 border-0 shadow-sm bg-white">
                         {% if announcement.image %}
-
-                            <img
-                                src="{{ announcement.image.url }}"
-                                class="card-img-top"
-                                alt="{{ announcement.title }}"
-                                style="height: 190px; object-fit: cover;">
-
+                            <img src="{{ announcement.image.url }}" class="announcement-img card-img-top" alt="{{ announcement.title }}">
                         {% endif %}
 
-
-                        <div class="card-body">
-
-                            <div class="d-flex flex-wrap gap-2 mb-2">
-
-                                <span class="badge bg-warning text-dark">
-
-                                    <i class="bi bi-star-fill me-1"></i>
-                                    Featured
-
+                        <div class="card-body p-4">
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                <span class="badge bg-warning text-dark fw-semibold">
+                                    <i class="bi bi-star-fill me-1"></i>Featured
                                 </span>
-
-
                                 {% if announcement.priority == "URGENT" %}
-
-                                    <span class="badge bg-danger">
-                                        Urgent
-                                    </span>
-
+                                    <span class="badge bg-danger">Urgent</span>
                                 {% elif announcement.priority == "HIGH" %}
-
-                                    <span class="badge bg-warning text-dark">
-                                        High Priority
-                                    </span>
-
+                                    <span class="badge bg-warning text-dark">High Priority</span>
                                 {% else %}
-
-                                    <span class="badge bg-primary">
-                                        {{ announcement.get_priority_display }}
-                                    </span>
-
+                                    <span class="badge bg-primary">{{ announcement.get_priority_display }}</span>
                                 {% endif %}
-
                             </div>
 
-
-                            <h5 class="fw-bold">
-
-                                <a
-                                    href="{% url 'announcements:detail' announcement.pk %}"
-                                    class="text-decoration-none text-dark">
-
+                            <h5 class="fw-bold mb-2">
+                                <a href="{% url 'announcements:detail' announcement.pk %}" class="text-decoration-none text-dark stretched-link">
                                     {{ announcement.title }}
-
                                 </a>
-
                             </h5>
 
-
                             {% if announcement.summary %}
-
-                                <p class="text-muted small">
-                                    {{ announcement.summary|truncatewords:25 }}
-                                </p>
-
+                                <p class="text-muted small mb-0">{{ announcement.summary|truncatewords:22 }}</p>
                             {% elif announcement.content %}
-
-                                <p class="text-muted small">
-                                    {{ announcement.content|striptags|truncatewords:25 }}
-                                </p>
-
+                                <p class="text-muted small mb-0">{{ announcement.content|striptags|truncatewords:22 }}</p>
                             {% endif %}
-
                         </div>
 
-
-                        <div class="card-footer bg-white border-0">
-
-                            <a
-                                href="{% url 'announcements:detail' announcement.pk %}"
-                                class="btn btn-outline-primary btn-sm">
-
-                                Read More
-                                <i class="bi bi-arrow-right ms-1"></i>
-
-                            </a>
-
+                        <div class="card-footer bg-white border-0 px-4 pb-4 pt-0">
+                            <span class="text-primary small fw-bold">Read Full Announcement <i class="bi bi-arrow-right ms-1"></i></span>
                         </div>
-
                     </div>
-
                 </div>
-
             {% endfor %}
-
         </div>
-
     {% endif %}
 
 
     <!-- ========================================================= -->
-    <!-- ANNOUNCEMENT SECTION HEADER -->
+    <!-- MAIN ANNOUNCEMENTS GRID -->
     <!-- ========================================================= -->
-
     {% if announcements %}
-
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
-
             <div>
-
-                <h4 class="fw-bold mb-1">
-                    {% if page_title %}
-                        {{ page_title }}
-                    {% else %}
-                        All Announcements
-                    {% endif %}
+                <h4 class="fw-bold mb-1 text-dark">
+                    {% if page_title %}{{ page_title }}{% else %}All Announcements{% endif %}
                 </h4>
-
                 <p class="text-muted small mb-0">
-                    {% if can_manage %}
-                        Manage and review KUCSA announcements.
-                    {% else %}
-                        Browse announcements available to you.
-                    {% endif %}
+                    {% if can_manage %}Manage and monitor KUCSA broadcasts.{% else %}Browse notices and community messages.{% endif %}
                 </p>
-
             </div>
-
-
-            {% if announcements|length %}
-
-                <span class="badge bg-light text-dark border mt-2 mt-md-0">
-
-                    <i class="bi bi-megaphone me-1"></i>
-
-                    {{ announcements|length }} announcement{{ announcements|length|pluralize }}
-
-                </span>
-
-            {% endif %}
-
+            <span class="badge bg-white text-dark border shadow-sm mt-2 mt-md-0 px-3 py-2">
+                <i class="bi bi-megaphone me-1 text-primary"></i>
+                {{ announcements|length }} announcement{{ announcements|length|pluralize }} available
+            </span>
         </div>
 
-
-        <!-- ===================================================== -->
-        <!-- ANNOUNCEMENT CARDS -->
-        <!-- ===================================================== -->
-
         <div class="row g-4">
-
             {% for announcement in announcements %}
-
                 <div class="col-12 col-md-6 col-xl-4">
-
-                    <div class="card h-100 border-0 shadow-sm overflow-hidden">
-
-
-                        <!-- IMAGE -->
-
+                    <div class="card kucsa-card h-100 border-0 shadow-sm bg-white overflow-hidden">
+                        
+                        <!-- Image -->
                         {% if announcement.image %}
-
-                            <img
-                                src="{{ announcement.image.url }}"
-                                class="card-img-top"
-                                alt="{{ announcement.title }}"
-                                loading="lazy"
-                                style="height: 200px; object-fit: cover;">
-
+                            <img src="{{ announcement.image.url }}" class="announcement-img card-img-top" alt="{{ announcement.title }}" loading="lazy">
                         {% endif %}
 
-
-                        <!-- CARD HEADER -->
-
-                        <div class="card-header bg-white border-0 pt-3 px-3">
-
+                        <!-- Card Header Badges -->
+                        <div class="card-header bg-white border-0 pt-3 px-3 pb-0">
                             <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
-
                                 <div class="d-flex flex-wrap gap-1">
-
                                     {% if announcement.priority == "URGENT" %}
-
-                                        <span class="badge bg-danger">
-
-                                            <i class="bi bi-exclamation-triangle me-1"></i>
-                                            Urgent
-
-                                        </span>
-
+                                        <span class="badge bg-danger"><i class="bi bi-exclamation-triangle me-1"></i>Urgent</span>
                                     {% elif announcement.priority == "HIGH" %}
-
-                                        <span class="badge bg-warning text-dark">
-
-                                            <i class="bi bi-exclamation-circle me-1"></i>
-                                            High Priority
-
-                                        </span>
-
+                                        <span class="badge bg-warning text-dark"><i class="bi bi-exclamation-circle me-1"></i>High Priority</span>
                                     {% elif announcement.priority == "LOW" %}
-
-                                        <span class="badge bg-secondary">
-                                            Low Priority
-                                        </span>
-
+                                        <span class="badge bg-secondary">Low Priority</span>
                                     {% else %}
-
-                                        <span class="badge bg-primary">
-                                            {{ announcement.get_priority_display }}
-                                        </span>
-
+                                        <span class="badge bg-primary">{{ announcement.get_priority_display }}</span>
                                     {% endif %}
-
 
                                     {% if announcement.is_featured %}
-
-                                        <span class="badge bg-warning text-dark">
-
-                                            <i class="bi bi-star-fill me-1"></i>
-                                            Featured
-
-                                        </span>
-
+                                        <span class="badge bg-warning text-dark"><i class="bi bi-star-fill me-1"></i>Featured</span>
                                     {% endif %}
-
                                 </div>
 
-
-                                <!-- STATUS -->
-
+                                <!-- Status Badge -->
                                 {% if announcement.status == "PUBLISHED" %}
-
-                                    <span class="badge bg-success">
-
-                                        <i class="bi bi-check-circle me-1"></i>
-                                        Published
-
-                                    </span>
-
+                                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Published</span>
                                 {% elif announcement.status == "DRAFT" %}
-
-                                    <span class="badge bg-secondary">
-
-                                        <i class="bi bi-file-earmark me-1"></i>
-                                        Draft
-
-                                    </span>
-
+                                    <span class="badge bg-secondary"><i class="bi bi-file-earmark me-1"></i>Draft</span>
                                 {% elif announcement.status == "ARCHIVED" %}
-
-                                    <span class="badge bg-dark">
-
-                                        <i class="bi bi-archive me-1"></i>
-                                        Archived
-
-                                    </span>
-
+                                    <span class="badge bg-dark"><i class="bi bi-archive me-1"></i>Archived</span>
                                 {% else %}
-
-                                    <span class="badge bg-secondary">
-                                        {{ announcement.get_status_display }}
-                                    </span>
-
+                                    <span class="badge bg-secondary">{{ announcement.get_status_display }}</span>
                                 {% endif %}
-
                             </div>
-
                         </div>
 
-
-                        <!-- CARD BODY -->
-
+                        <!-- Card Body -->
                         <div class="card-body px-3 pt-2">
-
-                            <!-- TYPE -->
-
-                            <div class="small text-muted mb-2">
-
-                                <i class="bi bi-tag me-1"></i>
-
-                                {{ announcement.get_announcement_type_display }}
-
+                            <div class="small text-muted mb-2 fw-semibold">
+                                <i class="bi bi-tag me-1 text-primary"></i>{{ announcement.get_announcement_type_display }}
                             </div>
-
-
-                            <!-- TITLE -->
 
                             <h5 class="card-title fw-bold mb-2">
-
-                                <a
-                                    href="{% url 'announcements:detail' announcement.pk %}"
-                                    class="text-decoration-none text-dark">
-
+                                <a href="{% url 'announcements:detail' announcement.pk %}" class="text-decoration-none text-dark">
                                     {{ announcement.title }}
-
                                 </a>
-
                             </h5>
 
-
-                            <!-- SUMMARY -->
-
                             {% if announcement.summary %}
-
-                                <p class="text-muted small mb-3">
-
-                                    {{ announcement.summary|truncatewords:25 }}
-
-                                </p>
-
+                                <p class="text-muted small mb-3">{{ announcement.summary|truncatewords:20 }}</p>
                             {% elif announcement.content %}
-
-                                <p class="text-muted small mb-3">
-
-                                    {{ announcement.content|striptags|truncatewords:25 }}
-
-                                </p>
-
+                                <p class="text-muted small mb-3">{{ announcement.content|striptags|truncatewords:20 }}</p>
                             {% endif %}
 
-
-                            <!-- META -->
-
-                            <div class="small text-muted">
-
-                                <!-- AUDIENCE -->
-
-                                <div class="mb-1">
-
-                                    <i class="bi bi-people me-1"></i>
-
-                                    {{ announcement.get_target_audience_display }}
-
-                                </div>
-
-
-                                <!-- AUTHOR -->
-
+                            <div class="small text-muted border-top pt-2">
+                                <div class="mb-1"><i class="bi bi-people me-1 text-secondary"></i>{{ announcement.get_target_audience_display }}</div>
                                 {% if announcement.created_by %}
-
-                                    <div class="mb-1">
-
-                                        <i class="bi bi-person me-1"></i>
-
-                                        {{ announcement.created_by.get_full_name|default:announcement.created_by.username }}
-
-                                    </div>
-
+                                    <div class="mb-1"><i class="bi bi-person me-1 text-secondary"></i>{{ announcement.created_by.get_full_name|default:announcement.created_by.username }}</div>
                                 {% endif %}
-
-
-                                <!-- PUBLICATION DATE -->
-
                                 {% if announcement.published_at %}
-
-                                    <div class="mb-1">
-
-                                        <i class="bi bi-calendar-check me-1"></i>
-
-                                        Published
-                                        {{ announcement.published_at|date:"d M Y, H:i" }}
-
-                                    </div>
-
+                                    <div class="mb-1"><i class="bi bi-calendar-check me-1 text-secondary"></i>Published {{ announcement.published_at|date:"d M Y, H:i" }}</div>
                                 {% else %}
-
-                                    <div class="mb-1">
-
-                                        <i class="bi bi-calendar3 me-1"></i>
-
-                                        Created
-                                        {{ announcement.created_at|date:"d M Y, H:i" }}
-
-                                    </div>
-
+                                    <div class="mb-1"><i class="bi bi-calendar3 me-1 text-secondary"></i>Created {{ announcement.created_at|date:"d M Y, H:i" }}</div>
                                 {% endif %}
-
-
-                                <!-- VIEWS -->
-
-                                <div>
-
-                                    <i class="bi bi-eye me-1"></i>
-
-                                    {{ announcement.view_count|default:0 }}
-                                    view{{ announcement.view_count|default:0|pluralize }}
-
-                                </div>
-
+                                <div><i class="bi bi-eye me-1 text-secondary"></i>{{ announcement.view_count|default:0 }} view{{ announcement.view_count|default:0|pluralize }}</div>
                             </div>
-
                         </div>
 
-
-                        <!-- CARD FOOTER -->
-
-                        <div class="card-footer bg-white border-0 px-3 pb-3">
-
+                        <!-- Card Footer actions -->
+                        <div class="card-footer bg-white border-0 px-3 pb-3 pt-0">
                             <div class="d-flex justify-content-between align-items-center">
-
-                                <a
-                                    href="{% url 'announcements:detail' announcement.pk %}"
-                                    class="btn btn-outline-primary btn-sm">
-
-                                    Read More
-                                    <i class="bi bi-arrow-right ms-1"></i>
-
+                                <a href="{% url 'announcements:detail' announcement.pk %}" class="btn btn-outline-primary btn-sm shadow-sm fw-semibold">
+                                    Read More <i class="bi bi-arrow-right ms-1"></i>
                                 </a>
 
-
                                 {% if can_manage %}
-
                                     <div class="dropdown">
-
-                                        <button
-                                            class="btn btn-light btn-sm border"
-                                            type="button"
-                                            data-bs-toggle="dropdown"
-                                            aria-expanded="false"
-                                            aria-label="Announcement actions">
-
+                                        <button class="btn btn-light btn-sm border shadow-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Announcement actions">
                                             <i class="bi bi-three-dots-vertical"></i>
-
                                         </button>
-
-
                                         <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-
-
-                                            <!-- EDIT -->
-
                                             <li>
-
-                                                <a
-                                                    class="dropdown-item"
-                                                    href="{% url 'announcements:edit' announcement.pk %}">
-
-                                                    <i class="bi bi-pencil me-2"></i>
-                                                    Edit
-
+                                                <a class="dropdown-item" href="{% url 'announcements:edit' announcement.pk %}">
+                                                    <i class="bi bi-pencil me-2 text-primary"></i>Edit
                                                 </a>
-
                                             </li>
-
-
-                                            <!-- PUBLISH -->
 
                                             {% if announcement.status != "PUBLISHED" %}
-
                                                 <li>
-
-                                                    <form
-                                                        method="post"
-                                                        action="{% url 'announcements:publish' announcement.pk %}">
-
+                                                    <form method="post" action="{% url 'announcements:publish' announcement.pk %}">
                                                         {% csrf_token %}
-
-                                                        <input
-                                                            type="hidden"
-                                                            name="published_at"
-                                                            value="">
-
-                                                        <button
-                                                            type="submit"
-                                                            class="dropdown-item">
-
-                                                            <i class="bi bi-send me-2"></i>
-                                                            Publish
-
+                                                        <input type="hidden" name="published_at" value="">
+                                                        <button type="submit" class="dropdown-item">
+                                                            <i class="bi bi-send me-2 text-success"></i>Publish
                                                         </button>
-
                                                     </form>
-
                                                 </li>
-
                                             {% endif %}
-
-
-                                            <!-- UNPUBLISH -->
 
                                             {% if announcement.status == "PUBLISHED" %}
-
                                                 <li>
-
-                                                    <form
-                                                        method="post"
-                                                        action="{% url 'announcements:unpublish' announcement.pk %}">
-
+                                                    <form method="post" action="{% url 'announcements:unpublish' announcement.pk %}">
                                                         {% csrf_token %}
-
-                                                        <button
-                                                            type="submit"
-                                                            class="dropdown-item">
-
-                                                            <i class="bi bi-arrow-down-circle me-2"></i>
-                                                            Unpublish
-
+                                                        <button type="submit" class="dropdown-item">
+                                                            <i class="bi bi-arrow-down-circle me-2 text-warning"></i>Unpublish
                                                         </button>
-
                                                     </form>
-
                                                 </li>
-
                                             {% endif %}
-
-
-                                            <!-- FEATURE -->
 
                                             {% if announcement.status == "PUBLISHED" and not announcement.is_featured %}
-
                                                 <li>
-
-                                                    <form
-                                                        method="post"
-                                                        action="{% url 'announcements:feature' announcement.pk %}">
-
+                                                    <form method="post" action="{% url 'announcements:feature' announcement.pk %}">
                                                         {% csrf_token %}
-
-                                                        <button
-                                                            type="submit"
-                                                            class="dropdown-item">
-
-                                                            <i class="bi bi-star me-2"></i>
-                                                            Feature
-
+                                                        <button type="submit" class="dropdown-item">
+                                                            <i class="bi bi-star me-2 text-warning"></i>Feature
                                                         </button>
-
                                                     </form>
-
                                                 </li>
-
                                             {% endif %}
-
-
-                                            <!-- UNFEATURE -->
 
                                             {% if announcement.is_featured %}
-
                                                 <li>
-
-                                                    <form
-                                                        method="post"
-                                                        action="{% url 'announcements:unfeature' announcement.pk %}">
-
+                                                    <form method="post" action="{% url 'announcements:unfeature' announcement.pk %}">
                                                         {% csrf_token %}
-
-                                                        <button
-                                                            type="submit"
-                                                            class="dropdown-item">
-
-                                                            <i class="bi bi-star-fill me-2"></i>
-                                                            Remove Feature
-
+                                                        <button type="submit" class="dropdown-item">
+                                                            <i class="bi bi-star-fill me-2 text-warning"></i>Remove Feature
                                                         </button>
-
                                                     </form>
-
                                                 </li>
-
                                             {% endif %}
-
-
-                                            <!-- ARCHIVE -->
 
                                             {% if announcement.status != "ARCHIVED" %}
-
                                                 <li>
-
-                                                    <form
-                                                        method="post"
-                                                        action="{% url 'announcements:archive' announcement.pk %}">
-
+                                                    <form method="post" action="{% url 'announcements:archive' announcement.pk %}">
                                                         {% csrf_token %}
-
-                                                        <button
-                                                            type="submit"
-                                                            class="dropdown-item">
-
-                                                            <i class="bi bi-archive me-2"></i>
-                                                            Archive
-
+                                                        <button type="submit" class="dropdown-item">
+                                                            <i class="bi bi-archive me-2 text-secondary"></i>Archive
                                                         </button>
-
                                                     </form>
-
                                                 </li>
-
                                             {% endif %}
-
-
-                                            <!-- RESTORE -->
 
                                             {% if announcement.status == "ARCHIVED" %}
-
                                                 <li>
-
-                                                    <form
-                                                        method="post"
-                                                        action="{% url 'announcements:restore' announcement.pk %}">
-
+                                                    <form method="post" action="{% url 'announcements:restore' announcement.pk %}">
                                                         {% csrf_token %}
-
-                                                        <button
-                                                            type="submit"
-                                                            class="dropdown-item">
-
-                                                            <i class="bi bi-arrow-counterclockwise me-2"></i>
-                                                            Restore
-
+                                                        <button type="submit" class="dropdown-item">
+                                                            <i class="bi bi-arrow-counterclockwise me-2 text-success"></i>Restore
                                                         </button>
-
                                                     </form>
-
                                                 </li>
-
                                             {% endif %}
 
+                                            <li><hr class="dropdown-divider"></li>
 
                                             <li>
-                                                <hr class="dropdown-divider">
-                                            </li>
-
-
-                                            <!-- DELETE -->
-
-                                            <li>
-
-                                                <form
-                                                    method="post"
-                                                    action="{% url 'announcements:delete' announcement.pk %}"
-                                                    onsubmit="return confirm('Are you sure you want to permanently delete this announcement?');">
-
+                                                <form method="post" action="{% url 'announcements:delete' announcement.pk %}" onsubmit="return confirm('Are you sure you want to permanently delete this announcement?');">
                                                     {% csrf_token %}
-
-                                                    <button
-                                                        type="submit"
-                                                        class="dropdown-item text-danger">
-
-                                                        <i class="bi bi-trash me-2"></i>
-                                                        Delete
-
+                                                    <button type="submit" class="dropdown-item text-danger">
+                                                        <i class="bi bi-trash me-2"></i>Delete
                                                     </button>
-
                                                 </form>
-
                                             </li>
-
                                         </ul>
-
                                     </div>
-
                                 {% endif %}
-
                             </div>
-
                         </div>
 
                     </div>
-
                 </div>
-
             {% endfor %}
-
         </div>
 
-
     {% else %}
-
         <!-- ===================================================== -->
         <!-- EMPTY STATE -->
         <!-- ===================================================== -->
-
-        <div class="card border-0 shadow-sm">
-
+        <div class="card kucsa-card border-0 shadow-sm bg-white">
             <div class="card-body text-center py-5">
-
-                <i class="bi bi-megaphone display-3 text-muted"></i>
-
-                <h4 class="fw-bold mt-3">
-                    No Announcements
-                </h4>
-
+                <div class="mb-3 d-inline-block p-4 bg-light rounded-circle text-muted">
+                    <i class="bi bi-megaphone display-4"></i>
+                </div>
+                <h4 class="fw-bold mt-2 text-dark">No Announcements Found</h4>
                 <p class="text-muted mb-4">
-
                     {% if request.GET %}
-
-                        No announcements match your current filters.
-
+                        No announcements match your current filter parameters. Try broadening your criteria.
                     {% else %}
-
-                        There are currently no announcements available.
-
+                        There are currently no active announcements published on the KUCSA platform.
                     {% endif %}
-
                 </p>
 
+                <div class="d-flex justify-content-center gap-2">
+                    {% if request.GET %}
+                        <a href="{% url 'announcements:list' %}" class="btn btn-outline-secondary shadow-sm">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i>Clear Filters
+                        </a>
+                    {% endif %}
 
-                {% if request.GET %}
-
-                    <a
-                        href="{% url 'announcements:list' %}"
-                        class="btn btn-outline-secondary me-2">
-
-                        <i class="bi bi-arrow-counterclockwise me-1"></i>
-                        Clear Filters
-
-                    </a>
-
-                {% endif %}
-
-
-                {% if can_manage %}
-
-                    <a
-                        href="{% url 'announcements:create' %}"
-                        class="btn btn-primary">
-
-                        <i class="bi bi-plus-circle me-1"></i>
-                        Create Announcement
-
-                    </a>
-
-                {% endif %}
-
+                    {% if can_manage %}
+                        <a href="{% url 'announcements:create' %}" class="btn btn-primary shadow-sm fw-bold">
+                            <i class="bi bi-plus-circle me-1"></i>Create Announcement
+                        </a>
+                    {% endif %}
+                </div>
             </div>
-
         </div>
-
     {% endif %}
 
 </div>
+
+<!-- Inline JavaScript Component to Auto-Format Filter Fields -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const filterInputs = document.querySelectorAll('form input[type="text"], form select');
+        filterInputs.forEach(input => {
+            if (!input.classList.contains('form-control') && !input.classList.contains('form-select')) {
+                if (input.tagName.toLowerCase() === 'select') {
+                    input.classList.add('form-select');
+                } else {
+                    input.classList.add('form-control');
+                }
+            }
+        });
+    });
+</script>
 
 {% endblock %}

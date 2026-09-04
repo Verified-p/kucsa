@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block title %}
@@ -7,967 +6,404 @@
 
 {% block content %}
 
-<div class="container-fluid py-4">
+<style>
+    :root {
+        --kucsa-primary: #0d6efd;
+        --kucsa-primary-hover: #0b5ed7;
+        --kucsa-bg-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
 
-    <!-- ===================================================== -->
-    <!-- BACK NAVIGATION -->
-    <!-- ===================================================== -->
+    body {
+        background: var(--kucsa-bg-gradient);
+    }
+
+    .kucsa-card {
+        border-radius: 1rem;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .announcement-content {
+        font-size: 1.05rem;
+        line-height: 1.8;
+        color: #212529;
+    }
+
+    .announcement-content p {
+        margin-bottom: 1.25rem;
+    }
+
+    .announcement-main-img {
+        max-height: 480px;
+        width: 100%;
+        object-fit: cover;
+        border-radius: 0.75rem;
+    }
+
+    .modal-content {
+        border-radius: 1rem;
+        border: none;
+        box-shadow: 0 1rem 3rem rgba(0,0,0,0.15);
+    }
+</style>
+
+<div class="container py-4">
 
     <div class="mb-4">
-
-        <a
-            href="{% url 'announcements:list' %}"
-            class="btn btn-outline-secondary btn-sm">
-
-            <i class="bi bi-arrow-left me-1"></i>
-            Back to Announcements
-
+        <a href="{% url 'announcements:list' %}" class="btn btn-outline-secondary btn-sm shadow-sm px-3">
+            <i class="bi bi-arrow-left me-1"></i>Back to Announcements
         </a>
-
     </div>
 
 
-    <!-- ===================================================== -->
-    <!-- MESSAGES -->
-    <!-- ===================================================== -->
-
     {% if messages %}
-
         {% for message in messages %}
-
-            <div
-                class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show"
-                role="alert">
-
-                {{ message }}
-
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert">
-                </button>
-
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show shadow-sm" role="alert">
+                <i class="bi bi-info-circle-fill me-2"></i>{{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-
         {% endfor %}
-
     {% endif %}
 
 
-    <!-- ===================================================== -->
-    <!-- MAIN ANNOUNCEMENT -->
-    <!-- ===================================================== -->
-
     <div class="row justify-content-center">
+        <div class="col-12 col-xl-10">
 
-        <div class="col-12 col-xl-9">
+            <div class="card kucsa-card border-0 shadow-lg bg-white overflow-hidden">
 
-            <div class="card border-0 shadow-sm">
-
-
-                <!-- ================================================= -->
-                <!-- HEADER -->
-                <!-- ================================================= -->
-
-                <div class="card-header bg-white border-0 p-4">
-
+                <div class="card-header bg-white border-0 pt-4 px-4 px-md-5">
                     <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-start gap-3">
 
                         <div class="flex-grow-1">
-
-                            <!-- BADGES -->
-
                             <div class="d-flex flex-wrap gap-2 mb-3">
-
                                 {% if announcement.priority == "URGENT" %}
-
-                                    <span class="badge bg-danger">
-
-                                        <i class="bi bi-exclamation-triangle me-1"></i>
-                                        Urgent
-
-                                    </span>
-
+                                    <span class="badge bg-danger shadow-sm"><i class="bi bi-exclamation-triangle me-1"></i>Urgent</span>
                                 {% elif announcement.priority == "HIGH" %}
-
-                                    <span class="badge bg-warning text-dark">
-
-                                        <i class="bi bi-exclamation-circle me-1"></i>
-                                        High Priority
-
-                                    </span>
-
+                                    <span class="badge bg-warning text-dark shadow-sm"><i class="bi bi-exclamation-circle me-1"></i>High Priority</span>
                                 {% elif announcement.priority == "LOW" %}
-
-                                    <span class="badge bg-secondary">
-
-                                        <i class="bi bi-arrow-down-circle me-1"></i>
-                                        Low Priority
-
-                                    </span>
-
+                                    <span class="badge bg-secondary shadow-sm"><i class="bi bi-arrow-down-circle me-1"></i>Low Priority</span>
                                 {% else %}
-
-                                    <span class="badge bg-primary">
-
-                                        <i class="bi bi-info-circle me-1"></i>
-                                        Normal
-
-                                    </span>
-
+                                    <span class="badge bg-primary shadow-sm"><i class="bi bi-info-circle me-1"></i>Normal</span>
                                 {% endif %}
-
-
-                                <!-- STATUS -->
 
                                 {% if announcement.status == "PUBLISHED" %}
-
-                                    <span class="badge bg-success">
-
-                                        <i class="bi bi-check-circle me-1"></i>
-                                        Published
-
-                                    </span>
-
+                                    <span class="badge bg-success shadow-sm"><i class="bi bi-check-circle me-1"></i>Published</span>
                                 {% elif announcement.status == "DRAFT" %}
-
-                                    <span class="badge bg-secondary">
-
-                                        <i class="bi bi-pencil-square me-1"></i>
-                                        Draft
-
-                                    </span>
-
+                                    <span class="badge bg-secondary shadow-sm"><i class="bi bi-pencil-square me-1"></i>Draft</span>
                                 {% elif announcement.status == "ARCHIVED" %}
-
-                                    <span class="badge bg-dark">
-
-                                        <i class="bi bi-archive me-1"></i>
-                                        Archived
-
-                                    </span>
-
+                                    <span class="badge bg-dark shadow-sm"><i class="bi bi-archive me-1"></i>Archived</span>
                                 {% endif %}
-
-
-                                <!-- FEATURED -->
 
                                 {% if announcement.is_featured %}
-
-                                    <span class="badge bg-warning text-dark">
-
-                                        <i class="bi bi-star-fill me-1"></i>
-                                        Featured
-
-                                    </span>
-
+                                    <span class="badge bg-warning text-dark shadow-sm"><i class="bi bi-star-fill me-1"></i>Featured</span>
                                 {% endif %}
-
                             </div>
 
-
-                            <!-- TITLE -->
-
-                            <h1 class="fw-bold mb-3">
-
+                            <h1 class="fw-bold mb-3 text-dark display-6">
                                 {{ announcement.title }}
-
                             </h1>
 
-
-                            <!-- SUMMARY -->
-
                             {% if announcement.summary %}
-
-                                <p class="lead text-muted mb-0">
-
+                                <p class="lead text-muted mb-0 fs-5">
                                     {{ announcement.summary }}
-
                                 </p>
-
                             {% endif %}
-
                         </div>
 
-
-                        <!-- ================================================= -->
-                        <!-- MANAGEMENT MENU -->
-                        <!-- ================================================= -->
-
                         {% if can_manage %}
-
                             <div class="dropdown">
-
-                                <button
-                                    class="btn btn-outline-secondary dropdown-toggle"
-                                    type="button"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false">
-
-                                    <i class="bi bi-gear me-1"></i>
-                                    Manage
-
+                                <button class="btn btn-outline-primary dropdown-toggle shadow-sm px-3 fw-semibold" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-gear-fill me-1"></i>Manage Notice
                                 </button>
-
-
-                                <ul class="dropdown-menu dropdown-menu-end">
-
-                                    <!-- EDIT -->
-
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 py-2">
                                     <li>
-
-                                        <a
-                                            class="dropdown-item"
-                                            href="{% url 'announcements:edit' announcement.pk %}">
-
-                                            <i class="bi bi-pencil me-2"></i>
-                                            Edit Announcement
-
+                                        <a class="dropdown-item py-2" href="{% url 'announcements:edit' announcement.pk %}">
+                                            <i class="bi bi-pencil me-2 text-primary"></i>Edit Announcement
                                         </a>
-
                                     </li>
-
-
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-
-
-                                    <!-- PUBLISH -->
+                                    <li><hr class="dropdown-divider"></li>
 
                                     {% if announcement.status == "DRAFT" %}
-
                                         <li>
-
-                                            <button
-                                                type="button"
-                                                class="dropdown-item"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#publishModal">
-
-                                                <i class="bi bi-send me-2"></i>
-                                                Publish
-
+                                            <button type="button" class="dropdown-item py-2" data-bs-toggle="modal" data-bs-target="#publishModal">
+                                                <i class="bi bi-send me-2 text-success"></i>Publish
                                             </button>
-
                                         </li>
-
                                     {% endif %}
-
-
-                                    <!-- UNPUBLISH -->
 
                                     {% if announcement.status == "PUBLISHED" %}
-
                                         <li>
-
-                                            <form
-                                                method="post"
-                                                action="{% url 'announcements:unpublish' announcement.pk %}">
-
+                                            <form method="post" action="{% url 'announcements:unpublish' announcement.pk %}">
                                                 {% csrf_token %}
-
-                                                <button
-                                                    type="submit"
-                                                    class="dropdown-item">
-
-                                                    <i class="bi bi-arrow-counterclockwise me-2"></i>
-                                                    Unpublish
-
+                                                <button type="submit" class="dropdown-item py-2">
+                                                    <i class="bi bi-arrow-counterclockwise me-2 text-warning"></i>Unpublish
                                                 </button>
-
                                             </form>
-
                                         </li>
-
                                     {% endif %}
-
-
-                                    <!-- ARCHIVE -->
 
                                     {% if announcement.status != "ARCHIVED" %}
-
                                         <li>
-
-                                            <form
-                                                method="post"
-                                                action="{% url 'announcements:archive' announcement.pk %}">
-
+                                            <form method="post" action="{% url 'announcements:archive' announcement.pk %}">
                                                 {% csrf_token %}
-
-                                                <button
-                                                    type="submit"
-                                                    class="dropdown-item">
-
-                                                    <i class="bi bi-archive me-2"></i>
-                                                    Archive
-
+                                                <button type="submit" class="dropdown-item py-2">
+                                                    <i class="bi bi-archive me-2 text-secondary"></i>Archive
                                                 </button>
-
                                             </form>
-
                                         </li>
-
                                     {% endif %}
-
-
-                                    <!-- RESTORE -->
 
                                     {% if announcement.status == "ARCHIVED" %}
-
                                         <li>
-
-                                            <form
-                                                method="post"
-                                                action="{% url 'announcements:restore' announcement.pk %}">
-
+                                            <form method="post" action="{% url 'announcements:restore' announcement.pk %}">
                                                 {% csrf_token %}
-
-                                                <button
-                                                    type="submit"
-                                                    class="dropdown-item">
-
-                                                    <i class="bi bi-arrow-clockwise me-2"></i>
-                                                    Restore as Draft
-
+                                                <button type="submit" class="dropdown-item py-2">
+                                                    <i class="bi bi-arrow-clockwise me-2 text-success"></i>Restore as Draft
                                                 </button>
-
                                             </form>
-
                                         </li>
-
                                     {% endif %}
-
-
-                                    <!-- FEATURE -->
 
                                     {% if announcement.status == "PUBLISHED" %}
-
                                         {% if announcement.is_featured %}
-
                                             <li>
-
-                                                <form
-                                                    method="post"
-                                                    action="{% url 'announcements:unfeature' announcement.pk %}">
-
+                                                <form method="post" action="{% url 'announcements:unfeature' announcement.pk %}">
                                                     {% csrf_token %}
-
-                                                    <button
-                                                        type="submit"
-                                                        class="dropdown-item">
-
-                                                        <i class="bi bi-star me-2"></i>
-                                                        Remove Featured
-
+                                                    <button type="submit" class="dropdown-item py-2">
+                                                        <i class="bi bi-star me-2 text-warning"></i>Remove Featured
                                                     </button>
-
                                                 </form>
-
                                             </li>
-
                                         {% else %}
-
                                             <li>
-
-                                                <form
-                                                    method="post"
-                                                    action="{% url 'announcements:feature' announcement.pk %}">
-
+                                                <form method="post" action="{% url 'announcements:feature' announcement.pk %}">
                                                     {% csrf_token %}
-
-                                                    <button
-                                                        type="submit"
-                                                        class="dropdown-item">
-
-                                                        <i class="bi bi-star-fill me-2"></i>
-                                                        Feature Announcement
-
+                                                    <button type="submit" class="dropdown-item py-2">
+                                                        <i class="bi bi-star-fill me-2 text-warning"></i>Feature Announcement
                                                     </button>
-
                                                 </form>
-
                                             </li>
-
                                         {% endif %}
-
                                     {% endif %}
 
-
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-
-
-                                    <!-- DELETE -->
+                                    <li><hr class="dropdown-divider"></li>
 
                                     {% if user.is_superuser or user.role == "ADMIN" %}
-
                                         <li>
-
-                                            <button
-                                                type="button"
-                                                class="dropdown-item text-danger"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#deleteModal">
-
-                                                <i class="bi bi-trash me-2"></i>
-                                                Delete Permanently
-
+                                            <button type="button" class="dropdown-item py-2 text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                                <i class="bi bi-trash me-2"></i>Delete Permanently
                                             </button>
-
                                         </li>
-
                                     {% endif %}
-
                                 </ul>
-
                             </div>
-
                         {% endif %}
 
                     </div>
-
                 </div>
 
 
-                <!-- ================================================= -->
-                <!-- META INFORMATION -->
-                <!-- ================================================= -->
-
-                <div class="px-4 pb-3">
-
-                    <div class="d-flex flex-wrap gap-3 text-muted small">
-
-                        <!-- AUTHOR -->
-
+                <div class="px-4 px-md-5 pb-3 pt-2">
+                    <div class="d-flex flex-wrap gap-3 text-muted small bg-light p-3 rounded-3 border">
                         {% if announcement.created_by %}
-
-                            <span>
-
-                                <i class="bi bi-person me-1"></i>
-
-                                {{ announcement.created_by.get_full_name|default:announcement.created_by.username }}
-
-                            </span>
-
+                            <span><i class="bi bi-person me-1 text-primary"></i>{{ announcement.created_by.get_full_name|default:announcement.created_by.username }}</span>
                         {% endif %}
-
-
-                        <!-- CREATED -->
-
-                        <span>
-
-                            <i class="bi bi-calendar3 me-1"></i>
-
-                            {{ announcement.created_at|date:"d M Y, H:i" }}
-
-                        </span>
-
-
-                        <!-- TYPE -->
-
+                        <span><i class="bi bi-calendar3 me-1 text-primary"></i>{{ announcement.created_at|date:"d M Y, H:i" }}</span>
                         {% if announcement.announcement_type %}
-
-                            <span>
-
-                                <i class="bi bi-megaphone me-1"></i>
-
-                                {{ announcement.get_announcement_type_display }}
-
-                            </span>
-
+                            <span><i class="bi bi-megaphone me-1 text-primary"></i>{{ announcement.get_announcement_type_display }}</span>
                         {% endif %}
-
-
-                        <!-- AUDIENCE -->
-
                         {% if announcement.target_audience %}
-
-                            <span>
-
-                                <i class="bi bi-people me-1"></i>
-
-                                {{ announcement.get_target_audience_display }}
-
-                            </span>
-
+                            <span><i class="bi bi-people me-1 text-primary"></i>{{ announcement.get_target_audience_display }}</span>
                         {% endif %}
-
-
-                        <!-- VIEWS -->
-
-                        <span>
-
-                            <i class="bi bi-eye me-1"></i>
-
-                            {{ announcement.view_count|default:0 }} view{{ announcement.view_count|default:0|pluralize }}
-
-                        </span>
-
+                        <span><i class="bi bi-eye me-1 text-primary"></i>{{ announcement.view_count|default:0 }} view{{ announcement.view_count|default:0|pluralize }}</span>
                     </div>
-
                 </div>
 
+                <hr class="mx-4 mx-md-5 text-muted opacity-25">
 
-                <hr class="mx-4">
-
-
-                <!-- ================================================= -->
-                <!-- ANNOUNCEMENT CONTENT -->
-                <!-- ================================================= -->
-
-                <div class="card-body p-4">
-
-                    <div class="announcement-content">
-
-                        {{ announcement.content|linebreaks }}
-
-                    </div>
-
-                </div>
-
-
-                <!-- ================================================= -->
-                <!-- PUBLICATION INFORMATION -->
-                <!-- ================================================= -->
-
-                {% if announcement.published_at or announcement.expires_at %}
-
-                    <div class="px-4 pb-4">
-
-                        <div class="row g-3">
-
-                            {% if announcement.published_at %}
-
-                                <div class="col-12 col-md-6">
-
-                                    <div class="border rounded p-3 h-100">
-
-                                        <div class="small text-muted mb-1">
-
-                                            <i class="bi bi-send me-1"></i>
-                                            Published
-
-                                        </div>
-
-                                        <strong>
-
-                                            {{ announcement.published_at|date:"d M Y, H:i" }}
-
-                                        </strong>
-
-                                    </div>
-
-                                </div>
-
-                            {% endif %}
-
-
-                            {% if announcement.expires_at %}
-
-                                <div class="col-12 col-md-6">
-
-                                    <div class="border rounded p-3 h-100">
-
-                                        <div class="small text-muted mb-1">
-
-                                            <i class="bi bi-clock-history me-1"></i>
-                                            Expires
-
-                                        </div>
-
-                                        <strong>
-
-                                            {{ announcement.expires_at|date:"d M Y, H:i" }}
-
-                                        </strong>
-
-                                    </div>
-
-                                </div>
-
-                            {% endif %}
-
-                        </div>
-
-                    </div>
-
-                {% endif %}
-
-
-                <!-- ================================================= -->
-                <!-- ATTACHMENT -->
-                <!-- ================================================= -->
-
-                {% if announcement.attachment %}
-
-                    <div class="px-4 pb-4">
-
-                        <div class="alert alert-light border mb-0">
-
-                            <div class="d-flex align-items-center gap-3">
-
-                                <div>
-
-                                    <i class="bi bi-paperclip fs-3"></i>
-
-                                </div>
-
-                                <div class="flex-grow-1">
-
-                                    <strong>
-                                        Attachment
-                                    </strong>
-
-                                    <div class="small text-muted text-break">
-
-                                        {{ announcement.attachment.name }}
-
-                                    </div>
-
-                                </div>
-
-                                <div>
-
-                                    <a
-                                        href="{{ announcement.attachment.url }}"
-                                        class="btn btn-outline-primary btn-sm"
-                                        target="_blank"
-                                        rel="noopener noreferrer">
-
-                                        <i class="bi bi-download me-1"></i>
-                                        Open
-
-                                    </a>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                {% endif %}
-
-
-                <!-- ================================================= -->
-                <!-- IMAGE -->
-                <!-- ================================================= -->
 
                 {% if announcement.image %}
-
-                    <div class="px-4 pb-4">
-
-                        <div class="text-center">
-
-                            <img
-                                src="{{ announcement.image.url }}"
-                                alt="{{ announcement.title }}"
-                                class="img-fluid rounded shadow-sm"
-                                style="max-height: 500px; object-fit: cover;">
-
+                    <div class="px-4 px-md-5 pb-4">
+                        <div class="text-center bg-dark p-2 rounded-3 shadow-sm">
+                            <img src="{{ announcement.image.url }}" alt="{{ announcement.title }}" class="announcement-main-img img-fluid shadow-sm">
                         </div>
-
                     </div>
-
                 {% endif %}
 
 
-                <!-- ================================================= -->
-                <!-- FOOTER -->
-                <!-- ================================================= -->
+                <div class="card-body px-4 px-md-5 py-3">
+                    <div class="announcement-content">
+                        {{ announcement.content|linebreaks }}
+                    </div>
+                </div>
 
-                <div class="card-footer bg-light border-0 p-4">
 
+                {% if announcement.published_at or announcement.expires_at %}
+                    <div class="px-4 px-md-5 pb-4">
+                        <div class="row g-3">
+                            {% if announcement.published_at %}
+                                <div class="col-12 col-md-6">
+                                    <div class="border rounded-3 p-3 h-100 bg-light shadow-sm">
+                                        <div class="small text-muted mb-1 fw-semibold">
+                                            <i class="bi bi-send me-1 text-success"></i>Official Publication Time
+                                        </div>
+                                        <strong class="text-dark">{{ announcement.published_at|date:"d M Y, H:i" }}</strong>
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            {% if announcement.expires_at %}
+                                <div class="col-12 col-md-6">
+                                    <div class="border rounded-3 p-3 h-100 bg-light shadow-sm">
+                                        <div class="small text-muted mb-1 fw-semibold">
+                                            <i class="bi bi-clock-history me-1 text-warning"></i>Scheduled Expiry Time
+                                        </div>
+                                        <strong class="text-dark">{{ announcement.expires_at|date:"d M Y, H:i" }}</strong>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+
+
+                {% if announcement.attachment %}
+                    <div class="px-4 px-md-5 pb-4">
+                        <div class="alert alert-light border shadow-sm mb-0 rounded-3 p-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="p-2 bg-primary bg-opacity-10 rounded text-primary">
+                                    <i class="bi bi-paperclip fs-3"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <strong class="text-dark">Attached Document / Resource</strong>
+                                    <div class="small text-muted text-break">{{ announcement.attachment.name }}</div>
+                                </div>
+                                <div>
+                                    <a href="{{ announcement.attachment.url }}" class="btn btn-outline-primary btn-sm px-3 shadow-sm fw-semibold" target="_blank" rel="noopener noreferrer">
+                                        <i class="bi bi-download me-1"></i>Download
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+
+                <div class="card-footer bg-light border-0 p-4 px-md-5">
                     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-
-                        <a
-                            href="{% url 'announcements:list' %}"
-                            class="btn btn-outline-secondary">
-
-                            <i class="bi bi-arrow-left me-1"></i>
-                            All Announcements
-
+                        <a href="{% url 'announcements:list' %}" class="btn btn-outline-secondary shadow-sm px-4">
+                            <i class="bi bi-arrow-left me-1"></i>Back to All Announcements
                         </a>
 
-
                         {% if can_manage %}
-
-                            <a
-                                href="{% url 'announcements:edit' announcement.pk %}"
-                                class="btn btn-primary">
-
-                                <i class="bi bi-pencil me-1"></i>
-                                Edit Announcement
-
+                            <a href="{% url 'announcements:edit' announcement.pk %}" class="btn btn-primary shadow-sm px-4 fw-bold">
+                                <i class="bi bi-pencil me-1"></i>Edit Announcement
                             </a>
-
                         {% endif %}
-
                     </div>
-
                 </div>
 
             </div>
 
         </div>
-
     </div>
 
 </div>
 
-
-<!-- ========================================================= -->
-<!-- PUBLISH MODAL -->
-<!-- ========================================================= -->
 
 {% if can_manage and announcement.status == "DRAFT" %}
-
-<div
-    class="modal fade"
-    id="publishModal"
-    tabindex="-1"
-    aria-labelledby="publishModalLabel"
-    aria-hidden="true">
-
-    <div class="modal-dialog">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <h5
-                    class="modal-title"
-                    id="publishModalLabel">
-
-                    <i class="bi bi-send me-2"></i>
-                    Publish Announcement
-
+<div class="modal fade" id="publishModal" tabindex="-1" aria-labelledby="publishModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold" id="publishModalLabel">
+                    <i class="bi bi-send me-2"></i>Publish Announcement
                 </h5>
-
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal">
-                </button>
-
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-
-            <form
-                method="post"
-                action="{% url 'announcements:publish' announcement.pk %}">
-
+            <form method="post" action="{% url 'announcements:publish' announcement.pk %}">
                 {% csrf_token %}
-
-                <div class="modal-body">
-
-                    <p class="text-muted">
-
-                        You are about to publish:
-
+                <div class="modal-body p-4">
+                    <p class="text-muted small">You are about to publish the following announcement to the KUCSA platform:</p>
+                    <p class="fw-bold text-dark border-start border-primary border-4 ps-3 py-1 mb-4 bg-light rounded-end">
+                        "{{ announcement.title }}"
                     </p>
 
-                    <p class="fw-bold">
-
-                        {{ announcement.title }}
-
-                    </p>
-
+                    <div class="mb-3">
+                        <label for="published_at" class="form-label fw-semibold">Publication Date & Time</label>
+                        <input type="datetime-local" name="published_at" id="published_at" class="form-control">
+                    </div>
 
                     <div class="mb-3">
-
-                        <label
-                            for="published_at"
-                            class="form-label">
-
-                            Publication Date & Time
-
-                        </label>
-
-                        <input
-                            type="datetime-local"
-                            name="published_at"
-                            id="published_at"
-                            class="form-control">
-
+                        <label for="expires_at" class="form-label fw-semibold">Expiry Date & Time <span class="text-muted fw-normal">(Optional)</span></label>
+                        <input type="datetime-local" name="expires_at" id="expires_at" class="form-control">
                     </div>
 
-
-                    <div class="mb-3">
-
-                        <label
-                            for="expires_at"
-                            class="form-label">
-
-                            Expiry Date & Time
-                            <span class="text-muted">(optional)</span>
-
+                    <div class="form-check mt-3">
+                        <input type="checkbox" name="is_featured" value="true" class="form-check-input" id="is_featured">
+                        <label class="form-check-label fw-semibold text-secondary" for="is_featured">
+                            Feature this announcement prominently
                         </label>
-
-                        <input
-                            type="datetime-local"
-                            name="expires_at"
-                            id="expires_at"
-                            class="form-control">
-
                     </div>
-
-
-                    <div class="form-check">
-
-                        <input
-                            type="checkbox"
-                            name="is_featured"
-                            value="true"
-                            class="form-check-input"
-                            id="is_featured">
-
-                        <label
-                            class="form-check-label"
-                            for="is_featured">
-
-                            Feature this announcement
-
-                        </label>
-
-                    </div>
-
                 </div>
 
-
-                <div class="modal-footer">
-
-                    <button
-                        type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal">
-
-                        Cancel
-
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-outline-secondary px-4 shadow-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary px-4 shadow-sm fw-bold">
+                        <i class="bi bi-send me-1"></i>Publish Now
                     </button>
-
-                    <button
-                        type="submit"
-                        class="btn btn-primary">
-
-                        <i class="bi bi-send me-1"></i>
-                        Publish Announcement
-
-                    </button>
-
                 </div>
-
             </form>
-
         </div>
-
     </div>
-
 </div>
-
 {% endif %}
 
-
-<!-- ========================================================= -->
-<!-- DELETE MODAL -->
-<!-- ========================================================= -->
 
 {% if can_manage and user.is_superuser or can_manage and user.role == "ADMIN" %}
-
-<div
-    class="modal fade"
-    id="deleteModal"
-    tabindex="-1"
-    aria-labelledby="deleteModalLabel"
-    aria-hidden="true">
-
-    <div class="modal-dialog">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <h5
-                    class="modal-title text-danger"
-                    id="deleteModalLabel">
-
-                    <i class="bi bi-exclamation-triangle me-2"></i>
-                    Delete Announcement
-
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title fw-bold" id="deleteModalLabel">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Delete Announcement
                 </h5>
-
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal">
-                </button>
-
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-
-            <div class="modal-body">
-
-                <p>
-                    Are you sure you want to permanently delete this announcement?
-                </p>
-
-                <p class="fw-bold mb-0">
-
+            <div class="modal-body p-4">
+                <p class="text-danger fw-semibold">Are you sure you want to permanently delete this announcement?</p>
+                <p class="fw-bold text-dark border-start border-danger border-4 ps-3 py-1 mb-3 bg-light rounded-end">
                     "{{ announcement.title }}"
-
                 </p>
-
-                <div class="alert alert-danger mt-3 mb-0">
-
-                    <i class="bi bi-exclamation-circle me-1"></i>
-
-                    This action cannot be undone.
-
+                <div class="alert alert-danger mb-0 py-2 small shadow-sm">
+                    <i class="bi bi-exclamation-circle me-1"></i>This action cannot be undone. All views and records associated will be wiped.
                 </div>
-
             </div>
 
-
-            <div class="modal-footer">
-
-                <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-bs-dismiss="modal">
-
-                    Cancel
-
-                </button>
-
-
-                <form
-                    method="post"
-                    action="{% url 'announcements:delete' announcement.pk %}">
-
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-outline-secondary px-4 shadow-sm" data-bs-dismiss="modal">Cancel</button>
+                <form method="post" action="{% url 'announcements:delete' announcement.pk %}">
                     {% csrf_token %}
-
-                    <button
-                        type="submit"
-                        class="btn btn-danger">
-
-                        <i class="bi bi-trash me-1"></i>
-                        Delete Permanently
-
+                    <button type="submit" class="btn btn-danger px-4 shadow-sm fw-bold">
+                        <i class="bi bi-trash me-1"></i>Delete Permanently
                     </button>
-
                 </form>
-
             </div>
-
         </div>
-
     </div>
-
 </div>
-
 {% endif %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const modalInputs = document.querySelectorAll('.modal input[type="datetime-local"]');
+        modalInputs.forEach(input => {
+            if (!input.classList.contains('form-control')) {
+                input.classList.add('form-control');
+            }
+        });
+    });
+</script>
 
 {% endblock %}

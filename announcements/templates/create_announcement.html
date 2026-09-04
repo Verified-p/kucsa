@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block title %}
@@ -7,282 +6,146 @@
 
 {% block content %}
 
-<div class="container-fluid py-4">
+<style>
+    :root {
+        --kucsa-primary: #0d6efd;
+        --kucsa-primary-hover: #0b5ed7;
+        --kucsa-bg-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
 
-    <!-- ===================================================== -->
-    <!-- PAGE HEADER -->
-    <!-- ===================================================== -->
+    body {
+        background: var(--kucsa-bg-gradient);
+    }
 
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+    .kucsa-card {
+        border-radius: 1rem;
+        transition: all 0.2s ease-in-out;
+    }
 
-        <div>
+    .form-control, .form-select {
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        border-radius: 0.50rem;
+        border: 1px solid #ced4da;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
 
-            <a
-                href="{% url 'announcements:list' %}"
-                class="text-decoration-none">
+    .form-control:focus, .form-select:focus {
+        border-color: var(--kucsa-primary);
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    }
 
-                <i class="bi bi-arrow-left me-1"></i>
-                Back to Announcements
+    textarea.form-control {
+        min-height: 150px;
+    }
+</style>
 
-            </a>
+<div class="container py-4">
 
-            <h2 class="fw-bold mt-3 mb-1">
-
-                <i class="bi bi-megaphone-fill me-2"></i>
-                Create Announcement
-
-            </h2>
-
-            <p class="text-muted mb-0">
-                Create an announcement for KUCSA members and choose
-                the appropriate audience, priority, and publication settings.
-            </p>
-
-        </div>
-
+    <div class="mb-4">
+        <a href="{% url 'announcements:list' %}" class="btn btn-outline-secondary btn-sm shadow-sm px-3">
+            <i class="bi bi-arrow-left me-1"></i>Back to Announcements
+        </a>
     </div>
 
 
-    <!-- ===================================================== -->
-    <!-- FORM CARD -->
-    <!-- ===================================================== -->
-
     <div class="row justify-content-center">
-
         <div class="col-12 col-xl-9">
 
-            <div class="card border-0 shadow-sm">
+            <div class="card kucsa-card border-0 shadow-lg bg-white overflow-hidden">
 
-                <!-- CARD HEADER -->
-
-                <div class="card-header bg-white border-0 p-4">
-
-                    <div class="d-flex align-items-center">
-
-                        <div
-                            class="bg-primary bg-opacity-10 text-primary rounded-circle
-                                   d-flex align-items-center justify-content-center
-                                   me-3"
-                            style="width: 48px; height: 48px;">
-
-                            <i class="bi bi-megaphone-fill fs-5"></i>
-
+                <div class="card-header bg-white border-0 p-4 p-md-5 pb-0">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 56px; height: 56px;">
+                            <i class="bi bi-megaphone-fill fs-4"></i>
                         </div>
-
                         <div>
-
-                            <h5 class="fw-bold mb-1">
-                                Announcement Details
-                            </h5>
-
+                            <h3 class="fw-bold mb-1 text-dark">
+                                Create Announcement
+                            </h3>
                             <p class="text-muted small mb-0">
-                                Fill in the information below to create your announcement.
+                                Broadcast important notices, news, or opportunities to KUCSA members.
                             </p>
-
                         </div>
-
                     </div>
-
                 </div>
 
+                <div class="card-body p-4 p-md-5">
 
-                <div class="card-body p-4">
-
-                    <!-- ================================================= -->
-                    <!-- FORM -->
-                    <!-- ================================================= -->
-
-                    <form
-                        method="post"
-                        enctype="multipart/form-data"
-                        novalidate>
+                    <form method="post" enctype="multipart/form-data" novalidate id="kucsaCreateAnnouncementForm">
 
                         {% csrf_token %}
 
-
-                        <!-- ================================================= -->
-                        <!-- NON-FIELD ERRORS -->
-                        <!-- ================================================= -->
-
                         {% if form.non_field_errors %}
-
-                            <div
-                                class="alert alert-danger alert-dismissible fade show"
-                                role="alert">
-
-                                <div class="d-flex">
-
-                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-
+                            <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-exclamation-triangle-fill fs-4 me-2"></i>
                                     <div>
-
-                                        <strong>
-                                            Please correct the following:
-                                        </strong>
-
-                                        <div class="mt-1">
-                                            {{ form.non_field_errors }}
-                                        </div>
-
+                                        <strong>Please check the form below:</strong>
+                                        <div class="mt-1 small">{{ form.non_field_errors }}</div>
                                     </div>
-
                                 </div>
-
-                                <button
-                                    type="button"
-                                    class="btn-close"
-                                    data-bs-dismiss="alert">
-                                </button>
-
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
-
                         {% endif %}
 
 
-                        <!-- ================================================= -->
-                        <!-- FORM FIELDS -->
-                        <!-- ================================================= -->
-
                         {% for field in form %}
-
                             <div class="mb-4">
 
-                                <!-- LABEL -->
-
-                                <label
-                                    for="{{ field.id_for_label }}"
-                                    class="form-label fw-semibold">
-
-                                    {{ field.label }}
-
+                                <label for="{{ field.id_for_label }}" class="form-label fw-semibold text-dark">
+                                    <i class="bi bi-dot text-primary fs-5"></i>{{ field.label }}
                                     {% if field.field.required %}
-
-                                        <span
-                                            class="text-danger"
-                                            title="Required field">
-                                            *
-                                        </span>
-
+                                        <span class="text-danger" title="Required field">*</span>
                                     {% endif %}
-
                                 </label>
-
-
-                                <!-- FIELD -->
 
                                 {{ field }}
 
-
-                                <!-- HELP TEXT -->
-
                                 {% if field.help_text %}
-
-                                    <div class="form-text mt-1">
-
-                                        <i class="bi bi-info-circle me-1"></i>
-
-                                        {{ field.help_text }}
-
+                                    <div class="form-text small text-muted mt-1">
+                                        <i class="bi bi-info-circle me-1"></i>{{ field.help_text }}
                                     </div>
-
                                 {% endif %}
 
-
-                                <!-- FIELD ERRORS -->
-
                                 {% if field.errors %}
-
                                     <div class="text-danger small mt-2">
-
                                         {% for error in field.errors %}
-
-                                            <div class="d-flex align-items-start mb-1">
-
-                                                <i
-                                                    class="bi bi-exclamation-circle me-1 mt-1">
-                                                </i>
-
-                                                <span>
-                                                    {{ error }}
-                                                </span>
-
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-exclamation-circle me-1"></i>
+                                                <span>{{ error }}</span>
                                             </div>
-
                                         {% endfor %}
-
                                     </div>
-
                                 {% endif %}
 
                             </div>
-
                         {% endfor %}
 
 
-                        <!-- ================================================= -->
-                        <!-- FORM INFORMATION -->
-                        <!-- ================================================= -->
-
-                        <div class="alert alert-light border mt-4">
-
-                            <div class="d-flex align-items-start">
-
-                                <i
-                                    class="bi bi-lightbulb text-primary fs-5 me-3">
-                                </i>
-
-                                <div>
-
-                                    <h6 class="fw-bold mb-1">
-                                        Before submitting
-                                    </h6>
-
-                                    <p class="small text-muted mb-0">
-
-                                        Make sure the announcement has the correct
-                                        audience, priority, publication status,
-                                        and expiry date where applicable.
-
-                                    </p>
-
+                        <div class="alert alert-light border shadow-sm my-4 rounded-3 p-3">
+                            <div class="d-flex align-items-start gap-3">
+                                <div class="text-primary fs-4 mt-1">
+                                    <i class="bi bi-lightbulb-fill"></i>
                                 </div>
-
+                                <div>
+                                    <h6 class="fw-bold mb-1 text-dark">Publishing Best Practices</h6>
+                                    <p class="small text-muted mb-0">
+                                        Ensure your target audience and priority level are correctly configured so members receive timely notifications according to your intentions.
+                                    </p>
+                                </div>
                             </div>
-
                         </div>
 
 
-                        <!-- ================================================= -->
-                        <!-- ACTIONS -->
-                        <!-- ================================================= -->
-
-                        <div
-                            class="d-flex flex-column flex-sm-row
-                                   justify-content-between
-                                   gap-2
-                                   mt-4
-                                   pt-4
-                                   border-top">
-
-                            <a
-                                href="{% url 'announcements:list' %}"
-                                class="btn btn-outline-secondary">
-
-                                <i class="bi bi-x-circle me-1"></i>
-                                Cancel
-
+                        <div class="d-flex flex-column flex-sm-row justify-content-between gap-3 mt-4 pt-4 border-top">
+                            <a href="{% url 'announcements:list' %}" class="btn btn-outline-secondary px-4 shadow-sm">
+                                <i class="bi bi-x-circle me-1"></i>Cancel
                             </a>
 
-
-                            <button
-                                type="submit"
-                                class="btn btn-primary">
-
-                                <i class="bi bi-check-circle me-1"></i>
-                                Create Announcement
-
+                            <button type="submit" class="btn btn-primary px-5 shadow-sm fw-bold py-2">
+                                <i class="bi bi-check-circle-fill me-2"></i>Publish Announcement
                             </button>
-
                         </div>
 
                     </form>
@@ -292,9 +155,46 @@
             </div>
 
         </div>
-
     </div>
 
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Automatically inject Bootstrap classes into rendered Django form elements
+        const textInputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="url"], input[type="number"], input[type="password"], input[type="datetime-local"], input[type="date"]');
+        const textAreas = document.querySelectorAll('textarea');
+        const selectInputs = document.querySelectorAll('select');
+        const fileInputs = document.querySelectorAll('input[type="file"]');
+        const checkboxInputs = document.querySelectorAll('input[type="checkbox"]');
+
+        textInputs.forEach(el => {
+            if (!el.classList.contains('form-control')) el.classList.add('form-control');
+        });
+
+        textAreas.forEach(el => {
+            if (!el.classList.contains('form-control')) el.classList.add('form-control');
+        });
+
+        selectInputs.forEach(el => {
+            if (!el.classList.contains('form-select')) el.classList.add('form-select');
+        });
+
+        fileInputs.forEach(el => {
+            if (!el.classList.contains('form-control')) el.classList.add('form-control');
+        });
+
+        checkboxInputs.forEach(el => {
+            if (!el.classList.contains('form-check-input')) {
+                el.classList.add('form-check-input');
+                // Wrap in form-check div structure if not already styled by parent template
+                const parent = el.parentNode;
+                if (parent && !parent.classList.contains('form-check')) {
+                    parent.classList.add('form-check', 'form-switch', 'my-2');
+                }
+            }
+        });
+    });
+</script>
 
 {% endblock %}

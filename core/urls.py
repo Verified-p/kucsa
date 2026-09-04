@@ -31,4 +31,11 @@ urlpatterns = [
         name="faq"
     ),
 
+     # Public KUCSA landing page
+    path(
+        "landing/",
+        views.landing_page_view,
+        name="landing",
+    ),
+
 ]

@@ -1,0 +1,2353 @@
+{% extends "base.html" %}
+
+{% block title %}
+Home | KUCSA Platform
+{% endblock %}
+
+{% block content %}
+
+<style>
+    /* =========================================================
+       KUCSA HOME PAGE
+       All styles are scoped to .kucsa-home-page
+       ========================================================= */
+
+    .kucsa-home-page {
+        --kucsa-primary: #0d6efd;
+        --kucsa-primary-dark: #0a58ca;
+        --kucsa-primary-soft: rgba(13, 110, 253, 0.08);
+        --kucsa-dark: #101828;
+        --kucsa-text: #344054;
+        --kucsa-muted: #667085;
+        --kucsa-border: #eaecf0;
+        --kucsa-surface: #ffffff;
+        --kucsa-surface-soft: #f8fafc;
+        --kucsa-radius: 18px;
+
+        width: 100%;
+        overflow: hidden;
+
+        background: #ffffff;
+        color: var(--kucsa-text);
+    }
+
+
+    /* =========================================================
+       GLOBAL SECTION UTILITIES
+       ========================================================= */
+
+    .kucsa-home-page .kucsa-section {
+        position: relative;
+
+        padding:
+            5.5rem 0;
+    }
+
+    .kucsa-home-page .kucsa-section-soft {
+        background:
+            linear-gradient(
+                180deg,
+                #f8fafc 0%,
+                #ffffff 100%
+            );
+    }
+
+    .kucsa-home-page .kucsa-section-heading {
+        max-width: 720px;
+
+        margin:
+            0 auto
+            3rem;
+
+        text-align: center;
+    }
+
+    .kucsa-home-page .kucsa-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+
+        margin-bottom: 0.75rem;
+
+        padding:
+            0.42rem
+            0.75rem;
+
+        border:
+            1px solid
+            rgba(13, 110, 253, 0.12);
+
+        border-radius: 999px;
+
+        background:
+            rgba(13, 110, 253, 0.06);
+
+        color:
+            var(--kucsa-primary);
+
+        font-size: 0.7rem;
+        font-weight: 750;
+
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+    }
+
+    .kucsa-home-page .kucsa-section-title {
+        margin: 0;
+
+        color: var(--kucsa-dark);
+
+        font-size:
+            clamp(
+                1.75rem,
+                3vw,
+                2.35rem
+            );
+
+        line-height: 1.2;
+
+        font-weight: 800;
+
+        letter-spacing: -0.035em;
+    }
+
+    .kucsa-home-page .kucsa-section-description {
+        margin:
+            0.85rem
+            auto
+            0;
+
+        max-width: 680px;
+
+        color: var(--kucsa-muted);
+
+        font-size: 0.95rem;
+        line-height: 1.75;
+    }
+
+
+    /* =========================================================
+       HERO
+       ========================================================= */
+
+    .kucsa-home-page .kucsa-hero {
+        position: relative;
+
+        min-height:
+            min(
+                720px,
+                calc(100vh - 70px)
+            );
+
+        display: flex;
+        align-items: center;
+
+        padding:
+            5rem 0;
+
+        background:
+            radial-gradient(
+                circle at 85% 20%,
+                rgba(13, 110, 253, 0.15),
+                transparent 32%
+            ),
+            radial-gradient(
+                circle at 10% 80%,
+                rgba(13, 110, 253, 0.08),
+                transparent 30%
+            ),
+            linear-gradient(
+                135deg,
+                #f8fbff 0%,
+                #ffffff 58%,
+                #f7faff 100%
+            );
+
+        overflow: hidden;
+    }
+
+
+    /* =========================================================
+       HERO DECORATION
+       ========================================================= */
+
+    .kucsa-home-page .kucsa-hero::before {
+        content: "";
+
+        position: absolute;
+
+        width: 360px;
+        height: 360px;
+
+        right: -150px;
+        bottom: -160px;
+
+        border-radius: 50%;
+
+        border:
+            1px solid
+            rgba(13, 110, 253, 0.09);
+
+        box-shadow:
+            0 0 0 55px
+                rgba(13, 110, 253, 0.025),
+            0 0 0 110px
+                rgba(13, 110, 253, 0.018);
+
+        pointer-events: none;
+    }
+
+    .kucsa-home-page .kucsa-hero::after {
+        content: "";
+
+        position: absolute;
+
+        width: 220px;
+        height: 220px;
+
+        left: -120px;
+        top: -100px;
+
+        border-radius: 50%;
+
+        background:
+            rgba(13, 110, 253, 0.035);
+
+        pointer-events: none;
+    }
+
+
+    /* =========================================================
+       HERO CONTENT
+       ========================================================= */
+
+    .kucsa-home-page .kucsa-hero-content {
+        position: relative;
+
+        z-index: 2;
+
+        animation:
+            kucsaHeroContent
+            0.7s
+            cubic-bezier(0.22, 1, 0.36, 1)
+            both;
+    }
+
+    @keyframes kucsaHeroContent {
+
+        from {
+            opacity: 0;
+            transform: translateY(18px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    }
+
+
+    /* =========================================================
+       HERO TITLE
+       ========================================================= */
+
+    .kucsa-home-page .kucsa-hero-title {
+        max-width: 720px;
+
+        margin: 0;
+
+        color: var(--kucsa-dark);
+
+        font-size:
+            clamp(
+                2.25rem,
+                5vw,
+                4.25rem
+            );
+
+        line-height: 1.03;
+
+        font-weight: 850;
+
+        letter-spacing: -0.055em;
+    }
+
+    .kucsa-home-page .kucsa-hero-title .highlight {
+        color: var(--kucsa-primary);
+    }
+
+
+    /* =========================================================
+       HERO DESCRIPTION
+       ========================================================= */
+
+    .kucsa-home-page .kucsa-hero-description {
+        max-width: 650px;
+
+        margin:
+            1.5rem 0
+            0;
+
+        color: var(--kucsa-muted);
+
+        font-size:
+            clamp(
+                0.95rem,
+                2vw,
+                1.1rem
+            );
+
+        line-height: 1.8;
+    }
+
+
+    /* =========================================================
+       HERO ACTIONS
+       ========================================================= */
+
+    .kucsa-home-page .kucsa-hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+
+        gap: 0.75rem;
+
+        margin-top: 2rem;
+    }
+
+    .kucsa-home-page .kucsa-primary-btn,
+    .kucsa-home-page .kucsa-secondary-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+
+        min-height: 48px;
+
+        padding:
+            0.75rem
+            1.15rem;
+
+        border-radius: 11px;
+
+        font-size: 0.85rem;
+        font-weight: 700;
+
+        text-decoration: none;
+
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            background-color 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .kucsa-home-page .kucsa-primary-btn {
+        border:
+            1px solid
+            var(--kucsa-primary);
+
+        background:
+            var(--kucsa-primary);
+
+        color: #ffffff;
+
+        box-shadow:
+            0 7px 18px
+            rgba(13, 110, 253, 0.18);
+    }
+
+    .kucsa-home-page .kucsa-primary-btn:hover {
+        background:
+            var(--kucsa-primary-dark);
+
+        border-color:
+            var(--kucsa-primary-dark);
+
+        color: #ffffff;
+
+        transform:
+            translateY(-2px);
+
+        box-shadow:
+            0 12px 24px
+            rgba(13, 110, 253, 0.24);
+    }
+
+    .kucsa-home-page .kucsa-secondary-btn {
+        border:
+            1px solid
+            #d0d5dd;
+
+        background:
+            #ffffff;
+
+        color:
+            #344054;
+    }
+
+    .kucsa-home-page .kucsa-secondary-btn:hover {
+        border-color:
+            #98a2b3;
+
+        background:
+            #f8fafc;
+
+        color:
+            var(--kucsa-dark);
+
+        transform:
+            translateY(-2px);
+
+        box-shadow:
+            0 7px 18px
+            rgba(16, 24, 40, 0.08);
+    }
+
+    .kucsa-home-page
+    .kucsa-primary-btn:focus-visible,
+    .kucsa-home-page
+    .kucsa-secondary-btn:focus-visible {
+        outline: none;
+
+        box-shadow:
+            0 0 0 4px
+            rgba(13, 110, 253, 0.14);
+    }
+
+
+    /* =========================================================
+       HERO VISUAL
+       ========================================================= */
+
+    .kucsa-home-page .kucsa-hero-visual {
+        position: relative;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        min-height: 420px;
+
+        animation:
+            kucsaHeroVisual
+            0.85s
+            0.1s
+            cubic-bezier(0.22, 1, 0.36, 1)
+            both;
+    }
+
+    @keyframes kucsaHeroVisual {
+
+        from {
+            opacity: 0;
+            transform:
+                translateY(20px)
+                scale(0.96);
+        }
+
+        to {
+            opacity: 1;
+            transform:
+                translateY(0)
+                scale(1);
+        }
+
+    }
+
+
+    /* =========================================================
+       HERO DEVICE
+       ========================================================= */
+
+    .kucsa-home-page .kucsa-device {
+        position: relative;
+
+        width: min(440px, 90%);
+
+        padding: 10px;
+
+        border:
+            1px solid
+            rgba(255, 255, 255, 0.8);
+
+        border-radius: 24px;
+
+        background:
+            linear-gradient(
+                145deg,
+                #ffffff,
+                #eef5ff
+            );
+
+        box-shadow:
+            0 35px 80px
+            rgba(16, 24, 40, 0.16),
+            0 10px 30px
+            rgba(13, 110, 253, 0.08);
+
+        transform:
+            perspective(900px)
+            rotateY(-5deg)
+            rotateX(2deg);
+
+        transition:
+            transform 0.35s ease;
+    }
+
+    .kucsa-home-page .kucsa-device:hover {
+        transform:
+            perspective(900px)
+            rotateY(0deg)
+            rotateX(0deg)
+            translateY(-5px);
+    }
+
+    .kucsa-home-page .kucsa-device-screen {
+        min-height: 310px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 17px;
+
+        background:
+            radial-gradient(
+                circle at 50% 25%,
+                rgba(13, 110, 253, 0.16),
+                transparent 42%
+            ),
+            linear-gradient(
+                145deg,
+                #0f172a,
+                #172554
+            );
+
+        overflow: hidden;
+    }
+
+    .kucsa-home-page .kucsa-device-content {
+        width: 80%;
+
+        text-align: center;
+    }
+
+    .kucsa-home-page .kucsa-device-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 76px;
+        height: 76px;
+
+        margin-bottom: 1.25rem;
+
+        border-radius: 22px;
+
+        background:
+            rgba(255, 255, 255, 0.1);
+
+        border:
+            1px solid
+            rgba(255, 255, 255, 0.12);
+
+        color: #ffffff;
+
+        font-size: 2rem;
+
+        box-shadow:
+            0 15px 35px
+            rgba(0, 0, 0, 0.15);
+    }
+
+    .kucsa-home-page .kucsa-device-title {
+        margin: 0;
+
+        color: #ffffff;
+
+        font-size: 1.2rem;
+        font-weight: 750;
+    }
+
+    .kucsa-home-page .kucsa-device-text {
+        margin:
+            0.6rem
+            0
+            0;
+
+        color:
+            rgba(255, 255, 255, 0.68);
+
+        font-size: 0.78rem;
+        line-height: 1.6;
+    }
+
+
+    /* =========================================================
+       HERO FLOATING CARDS
+       ========================================================= */
+
+    .kucsa-home-page .kucsa-floating-card {
+        position: absolute;
+
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+
+        padding:
+            0.65rem
+            0.8rem;
+
+        border:
+            1px solid
+            rgba(255, 255, 255, 0.8);
+
+        border-radius: 12px;
+
+        background:
+            rgba(255, 255, 255, 0.9);
+
+        backdrop-filter:
+            blur(12px);
+
+        -webkit-backdrop-filter:
+            blur(12px);
+
+        box-shadow:
+            0 15px 35px
+            rgba(16, 24, 40, 0.11);
+
+        color:
+            #344054;
+
+        font-size: 0.72rem;
+        font-weight: 700;
+
+        z-index: 3;
+
+        animation:
+            kucsaFloat
+            4s
+            ease-in-out
+            infinite;
+    }
+
+    .kucsa-home-page .kucsa-floating-card i {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 28px;
+        height: 28px;
+
+        border-radius: 8px;
+
+        background:
+            var(--kucsa-primary-soft);
+
+        color:
+            var(--kucsa-primary);
+    }
+
+    .kucsa-home-page .kucsa-floating-one {
+        top: 12%;
+        left: 2%;
+    }
+
+    .kucsa-home-page .kucsa-floating-two {
+        right: 0;
+        bottom: 12%;
+
+        animation-delay:
+            -1.5s;
+    }
+
+    @keyframes kucsaFloat {
+
+        0%,
+        100% {
+            transform:
+                translateY(0);
+        }
+
+        50% {
+            transform:
+                translateY(-7px);
+        }
+
+    }
+
+
+    /* =========================================================
+       ABOUT
+       ========================================================= */
+
+    .kucsa-home-page .kucsa-about-card {
+        padding:
+            2rem;
+
+        border:
+            1px solid
+            var(--kucsa-border);
+
+        border-radius:
+            var(--kucsa-radius);
+
+        background:
+            #ffffff;
+
+        box-shadow:
+            0 8px 28px
+            rgba(16, 24, 40, 0.05);
+
+        text-align: center;
+    }
+
+    .kucsa-home-page .kucsa-about-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 58px;
+        height: 58px;
+
+        margin-bottom: 1rem;
+
+        border-radius: 16px;
+
+        background:
+            var(--kucsa-primary-soft);
+
+        color:
+            var(--kucsa-primary);
+
+        font-size: 1.35rem;
+    }
+
+    .kucsa-home-page .kucsa-about-text {
+        max-width: 800px;
+
+        margin:
+            0 auto;
+
+        color:
+            var(--kucsa-muted);
+
+        font-size: 0.92rem;
+        line-height: 1.8;
+    }
+
+
+    /* =========================================================
+       FEATURE CARDS
+       ========================================================= */
+
+    .kucsa-home-page .kucsa-feature-card {
+        position: relative;
+
+        height: 100%;
+
+        padding:
+            1.6rem;
+
+        border:
+            1px solid
+            var(--kucsa-border);
+
+        border-radius:
+            var(--kucsa-radius);
+
+        background:
+            #ffffff;
+
+        box-shadow:
+            0 5px 18px
+            rgba(16, 24, 40, 0.035);
+
+        overflow: hidden;
+
+        transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease,
+            border-color 0.25s ease;
+    }
+
+    .kucsa-home-page .kucsa-feature-card::after {
+        content: "";
+
+        position: absolute;
+
+        width: 100px;
+        height: 100px;
+
+        right: -45px;
+        bottom: -45px;
+
+        border-radius: 50%;
+
+        background:
+            var(--kucsa-primary-soft);
+
+        pointer-events: none;
+    }
+
+    .kucsa-home-page .kucsa-feature-card:hover {
+        transform:
+            translateY(-6px);
+
+        border-color:
+            rgba(13, 110, 253, 0.18);
+
+        box-shadow:
+            0 18px 38px
+            rgba(16, 24, 40, 0.09);
+    }
+
+    .kucsa-home-page .kucsa-feature-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 50px;
+        height: 50px;
+
+        margin-bottom: 1rem;
+
+        border-radius: 14px;
+
+        font-size: 1.15rem;
+    }
+
+    .kucsa-home-page .kucsa-feature-icon-blue {
+        background: rgba(13, 110, 253, 0.09);
+        color: #0d6efd;
+    }
+
+    .kucsa-home-page .kucsa-feature-icon-green {
+        background: rgba(25, 135, 84, 0.09);
+        color: #198754;
+    }
+
+    .kucsa-home-page .kucsa-feature-icon-orange {
+        background: rgba(255, 193, 7, 0.12);
+        color: #b58105;
+    }
+
+    .kucsa-home-page .kucsa-feature-title {
+        margin: 0;
+
+        color:
+            var(--kucsa-dark);
+
+        font-size: 0.98rem;
+        font-weight: 750;
+    }
+
+    .kucsa-home-page .kucsa-feature-text {
+        margin:
+            0.65rem
+            0
+            0;
+
+        color:
+            var(--kucsa-muted);
+
+        font-size: 0.8rem;
+        line-height: 1.7;
+    }
+
+
+    /* =========================================================
+       TECHNICAL DOMAINS
+       ========================================================= */
+
+    .kucsa-home-page .kucsa-domain {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+
+        width: 100%;
+        min-height: 54px;
+
+        padding:
+            0.75rem
+            1rem;
+
+        border:
+            1px solid
+            var(--kucsa-border);
+
+        border-radius: 12px;
+
+        background:
+            #ffffff;
+
+        color:
+            var(--kucsa-text);
+
+        font-size: 0.78rem;
+        font-weight: 650;
+
+        box-shadow:
+            0 3px 10px
+            rgba(16, 24, 40, 0.025);
+
+        transition:
+            transform 0.2s ease,
+            border-color 0.2s ease,
+            background-color 0.2s ease,
+            color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .kucsa-home-page .kucsa-domain:hover {
+        transform:
+            translateY(-3px);
+
+        border-color:
+            rgba(13, 110, 253, 0.2);
+
+        background:
+            #f8fbff;
+
+        color:
+            var(--kucsa-primary);
+
+        box-shadow:
+            0 10px 22px
+            rgba(13, 110, 253, 0.07);
+    }
+
+    .kucsa-home-page .kucsa-domain i {
+        color:
+            var(--kucsa-primary);
+
+        font-size: 0.9rem;
+    }
+
+
+    /* =========================================================
+       CTA
+       ========================================================= */
+
+    .kucsa-home-page .kucsa-cta {
+        position: relative;
+
+        padding:
+            5rem 0;
+
+        background:
+            radial-gradient(
+                circle at 20% 30%,
+                rgba(255, 255, 255, 0.12),
+                transparent 25%
+            ),
+            radial-gradient(
+                circle at 85% 70%,
+                rgba(255, 255, 255, 0.09),
+                transparent 30%
+            ),
+            linear-gradient(
+                135deg,
+                #0b5ed7 0%,
+                #0d6efd 50%,
+                #2563eb 100%
+            );
+
+        color: #ffffff;
+
+        overflow: hidden;
+    }
+
+    .kucsa-home-page .kucsa-cta::before {
+        content: "";
+
+        position: absolute;
+
+        width: 280px;
+        height: 280px;
+
+        right: -100px;
+        top: -130px;
+
+        border-radius: 50%;
+
+        border:
+            1px solid
+            rgba(255, 255, 255, 0.15);
+
+        box-shadow:
+            0 0 0 50px
+                rgba(255, 255, 255, 0.025),
+            0 0 0 100px
+                rgba(255, 255, 255, 0.02);
+    }
+
+    .kucsa-home-page .kucsa-cta-content {
+        position: relative;
+        z-index: 2;
+
+        max-width: 760px;
+
+        margin: 0 auto;
+
+        text-align: center;
+    }
+
+    .kucsa-home-page .kucsa-cta-title {
+        margin: 0;
+
+        color: #ffffff;
+
+        font-size:
+            clamp(
+                1.8rem,
+                4vw,
+                2.7rem
+            );
+
+        line-height: 1.2;
+
+        font-weight: 800;
+
+        letter-spacing: -0.035em;
+    }
+
+    .kucsa-home-page .kucsa-cta-text {
+        max-width: 650px;
+
+        margin:
+            1rem auto
+            0;
+
+        color:
+            rgba(255, 255, 255, 0.82);
+
+        font-size: 0.95rem;
+        line-height: 1.75;
+    }
+
+    .kucsa-home-page .kucsa-cta-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+
+        min-height: 48px;
+
+        margin-top: 1.6rem;
+
+        padding:
+            0.75rem
+            1.3rem;
+
+        border:
+            1px solid
+            rgba(255, 255, 255, 0.9);
+
+        border-radius: 11px;
+
+        background: #ffffff;
+
+        color:
+            var(--kucsa-primary);
+
+        font-size: 0.84rem;
+        font-weight: 750;
+
+        text-decoration: none;
+
+        box-shadow:
+            0 8px 20px
+            rgba(0, 0, 0, 0.12);
+
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            background-color 0.2s ease;
+    }
+
+    .kucsa-home-page .kucsa-cta-btn:hover {
+        background:
+            #f8fafc;
+
+        color:
+            var(--kucsa-primary-dark);
+
+        transform:
+            translateY(-2px);
+
+        box-shadow:
+            0 13px 26px
+            rgba(0, 0, 0, 0.16);
+    }
+
+
+    /* =========================================================
+       SCROLL REVEAL
+       ========================================================= */
+
+    .kucsa-home-page .kucsa-reveal {
+        opacity: 0;
+
+        transform:
+            translateY(18px);
+
+        transition:
+            opacity 0.65s ease,
+            transform 0.65s ease;
+    }
+
+    .kucsa-home-page
+    .kucsa-reveal.kucsa-visible {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+
+
+    /* =========================================================
+       TABLET
+       ========================================================= */
+
+    @media (max-width: 991.98px) {
+
+        .kucsa-home-page .kucsa-section {
+            padding:
+                4.5rem 0;
+        }
+
+        .kucsa-home-page .kucsa-hero {
+            min-height: auto;
+
+            padding:
+                4.5rem 0;
+        }
+
+        .kucsa-home-page .kucsa-hero-title {
+            font-size:
+                clamp(
+                    2.25rem,
+                    6vw,
+                    3.4rem
+                );
+        }
+
+        .kucsa-home-page .kucsa-hero-visual {
+            min-height: 360px;
+
+            margin-top: 2.5rem;
+        }
+
+        .kucsa-home-page .kucsa-device {
+            width: min(420px, 82%);
+        }
+
+        .kucsa-home-page .kucsa-floating-one {
+            left: 7%;
+        }
+
+        .kucsa-home-page .kucsa-floating-two {
+            right: 7%;
+        }
+
+    }
+
+
+    /* =========================================================
+       MOBILE
+       ========================================================= */
+
+    @media (max-width: 767.98px) {
+
+        .kucsa-home-page .kucsa-section {
+            padding:
+                3.75rem 0;
+        }
+
+        .kucsa-home-page .kucsa-section-heading {
+            margin-bottom: 2.25rem;
+        }
+
+        .kucsa-home-page .kucsa-section-description {
+            font-size: 0.86rem;
+        }
+
+        .kucsa-home-page .kucsa-hero {
+            padding:
+                3.75rem 0;
+        }
+
+        .kucsa-home-page .kucsa-hero-title {
+            font-size:
+                clamp(
+                    2rem,
+                    10vw,
+                    2.8rem
+                );
+
+            letter-spacing:
+                -0.045em;
+        }
+
+        .kucsa-home-page .kucsa-hero-description {
+            margin-top: 1.2rem;
+
+            font-size: 0.88rem;
+        }
+
+        .kucsa-home-page .kucsa-hero-actions {
+            margin-top: 1.5rem;
+        }
+
+        .kucsa-home-page
+        .kucsa-primary-btn,
+        .kucsa-home-page
+        .kucsa-secondary-btn {
+            min-height: 46px;
+
+            padding:
+                0.7rem
+                0.95rem;
+
+            font-size: 0.8rem;
+        }
+
+        .kucsa-home-page .kucsa-hero-visual {
+            min-height: 310px;
+
+            margin-top: 2rem;
+        }
+
+        .kucsa-home-page .kucsa-device {
+            width: 84%;
+
+            border-radius: 20px;
+
+            transform: none;
+        }
+
+        .kucsa-home-page .kucsa-device-screen {
+            min-height: 250px;
+
+            border-radius: 14px;
+        }
+
+        .kucsa-home-page .kucsa-floating-card {
+            padding:
+                0.55rem
+                0.65rem;
+
+            font-size: 0.65rem;
+        }
+
+        .kucsa-home-page .kucsa-floating-one {
+            left: 0;
+        }
+
+        .kucsa-home-page .kucsa-floating-two {
+            right: 0;
+        }
+
+        .kucsa-home-page .kucsa-about-card {
+            padding: 1.5rem;
+        }
+
+        .kucsa-home-page .kucsa-feature-card {
+            padding: 1.4rem;
+        }
+
+        .kucsa-home-page .kucsa-cta {
+            padding:
+                3.75rem 0;
+        }
+
+    }
+
+
+    /* =========================================================
+       SMALL PHONES
+       ========================================================= */
+
+    @media (max-width: 575.98px) {
+
+        .kucsa-home-page .kucsa-section {
+            padding:
+                3.25rem 0;
+        }
+
+        .kucsa-home-page .kucsa-hero {
+            padding:
+                3.25rem 0;
+        }
+
+        .kucsa-home-page .kucsa-hero-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .kucsa-home-page
+        .kucsa-primary-btn,
+        .kucsa-home-page
+        .kucsa-secondary-btn {
+            width: 100%;
+        }
+
+        .kucsa-home-page .kucsa-hero-visual {
+            min-height: 280px;
+        }
+
+        .kucsa-home-page .kucsa-device {
+            width: 88%;
+        }
+
+        .kucsa-home-page .kucsa-device-screen {
+            min-height: 220px;
+        }
+
+        .kucsa-home-page .kucsa-device-icon {
+            width: 62px;
+            height: 62px;
+
+            border-radius: 17px;
+
+            font-size: 1.55rem;
+        }
+
+        .kucsa-home-page .kucsa-device-title {
+            font-size: 1rem;
+        }
+
+        .kucsa-home-page .kucsa-device-text {
+            font-size: 0.7rem;
+        }
+
+        .kucsa-home-page .kucsa-floating-card {
+            display: none;
+        }
+
+        .kucsa-home-page .kucsa-domain {
+            min-height: 50px;
+
+            padding:
+                0.65rem
+                0.55rem;
+
+            font-size: 0.72rem;
+        }
+
+    }
+
+
+    /* =========================================================
+       VERY SMALL DEVICES
+       ========================================================= */
+
+    @media (max-width: 359.98px) {
+
+        .kucsa-home-page .kucsa-hero-title {
+            font-size: 1.9rem;
+        }
+
+        .kucsa-home-page .kucsa-section-title {
+            font-size: 1.55rem;
+        }
+
+        .kucsa-home-page .kucsa-domain {
+            font-size: 0.68rem;
+        }
+
+    }
+
+
+    /* =========================================================
+       REDUCED MOTION
+       ========================================================= */
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .kucsa-home-page *,
+        .kucsa-home-page *::before,
+        .kucsa-home-page *::after {
+            animation: none !important;
+
+            transition-duration:
+                0.01ms !important;
+        }
+
+        .kucsa-home-page .kucsa-reveal {
+            opacity: 1;
+
+            transform: none;
+        }
+
+    }
+</style>
+
+
+<div class="kucsa-home-page">
+
+
+    <!-- =====================================================
+         HERO SECTION
+         ===================================================== -->
+
+    <section class="kucsa-hero">
+
+        <div class="container">
+
+            <div class="row align-items-center">
+
+
+                <!-- =============================================
+                     HERO CONTENT
+                     ============================================= -->
+
+                <div class="col-lg-7">
+
+                    <div class="kucsa-hero-content">
+
+                        <span class="kucsa-eyebrow">
+
+                            <i
+                                class="bi bi-stars"
+                                aria-hidden="true"
+                            ></i>
+
+                            KUCSA Digital Community
+
+                        </span>
+
+
+                        <h1 class="kucsa-hero-title">
+
+                            Empowering the next generation of
+
+                            <span class="highlight">
+                                computing innovators.
+                            </span>
+
+                        </h1>
+
+
+                        <p class="kucsa-hero-description">
+
+                            Welcome to the KUCSA Digital Computing
+                            Community Platform — a centralized space
+                            for membership, events, attendance,
+                            announcements, collaboration and
+                            professional growth within the Kisii
+                            University Computing Students Association.
+
+                        </p>
+
+
+                        <div class="kucsa-hero-actions">
+
+                            <a
+                                href="{% url 'accounts:register' %}"
+                                class="kucsa-primary-btn"
+                            >
+
+                                <i
+                                    class="bi bi-person-plus-fill"
+                                    aria-hidden="true"
+                                ></i>
+
+                                <span>
+                                    Join KUCSA
+                                </span>
+
+                            </a>
+
+
+                            <a
+                                href="{% url 'accounts:login' %}"
+                                class="kucsa-secondary-btn"
+                            >
+
+                                <i
+                                    class="bi bi-box-arrow-in-right"
+                                    aria-hidden="true"
+                                ></i>
+
+                                <span>
+                                    Sign In
+                                </span>
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =============================================
+                     HERO VISUAL
+                     ============================================= -->
+
+                <div class="col-lg-5">
+
+                    <div class="kucsa-hero-visual">
+
+
+                        <!-- FLOATING CARD -->
+
+                        <div
+                            class="
+                                kucsa-floating-card
+                                kucsa-floating-one
+                            "
+                        >
+
+                            <i
+                                class="bi bi-people-fill"
+                                aria-hidden="true"
+                            ></i>
+
+                            <span>
+                                Computing Community
+                            </span>
+
+                        </div>
+
+
+                        <!-- DEVICE -->
+
+                        <div class="kucsa-device">
+
+                            <div class="kucsa-device-screen">
+
+                                <div
+                                    class="kucsa-device-content"
+                                >
+
+                                    <div
+                                        class="kucsa-device-icon"
+                                    >
+
+                                        <i
+                                            class="bi bi-cpu-fill"
+                                            aria-hidden="true"
+                                        ></i>
+
+                                    </div>
+
+                                    <h2
+                                        class="kucsa-device-title"
+                                    >
+                                        KUCSA Platform
+                                    </h2>
+
+                                    <p
+                                        class="kucsa-device-text"
+                                    >
+                                        Connect. Learn. Build.
+                                        Innovate. Grow together.
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- FLOATING CARD -->
+
+                        <div
+                            class="
+                                kucsa-floating-card
+                                kucsa-floating-two
+                            "
+                        >
+
+                            <i
+                                class="bi bi-lightning-charge-fill"
+                                aria-hidden="true"
+                            ></i>
+
+                            <span>
+                                Learn &amp; Innovate
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         ABOUT KUCSA
+         ===================================================== -->
+
+    <section class="kucsa-section">
+
+        <div class="container">
+
+            <div class="kucsa-section-heading kucsa-reveal">
+
+                <span class="kucsa-eyebrow">
+
+                    <i
+                        class="bi bi-info-circle"
+                        aria-hidden="true"
+                    ></i>
+
+                    About KUCSA
+
+                </span>
+
+                <h2 class="kucsa-section-title">
+
+                    A community built around technology
+
+                </h2>
+
+                <p class="kucsa-section-description">
+
+                    The Kisii University Computing Students Association
+                    (KUCSA) brings together students passionate about
+                    computing and technology, creating opportunities
+                    for learning, networking, innovation and
+                    professional development.
+
+                </p>
+
+            </div>
+
+
+            <div class="kucsa-about-card kucsa-reveal">
+
+                <div class="kucsa-about-icon">
+
+                    <i
+                        class="bi bi-people-fill"
+                        aria-hidden="true"
+                    ></i>
+
+                </div>
+
+                <p class="kucsa-about-text">
+
+                    Whether you are exploring your first programming
+                    language, developing advanced software solutions,
+                    participating in technical events, or preparing
+                    for your professional career, KUCSA provides a
+                    community where computing students can connect,
+                    collaborate and grow.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         PLATFORM FEATURES
+         ===================================================== -->
+
+    <section
+        class="
+            kucsa-section
+            kucsa-section-soft
+        "
+    >
+
+        <div class="container">
+
+            <div class="kucsa-section-heading kucsa-reveal">
+
+                <span class="kucsa-eyebrow">
+
+                    <i
+                        class="bi bi-grid-1x2"
+                        aria-hidden="true"
+                    ></i>
+
+                    Platform Features
+
+                </span>
+
+                <h2 class="kucsa-section-title">
+
+                    Everything you need in one place
+
+                </h2>
+
+                <p class="kucsa-section-description">
+
+                    The KUCSA platform brings important community
+                    activities together into one simple and accessible
+                    digital experience.
+
+                </p>
+
+            </div>
+
+
+            <div class="row g-4">
+
+
+                <!-- MEMBERSHIP -->
+
+                <div class="col-md-4">
+
+                    <article
+                        class="
+                            kucsa-feature-card
+                            kucsa-reveal
+                        "
+                    >
+
+                        <div
+                            class="
+                                kucsa-feature-icon
+                                kucsa-feature-icon-blue
+                            "
+                        >
+
+                            <i
+                                class="bi bi-people-fill"
+                                aria-hidden="true"
+                            ></i>
+
+                        </div>
+
+                        <h3
+                            class="kucsa-feature-title"
+                        >
+                            Membership Management
+                        </h3>
+
+                        <p
+                            class="kucsa-feature-text"
+                        >
+                            Register, manage your profile,
+                            maintain your membership information
+                            and stay connected with the KUCSA
+                            community.
+
+                        </p>
+
+                    </article>
+
+                </div>
+
+
+                <!-- EVENTS -->
+
+                <div class="col-md-4">
+
+                    <article
+                        class="
+                            kucsa-feature-card
+                            kucsa-reveal
+                        "
+                    >
+
+                        <div
+                            class="
+                                kucsa-feature-icon
+                                kucsa-feature-icon-green
+                            "
+                        >
+
+                            <i
+                                class="bi bi-calendar-event-fill"
+                                aria-hidden="true"
+                            ></i>
+
+                        </div>
+
+                        <h3
+                            class="kucsa-feature-title"
+                        >
+                            Events &amp; Activities
+                        </h3>
+
+                        <p
+                            class="kucsa-feature-text"
+                        >
+                            Discover workshops, meetings,
+                            technical sessions and other KUCSA
+                            activities happening throughout
+                            the community.
+
+                        </p>
+
+                    </article>
+
+                </div>
+
+
+                <!-- ANNOUNCEMENTS -->
+
+                <div class="col-md-4">
+
+                    <article
+                        class="
+                            kucsa-feature-card
+                            kucsa-reveal
+                        "
+                    >
+
+                        <div
+                            class="
+                                kucsa-feature-icon
+                                kucsa-feature-icon-orange
+                            "
+                        >
+
+                            <i
+                                class="bi bi-megaphone-fill"
+                                aria-hidden="true"
+                            ></i>
+
+                        </div>
+
+                        <h3
+                            class="kucsa-feature-title"
+                        >
+                            Announcements
+                        </h3>
+
+                        <p
+                            class="kucsa-feature-text"
+                        >
+                            Stay informed with important KUCSA
+                            updates, notices, opportunities and
+                            community communications.
+
+                        </p>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         TECHNICAL INTEREST AREAS
+         ===================================================== -->
+
+    <section class="kucsa-section">
+
+        <div class="container">
+
+            <div class="kucsa-section-heading kucsa-reveal">
+
+                <span class="kucsa-eyebrow">
+
+                    <i
+                        class="bi bi-code-slash"
+                        aria-hidden="true"
+                    ></i>
+
+                    Explore Technology
+
+                </span>
+
+                <h2 class="kucsa-section-title">
+
+                    Technical Interest Areas
+
+                </h2>
+
+                <p class="kucsa-section-description">
+
+                    Explore different areas of computing,
+                    discover your interests and connect with
+                    other students who share your passion.
+
+                </p>
+
+            </div>
+
+
+            <div class="row g-3">
+
+
+                <!-- AI -->
+
+                <div class="col-6 col-md-3">
+
+                    <div
+                        class="
+                            kucsa-domain
+                            kucsa-reveal
+                        "
+                    >
+
+                        <i
+                            class="bi bi-stars"
+                            aria-hidden="true"
+                        ></i>
+
+                        <span>
+                            Artificial Intelligence
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CYBERSECURITY -->
+
+                <div class="col-6 col-md-3">
+
+                    <div
+                        class="
+                            kucsa-domain
+                            kucsa-reveal
+                        "
+                    >
+
+                        <i
+                            class="bi bi-shield-lock-fill"
+                            aria-hidden="true"
+                        ></i>
+
+                        <span>
+                            Cybersecurity
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SOFTWARE -->
+
+                <div class="col-6 col-md-3">
+
+                    <div
+                        class="
+                            kucsa-domain
+                            kucsa-reveal
+                        "
+                    >
+
+                        <i
+                            class="bi bi-code-square"
+                            aria-hidden="true"
+                        ></i>
+
+                        <span>
+                            Software Engineering
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- WEB -->
+
+                <div class="col-6 col-md-3">
+
+                    <div
+                        class="
+                            kucsa-domain
+                            kucsa-reveal
+                        "
+                    >
+
+                        <i
+                            class="bi bi-globe2"
+                            aria-hidden="true"
+                        ></i>
+
+                        <span>
+                            Web Development
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- MOBILE -->
+
+                <div class="col-6 col-md-3">
+
+                    <div
+                        class="
+                            kucsa-domain
+                            kucsa-reveal
+                        "
+                    >
+
+                        <i
+                            class="bi bi-phone-fill"
+                            aria-hidden="true"
+                        ></i>
+
+                        <span>
+                            Mobile Development
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DATA SCIENCE -->
+
+                <div class="col-6 col-md-3">
+
+                    <div
+                        class="
+                            kucsa-domain
+                            kucsa-reveal
+                        "
+                    >
+
+                        <i
+                            class="bi bi-bar-chart-fill"
+                            aria-hidden="true"
+                        ></i>
+
+                        <span>
+                            Data Science
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- NETWORKING -->
+
+                <div class="col-6 col-md-3">
+
+                    <div
+                        class="
+                            kucsa-domain
+                            kucsa-reveal
+                        "
+                    >
+
+                        <i
+                            class="bi bi-diagram-3-fill"
+                            aria-hidden="true"
+                        ></i>
+
+                        <span>
+                            Networking
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CLOUD -->
+
+                <div class="col-6 col-md-3">
+
+                    <div
+                        class="
+                            kucsa-domain
+                            kucsa-reveal
+                        "
+                    >
+
+                        <i
+                            class="bi bi-cloud-fill"
+                            aria-hidden="true"
+                        ></i>
+
+                        <span>
+                            Cloud Computing
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CALL TO ACTION
+         ===================================================== -->
+
+    <section class="kucsa-cta">
+
+        <div class="container">
+
+            <div class="kucsa-cta-content kucsa-reveal">
+
+                <span class="kucsa-eyebrow">
+
+                    <i
+                        class="bi bi-rocket-takeoff-fill"
+                        aria-hidden="true"
+                    ></i>
+
+                    Start Your Journey
+
+                </span>
+
+                <h2 class="kucsa-cta-title">
+
+                    Become part of KUCSA today
+
+                </h2>
+
+                <p class="kucsa-cta-text">
+
+                    Connect with fellow computing students,
+                    participate in events, explore technology,
+                    collaborate on projects and grow your
+                    professional network.
+
+                </p>
+
+                <a
+                    href="{% url 'accounts:register' %}"
+                    class="kucsa-cta-btn"
+                >
+
+                    <i
+                        class="bi bi-person-plus-fill"
+                        aria-hidden="true"
+                    ></i>
+
+                    Register Now
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<script>
+(function () {
+
+    "use strict";
+
+
+    /* =========================================================
+       KUCSA HOME PAGE INTERACTIONS
+       ========================================================= */
+
+    function initKucsaHome() {
+
+        const page =
+            document.querySelector(
+                ".kucsa-home-page"
+            );
+
+        if (!page) {
+            return;
+        }
+
+
+        /* =====================================================
+           REDUCED MOTION CHECK
+           ===================================================== */
+
+        const reducedMotion =
+            window.matchMedia(
+                "(prefers-reduced-motion: reduce)"
+            ).matches;
+
+
+        /* =====================================================
+           SCROLL REVEAL
+           ===================================================== */
+
+        const revealElements =
+            page.querySelectorAll(
+                ".kucsa-reveal"
+            );
+
+
+        if (
+            reducedMotion ||
+            !("IntersectionObserver" in window)
+        ) {
+
+            revealElements.forEach(
+                function (element) {
+
+                    element.classList.add(
+                        "kucsa-visible"
+                    );
+
+                }
+            );
+
+        } else {
+
+            const observer =
+                new IntersectionObserver(
+                    function (entries) {
+
+                        entries.forEach(
+                            function (entry) {
+
+                                if (
+                                    entry.isIntersecting
+                                ) {
+
+                                    entry.target.classList.add(
+                                        "kucsa-visible"
+                                    );
+
+                                    observer.unobserve(
+                                        entry.target
+                                    );
+
+                                }
+
+                            }
+                        );
+
+                    },
+                    {
+                        threshold: 0.12,
+
+                        rootMargin:
+                            "0px 0px -40px 0px"
+                    }
+                );
+
+
+            revealElements.forEach(
+                function (element) {
+
+                    observer.observe(
+                        element
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           BUTTON NAVIGATION FEEDBACK
+           ===================================================== */
+
+        const navigationLinks =
+            page.querySelectorAll(
+                "a[href]"
+            );
+
+
+        navigationLinks.forEach(
+            function (link) {
+
+                link.addEventListener(
+                    "click",
+                    function () {
+
+                        /*
+                         * Avoid modifying external links.
+                         */
+
+                        if (
+                            link.hostname !==
+                            window.location.hostname
+                        ) {
+                            return;
+                        }
+
+
+                        link.classList.add(
+                            "kucsa-home-navigating"
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+        /* =====================================================
+           RESTORE STATE
+           ===================================================== */
+
+        window.addEventListener(
+            "pageshow",
+            function () {
+
+                navigationLinks.forEach(
+                    function (link) {
+
+                        link.classList.remove(
+                            "kucsa-home-navigating"
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       INITIALIZE
+       ========================================================= */
+
+    if (
+        document.readyState === "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            initKucsaHome,
+            {
+                once: true
+            }
+        );
+
+    } else {
+
+        initKucsaHome();
+
+    }
+
+})();
+</script>
+
+{% endblock %}

@@ -110,3 +110,18 @@ def error_404_view(request, exception):
         "error_404.html",
         status=404,
     )
+
+
+def landing_page_view(request):
+    """
+    Display the public KUCSA landing page.
+
+    This page is accessible to both authenticated
+    and unauthenticated users.
+    """
+
+    return render(
+        request,
+        "landing.html"
+    )
+

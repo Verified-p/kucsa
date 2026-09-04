@@ -7,324 +7,2533 @@
 {% block content %}
 
 <style>
-    :root {
+    /* =========================================================
+       KUCSA REGISTRATION PAGE
+       All styling is scoped to prevent conflicts with base.html
+    ========================================================== */
+
+    .kucsa-register-page {
         --kucsa-primary: #0d6efd;
-        --kucsa-primary-hover: #0b5ed7;
-        --kucsa-bg-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        --kucsa-primary-dark: #0b5ed7;
+        --kucsa-primary-soft: rgba(13, 110, 253, 0.09);
+        --kucsa-primary-soft-strong: rgba(13, 110, 253, 0.14);
+
+        --kucsa-success: #198754;
+        --kucsa-danger: #dc3545;
+        --kucsa-warning: #ffc107;
+
+        --kucsa-text: #172033;
+        --kucsa-muted: #6c757d;
+        --kucsa-border: #e2e7ee;
+        --kucsa-surface: #ffffff;
+        --kucsa-surface-soft: #f8fafc;
+        --kucsa-page: #f4f7fb;
+
+        --kucsa-radius-sm: 0.65rem;
+        --kucsa-radius-md: 0.9rem;
+        --kucsa-radius-lg: 1.25rem;
+        --kucsa-radius-xl: 1.5rem;
+
+        --kucsa-shadow-sm:
+            0 4px 14px rgba(15, 23, 42, 0.05);
+
+        --kucsa-shadow-md:
+            0 12px 35px rgba(15, 23, 42, 0.08);
+
+        --kucsa-shadow-lg:
+            0 22px 60px rgba(15, 23, 42, 0.11);
+
+        --kucsa-transition:
+            180ms ease;
+
+        position: relative;
+        width: 100%;
+        min-height: 100%;
+        padding: clamp(1rem, 3vw, 3rem) 0;
+        overflow: hidden;
+
+        background:
+            radial-gradient(
+                circle at 10% 10%,
+                rgba(13, 110, 253, 0.08),
+                transparent 28%
+            ),
+            radial-gradient(
+                circle at 90% 5%,
+                rgba(13, 110, 253, 0.06),
+                transparent 25%
+            ),
+            linear-gradient(
+                180deg,
+                #f8faff 0%,
+                #f4f7fb 48%,
+                #eef3f9 100%
+            );
     }
 
-    body {
-        background: var(--kucsa-bg-gradient);
+    /* =========================================================
+       DECORATIVE BACKGROUND
+    ========================================================== */
+
+    .kucsa-register-page::before,
+    .kucsa-register-page::after {
+        content: "";
+        position: absolute;
+        pointer-events: none;
+        border-radius: 50%;
+        filter: blur(2px);
     }
 
-    .kucsa-card {
-        border-radius: 1rem;
-        transition: all 0.3s ease-in-out;
+    .kucsa-register-page::before {
+        width: 260px;
+        height: 260px;
+        top: 5%;
+        left: -130px;
+        background: rgba(13, 110, 253, 0.045);
     }
 
-    .form-control, .form-select {
-        padding: 0.75rem 1rem;
-        font-size: 0.95rem;
-        border-radius: 0.50rem;
-        border: 1px solid #ced4da;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    .kucsa-register-page::after {
+        width: 320px;
+        height: 320px;
+        bottom: 5%;
+        right: -160px;
+        background: rgba(13, 110, 253, 0.04);
     }
 
-    .form-control:focus {
-        border-color: var(--kucsa-primary);
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    .kucsa-register-container {
+        position: relative;
+        z-index: 1;
+        width: min(100% - 1.5rem, 1120px);
+        margin: 0 auto;
     }
 
-    .password-toggle-addon {
-        cursor: pointer;
-        background-color: transparent;
-        border-left: none;
-        color: #6c757d;
-        transition: color 0.2s;
+    /* =========================================================
+       MAIN CARD
+    ========================================================== */
+
+    .kucsa-register-card {
+        overflow: hidden;
+        background: var(--kucsa-surface);
+        border: 1px solid rgba(226, 231, 238, 0.9);
+        border-radius: var(--kucsa-radius-xl);
+        box-shadow: var(--kucsa-shadow-lg);
     }
 
-    .password-toggle-addon:hover {
+    /* =========================================================
+       TOP BRAND / HERO
+    ========================================================== */
+
+    .kucsa-register-hero {
+        position: relative;
+        padding: clamp(1.5rem, 4vw, 3rem);
+        color: #ffffff;
+        overflow: hidden;
+
+        background:
+            linear-gradient(
+                135deg,
+                #0d6efd 0%,
+                #1559c7 55%,
+                #084298 100%
+            );
+    }
+
+    .kucsa-register-hero::before {
+        content: "";
+        position: absolute;
+        width: 260px;
+        height: 260px;
+        border-radius: 50%;
+        top: -150px;
+        right: -80px;
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .kucsa-register-hero::after {
+        content: "";
+        position: absolute;
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        bottom: -110px;
+        left: 8%;
+        background: rgba(255, 255, 255, 0.055);
+    }
+
+    .kucsa-register-hero-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 2rem;
+    }
+
+    .kucsa-brand-mark {
+        width: clamp(58px, 7vw, 76px);
+        height: clamp(58px, 7vw, 76px);
+        flex: 0 0 auto;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 1.25rem;
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+
+        box-shadow:
+            0 12px 30px rgba(0, 0, 0, 0.12);
+
+        backdrop-filter: blur(8px);
+    }
+
+    .kucsa-brand-mark i {
+        font-size: clamp(1.8rem, 4vw, 2.5rem);
+    }
+
+    .kucsa-hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin-bottom: 0.65rem;
+
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .kucsa-register-hero h1 {
+        margin: 0 0 0.65rem;
+        font-size: clamp(1.65rem, 4vw, 2.45rem);
+        line-height: 1.15;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+    }
+
+    .kucsa-register-hero p {
+        max-width: 670px;
+        margin: 0;
+        color: rgba(255, 255, 255, 0.86);
+        font-size: clamp(0.88rem, 2vw, 1rem);
+        line-height: 1.7;
+    }
+
+    .kucsa-hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        margin-top: 1.2rem;
+        padding: 0.5rem 0.8rem;
+
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.11);
+        border: 1px solid rgba(255, 255, 255, 0.17);
+
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .kucsa-hero-badge i {
+        font-size: 0.85rem;
+    }
+
+    /* =========================================================
+       FORM AREA
+    ========================================================== */
+
+    .kucsa-register-body {
+        padding: clamp(1.25rem, 4vw, 3rem);
+    }
+
+    .kucsa-form-intro {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .kucsa-form-intro h2 {
+        margin: 0 0 0.35rem;
+        color: var(--kucsa-text);
+        font-size: clamp(1.2rem, 3vw, 1.45rem);
+        font-weight: 750;
+    }
+
+    .kucsa-form-intro p {
+        margin: 0;
+        color: var(--kucsa-muted);
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    .kucsa-secure-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        flex-shrink: 0;
+
+        padding: 0.55rem 0.75rem;
+        border-radius: 999px;
+
+        color: var(--kucsa-success);
+        background: rgba(25, 135, 84, 0.08);
+
+        font-size: 0.74rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    /* =========================================================
+       PROGRESS INDICATOR
+    ========================================================== */
+
+    .kucsa-registration-progress {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.45rem;
+        margin-bottom: 2.25rem;
+    }
+
+    .kucsa-progress-step {
+        position: relative;
+        min-width: 0;
+    }
+
+    .kucsa-progress-line {
+        height: 4px;
+        margin-bottom: 0.55rem;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #e9edf3;
+    }
+
+    .kucsa-progress-line span {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+        background: var(--kucsa-primary);
+        opacity: 0.85;
+    }
+
+    .kucsa-progress-label {
+        display: block;
+        overflow: hidden;
+
+        color: #8992a2;
+        font-size: 0.68rem;
+        font-weight: 650;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .kucsa-progress-step.active .kucsa-progress-label {
         color: var(--kucsa-primary);
     }
 
-    .password-wrapper .form-control {
-        border-right: none;
+    /* =========================================================
+       FORM SECTIONS
+    ========================================================== */
+
+    .kucsa-form-section {
+        margin-top: 2.25rem;
     }
 
-    .profile-preview-container {
-        width: 100px;
-        height: 100px;
+    .kucsa-form-section:first-of-type {
+        margin-top: 0;
+    }
+
+    .kucsa-section-heading {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .kucsa-section-icon {
+        width: 42px;
+        height: 42px;
+        flex: 0 0 42px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 0.8rem;
+
+        color: var(--kucsa-primary);
+        background: var(--kucsa-primary-soft);
+
+        font-size: 1.15rem;
+    }
+
+    .kucsa-section-heading h3 {
+        margin: 0 0 0.2rem;
+        color: var(--kucsa-text);
+        font-size: 1rem;
+        font-weight: 750;
+    }
+
+    .kucsa-section-heading p {
+        margin: 0;
+        color: var(--kucsa-muted);
+        font-size: 0.78rem;
+        line-height: 1.45;
+    }
+
+    .kucsa-section-divider {
+        height: 1px;
+        margin: 0 0 1.4rem;
+        background: linear-gradient(
+            90deg,
+            var(--kucsa-border),
+            transparent
+        );
+    }
+
+    /* =========================================================
+       FORM LABELS
+    ========================================================== */
+
+    .kucsa-register-page .form-label {
+        margin-bottom: 0.48rem;
+        color: #273247;
+        font-size: 0.84rem;
+        font-weight: 700;
+    }
+
+    .kucsa-required {
+        color: var(--kucsa-danger);
+        margin-left: 0.15rem;
+    }
+
+    /* =========================================================
+       FORM CONTROLS
+    ========================================================== */
+
+    .kucsa-register-page .form-control,
+    .kucsa-register-page .form-select {
+        min-height: 48px;
+        padding: 0.72rem 0.9rem;
+
+        color: #253047;
+        background-color: #ffffff;
+
+        border: 1px solid #dce2ea;
+        border-radius: var(--kucsa-radius-sm);
+
+        font-size: 0.9rem;
+        line-height: 1.4;
+
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.025);
+
+        transition:
+            border-color var(--kucsa-transition),
+            box-shadow var(--kucsa-transition),
+            background-color var(--kucsa-transition),
+            transform var(--kucsa-transition);
+    }
+
+    .kucsa-register-page .form-control:hover,
+    .kucsa-register-page .form-select:hover {
+        border-color: #c6ceda;
+    }
+
+    .kucsa-register-page .form-control:focus,
+    .kucsa-register-page .form-select:focus {
+        border-color: var(--kucsa-primary);
+        background-color: #ffffff;
+
+        box-shadow:
+            0 0 0 4px rgba(13, 110, 253, 0.1),
+            0 4px 12px rgba(13, 110, 253, 0.05);
+
+        outline: none;
+    }
+
+    .kucsa-register-page .form-control::placeholder {
+        color: #a1a9b6;
+    }
+
+    .kucsa-register-page textarea.form-control {
+        min-height: 110px;
+        resize: vertical;
+    }
+
+    .kucsa-register-page .form-text {
+        margin-top: 0.42rem;
+        color: #8992a2;
+        font-size: 0.73rem;
+        line-height: 1.5;
+    }
+
+    /* =========================================================
+       PASSWORD FIELDS
+    ========================================================== */
+
+    .kucsa-password-group {
+        position: relative;
+    }
+
+    .kucsa-password-group .form-control {
+        padding-right: 3rem;
+    }
+
+    .kucsa-password-toggle {
+        position: absolute;
+        top: 50%;
+        right: 0.45rem;
+        z-index: 5;
+
+        width: 42px;
+        height: 42px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        transform: translateY(-50%);
+
+        border: 0;
+        border-radius: 0.6rem;
+        background: transparent;
+
+        color: #7b8493;
+        cursor: pointer;
+
+        transition:
+            background-color var(--kucsa-transition),
+            color var(--kucsa-transition);
+    }
+
+    .kucsa-password-toggle:hover {
+        color: var(--kucsa-primary);
+        background: var(--kucsa-primary-soft);
+    }
+
+    .kucsa-password-toggle:focus-visible {
+        outline: 3px solid rgba(13, 110, 253, 0.18);
+        outline-offset: 1px;
+    }
+
+    .kucsa-password-feedback {
+        display: none;
+        align-items: center;
+        gap: 0.4rem;
+
+        margin-top: 0.5rem;
+
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .kucsa-password-feedback.visible {
+        display: flex;
+    }
+
+    .kucsa-password-feedback.match {
+        color: var(--kucsa-success);
+    }
+
+    .kucsa-password-feedback.mismatch {
+        color: var(--kucsa-danger);
+    }
+
+    /* =========================================================
+       PROFILE PICTURE UPLOAD
+    ========================================================== */
+
+    .kucsa-profile-upload {
+        padding: clamp(1rem, 3vw, 1.5rem);
+        border: 1px dashed #cbd4e0;
+        border-radius: var(--kucsa-radius-md);
+        background: linear-gradient(
+            180deg,
+            #fbfcfe,
+            #f7f9fc
+        );
+        transition:
+            border-color var(--kucsa-transition),
+            background-color var(--kucsa-transition);
+    }
+
+    .kucsa-profile-upload:hover {
+        border-color: rgba(13, 110, 253, 0.55);
+        background: #f8fbff;
+    }
+
+    .kucsa-profile-upload-inner {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .kucsa-profile-placeholder,
+    .kucsa-profile-preview {
+        width: 86px;
+        height: 86px;
+        flex: 0 0 86px;
+
         border-radius: 50%;
         object-fit: cover;
-        border: 3px solid var(--kucsa-primary);
+    }
+
+    .kucsa-profile-placeholder {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        color: var(--kucsa-primary);
+        background: var(--kucsa-primary-soft);
+        border: 3px solid rgba(13, 110, 253, 0.1);
+
+        font-size: 1.8rem;
+    }
+
+    .kucsa-profile-preview {
         display: none;
-        margin: 0.5rem auto 0 auto;
+        border: 3px solid rgba(13, 110, 253, 0.18);
+        box-shadow: var(--kucsa-shadow-sm);
+    }
+
+    .kucsa-profile-copy strong {
+        display: block;
+        margin-bottom: 0.2rem;
+        color: #273247;
+        font-size: 0.86rem;
+    }
+
+    .kucsa-profile-copy span {
+        display: block;
+        color: #8992a2;
+        font-size: 0.74rem;
+        line-height: 1.5;
+    }
+
+    .kucsa-profile-upload .form-control {
+        margin-top: 0.9rem;
+        min-height: 46px;
+    }
+
+    /* =========================================================
+       ALERTS / MESSAGES
+    ========================================================== */
+
+    .kucsa-register-page .alert {
+        border-radius: var(--kucsa-radius-md);
+        border: 1px solid transparent;
+        font-size: 0.84rem;
+        line-height: 1.55;
+    }
+
+    .kucsa-register-message {
+        margin-bottom: 1.5rem;
+        box-shadow: var(--kucsa-shadow-sm);
+    }
+
+    .kucsa-form-error {
+        margin-bottom: 1.5rem;
+    }
+
+    .kucsa-registration-info {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.9rem;
+
+        margin-top: 2rem;
+        padding: 1rem 1.05rem;
+
+        border: 1px solid rgba(13, 202, 240, 0.14);
+        border-radius: var(--kucsa-radius-md);
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(13, 202, 240, 0.08),
+                rgba(13, 110, 253, 0.035)
+            );
+    }
+
+    .kucsa-registration-info-icon {
+        width: 40px;
+        height: 40px;
+        flex: 0 0 40px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 0.7rem;
+        background: rgba(13, 202, 240, 0.12);
+        color: #087990;
+    }
+
+    .kucsa-registration-info h4 {
+        margin: 0 0 0.25rem;
+        color: var(--kucsa-text);
+        font-size: 0.88rem;
+        font-weight: 750;
+    }
+
+    .kucsa-registration-info p {
+        margin: 0;
+        color: #697386;
+        font-size: 0.76rem;
+        line-height: 1.6;
+    }
+
+    /* =========================================================
+       AGREEMENT
+    ========================================================== */
+
+    .kucsa-agreement {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+
+        margin-top: 1.4rem;
+        padding: 0.9rem;
+
+        border: 1px solid #e5e9ef;
+        border-radius: var(--kucsa-radius-md);
+        background: #fafbfd;
+
+        transition:
+            border-color var(--kucsa-transition),
+            background-color var(--kucsa-transition);
+    }
+
+    .kucsa-agreement:focus-within {
+        border-color: rgba(13, 110, 253, 0.35);
+        background: #f8fbff;
+    }
+
+    .kucsa-agreement .form-check-input {
+        width: 19px;
+        height: 19px;
+        flex: 0 0 19px;
+        margin-top: 0.1rem;
+        cursor: pointer;
+    }
+
+    .kucsa-agreement .form-check-input:focus {
+        border-color: var(--kucsa-primary);
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+    }
+
+    .kucsa-agreement .form-check-label {
+        color: #697386;
+        font-size: 0.76rem;
+        line-height: 1.6;
+        cursor: pointer;
+    }
+
+    /* =========================================================
+       SUBMIT BUTTON
+    ========================================================== */
+
+    .kucsa-submit-wrapper {
+        margin-top: 1.25rem;
+    }
+
+    .kucsa-submit-button {
+        position: relative;
+        min-height: 52px;
+        width: 100%;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+
+        padding: 0.8rem 1.25rem;
+
+        border: 0;
+        border-radius: var(--kucsa-radius-md);
+
+        background:
+            linear-gradient(
+                135deg,
+                var(--kucsa-primary),
+                #0958c7
+            );
+
+        color: #ffffff;
+        font-size: 0.9rem;
+        font-weight: 750;
+
+        box-shadow:
+            0 8px 20px rgba(13, 110, 253, 0.2);
+
+        transition:
+            transform var(--kucsa-transition),
+            box-shadow var(--kucsa-transition),
+            filter var(--kucsa-transition);
+    }
+
+    .kucsa-submit-button:hover:not(:disabled) {
+        transform: translateY(-1px);
+        filter: brightness(1.02);
+        box-shadow:
+            0 12px 26px rgba(13, 110, 253, 0.25);
+    }
+
+    .kucsa-submit-button:active:not(:disabled) {
+        transform: translateY(0);
+    }
+
+    .kucsa-submit-button:focus-visible {
+        outline: 3px solid rgba(13, 110, 253, 0.25);
+        outline-offset: 3px;
+    }
+
+    .kucsa-submit-button:disabled {
+        cursor: not-allowed;
+        opacity: 0.72;
+        transform: none;
+    }
+
+    .kucsa-submit-note {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+
+        margin-top: 0.75rem;
+
+        color: #8992a2;
+        font-size: 0.7rem;
+        text-align: center;
+    }
+
+    /* =========================================================
+       LOGIN LINK
+    ========================================================== */
+
+    .kucsa-login-area {
+        margin-top: 1.75rem;
+        padding-top: 1.5rem;
+
+        border-top: 1px solid #edf0f4;
+
+        text-align: center;
+    }
+
+    .kucsa-login-area p {
+        margin: 0;
+        color: #7b8493;
+        font-size: 0.82rem;
+    }
+
+    .kucsa-login-area a {
+        color: var(--kucsa-primary);
+        font-weight: 750;
+        text-decoration: none;
+
+        transition:
+            color var(--kucsa-transition),
+            text-decoration-color var(--kucsa-transition);
+    }
+
+    .kucsa-login-area a:hover {
+        color: var(--kucsa-primary-dark);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
+
+    /* =========================================================
+       FOOTER SECURITY NOTE
+    ========================================================== */
+
+    .kucsa-security-footer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.45rem;
+
+        margin-top: 1rem;
+        padding: 0 0.5rem;
+
+        color: #8992a2;
+        font-size: 0.7rem;
+        text-align: center;
+        line-height: 1.5;
+    }
+
+    .kucsa-security-footer i {
+        color: var(--kucsa-success);
+    }
+
+    /* =========================================================
+       FIELD ERROR STATE
+    ========================================================== */
+
+    .kucsa-field-error {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.35rem;
+
+        margin-top: 0.4rem;
+
+        color: var(--kucsa-danger);
+        font-size: 0.74rem;
+        line-height: 1.45;
+    }
+
+    .kucsa-register-page input.is-invalid,
+    .kucsa-register-page select.is-invalid,
+    .kucsa-register-page textarea.is-invalid {
+        border-color: rgba(220, 53, 69, 0.65);
+    }
+
+    /* =========================================================
+       RESPONSIVE — LARGE TABLET / SMALL DESKTOP
+    ========================================================== */
+
+    @media (max-width: 991.98px) {
+
+        .kucsa-register-container {
+            width: min(100% - 1.25rem, 850px);
+        }
+
+        .kucsa-register-hero-content {
+            align-items: flex-start;
+        }
+
+        .kucsa-register-hero {
+            padding: 2rem;
+        }
+
+        .kucsa-register-body {
+            padding: 2rem;
+        }
+    }
+
+    /* =========================================================
+       RESPONSIVE — TABLET
+    ========================================================== */
+
+    @media (max-width: 767.98px) {
+
+        .kucsa-register-page {
+            padding: 0.75rem 0;
+        }
+
+        .kucsa-register-container {
+            width: min(100% - 1rem, 650px);
+        }
+
+        .kucsa-register-card {
+            border-radius: 1.15rem;
+        }
+
+        .kucsa-register-hero-content {
+            display: block;
+        }
+
+        .kucsa-brand-mark {
+            margin-bottom: 1rem;
+        }
+
+        .kucsa-register-hero {
+            padding: 1.5rem;
+        }
+
+        .kucsa-register-body {
+            padding: 1.4rem;
+        }
+
+        .kucsa-form-intro {
+            display: block;
+        }
+
+        .kucsa-secure-badge {
+            margin-top: 0.85rem;
+        }
+
+        .kucsa-registration-progress {
+            margin-bottom: 1.75rem;
+        }
+
+        .kucsa-progress-label {
+            font-size: 0.62rem;
+        }
+
+        .kucsa-profile-upload-inner {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+
+        .kucsa-profile-placeholder,
+        .kucsa-profile-preview {
+            margin: 0 auto;
+        }
+
+        .kucsa-profile-upload .form-control {
+            text-align: left;
+        }
+    }
+
+    /* =========================================================
+       RESPONSIVE — MOBILE
+    ========================================================== */
+
+    @media (max-width: 575.98px) {
+
+        .kucsa-register-page {
+            padding: 0;
+        }
+
+        .kucsa-register-container {
+            width: 100%;
+        }
+
+        .kucsa-register-card {
+            border-radius: 0;
+            border-left: 0;
+            border-right: 0;
+            box-shadow: none;
+        }
+
+        .kucsa-register-hero {
+            padding:
+                1.5rem
+                1rem
+                1.7rem;
+        }
+
+        .kucsa-register-body {
+            padding:
+                1.25rem
+                1rem
+                1.5rem;
+        }
+
+        .kucsa-register-hero h1 {
+            font-size: 1.55rem;
+        }
+
+        .kucsa-register-hero p {
+            font-size: 0.84rem;
+        }
+
+        .kucsa-hero-badge {
+            font-size: 0.7rem;
+        }
+
+        .kucsa-form-intro h2 {
+            font-size: 1.15rem;
+        }
+
+        .kucsa-section-heading {
+            gap: 0.7rem;
+        }
+
+        .kucsa-section-icon {
+            width: 38px;
+            height: 38px;
+            flex-basis: 38px;
+            font-size: 1rem;
+        }
+
+        .kucsa-section-heading h3 {
+            font-size: 0.92rem;
+        }
+
+        .kucsa-section-heading p {
+            font-size: 0.72rem;
+        }
+
+        .kucsa-register-page .form-control,
+        .kucsa-register-page .form-select {
+            min-height: 49px;
+        }
+
+        .kucsa-registration-info {
+            padding: 0.9rem;
+        }
+
+        .kucsa-registration-info-icon {
+            width: 36px;
+            height: 36px;
+            flex-basis: 36px;
+        }
+
+        .kucsa-agreement {
+            padding: 0.8rem;
+        }
+
+        .kucsa-submit-button {
+            min-height: 52px;
+        }
+
+        .kucsa-security-footer {
+            padding: 0 1rem;
+        }
+    }
+
+    /* =========================================================
+       VERY SMALL DEVICES
+    ========================================================== */
+
+    @media (max-width: 360px) {
+
+        .kucsa-register-body {
+            padding-left: 0.8rem;
+            padding-right: 0.8rem;
+        }
+
+        .kucsa-registration-progress {
+            gap: 0.25rem;
+        }
+
+        .kucsa-progress-label {
+            font-size: 0.55rem;
+        }
+
+        .kucsa-brand-mark {
+            width: 54px;
+            height: 54px;
+        }
+    }
+
+    /* =========================================================
+       REDUCED MOTION ACCESSIBILITY
+    ========================================================== */
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .kucsa-register-page *,
+        .kucsa-register-page *::before,
+        .kucsa-register-page *::after {
+            scroll-behavior: auto !important;
+            transition-duration: 0.01ms !important;
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+        }
     }
 </style>
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-xl-9 col-lg-10">
 
-            <div class="card kucsa-card shadow-lg border-0 bg-white">
-                <div class="card-body p-4 p-md-5">
+<div class="kucsa-register-page">
 
-                    <div class="text-center mb-5">
-                        <div class="mb-3 d-inline-block p-3 bg-primary bg-opacity-10 rounded-circle text-primary">
-                            <i class="bi bi-person-plus-fill display-4"></i>
+    <div class="kucsa-register-container">
+
+        <!-- =====================================================
+             MAIN REGISTRATION CARD
+        ====================================================== -->
+
+        <div class="kucsa-register-card">
+
+            <!-- =================================================
+                 HERO HEADER
+            ================================================== -->
+
+            <header class="kucsa-register-hero">
+
+                <div class="kucsa-register-hero-content">
+
+                    <div>
+
+                        <div class="kucsa-brand-mark"
+                             aria-hidden="true">
+
+                            <i class="bi bi-person-plus-fill"></i>
+
                         </div>
-                        <h2 class="fw-bold mb-2 text-dark">
+
+                        <div class="kucsa-hero-eyebrow">
+
+                            <i class="bi bi-stars"></i>
+
+                            KUCSA Digital Community
+
+                        </div>
+
+                        <h1>
                             Create Your KUCSA Account
-                        </h2>
-                        <p class="text-muted mb-0 mx-auto" style="max-width: 500px;">
-                            Join the official Kisii University Computing Students Association digital community platform.
+                        </h1>
+
+                        <p>
+                            Join the Kisii University Computing Students
+                            Association digital community and gain access
+                            to your member portal, events, projects,
+                            attendance and other KUCSA services.
                         </p>
-                    </div>
 
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% elif message.tags == 'warning' %}alert-warning{% else %}alert-info{% endif %} alert-dismissible fade show shadow-sm" role="alert">
-                                <i class="bi bi-info-circle-fill me-2"></i>{{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
+                        <div class="kucsa-hero-badge">
 
-                    <form method="post" enctype="multipart/form-data" novalidate id="kucsaRegisterForm">
-                        {% csrf_token %}
+                            <i class="bi bi-shield-check"></i>
 
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger shadow-sm">
-                                <i class="bi bi-exclamation-triangle me-2"></i>
-                                {% for error in form.non_field_errors %}
-                                    <div>{{ error }}</div>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-
-                        <div class="row g-4">
-
-                            <div class="col-12">
-                                <h5 class="fw-bold mb-1 text-primary">
-                                    <i class="bi bi-person me-2"></i>Personal Information
-                                </h5>
-                                <p class="text-muted small mb-0">Provide your basic names as they appear on official records.</p>
-                                <hr class="text-muted opacity-25">
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="{{ form.first_name.id_for_label }}" class="form-label fw-semibold">First Name</label>
-                                {{ form.first_name }}
-                                {% if form.first_name.help_text %}<div class="form-text">{{ form.first_name.help_text }}</div>{% endif %}
-                                {% for error in form.first_name.errors %}
-                                    <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
-                                {% endfor %}
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="{{ form.last_name.id_for_label }}" class="form-label fw-semibold">Last Name</label>
-                                {{ form.last_name }}
-                                {% if form.last_name.help_text %}<div class="form-text">{{ form.last_name.help_text }}</div>{% endif %}
-                                {% for error in form.last_name.errors %}
-                                    <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
-                                {% endfor %}
-                            </div>
-
-                            <div class="col-12 mt-4">
-                                <h5 class="fw-bold mb-1 text-primary">
-                                    <i class="bi bi-mortarboard me-2"></i>University Information
-                                </h5>
-                                <p class="text-muted small mb-0">Use your official Kisii University registration credentials.</p>
-                                <hr class="text-muted opacity-25">
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="{{ form.registration_number.id_for_label }}" class="form-label fw-semibold">Registration Number</label>
-                                {{ form.registration_number }}
-                                {% if form.registration_number.help_text %}<div class="form-text">{{ form.registration_number.help_text }}</div>{% endif %}
-                                {% for error in form.registration_number.errors %}
-                                    <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
-                                {% endfor %}
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold">Email Address</label>
-                                {{ form.email }}
-                                {% if form.email.help_text %}<div class="form-text">{{ form.email.help_text }}</div>{% endif %}
-                                {% for error in form.email.errors %}
-                                    <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
-                                {% endfor %}
-                            </div>
-
-                            <div class="col-12 mt-4">
-                                <h5 class="fw-bold mb-1 text-primary">
-                                    <i class="bi bi-person-lock me-2"></i>Account Information
-                                </h5>
-                                <p class="text-muted small mb-0">Set up credentials to access your KUCSA member portal.</p>
-                                <hr class="text-muted opacity-25">
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold">Username</label>
-                                {{ form.username }}
-                                {% if form.username.help_text %}<div class="form-text">{{ form.username.help_text }}</div>{% endif %}
-                                {% for error in form.username.errors %}
-                                    <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
-                                {% endfor %}
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="{{ form.phone_number.id_for_label }}" class="form-label fw-semibold">Phone Number</label>
-                                {{ form.phone_number }}
-                                {% if form.phone_number.help_text %}<div class="form-text">{{ form.phone_number.help_text }}</div>{% endif %}
-                                {% for error in form.phone_number.errors %}
-                                    <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
-                                {% endfor %}
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="{{ form.password1.id_for_label }}" class="form-label fw-semibold">Password</label>
-                                <div class="input-group password-wrapper">
-                                    {{ form.password1 }}
-                                    <span class="input-group-text password-toggle-addon" onclick="togglePasswordVisibility('{{ form.password1.id_for_label }}', this)">
-                                        <i class="bi bi-eye-slash" id="toggleIcon1"></i>
-                                    </span>
-                                </div>
-                                {% if form.password1.help_text %}<div class="form-text">{{ form.password1.help_text }}</div>{% endif %}
-                                {% for error in form.password1.errors %}
-                                    <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
-                                {% endfor %}
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="{{ form.password2.id_for_label }}" class="form-label fw-semibold">Confirm Password</label>
-                                <div class="input-group password-wrapper">
-                                    {{ form.password2 }}
-                                    <span class="input-group-text password-toggle-addon" onclick="togglePasswordVisibility('{{ form.password2.id_for_label }}', this)">
-                                        <i class="bi bi-eye-slash" id="toggleIcon2"></i>
-                                    </span>
-                                </div>
-                                {% if form.password2.help_text %}<div class="form-text">{{ form.password2.help_text }}</div>{% endif %}
-                                {% for error in form.password2.errors %}
-                                    <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
-                                {% endfor %}
-                            </div>
-
-                            <div class="col-12 mt-4">
-                                <h5 class="fw-bold mb-1 text-primary">
-                                    <i class="bi bi-image me-2"></i>Profile Image
-                                </h5>
-                                <p class="text-muted small mb-0">Upload a professional photo for your platform directory.</p>
-                                <hr class="text-muted opacity-25">
-                            </div>
-
-                            <div class="col-12 text-center">
-                                <label for="{{ form.profile_picture.id_for_label }}" class="form-label fw-semibold d-block text-start">Profile Picture</label>
-                                {{ form.profile_picture }}
-                                <img id="profilePreview" class="profile-preview-container shadow-sm" alt="Profile Preview">
-                                {% if form.profile_picture.help_text %}<div class="form-text">{{ form.profile_picture.help_text }}</div>{% endif %}
-                                {% for error in form.profile_picture.errors %}
-                                    <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
-                                {% endfor %}
-                            </div>
+                            Secure student registration
 
                         </div>
 
-                        <div class="alert alert-info border-0 bg-info bg-opacity-10 mt-4 rounded-3">
-                            <div class="d-flex align-items-center">
-                                <i class="bi bi-info-circle-fill fs-4 me-3 text-info"></i>
-                                <div>
-                                    <h6 class="fw-bold mb-1 text-dark">What happens after registration?</h6>
-                                    <p class="mb-0 small text-muted">
-                                        Your account will be generated instantly with a <strong>Pending</strong> status. You can then complete subscription requirements to unlock full forum access, computing projects, and event attendance tracking.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-check mt-4 mb-4">
-                            <input class="form-check-input" type="checkbox" id="registrationAgreement" required>
-                            <label class="form-check-label small text-secondary" for="registrationAgreement">
-                                I confirm that the details entered above are accurate and belong to me as a student of Kisii University.
-                            </label>
-                        </div>
-
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg shadow-sm py-3 fw-bold">
-                                <i class="bi bi-person-check-fill me-2"></i>Create KUCSA Account
-                            </button>
-                        </div>
-
-                    </form>
-
-                    <div class="text-center mt-4">
-                        <p class="mb-0 text-muted">
-                            Already registered? 
-                            <a href="{% url 'accounts:login' %}" class="text-decoration-none fw-bold text-primary">
-                                Sign in here
-                            </a>
-                        </p>
                     </div>
 
                 </div>
-            </div>
 
-            <div class="text-center mt-3">
-                <small class="text-muted">
-                    <i class="bi bi-shield-check me-1 text-success"></i>
-                    Secured by KUCSA Systems &bull; Kisii University Computing Community
-                </small>
+            </header>
+
+
+            <!-- =================================================
+                 FORM BODY
+            ================================================== -->
+
+            <div class="kucsa-register-body">
+
+                <div class="kucsa-form-intro">
+
+                    <div>
+
+                        <h2>
+                            Registration Details
+                        </h2>
+
+                        <p>
+                            Complete the form below using your official
+                            student information.
+                        </p>
+
+                    </div>
+
+                    <div class="kucsa-secure-badge">
+
+                        <i class="bi bi-lock-fill"></i>
+
+                        Protected registration
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     REGISTRATION PROGRESS
+                ================================================== -->
+
+                <div class="kucsa-registration-progress"
+                     aria-label="Registration sections">
+
+                    <div class="kucsa-progress-step active">
+
+                        <div class="kucsa-progress-line">
+                            <span></span>
+                        </div>
+
+                        <span class="kucsa-progress-label">
+                            Personal
+                        </span>
+
+                    </div>
+
+                    <div class="kucsa-progress-step active">
+
+                        <div class="kucsa-progress-line">
+                            <span></span>
+                        </div>
+
+                        <span class="kucsa-progress-label">
+                            University
+                        </span>
+
+                    </div>
+
+                    <div class="kucsa-progress-step active">
+
+                        <div class="kucsa-progress-line">
+                            <span></span>
+                        </div>
+
+                        <span class="kucsa-progress-label">
+                            Account
+                        </span>
+
+                    </div>
+
+                    <div class="kucsa-progress-step active">
+
+                        <div class="kucsa-progress-line">
+                            <span></span>
+                        </div>
+
+                        <span class="kucsa-progress-label">
+                            Profile
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     DJANGO MESSAGES
+                ================================================== -->
+
+                {% if messages %}
+
+                    {% for message in messages %}
+
+                        <div class="alert
+                                    {% if message.tags == 'error' %}
+                                        alert-danger
+                                    {% elif message.tags == 'success' %}
+                                        alert-success
+                                    {% elif message.tags == 'warning' %}
+                                        alert-warning
+                                    {% else %}
+                                        alert-info
+                                    {% endif %}
+                                    alert-dismissible
+                                    fade
+                                    show
+                                    kucsa-register-message"
+                             role="alert">
+
+                            <div class="d-flex align-items-start gap-2">
+
+                                <i class="bi
+                                          {% if message.tags == 'error' %}
+                                              bi-exclamation-triangle-fill
+                                          {% elif message.tags == 'success' %}
+                                              bi-check-circle-fill
+                                          {% elif message.tags == 'warning' %}
+                                              bi-exclamation-circle-fill
+                                          {% else %}
+                                              bi-info-circle-fill
+                                          {% endif %} mt-1">
+                                </i>
+
+                                <div class="flex-grow-1">
+
+                                    {{ message }}
+
+                                </div>
+
+                            </div>
+
+                            <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="alert"
+                                    aria-label="Close">
+                            </button>
+
+                        </div>
+
+                    {% endfor %}
+
+                {% endif %}
+
+
+                <!-- =================================================
+                     REGISTRATION FORM
+                ================================================== -->
+
+                <form method="post"
+                      enctype="multipart/form-data"
+                      novalidate
+                      id="kucsaRegisterForm">
+
+                    {% csrf_token %}
+
+
+                    <!-- =============================================
+                         NON-FIELD ERRORS
+                    ============================================== -->
+
+                    {% if form.non_field_errors %}
+
+                        <div class="alert alert-danger
+                                    kucsa-form-error"
+                             role="alert">
+
+                            <div class="d-flex align-items-start gap-2">
+
+                                <i class="bi bi-exclamation-triangle-fill mt-1"></i>
+
+                                <div>
+
+                                    <strong>
+                                        Registration could not be completed.
+                                    </strong>
+
+                                    <div class="mt-1">
+
+                                        {% for error in form.non_field_errors %}
+
+                                            <div>
+                                                {{ error }}
+                                            </div>
+
+                                        {% endfor %}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- =================================================
+                         PERSONAL INFORMATION
+                    ================================================== -->
+
+                    <section class="kucsa-form-section"
+                             aria-labelledby="personalInformationHeading">
+
+                        <div class="kucsa-section-heading">
+
+                            <div class="kucsa-section-icon"
+                                 aria-hidden="true">
+
+                                <i class="bi bi-person"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h3 id="personalInformationHeading">
+                                    Personal Information
+                                </h3>
+
+                                <p>
+                                    Enter your name exactly as it appears
+                                    on your official university records.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="kucsa-section-divider"></div>
+
+
+                        <div class="row g-3">
+
+                            <!-- FIRST NAME -->
+
+                            <div class="col-12 col-md-6">
+
+                                <label for="{{ form.first_name.id_for_label }}"
+                                       class="form-label">
+
+                                    First Name
+                                    <span class="kucsa-required">*</span>
+
+                                </label>
+
+                                {{ form.first_name }}
+
+                                {% if form.first_name.help_text %}
+
+                                    <div class="form-text">
+                                        {{ form.first_name.help_text }}
+                                    </div>
+
+                                {% endif %}
+
+                                {% for error in form.first_name.errors %}
+
+                                    <div class="kucsa-field-error">
+
+                                        <i class="bi bi-exclamation-circle"></i>
+
+                                        <span>{{ error }}</span>
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- LAST NAME -->
+
+                            <div class="col-12 col-md-6">
+
+                                <label for="{{ form.last_name.id_for_label }}"
+                                       class="form-label">
+
+                                    Last Name
+                                    <span class="kucsa-required">*</span>
+
+                                </label>
+
+                                {{ form.last_name }}
+
+                                {% if form.last_name.help_text %}
+
+                                    <div class="form-text">
+                                        {{ form.last_name.help_text }}
+                                    </div>
+
+                                {% endif %}
+
+                                {% for error in form.last_name.errors %}
+
+                                    <div class="kucsa-field-error">
+
+                                        <i class="bi bi-exclamation-circle"></i>
+
+                                        <span>{{ error }}</span>
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         UNIVERSITY INFORMATION
+                    ================================================== -->
+
+                    <section class="kucsa-form-section"
+                             aria-labelledby="universityInformationHeading">
+
+                        <div class="kucsa-section-heading">
+
+                            <div class="kucsa-section-icon"
+                                 aria-hidden="true">
+
+                                <i class="bi bi-mortarboard"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h3 id="universityInformationHeading">
+                                    University Information
+                                </h3>
+
+                                <p>
+                                    Use your official Kisii University
+                                    registration and contact details.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="kucsa-section-divider"></div>
+
+
+                        <div class="row g-3">
+
+                            <!-- REGISTRATION NUMBER -->
+
+                            <div class="col-12 col-md-6">
+
+                                <label for="{{ form.registration_number.id_for_label }}"
+                                       class="form-label">
+
+                                    Registration Number
+                                    <span class="kucsa-required">*</span>
+
+                                </label>
+
+                                {{ form.registration_number }}
+
+                                {% if form.registration_number.help_text %}
+
+                                    <div class="form-text">
+                                        {{ form.registration_number.help_text }}
+                                    </div>
+
+                                {% endif %}
+
+                                {% for error in form.registration_number.errors %}
+
+                                    <div class="kucsa-field-error">
+
+                                        <i class="bi bi-exclamation-circle"></i>
+
+                                        <span>{{ error }}</span>
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- EMAIL -->
+
+                            <div class="col-12 col-md-6">
+
+                                <label for="{{ form.email.id_for_label }}"
+                                       class="form-label">
+
+                                    Email Address
+                                    <span class="kucsa-required">*</span>
+
+                                </label>
+
+                                {{ form.email }}
+
+                                {% if form.email.help_text %}
+
+                                    <div class="form-text">
+                                        {{ form.email.help_text }}
+                                    </div>
+
+                                {% endif %}
+
+                                {% for error in form.email.errors %}
+
+                                    <div class="kucsa-field-error">
+
+                                        <i class="bi bi-exclamation-circle"></i>
+
+                                        <span>{{ error }}</span>
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         ACCOUNT INFORMATION
+                    ================================================== -->
+
+                    <section class="kucsa-form-section"
+                             aria-labelledby="accountInformationHeading">
+
+                        <div class="kucsa-section-heading">
+
+                            <div class="kucsa-section-icon"
+                                 aria-hidden="true">
+
+                                <i class="bi bi-person-lock"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h3 id="accountInformationHeading">
+                                    Account Information
+                                </h3>
+
+                                <p>
+                                    Create the credentials you will use
+                                    to access your KUCSA member portal.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="kucsa-section-divider"></div>
+
+
+                        <div class="row g-3">
+
+                            <!-- USERNAME -->
+
+                            <div class="col-12 col-md-6">
+
+                                <label for="{{ form.username.id_for_label }}"
+                                       class="form-label">
+
+                                    Username
+                                    <span class="kucsa-required">*</span>
+
+                                </label>
+
+                                {{ form.username }}
+
+                                {% if form.username.help_text %}
+
+                                    <div class="form-text">
+                                        {{ form.username.help_text }}
+                                    </div>
+
+                                {% endif %}
+
+                                {% for error in form.username.errors %}
+
+                                    <div class="kucsa-field-error">
+
+                                        <i class="bi bi-exclamation-circle"></i>
+
+                                        <span>{{ error }}</span>
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- PHONE NUMBER -->
+
+                            <div class="col-12 col-md-6">
+
+                                <label for="{{ form.phone_number.id_for_label }}"
+                                       class="form-label">
+
+                                    Phone Number
+                                    <span class="kucsa-required">*</span>
+
+                                </label>
+
+                                {{ form.phone_number }}
+
+                                {% if form.phone_number.help_text %}
+
+                                    <div class="form-text">
+                                        {{ form.phone_number.help_text }}
+                                    </div>
+
+                                {% endif %}
+
+                                {% for error in form.phone_number.errors %}
+
+                                    <div class="kucsa-field-error">
+
+                                        <i class="bi bi-exclamation-circle"></i>
+
+                                        <span>{{ error }}</span>
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- PASSWORD -->
+
+                            <div class="col-12 col-md-6">
+
+                                <label for="{{ form.password1.id_for_label }}"
+                                       class="form-label">
+
+                                    Password
+                                    <span class="kucsa-required">*</span>
+
+                                </label>
+
+                                <div class="kucsa-password-group">
+
+                                    {{ form.password1 }}
+
+                                    <button type="button"
+                                            class="kucsa-password-toggle"
+                                            aria-label="Show password"
+                                            aria-pressed="false"
+                                            data-password-target="{{ form.password1.id_for_label }}">
+
+                                        <i class="bi bi-eye-slash"
+                                           aria-hidden="true">
+                                        </i>
+
+                                    </button>
+
+                                </div>
+
+                                {% if form.password1.help_text %}
+
+                                    <div class="form-text">
+                                        {{ form.password1.help_text }}
+                                    </div>
+
+                                {% endif %}
+
+                                {% for error in form.password1.errors %}
+
+                                    <div class="kucsa-field-error">
+
+                                        <i class="bi bi-exclamation-circle"></i>
+
+                                        <span>{{ error }}</span>
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- CONFIRM PASSWORD -->
+
+                            <div class="col-12 col-md-6">
+
+                                <label for="{{ form.password2.id_for_label }}"
+                                       class="form-label">
+
+                                    Confirm Password
+                                    <span class="kucsa-required">*</span>
+
+                                </label>
+
+                                <div class="kucsa-password-group">
+
+                                    {{ form.password2 }}
+
+                                    <button type="button"
+                                            class="kucsa-password-toggle"
+                                            aria-label="Show password"
+                                            aria-pressed="false"
+                                            data-password-target="{{ form.password2.id_for_label }}">
+
+                                        <i class="bi bi-eye-slash"
+                                           aria-hidden="true">
+                                        </i>
+
+                                    </button>
+
+                                </div>
+
+                                <div id="passwordMatchFeedback"
+                                     class="kucsa-password-feedback"
+                                     aria-live="polite">
+                                </div>
+
+                                {% if form.password2.help_text %}
+
+                                    <div class="form-text">
+                                        {{ form.password2.help_text }}
+                                    </div>
+
+                                {% endif %}
+
+                                {% for error in form.password2.errors %}
+
+                                    <div class="kucsa-field-error">
+
+                                        <i class="bi bi-exclamation-circle"></i>
+
+                                        <span>{{ error }}</span>
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         PROFILE IMAGE
+                    ================================================== -->
+
+                    <section class="kucsa-form-section"
+                             aria-labelledby="profileInformationHeading">
+
+                        <div class="kucsa-section-heading">
+
+                            <div class="kucsa-section-icon"
+                                 aria-hidden="true">
+
+                                <i class="bi bi-image"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h3 id="profileInformationHeading">
+                                    Profile Image
+                                </h3>
+
+                                <p>
+                                    Add a clear and professional photo
+                                    for your KUCSA member profile.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="kucsa-section-divider"></div>
+
+
+                        <div class="kucsa-profile-upload">
+
+                            <div class="kucsa-profile-upload-inner">
+
+                                <div>
+
+                                    <div id="profilePlaceholder"
+                                         class="kucsa-profile-placeholder"
+                                         aria-hidden="true">
+
+                                        <i class="bi bi-person"></i>
+
+                                    </div>
+
+                                    <img id="profilePreview"
+                                         class="kucsa-profile-preview"
+                                         alt="Selected profile picture preview">
+
+                                </div>
+
+
+                                <div class="kucsa-profile-copy">
+
+                                    <strong>
+                                        Choose your profile picture
+                                    </strong>
+
+                                    <span>
+                                        Use a clear photo that represents
+                                        you professionally. The preview
+                                        will appear automatically after
+                                        selecting an image.
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <label for="{{ form.profile_picture.id_for_label }}"
+                                   class="form-label mt-3">
+
+                                Profile Picture
+
+                            </label>
+
+                            {{ form.profile_picture }}
+
+                            {% if form.profile_picture.help_text %}
+
+                                <div class="form-text">
+                                    {{ form.profile_picture.help_text }}
+                                </div>
+
+                            {% endif %}
+
+                            {% for error in form.profile_picture.errors %}
+
+                                <div class="kucsa-field-error">
+
+                                    <i class="bi bi-exclamation-circle"></i>
+
+                                    <span>{{ error }}</span>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         AFTER REGISTRATION INFORMATION
+                    ================================================== -->
+
+                    <div class="kucsa-registration-info"
+                         role="note">
+
+                        <div class="kucsa-registration-info-icon"
+                             aria-hidden="true">
+
+                            <i class="bi bi-info-circle-fill"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h4>
+                                What happens after registration?
+                            </h4>
+
+                            <p>
+                                Your account will be generated instantly
+                                with a <strong>Pending</strong> status.
+                                You can then complete subscription
+                                requirements to unlock full forum access,
+                                computing projects, and event attendance
+                                tracking.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         REGISTRATION AGREEMENT
+                    ================================================== -->
+
+                    <div class="kucsa-agreement">
+
+                        <input class="form-check-input"
+                               type="checkbox"
+                               name="registration_agreement"
+                               value="1"
+                               id="registrationAgreement"
+                               required>
+
+                        <label class="form-check-label"
+                               for="registrationAgreement">
+
+                            I confirm that the details entered above are
+                            accurate and belong to me as a student of
+                            Kisii University.
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         SUBMIT
+                    ================================================== -->
+
+                    <div class="kucsa-submit-wrapper">
+
+                        <button type="submit"
+                                class="kucsa-submit-button"
+                                id="kucsaRegisterSubmit">
+
+                            <i class="bi bi-person-check-fill"
+                               aria-hidden="true">
+                            </i>
+
+                            <span>
+                                Create KUCSA Account
+                            </span>
+
+                        </button>
+
+                        <div class="kucsa-submit-note">
+
+                            <i class="bi bi-shield-check"></i>
+
+                            Your registration information is submitted
+                            securely.
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+
+                <!-- =================================================
+                     LOGIN LINK
+                ================================================== -->
+
+                <div class="kucsa-login-area">
+
+                    <p>
+
+                        Already registered?
+
+                        <a href="{% url 'accounts:login' %}">
+                            Sign in to your account
+                        </a>
+
+                    </p>
+
+                </div>
+
             </div>
 
         </div>
+
+
+        <!-- =====================================================
+             SECURITY FOOTER
+        ====================================================== -->
+
+        <div class="kucsa-security-footer">
+
+            <i class="bi bi-shield-check"></i>
+
+            <span>
+                Secured by KUCSA Systems &bull;
+                Kisii University Computing Community
+            </span>
+
+        </div>
+
     </div>
+
 </div>
 
-<script>
-    // Password visibility toggle feature
-    function togglePasswordVisibility(fieldId, toggleElement) {
-        const passwordField = document.getElementById(fieldId);
-        const icon = toggleElement.querySelector('i');
-        
-        if (passwordField.type === "password") {
-            passwordField.type = "text";
-            icon.classList.remove("bi-eye-slash");
-            icon.classList.add("bi-eye");
-        } else {
-            passwordField.type = "password";
-            icon.classList.remove("bi-eye");
-            icon.classList.add("bi-eye-slash");
-        }
-    }
 
-    // Dynamic Profile Picture Preview Script
-    document.addEventListener("DOMContentLoaded", function() {
-        // Automatically inject Bootstrap classes into Django rendered widgets if missing
-        const formInputs = document.querySelectorAll('input:not([type="checkbox"]):not([type="file"]), select, textarea');
-        formInputs.forEach(input => {
-            if (!input.classList.contains('form-control') && !input.classList.contains('form-select')) {
-                input.classList.add('form-control');
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        /* =====================================================
+           AUTOMATIC BOOTSTRAP FORM WIDGET STYLING
+        ====================================================== */
+
+        const formInputs = document.querySelectorAll(
+            "#kucsaRegisterForm input:not([type='checkbox']):not([type='file']):not([type='hidden']), " +
+            "#kucsaRegisterForm select, " +
+            "#kucsaRegisterForm textarea"
+        );
+
+        formInputs.forEach(function (input) {
+
+            if (
+                !input.classList.contains("form-control") &&
+                !input.classList.contains("form-select")
+            ) {
+                input.classList.add(
+                    input.tagName.toLowerCase() === "select"
+                        ? "form-select"
+                        : "form-control"
+                );
             }
+
         });
 
-        const fileInput = document.querySelector('input[type="file"]');
+
+        /* =====================================================
+           FILE INPUT STYLING
+        ====================================================== */
+
+        const fileInput =
+            document.querySelector(
+                "#kucsaRegisterForm input[type='file']"
+            );
+
         if (fileInput) {
-            fileInput.classList.add('form-control');
-            fileInput.addEventListener('change', function(event) {
-                const file = event.target.files[0];
-                const preview = document.getElementById('profilePreview');
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        preview.src = e.target.result;
-                        preview.style.display = 'block';
-                    }
-                    reader.readAsDataURL(file);
-                } else {
-                    preview.style.display = 'none';
-                }
-            });
+
+            fileInput.classList.add("form-control");
+
         }
+
+
+        /* =====================================================
+           PASSWORD VISIBILITY TOGGLE
+        ====================================================== */
+
+        const passwordToggles =
+            document.querySelectorAll(
+                ".kucsa-password-toggle"
+            );
+
+        passwordToggles.forEach(function (toggle) {
+
+            toggle.addEventListener("click", function () {
+
+                const targetId =
+                    toggle.dataset.passwordTarget;
+
+                const passwordField =
+                    document.getElementById(targetId);
+
+                const icon =
+                    toggle.querySelector("i");
+
+                if (!passwordField || !icon) {
+                    return;
+                }
+
+
+                if (passwordField.type === "password") {
+
+                    passwordField.type = "text";
+
+                    icon.classList.remove(
+                        "bi-eye-slash"
+                    );
+
+                    icon.classList.add(
+                        "bi-eye"
+                    );
+
+                    toggle.setAttribute(
+                        "aria-label",
+                        "Hide password"
+                    );
+
+                    toggle.setAttribute(
+                        "aria-pressed",
+                        "true"
+                    );
+
+                } else {
+
+                    passwordField.type = "password";
+
+                    icon.classList.remove(
+                        "bi-eye"
+                    );
+
+                    icon.classList.add(
+                        "bi-eye-slash"
+                    );
+
+                    toggle.setAttribute(
+                        "aria-label",
+                        "Show password"
+                    );
+
+                    toggle.setAttribute(
+                        "aria-pressed",
+                        "false"
+                    );
+
+                }
+
+            });
+
+        });
+
+
+        /* =====================================================
+           PASSWORD MATCH FEEDBACK
+        ====================================================== */
+
+        const password1 =
+            document.getElementById(
+                "{{ form.password1.id_for_label }}"
+            );
+
+        const password2 =
+            document.getElementById(
+                "{{ form.password2.id_for_label }}"
+            );
+
+        const passwordFeedback =
+            document.getElementById(
+                "passwordMatchFeedback"
+            );
+
+
+        function updatePasswordMatch() {
+
+            if (
+                !password1 ||
+                !password2 ||
+                !passwordFeedback
+            ) {
+                return;
+            }
+
+
+            const value1 =
+                password1.value;
+
+            const value2 =
+                password2.value;
+
+
+            passwordFeedback.classList.remove(
+                "visible",
+                "match",
+                "mismatch"
+            );
+
+
+            if (!value2) {
+                return;
+            }
+
+
+            passwordFeedback.classList.add(
+                "visible"
+            );
+
+
+            if (value1 === value2) {
+
+                passwordFeedback.classList.add(
+                    "match"
+                );
+
+                passwordFeedback.innerHTML =
+                    '<i class="bi bi-check-circle-fill"></i>' +
+                    '<span>Passwords match.</span>';
+
+            } else {
+
+                passwordFeedback.classList.add(
+                    "mismatch"
+                );
+
+                passwordFeedback.innerHTML =
+                    '<i class="bi bi-x-circle-fill"></i>' +
+                    '<span>Passwords do not match.</span>';
+
+            }
+
+        }
+
+
+        if (password1) {
+
+            password1.addEventListener(
+                "input",
+                updatePasswordMatch
+            );
+
+        }
+
+        if (password2) {
+
+            password2.addEventListener(
+                "input",
+                updatePasswordMatch
+            );
+
+        }
+
+
+        /* =====================================================
+           PROFILE IMAGE PREVIEW
+        ====================================================== */
+
+        const preview =
+            document.getElementById(
+                "profilePreview"
+            );
+
+        const placeholder =
+            document.getElementById(
+                "profilePlaceholder"
+            );
+
+
+        if (fileInput && preview) {
+
+            fileInput.addEventListener(
+                "change",
+                function (event) {
+
+                    const file =
+                        event.target.files &&
+                        event.target.files[0];
+
+
+                    if (!file) {
+
+                        preview.removeAttribute(
+                            "src"
+                        );
+
+                        preview.style.display =
+                            "none";
+
+                        if (placeholder) {
+                            placeholder.style.display =
+                                "inline-flex";
+                        }
+
+                        return;
+
+                    }
+
+
+                    /*
+                     * Only create a preview for image files.
+                     */
+
+                    if (
+                        !file.type ||
+                        !file.type.startsWith("image/")
+                    ) {
+
+                        preview.removeAttribute(
+                            "src"
+                        );
+
+                        preview.style.display =
+                            "none";
+
+                        if (placeholder) {
+                            placeholder.style.display =
+                                "inline-flex";
+                        }
+
+                        return;
+
+                    }
+
+
+                    const reader =
+                        new FileReader();
+
+
+                    reader.onload =
+                        function (e) {
+
+                            preview.src =
+                                e.target.result;
+
+                            preview.style.display =
+                                "block";
+
+                            if (placeholder) {
+                                placeholder.style.display =
+                                    "none";
+                            }
+
+                        };
+
+
+                    reader.readAsDataURL(file);
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           FORM SUBMISSION PROTECTION
+        ====================================================== */
+
+        const registerForm =
+            document.getElementById(
+                "kucsaRegisterForm"
+            );
+
+        const submitButton =
+            document.getElementById(
+                "kucsaRegisterSubmit"
+            );
+
+
+        if (
+            registerForm &&
+            submitButton
+        ) {
+
+            let formSubmitted = false;
+
+
+            registerForm.addEventListener(
+                "submit",
+                function (event) {
+
+                    /*
+                     * Allow the browser's required validation
+                     * to stop submission first.
+                     */
+
+                    if (
+                        !registerForm.checkValidity()
+                    ) {
+                        return;
+                    }
+
+
+                    /*
+                     * Prevent accidental double submission.
+                     */
+
+                    if (formSubmitted) {
+
+                        event.preventDefault();
+
+                        return;
+
+                    }
+
+
+                    formSubmitted = true;
+
+
+                    submitButton.disabled =
+                        true;
+
+
+                    submitButton.innerHTML =
+                        '<span class="spinner-border spinner-border-sm" ' +
+                        'role="status" aria-hidden="true"></span>' +
+                        '<span>Creating your account...</span>';
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           ADD INVALID CLASS TO DJANGO-ERROR FIELDS
+        ====================================================== */
+
+        const fieldContainers =
+            document.querySelectorAll(
+                ".kucsa-field-error"
+            );
+
+
+        fieldContainers.forEach(function (errorElement) {
+
+            const field =
+                errorElement
+                    .closest(".col-12, .col-md-6")
+                    ?.querySelector(
+                        ".form-control, .form-select"
+                    );
+
+            if (field) {
+
+                field.classList.add(
+                    "is-invalid"
+                );
+
+            }
+
+        });
+
+
+        /* =====================================================
+           PREVENT ACCIDENTAL SPACE-ONLY SUBMISSION
+           WITHOUT MODIFYING THE ACTUAL FORM DATA
+        ====================================================== */
+
+        const textInputs =
+            document.querySelectorAll(
+                "#kucsaRegisterForm input[type='text']"
+            );
+
+
+        textInputs.forEach(function (input) {
+
+            input.addEventListener(
+                "blur",
+                function () {
+
+                    if (
+                        input.value &&
+                        input.value.trim() === ""
+                    ) {
+
+                        input.value = "";
+
+                    }
+
+                }
+            );
+
+        });
+
     });
 </script>
 

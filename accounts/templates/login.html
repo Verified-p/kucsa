@@ -7,194 +7,1593 @@
 {% block content %}
 
 <style>
-    :root {
+    /* =========================================================
+       KUCSA LOGIN PAGE
+       Scoped styling — does not modify base.html globally
+    ========================================================== */
+
+    .kucsa-login-page {
         --kucsa-primary: #0d6efd;
-        --kucsa-primary-hover: #0b5ed7;
-        --kucsa-bg-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        --kucsa-primary-dark: #0b5ed7;
+        --kucsa-primary-soft: rgba(13, 110, 253, 0.09);
+        --kucsa-primary-soft-strong: rgba(13, 110, 253, 0.14);
+
+        --kucsa-success: #198754;
+        --kucsa-danger: #dc3545;
+
+        --kucsa-text: #172033;
+        --kucsa-muted: #6c757d;
+        --kucsa-border: #e1e6ed;
+        --kucsa-surface: #ffffff;
+
+        --kucsa-radius-sm: 0.65rem;
+        --kucsa-radius-md: 0.9rem;
+        --kucsa-radius-lg: 1.25rem;
+        --kucsa-radius-xl: 1.5rem;
+
+        --kucsa-shadow-sm:
+            0 4px 14px rgba(15, 23, 42, 0.05);
+
+        --kucsa-shadow-md:
+            0 12px 35px rgba(15, 23, 42, 0.08);
+
+        --kucsa-shadow-lg:
+            0 24px 65px rgba(15, 23, 42, 0.12);
+
+        --kucsa-transition:
+            180ms ease;
+
+        position: relative;
+        width: 100%;
+        min-height: calc(100vh - 80px);
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding:
+            clamp(1rem, 3vw, 3rem)
+            0;
+
+        overflow: hidden;
+
+        background:
+            radial-gradient(
+                circle at 8% 10%,
+                rgba(13, 110, 253, 0.08),
+                transparent 27%
+            ),
+            radial-gradient(
+                circle at 92% 85%,
+                rgba(13, 110, 253, 0.065),
+                transparent 28%
+            ),
+            linear-gradient(
+                145deg,
+                #f8faff 0%,
+                #f3f6fb 50%,
+                #edf2f8 100%
+            );
     }
 
-    body {
-        background: var(--kucsa-bg-gradient);
+
+    /* =========================================================
+       DECORATIVE BACKGROUND ELEMENTS
+    ========================================================== */
+
+    .kucsa-login-page::before {
+        content: "";
+        position: absolute;
+
+        width: 300px;
+        height: 300px;
+
+        top: -150px;
+        left: -100px;
+
+        border-radius: 50%;
+
+        background:
+            rgba(13, 110, 253, 0.045);
+
+        pointer-events: none;
     }
 
-    .kucsa-card {
-        border-radius: 1rem;
-        transition: all 0.3s ease-in-out;
+    .kucsa-login-page::after {
+        content: "";
+        position: absolute;
+
+        width: 360px;
+        height: 360px;
+
+        bottom: -190px;
+        right: -130px;
+
+        border-radius: 50%;
+
+        background:
+            rgba(13, 110, 253, 0.04);
+
+        pointer-events: none;
     }
 
-    .form-control {
-        padding: 0.75rem 1rem;
-        font-size: 0.95rem;
-        border-radius: 0.50rem;
-        border: 1px solid #ced4da;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    /* =========================================================
+       MAIN CONTAINER
+    ========================================================== */
+
+    .kucsa-login-container {
+        position: relative;
+        z-index: 1;
+
+        width: min(
+            calc(100% - 1.5rem),
+            470px
+        );
+
+        margin: 0 auto;
     }
 
-    .form-control:focus {
-        border-color: var(--kucsa-primary);
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+
+    /* =========================================================
+       LOGIN CARD
+    ========================================================== */
+
+    .kucsa-login-card {
+        overflow: hidden;
+
+        background:
+            rgba(255, 255, 255, 0.97);
+
+        border:
+            1px solid rgba(225, 230, 237, 0.9);
+
+        border-radius:
+            var(--kucsa-radius-xl);
+
+        box-shadow:
+            var(--kucsa-shadow-lg);
     }
 
-    .password-toggle-addon {
+
+    /* =========================================================
+       CARD TOP BRAND AREA
+    ========================================================== */
+
+    .kucsa-login-brand {
+        position: relative;
+
+        padding:
+            clamp(1.7rem, 5vw, 2.5rem)
+            1.5rem
+            1.6rem;
+
+        text-align: center;
+
+        color: #ffffff;
+
+        background:
+            linear-gradient(
+                135deg,
+                #0d6efd 0%,
+                #1559c7 55%,
+                #084298 100%
+            );
+
+        overflow: hidden;
+    }
+
+    .kucsa-login-brand::before {
+        content: "";
+
+        position: absolute;
+
+        width: 190px;
+        height: 190px;
+
+        top: -110px;
+        right: -65px;
+
+        border-radius: 50%;
+
+        background:
+            rgba(255, 255, 255, 0.08);
+    }
+
+    .kucsa-login-brand::after {
+        content: "";
+
+        position: absolute;
+
+        width: 130px;
+        height: 130px;
+
+        bottom: -90px;
+        left: -30px;
+
+        border-radius: 50%;
+
+        background:
+            rgba(255, 255, 255, 0.06);
+    }
+
+
+    /* =========================================================
+       BRAND ICON
+    ========================================================== */
+
+    .kucsa-login-icon {
+        position: relative;
+        z-index: 1;
+
+        width: 72px;
+        height: 72px;
+
+        margin: 0 auto 1rem;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 1.15rem;
+
+        color: #ffffff;
+
+        background:
+            rgba(255, 255, 255, 0.13);
+
+        border:
+            1px solid rgba(255, 255, 255, 0.2);
+
+        box-shadow:
+            0 12px 30px rgba(0, 0, 0, 0.12);
+
+        backdrop-filter:
+            blur(8px);
+    }
+
+    .kucsa-login-icon i {
+        font-size: 2rem;
+    }
+
+
+    .kucsa-login-brand h1 {
+        position: relative;
+        z-index: 1;
+
+        margin: 0 0 0.4rem;
+
+        font-size:
+            clamp(1.4rem, 4vw, 1.75rem);
+
+        line-height: 1.2;
+
+        font-weight: 800;
+
+        letter-spacing: -0.02em;
+    }
+
+    .kucsa-login-brand p {
+        position: relative;
+        z-index: 1;
+
+        margin: 0;
+
+        color:
+            rgba(255, 255, 255, 0.84);
+
+        font-size: 0.82rem;
+
+        line-height: 1.55;
+    }
+
+
+    /* =========================================================
+       CARD BODY
+    ========================================================== */
+
+    .kucsa-login-body {
+        padding:
+            clamp(1.25rem, 4vw, 2.25rem);
+    }
+
+
+    /* =========================================================
+       WELCOME INTRO
+    ========================================================== */
+
+    .kucsa-login-intro {
+        margin-bottom: 1.5rem;
+    }
+
+    .kucsa-login-intro h2 {
+        margin: 0 0 0.3rem;
+
+        color:
+            var(--kucsa-text);
+
+        font-size: 1.08rem;
+
+        font-weight: 750;
+    }
+
+    .kucsa-login-intro p {
+        margin: 0;
+
+        color:
+            var(--kucsa-muted);
+
+        font-size: 0.78rem;
+
+        line-height: 1.6;
+    }
+
+
+    /* =========================================================
+       ALERTS
+    ========================================================== */
+
+    .kucsa-login-page .alert {
+        border-radius:
+            var(--kucsa-radius-md);
+
+        font-size: 0.8rem;
+
+        line-height: 1.55;
+    }
+
+    .kucsa-login-message {
+        margin-bottom: 1.25rem;
+
+        box-shadow:
+            var(--kucsa-shadow-sm);
+    }
+
+    .kucsa-login-error {
+        margin-bottom: 1.25rem;
+    }
+
+
+    /* =========================================================
+       FORM LABEL
+    ========================================================== */
+
+    .kucsa-login-page .form-label {
+        margin-bottom: 0.45rem;
+
+        color: #273247;
+
+        font-size: 0.82rem;
+
+        font-weight: 700;
+    }
+
+    .kucsa-label-icon {
+        color:
+            var(--kucsa-primary);
+    }
+
+
+    /* =========================================================
+       FORM CONTROLS
+    ========================================================== */
+
+    .kucsa-login-page .form-control {
+        min-height: 49px;
+
+        padding:
+            0.72rem
+            0.9rem;
+
+        color: #253047;
+
+        background:
+            #ffffff;
+
+        border:
+            1px solid #dce2ea;
+
+        border-radius:
+            var(--kucsa-radius-sm);
+
+        font-size: 0.9rem;
+
+        box-shadow:
+            0 1px 2px rgba(15, 23, 42, 0.025);
+
+        transition:
+            border-color var(--kucsa-transition),
+            box-shadow var(--kucsa-transition),
+            background-color var(--kucsa-transition);
+    }
+
+    .kucsa-login-page .form-control:hover {
+        border-color:
+            #c6ceda;
+    }
+
+    .kucsa-login-page .form-control:focus {
+        border-color:
+            var(--kucsa-primary);
+
+        background:
+            #ffffff;
+
+        box-shadow:
+            0 0 0 4px rgba(13, 110, 253, 0.1),
+            0 4px 12px rgba(13, 110, 253, 0.05);
+
+        outline: none;
+    }
+
+    .kucsa-login-page .form-control::placeholder {
+        color:
+            #a1a9b6;
+    }
+
+    .kucsa-login-page .form-text {
+        margin-top: 0.4rem;
+
+        color:
+            #8992a2;
+
+        font-size: 0.71rem;
+
+        line-height: 1.5;
+    }
+
+
+    /* =========================================================
+       PASSWORD FIELD
+    ========================================================== */
+
+    .kucsa-password-wrapper {
+        position: relative;
+    }
+
+    .kucsa-password-wrapper .form-control {
+        padding-right: 3.1rem;
+    }
+
+    .kucsa-password-toggle {
+        position: absolute;
+
+        top: 50%;
+        right: 0.4rem;
+
+        z-index: 5;
+
+        width: 42px;
+        height: 42px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        transform:
+            translateY(-50%);
+
+        border: 0;
+
+        border-radius:
+            0.6rem;
+
+        background:
+            transparent;
+
+        color:
+            #7b8493;
+
         cursor: pointer;
-        background-color: transparent;
-        border-left: none;
-        color: #6c757d;
-        transition: color 0.2s;
+
+        transition:
+            color var(--kucsa-transition),
+            background-color var(--kucsa-transition);
     }
 
-    .password-toggle-addon:hover {
-        color: var(--kucsa-primary);
+    .kucsa-password-toggle:hover {
+        color:
+            var(--kucsa-primary);
+
+        background:
+            var(--kucsa-primary-soft);
     }
 
-    .password-wrapper .form-control {
-        border-right: none;
+    .kucsa-password-toggle:focus-visible {
+        outline:
+            3px solid
+            rgba(13, 110, 253, 0.18);
+
+        outline-offset:
+            1px;
+    }
+
+
+    /* =========================================================
+       FORGOT PASSWORD
+    ========================================================== */
+
+    .kucsa-forgot-row {
+        display: flex;
+        justify-content: flex-end;
+
+        margin-top: 0.55rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .kucsa-forgot-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+
+        min-height: 44px;
+
+        padding:
+            0.4rem
+            0.15rem;
+
+        color:
+            var(--kucsa-primary);
+
+        font-size: 0.76rem;
+
+        font-weight: 700;
+
+        text-decoration: none;
+
+        transition:
+            color var(--kucsa-transition);
+    }
+
+    .kucsa-forgot-link:hover {
+        color:
+            var(--kucsa-primary-dark);
+
+        text-decoration:
+            underline;
+
+        text-underline-offset:
+            3px;
+    }
+
+    .kucsa-forgot-link:focus-visible {
+        outline:
+            3px solid
+            rgba(13, 110, 253, 0.18);
+
+        outline-offset:
+            2px;
+
+        border-radius:
+            0.35rem;
+    }
+
+
+    /* =========================================================
+       FIELD ERRORS
+    ========================================================== */
+
+    .kucsa-field-error {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.35rem;
+
+        margin-top: 0.4rem;
+
+        color:
+            var(--kucsa-danger);
+
+        font-size: 0.73rem;
+
+        line-height: 1.45;
+    }
+
+    .kucsa-login-page input.is-invalid {
+        border-color:
+            rgba(220, 53, 69, 0.65);
+    }
+
+
+    /* =========================================================
+       SIGN-IN BUTTON
+    ========================================================== */
+
+    .kucsa-login-submit {
+        position: relative;
+
+        width: 100%;
+        min-height: 52px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+
+        padding:
+            0.8rem 1.25rem;
+
+        border: 0;
+
+        border-radius:
+            var(--kucsa-radius-md);
+
+        color: #ffffff;
+
+        background:
+            linear-gradient(
+                135deg,
+                var(--kucsa-primary),
+                #0958c7
+            );
+
+        font-size: 0.9rem;
+
+        font-weight: 750;
+
+        box-shadow:
+            0 8px 20px
+            rgba(13, 110, 253, 0.2);
+
+        transition:
+            transform var(--kucsa-transition),
+            box-shadow var(--kucsa-transition),
+            filter var(--kucsa-transition);
+    }
+
+    .kucsa-login-submit:hover:not(:disabled) {
+        transform:
+            translateY(-1px);
+
+        filter:
+            brightness(1.02);
+
+        box-shadow:
+            0 12px 27px
+            rgba(13, 110, 253, 0.25);
+    }
+
+    .kucsa-login-submit:active:not(:disabled) {
+        transform:
+            translateY(0);
+    }
+
+    .kucsa-login-submit:focus-visible {
+        outline:
+            3px solid
+            rgba(13, 110, 253, 0.25);
+
+        outline-offset:
+            3px;
+    }
+
+    .kucsa-login-submit:disabled {
+        cursor:
+            not-allowed;
+
+        opacity:
+            0.72;
+
+        transform:
+            none;
+    }
+
+
+    /* =========================================================
+       SECURITY NOTE
+    ========================================================== */
+
+    .kucsa-security-note {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+
+        margin-top: 0.75rem;
+
+        color:
+            #8992a2;
+
+        font-size: 0.69rem;
+
+        text-align: center;
+        line-height: 1.5;
+    }
+
+    .kucsa-security-note i {
+        color:
+            var(--kucsa-success);
+    }
+
+
+    /* =========================================================
+       ACCOUNT REGISTRATION AREA
+    ========================================================== */
+
+    .kucsa-register-prompt {
+        margin-top: 1.6rem;
+        padding-top: 1.4rem;
+
+        border-top:
+            1px solid #edf0f4;
+
+        text-align: center;
+    }
+
+    .kucsa-register-prompt p {
+        margin: 0 0 0.75rem;
+
+        color:
+            #7b8493;
+
+        font-size: 0.77rem;
+
+        line-height: 1.55;
+    }
+
+    .kucsa-register-prompt a {
+        color:
+            var(--kucsa-primary);
+
+        font-weight: 750;
+
+        text-decoration: none;
+
+        transition:
+            color var(--kucsa-transition);
+    }
+
+    .kucsa-register-prompt a:hover {
+        color:
+            var(--kucsa-primary-dark);
+
+        text-decoration:
+            underline;
+
+        text-underline-offset:
+            3px;
+    }
+
+
+    /* =========================================================
+       FOOTER
+    ========================================================== */
+
+    .kucsa-login-footer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+
+        margin-top: 1rem;
+
+        padding:
+            0 0.75rem;
+
+        color:
+            #8992a2;
+
+        font-size: 0.68rem;
+
+        text-align: center;
+
+        line-height: 1.5;
+    }
+
+    .kucsa-login-footer i {
+        color:
+            var(--kucsa-success);
+    }
+
+
+    /* =========================================================
+       RESPONSIVE — TABLET
+    ========================================================== */
+
+    @media (max-width: 767.98px) {
+
+        .kucsa-login-page {
+            min-height:
+                calc(100vh - 60px);
+
+            padding:
+                1rem 0;
+        }
+
+        .kucsa-login-container {
+            width:
+                min(
+                    calc(100% - 1rem),
+                    500px
+                );
+        }
+
+        .kucsa-login-brand {
+            padding:
+                1.6rem
+                1.25rem
+                1.5rem;
+        }
+
+        .kucsa-login-body {
+            padding:
+                1.4rem;
+        }
+
+    }
+
+
+    /* =========================================================
+       RESPONSIVE — MOBILE
+    ========================================================== */
+
+    @media (max-width: 575.98px) {
+
+        .kucsa-login-page {
+            align-items:
+                flex-start;
+
+            min-height:
+                calc(100vh - 50px);
+
+            padding:
+                0.75rem 0;
+        }
+
+        .kucsa-login-container {
+            width:
+                100%;
+        }
+
+        .kucsa-login-card {
+            border-radius:
+                1.15rem;
+        }
+
+        .kucsa-login-brand {
+            padding:
+                1.45rem
+                1rem
+                1.4rem;
+        }
+
+        .kucsa-login-icon {
+            width: 62px;
+            height: 62px;
+
+            margin-bottom:
+                0.85rem;
+
+            border-radius:
+                1rem;
+        }
+
+        .kucsa-login-icon i {
+            font-size:
+                1.7rem;
+        }
+
+        .kucsa-login-brand h1 {
+            font-size:
+                1.4rem;
+        }
+
+        .kucsa-login-brand p {
+            font-size:
+                0.76rem;
+        }
+
+        .kucsa-login-body {
+            padding:
+                1.2rem
+                1rem
+                1.35rem;
+        }
+
+        .kucsa-login-intro {
+            margin-bottom:
+                1.25rem;
+        }
+
+        .kucsa-login-page .form-control {
+            min-height:
+                50px;
+        }
+
+        .kucsa-login-submit {
+            min-height:
+                52px;
+        }
+
+    }
+
+
+    /* =========================================================
+       VERY SMALL DEVICES
+    ========================================================== */
+
+    @media (max-width: 360px) {
+
+        .kucsa-login-body {
+            padding-left:
+                0.8rem;
+
+            padding-right:
+                0.8rem;
+        }
+
+        .kucsa-login-brand h1 {
+            font-size:
+                1.3rem;
+        }
+
+    }
+
+
+    /* =========================================================
+       REDUCED MOTION
+    ========================================================== */
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .kucsa-login-page *,
+        .kucsa-login-page *::before,
+        .kucsa-login-page *::after {
+            scroll-behavior:
+                auto !important;
+
+            transition-duration:
+                0.01ms !important;
+
+            animation-duration:
+                0.01ms !important;
+
+            animation-iteration-count:
+                1 !important;
+        }
+
     }
 </style>
 
-<div class="container py-5">
-    <div class="row justify-content-center align-items-center" style="min-height: 75vh;">
-        <div class="col-lg-5 col-md-7 col-sm-10">
 
-            <div class="card kucsa-card shadow-lg border-0 bg-white">
-                <div class="card-body p-4 p-md-5">
+<div class="kucsa-login-page">
 
-                    <div class="text-center mb-4">
-                        <div class="mb-3 d-inline-block p-3 bg-primary bg-opacity-10 rounded-circle text-primary">
-                            <i class="bi bi-cpu-fill display-4"></i>
-                        </div>
-                        <h3 class="fw-bold mb-1 text-dark">
-                            KUCSA Platform
-                        </h3>
-                        <p class="text-muted mb-0">
-                            Sign in to your member portal
-                        </p>
-                    </div>
+    <div class="kucsa-login-container">
 
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% elif message.tags == 'warning' %}alert-warning{% else %}alert-info{% endif %} alert-dismissible fade show shadow-sm" role="alert">
-                                <i class="bi bi-info-circle-fill me-2"></i>{{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
+        <!-- =====================================================
+             LOGIN CARD
+        ====================================================== -->
 
-                    <form method="post" novalidate id="kucsaLoginForm">
-                        {% csrf_token %}
+        <main class="kucsa-login-card">
 
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger shadow-sm">
-                                <i class="bi bi-exclamation-triangle me-2"></i>
-                                {% for error in form.non_field_errors %}
-                                    <div>{{ error }}</div>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
+            <!-- =================================================
+                 BRAND HEADER
+            ================================================== -->
 
-                        <div class="mb-3">
-                            <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold">
-                                <i class="bi bi-person me-1 text-primary"></i>Username
-                            </label>
-                            {{ form.username }}
-                            {% if form.username.help_text %}
-                                <div class="form-text">{{ form.username.help_text }}</div>
-                            {% endif %}
-                            {% for error in form.username.errors %}
-                                <div class="text-danger small mt-1">
-                                    <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
-                                </div>
-                            {% endfor %}
-                        </div>
+            <header class="kucsa-login-brand">
 
-                        <div class="mb-2">
-                            <label for="{{ form.password.id_for_label }}" class="form-label fw-semibold">
-                                <i class="bi bi-lock me-1 text-primary"></i>Password
-                            </label>
-                            <div class="input-group password-wrapper">
-                                {{ form.password }}
-                                <span class="input-group-text password-toggle-addon" onclick="togglePasswordVisibility('{{ form.password.id_for_label }}', this)">
-                                    <i class="bi bi-eye-slash" id="loginToggleIcon"></i>
-                                </span>
-                            </div>
-                            {% if form.password.help_text %}
-                                <div class="form-text">{{ form.password.help_text }}</div>
-                            {% endif %}
-                            {% for error in form.password.errors %}
-                                <div class="text-danger small mt-1">
-                                    <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
-                                </div>
-                            {% endfor %}
-                        </div>
+                <div class="kucsa-login-icon"
+                     aria-hidden="true">
 
-                        <div class="d-flex justify-content-end mb-4">
-                            <a href="{% url 'accounts:forgot_password' %}" class="text-decoration-none small fw-semibold text-primary">
-                                Forgot password?
-                            </a>
-                        </div>
-
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg shadow-sm py-3 fw-bold">
-                                <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
-                            </button>
-                        </div>
-
-                    </form>
-
-                    <div class="text-center mt-4">
-                        <p class="text-muted small mb-3">
-                            Your KUCSA account grants access to community resources, event tracking, and member profiles.
-                        </p>
-                        
-                        <hr class="text-muted opacity-25">
-
-                        <p class="mb-0 text-muted">
-                            Don't have a KUCSA account? 
-                            <a href="{% url 'accounts:register' %}" class="text-decoration-none fw-bold text-primary">
-                                Create an account
-                            </a>
-                        </p>
-                    </div>
+                    <i class="bi bi-cpu-fill"></i>
 
                 </div>
+
+                <h1>
+                    KUCSA Platform
+                </h1>
+
+                <p>
+                    Your digital gateway to the
+                    Kisii University Computing Community
+                </p>
+
+            </header>
+
+
+            <!-- =================================================
+                 LOGIN BODY
+            ================================================== -->
+
+            <div class="kucsa-login-body">
+
+                <div class="kucsa-login-intro">
+
+                    <h2>
+                        Welcome back
+                    </h2>
+
+                    <p>
+                        Sign in to access your KUCSA member portal.
+                    </p>
+
+                </div>
+
+
+                <!-- =================================================
+                     DJANGO MESSAGES
+                ================================================== -->
+
+                {% if messages %}
+
+                    {% for message in messages %}
+
+                        <div class="alert
+                                    {% if message.tags == 'error' %}
+                                        alert-danger
+                                    {% elif message.tags == 'success' %}
+                                        alert-success
+                                    {% elif message.tags == 'warning' %}
+                                        alert-warning
+                                    {% else %}
+                                        alert-info
+                                    {% endif %}
+                                    alert-dismissible
+                                    fade
+                                    show
+                                    kucsa-login-message"
+                             role="alert">
+
+                            <div class="d-flex
+                                        align-items-start
+                                        gap-2">
+
+                                <i class="bi
+                                          {% if message.tags == 'error' %}
+                                              bi-exclamation-triangle-fill
+                                          {% elif message.tags == 'success' %}
+                                              bi-check-circle-fill
+                                          {% elif message.tags == 'warning' %}
+                                              bi-exclamation-circle-fill
+                                          {% else %}
+                                              bi-info-circle-fill
+                                          {% endif %}
+                                          mt-1">
+                                </i>
+
+                                <div class="flex-grow-1">
+
+                                    {{ message }}
+
+                                </div>
+
+                            </div>
+
+                            <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="alert"
+                                    aria-label="Close">
+                            </button>
+
+                        </div>
+
+                    {% endfor %}
+
+                {% endif %}
+
+
+                <!-- =================================================
+                     LOGIN FORM
+                ================================================== -->
+
+                <form method="post"
+                      novalidate
+                      id="kucsaLoginForm">
+
+                    {% csrf_token %}
+
+
+                    <!-- =============================================
+                         NON-FIELD ERRORS
+                    ============================================== -->
+
+                    {% if form.non_field_errors %}
+
+                        <div class="alert alert-danger
+                                    kucsa-login-error"
+                             role="alert">
+
+                            <div class="d-flex
+                                        align-items-start
+                                        gap-2">
+
+                                <i class="bi
+                                          bi-exclamation-triangle-fill
+                                          mt-1">
+                                </i>
+
+                                <div>
+
+                                    <strong>
+                                        Unable to sign in
+                                    </strong>
+
+                                    <div class="mt-1">
+
+                                        {% for error in form.non_field_errors %}
+
+                                            <div>
+                                                {{ error }}
+                                            </div>
+
+                                        {% endfor %}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- =================================================
+                         USERNAME
+                    ================================================== -->
+
+                    <div class="mb-3">
+
+                        <label for="{{ form.username.id_for_label }}"
+                               class="form-label">
+
+                            <i class="bi bi-person kucsa-label-icon me-1"></i>
+
+                            Username
+
+                        </label>
+
+                        {{ form.username }}
+
+                        {% if form.username.help_text %}
+
+                            <div class="form-text">
+                                {{ form.username.help_text }}
+                            </div>
+
+                        {% endif %}
+
+                        {% for error in form.username.errors %}
+
+                            <div class="kucsa-field-error">
+
+                                <i class="bi bi-exclamation-circle"></i>
+
+                                <span>
+                                    {{ error }}
+                                </span>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <!-- =================================================
+                         PASSWORD
+                    ================================================== -->
+
+                    <div class="mb-1">
+
+                        <label for="{{ form.password.id_for_label }}"
+                               class="form-label">
+
+                            <i class="bi bi-lock kucsa-label-icon me-1"></i>
+
+                            Password
+
+                        </label>
+
+                        <div class="kucsa-password-wrapper">
+
+                            {{ form.password }}
+
+                            <button type="button"
+                                    class="kucsa-password-toggle"
+                                    id="loginPasswordToggle"
+                                    aria-label="Show password"
+                                    aria-pressed="false"
+                                    title="Show password">
+
+                                <i class="bi bi-eye-slash"
+                                   aria-hidden="true">
+                                </i>
+
+                            </button>
+
+                        </div>
+
+                        {% if form.password.help_text %}
+
+                            <div class="form-text">
+                                {{ form.password.help_text }}
+                            </div>
+
+                        {% endif %}
+
+                        {% for error in form.password.errors %}
+
+                            <div class="kucsa-field-error">
+
+                                <i class="bi bi-exclamation-circle"></i>
+
+                                <span>
+                                    {{ error }}
+                                </span>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <!-- =================================================
+                         FORGOT PASSWORD
+                    ================================================== -->
+
+                    <div class="kucsa-forgot-row">
+
+                        <a href="{% url 'accounts:forgot_password' %}"
+                           class="kucsa-forgot-link">
+
+                            <i class="bi bi-key"></i>
+
+                            Forgot password?
+
+                        </a>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         SIGN IN
+                    ================================================== -->
+
+                    <button type="submit"
+                            class="kucsa-login-submit"
+                            id="kucsaLoginSubmit">
+
+                        <i class="bi bi-box-arrow-in-right"
+                           aria-hidden="true">
+                        </i>
+
+                        <span>
+                            Sign In
+                        </span>
+
+                    </button>
+
+
+                    <div class="kucsa-security-note">
+
+                        <i class="bi bi-shield-check"></i>
+
+                        <span>
+                            Your connection is protected
+                        </span>
+
+                    </div>
+
+                </form>
+
+
+                <!-- =================================================
+                     ACCOUNT INFORMATION
+                ================================================== -->
+
+                <div class="kucsa-register-prompt">
+
+                    <p>
+                        Your KUCSA account gives you access to
+                        community resources, event tracking,
+                        attendance records and your member profile.
+                    </p>
+
+                    <p class="mb-0">
+
+                        Don't have a KUCSA account?
+
+                        <a href="{% url 'accounts:register' %}">
+                            Create an account
+                        </a>
+
+                    </p>
+
+                </div>
+
             </div>
 
-            <div class="text-center mt-3">
-                <small class="text-muted">
-                    <i class="bi bi-shield-check me-1 text-success"></i>
-                    Pending accounts require membership activation requirements &bull; Kisii University
-                </small>
-            </div>
+        </main>
 
-        </div>
+
+        <!-- =====================================================
+             PAGE FOOTER
+        ====================================================== -->
+
+        <footer class="kucsa-login-footer">
+
+            <i class="bi bi-shield-check"></i>
+
+            <span>
+                Pending accounts require membership activation
+                requirements &bull; Kisii University
+            </span>
+
+        </footer>
+
     </div>
+
 </div>
 
-<script>
-    // Password visibility toggle feature
-    function togglePasswordVisibility(fieldId, toggleElement) {
-        const passwordField = document.getElementById(fieldId);
-        const icon = toggleElement.querySelector('i');
-        
-        if (passwordField.type === "password") {
-            passwordField.type = "text";
-            icon.classList.remove("bi-eye-slash");
-            icon.classList.add("bi-eye");
-        } else {
-            passwordField.type = "password";
-            icon.classList.remove("bi-eye");
-            icon.classList.add("bi-eye-slash");
-        }
-    }
 
-    // Automatically inject Bootstrap classes into Django-rendered fields if missing
-    document.addEventListener("DOMContentLoaded", function() {
-        const formInputs = document.querySelectorAll('input:not([type="checkbox"]):not([type="file"])');
-        formInputs.forEach(input => {
-            if (!input.classList.contains('form-control')) {
-                input.classList.add('form-control');
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        /* =====================================================
+           AUTOMATIC BOOTSTRAP CLASS INJECTION
+        ====================================================== */
+
+        const formInputs =
+            document.querySelectorAll(
+                "#kucsaLoginForm input:not([type='hidden'])"
+            );
+
+
+        formInputs.forEach(function (input) {
+
+            if (
+                !input.classList.contains("form-control") &&
+                input.type !== "checkbox" &&
+                input.type !== "radio"
+            ) {
+
+                input.classList.add(
+                    "form-control"
+                );
+
             }
+
         });
+
+
+        /* =====================================================
+           PASSWORD VISIBILITY
+        ====================================================== */
+
+        const passwordField =
+            document.getElementById(
+                "{{ form.password.id_for_label }}"
+            );
+
+        const passwordToggle =
+            document.getElementById(
+                "loginPasswordToggle"
+            );
+
+
+        if (
+            passwordField &&
+            passwordToggle
+        ) {
+
+            passwordToggle.addEventListener(
+                "click",
+                function () {
+
+                    const icon =
+                        passwordToggle.querySelector(
+                            "i"
+                        );
+
+
+                    if (
+                        passwordField.type ===
+                        "password"
+                    ) {
+
+                        passwordField.type =
+                            "text";
+
+
+                        icon.classList.remove(
+                            "bi-eye-slash"
+                        );
+
+                        icon.classList.add(
+                            "bi-eye"
+                        );
+
+
+                        passwordToggle.setAttribute(
+                            "aria-label",
+                            "Hide password"
+                        );
+
+                        passwordToggle.setAttribute(
+                            "title",
+                            "Hide password"
+                        );
+
+                        passwordToggle.setAttribute(
+                            "aria-pressed",
+                            "true"
+                        );
+
+                    } else {
+
+                        passwordField.type =
+                            "password";
+
+
+                        icon.classList.remove(
+                            "bi-eye"
+                        );
+
+                        icon.classList.add(
+                            "bi-eye-slash"
+                        );
+
+
+                        passwordToggle.setAttribute(
+                            "aria-label",
+                            "Show password"
+                        );
+
+                        passwordToggle.setAttribute(
+                            "title",
+                            "Show password"
+                        );
+
+                        passwordToggle.setAttribute(
+                            "aria-pressed",
+                            "false"
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           LOGIN FORM SUBMISSION PROTECTION
+        ====================================================== */
+
+        const loginForm =
+            document.getElementById(
+                "kucsaLoginForm"
+            );
+
+        const loginButton =
+            document.getElementById(
+                "kucsaLoginSubmit"
+            );
+
+
+        if (
+            loginForm &&
+            loginButton
+        ) {
+
+            let isSubmitting = false;
+
+
+            loginForm.addEventListener(
+                "submit",
+                function (event) {
+
+                    /*
+                     * Let browser validation run normally.
+                     */
+
+                    if (
+                        !loginForm.checkValidity()
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    /*
+                     * Prevent accidental
+                     * double submissions.
+                     */
+
+                    if (isSubmitting) {
+
+                        event.preventDefault();
+
+                        return;
+
+                    }
+
+
+                    isSubmitting = true;
+
+
+                    loginButton.disabled =
+                        true;
+
+
+                    loginButton.innerHTML =
+                        '<span class="spinner-border spinner-border-sm" ' +
+                        'role="status" aria-hidden="true"></span>' +
+                        '<span>Signing you in...</span>';
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           ADD INVALID STATE TO FIELDS WITH DJANGO ERRORS
+        ====================================================== */
+
+        const fieldErrors =
+            document.querySelectorAll(
+                ".kucsa-field-error"
+            );
+
+
+        fieldErrors.forEach(
+            function (errorElement) {
+
+                const field =
+                    errorElement
+                        .closest(".mb-3, .mb-1")
+                        ?.querySelector(
+                            ".form-control"
+                        );
+
+
+                if (field) {
+
+                    field.classList.add(
+                        "is-invalid"
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           AUTO-FOCUS USERNAME
+           Only when no field already contains a value.
+        ====================================================== */
+
+        const usernameField =
+            document.getElementById(
+                "{{ form.username.id_for_label }}"
+            );
+
+
+        if (
+            usernameField &&
+            !usernameField.value
+        ) {
+
+            /*
+             * Avoid forcing focus on mobile devices.
+             */
+
+            if (
+                window.innerWidth >= 768
+            ) {
+
+                usernameField.focus();
+
+            }
+
+        }
+
     });
 </script>
 

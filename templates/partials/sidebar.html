@@ -1,23 +1,37 @@
-
-<!-- =========================================================
-     KUCSA SIDEBAR
-     ========================================================= -->
-
 <style>
     /* =========================================================
-       SIDEBAR BASE
+       SIDEBAR BASE STYLING
        ========================================================= */
 
     .kucsa-sidebar {
         background: #212529;
         color: #fff;
         min-height: 100%;
+        height: 100vh;
         overflow-x: hidden;
         overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        transition: all 0.3s ease;
+        box-shadow: 4px 0 25px rgba(0, 0, 0, 0.15);
     }
 
     .kucsa-sidebar * {
         box-sizing: border-box;
+    }
+
+    /* Modern Custom Scrollbar for all platforms */
+    .kucsa-sidebar::-webkit-scrollbar {
+        width: 5px;
+    }
+    .kucsa-sidebar::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.02);
+    }
+    .kucsa-sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+    }
+    .kucsa-sidebar::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.3);
     }
 
 
@@ -26,9 +40,10 @@
        ========================================================= */
 
     .kucsa-sidebar .sidebar-header {
-        padding: 1.5rem 1rem;
+        padding: 1.75rem 1rem 1.25rem 1rem;
         text-align: center;
         border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(0, 0, 0, 0) 100%);
     }
 
     .kucsa-sidebar .sidebar-profile-picture {
@@ -37,6 +52,12 @@
         object-fit: cover;
         border-radius: 50%;
         border: 3px solid rgba(255, 255, 255, 0.25);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        transition: transform 0.2s ease;
+    }
+
+    .kucsa-sidebar .sidebar-profile-picture:hover {
+        transform: scale(1.03);
     }
 
     .kucsa-sidebar .sidebar-default-avatar {
@@ -63,6 +84,7 @@
         color: rgba(255, 255, 255, 0.45);
         font-size: 0.68rem;
         margin-top: 0.3rem;
+        font-family: monospace;
     }
 
 
@@ -78,6 +100,8 @@
         font-size: 0.68rem;
         font-weight: 500;
         padding: 0.4rem 0.65rem;
+        border-radius: 20px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
 
 
@@ -86,29 +110,28 @@
        ========================================================= */
 
     .kucsa-sidebar .sidebar-nav {
-        padding: 0.75rem 0;
+        padding: 0.75rem 0.75rem 3.5rem 0.75rem;
         margin: 0;
     }
 
     .kucsa-sidebar .nav-item {
         list-style: none;
+        width: 100%;
     }
 
     .kucsa-sidebar .nav-link {
         display: flex;
         align-items: center;
-        min-height: 44px;
-        margin: 2px 8px;
+        min-height: 44px; /* Optimized touch target height for mobile/tablets */
+        margin: 3px 0;
         padding: 0.65rem 0.85rem;
         border-radius: 7px;
         color: rgba(255, 255, 255, 0.88) !important;
         text-decoration: none;
         font-size: 0.88rem;
         font-weight: 400;
-        transition:
-            background-color 0.18s ease,
-            color 0.18s ease,
-            transform 0.18s ease;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
     }
 
     .kucsa-sidebar .nav-link i {
@@ -118,6 +141,7 @@
         color: rgba(255, 255, 255, 0.78);
         font-size: 1rem;
         text-align: center;
+        transition: color 0.2s ease;
     }
 
     .kucsa-sidebar .nav-link span {
@@ -129,7 +153,7 @@
     .kucsa-sidebar .nav-link:hover {
         background: rgba(255, 255, 255, 0.09);
         color: #fff !important;
-        transform: translateX(2px);
+        transform: translateX(3px);
     }
 
     .kucsa-sidebar .nav-link:hover i {
@@ -137,9 +161,10 @@
     }
 
     .kucsa-sidebar .nav-link.active {
-        background: rgba(255, 255, 255, 0.15);
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.08) 100%);
         color: #fff !important;
         font-weight: 600;
+        border-left: 3px solid #0d6efd;
     }
 
     .kucsa-sidebar .nav-link.active i {
@@ -154,7 +179,7 @@
     .kucsa-sidebar .sidebar-section {
         margin-top: 1rem;
         margin-bottom: 0.25rem;
-        padding: 0 1rem;
+        padding: 0 0.5rem;
     }
 
     .kucsa-sidebar .sidebar-section-title {
@@ -172,7 +197,7 @@
        ========================================================= */
 
     .kucsa-sidebar .sidebar-divider {
-        margin: 0.8rem 1rem;
+        margin: 0.8rem 0.5rem;
         border: 0;
         border-top: 1px solid rgba(255, 255, 255, 0.12);
     }
@@ -184,7 +209,7 @@
 
     .kucsa-sidebar .payment-required-box,
     .kucsa-sidebar .payment-pending-box {
-        margin: 0.75rem;
+        margin: 0.5rem 0;
         padding: 0.8rem;
         border-radius: 8px;
         font-size: 0.75rem;
@@ -220,7 +245,7 @@
        ========================================================= */
 
     .kucsa-sidebar .account-state-box {
-        margin: 0.75rem;
+        margin: 0.5rem 0;
         padding: 0.7rem 0.8rem;
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid rgba(255, 255, 255, 0.08);
@@ -259,11 +284,17 @@
 
 
     /* =========================================================
-       MOBILE
+       RESPONSIVE BREAKPOINTS (Mobile, Tablets, iPhones, Android)
        ========================================================= */
 
-    @media (max-width: 767.98px) {
+    @media (max-width: 991.98px) {
+        .offcanvas-start.kucsa-sidebar {
+            width: 285px !important;
+            transform: translateX(-100%);
+        }
+    }
 
+    @media (max-width: 767.98px) {
         .kucsa-sidebar .sidebar-header {
             padding: 1.25rem 0.75rem;
         }
@@ -276,20 +307,31 @@
         .kucsa-sidebar .sidebar-default-avatar {
             font-size: 3.8rem;
         }
-
-        .kucsa-sidebar .nav-link {
-            margin-left: 5px;
-            margin-right: 5px;
-        }
     }
 </style>
 
 
-<div class="kucsa-sidebar">
+<div class="offcanvas offcanvas-start kucsa-sidebar bg-dark text-white d-lg-none" tabindex="-1" id="kucsaMobileSidebar" aria-labelledby="kucsaMobileSidebarLabel">
+    <div class="offcanvas-header border-bottom border-secondary px-3 py-3">
+        <h5 class="offcanvas-title fs-6 fw-bold text-uppercase m-0" id="kucsaMobileSidebarLabel">
+            <i class="bi bi-grid-fill me-2 text-info"></i>KUCSA Menu
+        </h5>
+        <button type="button" class="btn-close btn-close-white text-reset shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+        <div class="kucsa-sidebar h-100">
+            {% include "./_sidebar_core.html"|default:"#inline_sidebar_content" %}
+        </div>
+    </div>
+</div>
 
-    <!-- =====================================================
-         USER PROFILE
-         ===================================================== -->
+
+<div class="d-none d-lg-block kucsa-sidebar h-100">
+    {% include "./_sidebar_core.html"|default:"#inline_sidebar_content" %}
+</div>
+
+
+<div class="kucsa-sidebar" id="inline_sidebar_content">
 
     <div class="sidebar-header">
 
@@ -336,8 +378,6 @@
 
         {% endif %}
 
-
-        <!-- MEMBERSHIP STATUS -->
 
         <div class="sidebar-status">
 
@@ -402,16 +442,8 @@
     </div>
 
 
-    <!-- =====================================================
-         NAVIGATION
-         ===================================================== -->
-
     <ul class="nav flex-column sidebar-nav">
 
-
-        <!-- =================================================
-             ACCOUNT
-             ================================================= -->
 
         <li class="sidebar-section">
 
@@ -439,10 +471,6 @@
 
         </li>
 
-
-        <!-- =================================================
-             PAYMENT GATE
-             ================================================= -->
 
         {% if not user.is_kucsa_admin and not user.has_platform_access %}
 
@@ -574,10 +602,6 @@
         {% endif %}
 
 
-        <!-- =================================================
-             PLATFORM ACCESS
-             ================================================= -->
-
         {% if user.is_kucsa_admin or user.has_platform_access %}
 
             <li>
@@ -593,10 +617,6 @@
 
             </li>
 
-
-            <!-- =================================================
-                 DASHBOARD
-                 ================================================= -->
 
             <li class="nav-item">
 
@@ -649,10 +669,6 @@
 
             </li>
 
-
-            <!-- =================================================
-                 MEMBER SERVICES
-                 ================================================= -->
 
             {% if not user.is_kucsa_admin %}
 
@@ -721,10 +737,6 @@
             {% endif %}
 
 
-            <!-- =================================================
-                 PAYMENTS
-                 ================================================= -->
-
             <li class="sidebar-section">
 
                 <span class="sidebar-section-title">
@@ -751,10 +763,6 @@
 
             </li>
 
-
-            <!-- =================================================
-                 EVENTS
-                 ================================================= -->
 
             <li class="sidebar-section">
 
@@ -800,10 +808,6 @@
 
             </li>
 
-
-            <!-- =================================================
-                 MEMBER ATTENDANCE
-                 ================================================= -->
 
             {% if not user.is_kucsa_admin and not user.is_executive %}
 
@@ -854,10 +858,6 @@
             {% endif %}
 
 
-            <!-- =================================================
-                 COMMUNICATION
-                 ================================================= -->
-
             <li class="sidebar-section">
 
                 <span class="sidebar-section-title">
@@ -884,10 +884,6 @@
 
             </li>
 
-
-            <!-- =================================================
-                 EXECUTIVE AREA
-                 ================================================= -->
 
             {% if user.is_executive %}
 
@@ -1013,10 +1009,6 @@
                 </li>
 
 
-                <!-- =================================================
-                     EXECUTIVE MEMBER MANAGEMENT
-                     ================================================= -->
-
                 <li class="sidebar-section">
 
                     <span class="sidebar-section-title">
@@ -1043,10 +1035,6 @@
 
                 </li>
 
-
-                <!-- =================================================
-                     EXECUTIVE EVENT MANAGEMENT
-                     ================================================= -->
 
                 <li class="sidebar-section">
 
@@ -1092,10 +1080,6 @@
 
                 </li>
 
-
-                <!-- =================================================
-                     EXECUTIVE ATTENDANCE MANAGEMENT
-                     ================================================= -->
 
                 <li class="sidebar-section">
 
@@ -1159,10 +1143,6 @@
 
                 </li>
 
-
-                <!-- =================================================
-                     EXECUTIVE FINANCE MANAGEMENT
-                     ================================================= -->
 
                 <li class="sidebar-section">
 
@@ -1299,10 +1279,6 @@
                 </li>
 
 
-                <!-- =================================================
-                     EXECUTIVE ANNOUNCEMENTS
-                     ================================================= -->
-
                 <li class="sidebar-section">
 
                     <span class="sidebar-section-title">
@@ -1350,10 +1326,6 @@
             {% endif %}
 
 
-            <!-- =================================================
-                 ADMINISTRATION
-                 ================================================= -->
-
             {% if user.is_kucsa_admin %}
 
                 <li>
@@ -1369,8 +1341,6 @@
 
                 </li>
 
-
-                <!-- MEMBERS -->
 
                 <li class="nav-item">
 
@@ -1389,8 +1359,6 @@
 
                 </li>
 
-
-                <!-- EXECUTIVES -->
 
                 <li class="nav-item">
 
@@ -1428,8 +1396,6 @@
                 </li>
 
 
-                <!-- EVENTS -->
-
                 <li class="nav-item">
 
                     <a
@@ -1465,10 +1431,6 @@
 
                 </li>
 
-
-                <!-- =================================================
-                     ADMIN ATTENDANCE
-                     ================================================= -->
 
                 <li class="sidebar-section">
 
@@ -1532,10 +1494,6 @@
 
                 </li>
 
-
-                <!-- =================================================
-                     ADMIN FINANCE
-                     ================================================= -->
 
                 <li class="sidebar-section">
 
@@ -1672,10 +1630,6 @@
                 </li>
 
 
-                <!-- =================================================
-                     ADMIN ANNOUNCEMENTS
-                     ================================================= -->
-
                 <li class="sidebar-section">
 
                     <span class="sidebar-section-title">
@@ -1721,10 +1675,6 @@
                 </li>
 
 
-                <!-- =================================================
-                     SYSTEM
-                     ================================================= -->
-
                 <li class="sidebar-section">
 
                     <span class="sidebar-section-title">
@@ -1756,10 +1706,6 @@
         {% endif %}
 
 
-        <!-- =================================================
-             ACCOUNT ACTIONS
-             ================================================= -->
-
         <li>
             <hr class="sidebar-divider">
         </li>
@@ -1773,8 +1719,6 @@
 
         </li>
 
-
-        <!-- CHANGE PASSWORD -->
 
         <li class="nav-item">
 
@@ -1793,8 +1737,6 @@
 
         </li>
 
-
-        <!-- LOGOUT -->
 
         <li class="nav-item">
 
@@ -1817,3 +1759,21 @@
 
 </div>
 
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const sidebarLinks = document.querySelectorAll('.kucsa-sidebar .nav-link');
+        const mobileSidebarEl = document.getElementById('kucsaMobileSidebar');
+        
+        if (mobileSidebarEl) {
+            const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(mobileSidebarEl);
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth < 992) {
+                        bsOffcanvas.hide();
+                    }
+                });
+            });
+        }
+    });
+</script>

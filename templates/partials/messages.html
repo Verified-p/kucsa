@@ -1,47 +1,624 @@
+<!-- =========================================================
+     KUCSA GLOBAL DJANGO MESSAGES
+     Auto-dismiss: 15 seconds
+     ========================================================= -->
+
+<style>
+    /* =========================================================
+       KUCSA MESSAGE SYSTEM
+       All styling is scoped to .kucsa-messages
+       ========================================================= */
+
+    .kucsa-messages {
+        --kucsa-message-radius: 14px;
+        --kucsa-message-text: #1d2939;
+        --kucsa-message-muted: #667085;
+        --kucsa-message-border: rgba(16, 24, 40, 0.08);
+        --kucsa-message-shadow:
+            0 8px 24px rgba(16, 24, 40, 0.08),
+            0 2px 6px rgba(16, 24, 40, 0.04);
+
+        width: 100%;
+        margin: 0;
+        padding: 0.75rem 1rem 0;
+
+        position: relative;
+        z-index: 1000;
+    }
+
+
+    /* =========================================================
+       MESSAGE ITEM
+       ========================================================= */
+
+    .kucsa-messages .kucsa-message {
+        position: relative;
+
+        display: flex;
+        align-items: flex-start;
+        gap: 0.8rem;
+
+        width: 100%;
+        max-width: 100%;
+
+        margin: 0 auto 0.75rem;
+        padding: 0.9rem 3rem 0.9rem 1rem;
+
+        border: 1px solid var(--kucsa-message-border);
+        border-radius: var(--kucsa-message-radius);
+
+        color: var(--kucsa-message-text);
+
+        background: #ffffff;
+
+        box-shadow: var(--kucsa-message-shadow);
+
+        overflow: hidden;
+
+        font-size: 0.88rem;
+        font-weight: 500;
+        line-height: 1.55;
+
+        animation:
+            kucsaMessageEnter
+            0.35s
+            cubic-bezier(0.22, 1, 0.36, 1)
+            both;
+
+        transition:
+            opacity 0.3s ease,
+            transform 0.3s ease,
+            max-height 0.35s ease,
+            margin 0.35s ease,
+            padding 0.35s ease;
+    }
+
+
+    /* =========================================================
+       MESSAGE ACCENT
+       ========================================================= */
+
+    .kucsa-messages .kucsa-message::before {
+        content: "";
+
+        position: absolute;
+
+        top: 0;
+        left: 0;
+        bottom: 0;
+
+        width: 4px;
+
+        background: currentColor;
+
+        opacity: 0.9;
+    }
+
+
+    /* =========================================================
+       MESSAGE ICON
+       ========================================================= */
+
+    .kucsa-messages .kucsa-message-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        flex: 0 0 34px;
+
+        width: 34px;
+        height: 34px;
+
+        margin-top: 0.05rem;
+
+        border-radius: 10px;
+
+        font-size: 0.9rem;
+    }
+
+
+    /* =========================================================
+       MESSAGE TEXT
+       ========================================================= */
+
+    .kucsa-messages .kucsa-message-content {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .kucsa-messages .kucsa-message-text {
+        display: block;
+
+        margin: 0;
+
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+
+    /* =========================================================
+       SUCCESS
+       ========================================================= */
+
+    .kucsa-messages .kucsa-message-success {
+        color: #146c43;
+
+        border-color: rgba(25, 135, 84, 0.18);
+
+        background:
+            linear-gradient(
+                135deg,
+                #f0fdf4 0%,
+                #ffffff 100%
+            );
+    }
+
+    .kucsa-messages .kucsa-message-success
+    .kucsa-message-icon {
+        background: rgba(25, 135, 84, 0.11);
+        color: #198754;
+    }
+
+
+    /* =========================================================
+       ERROR
+       ========================================================= */
+
+    .kucsa-messages .kucsa-message-error {
+        color: #b42318;
+
+        border-color: rgba(220, 53, 69, 0.18);
+
+        background:
+            linear-gradient(
+                135deg,
+                #fff5f5 0%,
+                #ffffff 100%
+            );
+    }
+
+    .kucsa-messages .kucsa-message-error
+    .kucsa-message-icon {
+        background: rgba(220, 53, 69, 0.10);
+        color: #dc3545;
+    }
+
+
+    /* =========================================================
+       WARNING
+       ========================================================= */
+
+    .kucsa-messages .kucsa-message-warning {
+        color: #8a6116;
+
+        border-color: rgba(255, 193, 7, 0.24);
+
+        background:
+            linear-gradient(
+                135deg,
+                #fffaf0 0%,
+                #ffffff 100%
+            );
+    }
+
+    .kucsa-messages .kucsa-message-warning
+    .kucsa-message-icon {
+        background: rgba(255, 193, 7, 0.13);
+        color: #b58105;
+    }
+
+
+    /* =========================================================
+       INFO
+       ========================================================= */
+
+    .kucsa-messages .kucsa-message-info {
+        color: #175cd3;
+
+        border-color: rgba(13, 110, 253, 0.17);
+
+        background:
+            linear-gradient(
+                135deg,
+                #f2f7ff 0%,
+                #ffffff 100%
+            );
+    }
+
+    .kucsa-messages .kucsa-message-info
+    .kucsa-message-icon {
+        background: rgba(13, 110, 253, 0.10);
+        color: #0d6efd;
+    }
+
+
+    /* =========================================================
+       DEFAULT / SECONDARY
+       ========================================================= */
+
+    .kucsa-messages .kucsa-message-secondary {
+        color: #475467;
+
+        border-color: rgba(16, 24, 40, 0.10);
+
+        background:
+            linear-gradient(
+                135deg,
+                #f8fafc 0%,
+                #ffffff 100%
+            );
+    }
+
+    .kucsa-messages .kucsa-message-secondary
+    .kucsa-message-icon {
+        background: rgba(71, 84, 103, 0.09);
+        color: #667085;
+    }
+
+
+    /* =========================================================
+       CLOSE BUTTON
+       ========================================================= */
+
+    .kucsa-messages .kucsa-message-close {
+        position: absolute;
+
+        top: 50%;
+        right: 0.7rem;
+
+        width: 32px;
+        height: 32px;
+
+        padding: 0;
+
+        transform: translateY(-50%);
+
+        border: 0;
+        border-radius: 9px;
+
+        background: transparent;
+
+        color: currentColor;
+
+        opacity: 0.55;
+
+        transition:
+            background-color 0.2s ease,
+            opacity 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .kucsa-messages .kucsa-message-close:hover {
+        background: rgba(16, 24, 40, 0.06);
+        opacity: 1;
+
+        transform:
+            translateY(-50%)
+            scale(1.04);
+    }
+
+    .kucsa-messages .kucsa-message-close:focus-visible {
+        outline: none;
+
+        opacity: 1;
+
+        box-shadow:
+            0 0 0 3px rgba(13, 110, 253, 0.15);
+    }
+
+
+    /* =========================================================
+       15-SECOND PROGRESS INDICATOR
+       ========================================================= */
+
+    .kucsa-messages .kucsa-message-progress {
+        position: absolute;
+
+        left: 0;
+        bottom: 0;
+
+        height: 3px;
+        width: 100%;
+
+        transform-origin: left center;
+
+        background: currentColor;
+
+        opacity: 0.28;
+
+        animation:
+            kucsaMessageProgress
+            15s
+            linear
+            forwards;
+
+        pointer-events: none;
+    }
+
+    @keyframes kucsaMessageProgress {
+        from {
+            transform: scaleX(1);
+        }
+
+        to {
+            transform: scaleX(0);
+        }
+    }
+
+
+    /* =========================================================
+       ENTER ANIMATION
+       ========================================================= */
+
+    @keyframes kucsaMessageEnter {
+
+        from {
+            opacity: 0;
+
+            transform:
+                translateY(-10px)
+                scale(0.985);
+        }
+
+        to {
+            opacity: 1;
+
+            transform:
+                translateY(0)
+                scale(1);
+        }
+
+    }
+
+
+    /* =========================================================
+       EXIT STATE
+       ========================================================= */
+
+    .kucsa-messages .kucsa-message.kucsa-message-hiding {
+        opacity: 0;
+
+        transform:
+            translateY(-8px)
+            scale(0.98);
+
+        pointer-events: none;
+    }
+
+
+    /* =========================================================
+       TABLET
+       ========================================================= */
+
+    @media (min-width: 768px) {
+
+        .kucsa-messages {
+            padding:
+                0.9rem
+                1.25rem
+                0;
+        }
+
+        .kucsa-messages .kucsa-message {
+            font-size: 0.9rem;
+        }
+
+    }
+
+
+    /* =========================================================
+       MOBILE
+       ========================================================= */
+
+    @media (max-width: 575.98px) {
+
+        .kucsa-messages {
+            padding:
+                0.6rem
+                0.65rem
+                0;
+        }
+
+        .kucsa-messages .kucsa-message {
+            gap: 0.65rem;
+
+            margin-bottom: 0.6rem;
+
+            padding:
+                0.8rem
+                2.8rem
+                0.8rem
+                0.85rem;
+
+            border-radius: 13px;
+
+            font-size: 0.83rem;
+        }
+
+        .kucsa-messages .kucsa-message-icon {
+            flex-basis: 31px;
+
+            width: 31px;
+            height: 31px;
+
+            border-radius: 9px;
+
+            font-size: 0.82rem;
+        }
+
+        .kucsa-messages .kucsa-message-close {
+            right: 0.55rem;
+
+            width: 30px;
+            height: 30px;
+        }
+
+    }
+
+
+    /* =========================================================
+       VERY SMALL PHONES
+       ========================================================= */
+
+    @media (max-width: 359.98px) {
+
+        .kucsa-messages {
+            padding-left: 0.45rem;
+            padding-right: 0.45rem;
+        }
+
+        .kucsa-messages .kucsa-message {
+            gap: 0.55rem;
+
+            padding:
+                0.75rem
+                2.55rem
+                0.75rem
+                0.75rem;
+
+            font-size: 0.79rem;
+        }
+
+        .kucsa-messages .kucsa-message-icon {
+            flex-basis: 28px;
+
+            width: 28px;
+            height: 28px;
+        }
+
+    }
+
+
+    /* =========================================================
+       REDUCED MOTION
+       ========================================================= */
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .kucsa-messages .kucsa-message,
+        .kucsa-messages .kucsa-message-close {
+            animation: none !important;
+
+            transition-duration: 0.01ms !important;
+        }
+
+        .kucsa-messages .kucsa-message-progress {
+            animation: none !important;
+        }
+
+    }
+</style>
+
+
 {% if messages %}
 
-<div class="container-fluid mb-3">
+<div
+    class="kucsa-messages container-fluid"
+    id="kucsaMessages"
+    aria-live="polite"
+    aria-atomic="false"
+>
 
     {% for message in messages %}
 
+        <!-- =================================================
+             MESSAGE
+             ================================================= -->
+
         <div
-            class="alert
+            class="
+                kucsa-message
                 {% if message.tags == 'success' %}
-                    alert-success
+                    kucsa-message-success
                 {% elif message.tags == 'error' %}
-                    alert-danger
+                    kucsa-message-error
                 {% elif message.tags == 'warning' %}
-                    alert-warning
+                    kucsa-message-warning
                 {% elif message.tags == 'info' %}
-                    alert-info
+                    kucsa-message-info
                 {% else %}
-                    alert-secondary
+                    kucsa-message-secondary
                 {% endif %}
-                alert-dismissible fade show"
-            role="alert">
+            "
+            role="alert"
+            data-message-timeout="15000"
+        >
 
-            {% if message.tags == "success" %}
-                <i class="bi bi-check-circle-fill me-2"></i>
 
-            {% elif message.tags == "error" %}
-                <i class="bi bi-x-circle-fill me-2"></i>
+            <!-- =============================================
+                 ICON
+                 ============================================= -->
 
-            {% elif message.tags == "warning" %}
-                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <div
+                class="kucsa-message-icon"
+                aria-hidden="true"
+            >
 
-            {% elif message.tags == "info" %}
-                <i class="bi bi-info-circle-fill me-2"></i>
+                {% if message.tags == "success" %}
 
-            {% endif %}
+                    <i class="bi bi-check-lg"></i>
 
-            {{ message }}
+                {% elif message.tags == "error" %}
+
+                    <i class="bi bi-x-lg"></i>
+
+                {% elif message.tags == "warning" %}
+
+                    <i class="bi bi-exclamation-lg"></i>
+
+                {% elif message.tags == "info" %}
+
+                    <i class="bi bi-info-lg"></i>
+
+                {% else %}
+
+                    <i class="bi bi-bell"></i>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- =============================================
+                 MESSAGE CONTENT
+                 ============================================= -->
+
+            <div class="kucsa-message-content">
+
+                <p class="kucsa-message-text">
+                    {{ message }}
+                </p>
+
+            </div>
+
+
+            <!-- =============================================
+                 CLOSE BUTTON
+                 ============================================= -->
 
             <button
                 type="button"
-                class="btn-close"
+                class="kucsa-message-close"
                 data-bs-dismiss="alert"
-                aria-label="Close">
+                aria-label="Dismiss notification"
+            >
+
+                <i
+                    class="bi bi-x-lg"
+                    aria-hidden="true"
+                ></i>
+
             </button>
+
+
+            <!-- =============================================
+                 15 SECOND PROGRESS BAR
+                 ============================================= -->
+
+            <span
+                class="kucsa-message-progress"
+                aria-hidden="true"
+            ></span>
 
         </div>
 
@@ -50,3 +627,205 @@
 </div>
 
 {% endif %}
+
+
+<script>
+(function () {
+
+    "use strict";
+
+
+    /* =========================================================
+       KUCSA GLOBAL MESSAGE SYSTEM
+       ========================================================= */
+
+    function initKucsaMessages() {
+
+        const messageContainer =
+            document.getElementById(
+                "kucsaMessages"
+            );
+
+        if (!messageContainer) {
+            return;
+        }
+
+
+        const messages =
+            messageContainer.querySelectorAll(
+                ".kucsa-message"
+            );
+
+
+        /* =====================================================
+           DISMISS FUNCTION
+           ===================================================== */
+
+        function dismissMessage(message) {
+
+            if (!message || message.dataset.dismissed === "true") {
+                return;
+            }
+
+
+            message.dataset.dismissed = "true";
+
+            message.classList.add(
+                "kucsa-message-hiding"
+            );
+
+
+            /*
+             * Allow the exit animation to complete
+             * before removing the element.
+             */
+
+            window.setTimeout(
+                function () {
+
+                    if (message) {
+                        message.remove();
+                    }
+
+
+                    /*
+                     * Remove the parent container when
+                     * there are no messages remaining.
+                     */
+
+                    if (
+                        messageContainer &&
+                        messageContainer.children.length === 0
+                    ) {
+
+                        messageContainer.remove();
+
+                    }
+
+                },
+                320
+            );
+
+        }
+
+
+        /* =====================================================
+           AUTO DISMISS — 15 SECONDS
+           ===================================================== */
+
+        messages.forEach(function (message) {
+
+            const timeoutValue =
+                parseInt(
+                    message.getAttribute(
+                        "data-message-timeout"
+                    ),
+                    10
+                ) || 15000;
+
+
+            /*
+             * Store timer so it can be cancelled
+             * if the user manually closes the message.
+             */
+
+            const timer =
+                window.setTimeout(
+                    function () {
+
+                        dismissMessage(
+                            message
+                        );
+
+                    },
+                    timeoutValue
+                );
+
+
+            message._kucsaMessageTimer =
+                timer;
+
+
+            /* =================================================
+               MANUAL DISMISS
+               ================================================= */
+
+            const closeButton =
+                message.querySelector(
+                    ".kucsa-message-close"
+                );
+
+            if (closeButton) {
+
+                closeButton.addEventListener(
+                    "click",
+                    function () {
+
+                        window.clearTimeout(
+                            message._kucsaMessageTimer
+                        );
+
+                        dismissMessage(
+                            message
+                        );
+
+                    }
+                );
+
+            }
+
+        });
+
+
+        /* =====================================================
+           SUPPORT BOOTSTRAP ALERT DISMISS
+           ===================================================== */
+
+        messageContainer.addEventListener(
+            "closed.bs.alert",
+            function (event) {
+
+                const message =
+                    event.target;
+
+                if (
+                    message &&
+                    message._kucsaMessageTimer
+                ) {
+
+                    window.clearTimeout(
+                        message._kucsaMessageTimer
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       INITIALIZE
+       ========================================================= */
+
+    if (
+        document.readyState === "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            initKucsaMessages,
+            {
+                once: true
+            }
+        );
+
+    } else {
+
+        initKucsaMessages();
+
+    }
+
+})();
+</script>

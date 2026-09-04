@@ -6,139 +6,1735 @@ Contact Us | KUCSA Platform
 
 {% block content %}
 
-<section class="py-5">
+<style>
+    /* =========================================================
+       KUCSA CONTACT PAGE
+       Scoped styling - safe for base.html
+       ========================================================= */
 
-    <div class="container">
+    .kucsa-contact-page {
+        --kucsa-primary: #0d6efd;
+        --kucsa-primary-dark: #0a58ca;
+        --kucsa-primary-soft: rgba(13, 110, 253, 0.08);
 
-        <!-- Page Header -->
+        --kucsa-success: #198754;
+        --kucsa-success-dark: #157347;
+        --kucsa-success-soft: rgba(25, 135, 84, 0.08);
 
-        <div class="text-center mb-5">
+        --kucsa-dark: #14213d;
+        --kucsa-text: #26354d;
+        --kucsa-muted: #6c757d;
+        --kucsa-border: rgba(20, 33, 61, 0.09);
 
-            <h1 class="fw-bold">
+        --kucsa-surface: #ffffff;
+        --kucsa-surface-soft: #f7f9fc;
 
-                Contact Us
+        --kucsa-radius: 22px;
+        --kucsa-shadow: 0 14px 40px rgba(20, 33, 61, 0.07);
+        --kucsa-shadow-hover: 0 20px 48px rgba(20, 33, 61, 0.12);
 
-            </h1>
+        position: relative;
+        overflow: hidden;
 
-            <p class="lead text-muted">
+        color: var(--kucsa-text);
 
-                Have a question or need assistance? We'd love to hear from you.
+        background:
+            radial-gradient(
+                circle at 0% 0%,
+                rgba(13, 110, 253, 0.055),
+                transparent 28%
+            ),
+            radial-gradient(
+                circle at 100% 25%,
+                rgba(25, 135, 84, 0.045),
+                transparent 25%
+            ),
+            #ffffff;
+    }
 
-            </p>
+    .kucsa-contact-page *,
+    .kucsa-contact-page *::before,
+    .kucsa-contact-page *::after {
+        box-sizing: border-box;
+    }
+
+    .kucsa-contact-container {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+    }
+
+    /* =========================================================
+       HERO
+       ========================================================= */
+
+    .kucsa-contact-hero {
+        position: relative;
+        overflow: hidden;
+
+        padding: clamp(70px, 9vw, 110px) 0 85px;
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(13, 110, 253, 0.065),
+                rgba(255, 255, 255, 0.96) 50%,
+                rgba(25, 135, 84, 0.045)
+            );
+
+        border-bottom: 1px solid var(--kucsa-border);
+    }
+
+    .kucsa-hero-decoration {
+        position: absolute;
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .kucsa-decoration-one {
+        width: 230px;
+        height: 230px;
+        top: -120px;
+        left: -80px;
+        background: rgba(13, 110, 253, 0.065);
+    }
+
+    .kucsa-decoration-two {
+        width: 300px;
+        height: 300px;
+        right: -150px;
+        bottom: -170px;
+        background: rgba(25, 135, 84, 0.055);
+    }
+
+    .kucsa-hero-content {
+        position: relative;
+        z-index: 2;
+
+        max-width: 820px;
+        margin: 0 auto;
+
+        text-align: center;
+    }
+
+    .kucsa-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+
+        padding: 8px 14px;
+        margin-bottom: 20px;
+
+        border: 1px solid rgba(13, 110, 253, 0.12);
+        border-radius: 999px;
+
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--kucsa-primary);
+
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+
+        box-shadow: 0 8px 25px rgba(13, 110, 253, 0.06);
+    }
+
+    .kucsa-hero-title {
+        margin: 0;
+
+        color: var(--kucsa-dark);
+
+        font-size: clamp(2.4rem, 5vw, 4.3rem);
+        line-height: 1.05;
+        letter-spacing: -0.045em;
+        font-weight: 800;
+    }
+
+    .kucsa-hero-title span {
+        color: var(--kucsa-primary);
+    }
+
+    .kucsa-hero-description {
+        max-width: 720px;
+        margin: 22px auto 0;
+
+        color: var(--kucsa-muted);
+
+        font-size: clamp(1rem, 1.8vw, 1.15rem);
+        line-height: 1.8;
+    }
+
+    .kucsa-hero-icon {
+        width: 80px;
+        height: 80px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        margin: 30px auto 0;
+
+        border-radius: 25px;
+
+        background:
+            linear-gradient(
+                135deg,
+                var(--kucsa-primary),
+                var(--kucsa-primary-dark)
+            );
+
+        color: #fff;
+        font-size: 2rem;
+
+        box-shadow:
+            0 18px 35px rgba(13, 110, 253, 0.22),
+            0 0 0 10px rgba(13, 110, 253, 0.05);
+    }
+
+    /* =========================================================
+       SECTIONS
+       ========================================================= */
+
+    .kucsa-contact-section {
+        padding: clamp(65px, 8vw, 95px) 0;
+    }
+
+    .kucsa-contact-section-soft {
+        background: var(--kucsa-surface-soft);
+
+        border-top: 1px solid rgba(20, 33, 61, 0.04);
+        border-bottom: 1px solid rgba(20, 33, 61, 0.04);
+    }
+
+    .kucsa-section-heading {
+        max-width: 760px;
+        margin: 0 auto 45px;
+
+        text-align: center;
+    }
+
+    .kucsa-section-heading h2 {
+        margin: 0;
+
+        color: var(--kucsa-dark);
+
+        font-size: clamp(1.8rem, 3vw, 2.6rem);
+        line-height: 1.2;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+    }
+
+    .kucsa-section-heading p {
+        max-width: 680px;
+        margin: 14px auto 0;
+
+        color: var(--kucsa-muted);
+        line-height: 1.75;
+    }
+
+    /* =========================================================
+       LEADERSHIP DIRECTORY
+       ========================================================= */
+
+    .kucsa-leadership-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+
+        gap: 20px;
+    }
+
+    .kucsa-leader-card {
+        position: relative;
+
+        min-height: 270px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        padding: 28px 22px;
+
+        border: 1px solid var(--kucsa-border);
+        border-radius: 21px;
+
+        background: #fff;
+        box-shadow: var(--kucsa-shadow);
+
+        text-align: center;
+
+        overflow: hidden;
+
+        transition:
+            transform 0.28s ease,
+            box-shadow 0.28s ease,
+            border-color 0.28s ease;
+    }
+
+    .kucsa-leader-card::before {
+        content: "";
+
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+
+        height: 4px;
+
+        background: var(--kucsa-primary);
+
+        transform: scaleX(0.35);
+
+        transition:
+            transform 0.3s ease;
+    }
+
+    .kucsa-leader-card:hover {
+        transform: translateY(-7px);
+
+        box-shadow: var(--kucsa-shadow-hover);
+
+        border-color: rgba(13, 110, 253, 0.15);
+    }
+
+    .kucsa-leader-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .kucsa-leader-avatar {
+        width: 70px;
+        height: 70px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        margin-bottom: 18px;
+
+        border-radius: 21px;
+
+        background: var(--kucsa-primary-soft);
+        color: var(--kucsa-primary);
+
+        font-size: 1.65rem;
+
+        box-shadow:
+            0 8px 20px rgba(13, 110, 253, 0.07);
+    }
+
+    .kucsa-leader-card:nth-child(3n) .kucsa-leader-avatar {
+        background: var(--kucsa-success-soft);
+        color: var(--kucsa-success);
+    }
+
+    .kucsa-leader-role {
+        margin-bottom: 5px;
+
+        color: var(--kucsa-dark);
+
+        font-size: 1.03rem;
+        line-height: 1.35;
+        font-weight: 800;
+    }
+
+    .kucsa-leader-name {
+        margin-bottom: 12px;
+
+        color: var(--kucsa-primary);
+
+        font-size: 0.88rem;
+        font-weight: 700;
+    }
+
+    .kucsa-leader-description {
+        margin: 0;
+
+        color: var(--kucsa-muted);
+
+        font-size: 0.83rem;
+        line-height: 1.65;
+    }
+
+    .kucsa-leader-contact {
+        margin-top: auto;
+        padding-top: 17px;
+    }
+
+    .kucsa-leader-contact-placeholder {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+
+        padding: 8px 12px;
+
+        border-radius: 999px;
+
+        background: var(--kucsa-primary-soft);
+        color: var(--kucsa-primary);
+
+        font-size: 0.73rem;
+        font-weight: 700;
+    }
+
+    /* =========================================================
+       MAIN CONTACT GRID
+       ========================================================= */
+
+    .kucsa-main-contact-grid {
+        display: grid;
+
+        grid-template-columns:
+            minmax(300px, 0.85fr)
+            minmax(0, 1.35fr);
+
+        gap: 28px;
+
+        align-items: stretch;
+    }
+
+    .kucsa-contact-card {
+        height: 100%;
+
+        border: 1px solid var(--kucsa-border);
+        border-radius: var(--kucsa-radius);
+
+        background: #fff;
+        box-shadow: var(--kucsa-shadow);
+
+        overflow: hidden;
+    }
+
+    /* =========================================================
+       CARD HEADER
+       ========================================================= */
+
+    .kucsa-card-header {
+        padding: 26px 28px;
+
+        color: #fff;
+
+        background:
+            linear-gradient(
+                135deg,
+                var(--kucsa-primary),
+                var(--kucsa-primary-dark)
+            );
+    }
+
+    .kucsa-card-header-success {
+        background:
+            linear-gradient(
+                135deg,
+                var(--kucsa-success),
+                var(--kucsa-success-dark)
+            );
+    }
+
+    .kucsa-card-header-content {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .kucsa-card-header-icon {
+        width: 47px;
+        height: 47px;
+
+        flex: 0 0 47px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 14px;
+
+        background: rgba(255, 255, 255, 0.15);
+
+        font-size: 1.25rem;
+    }
+
+    .kucsa-card-header h3 {
+        margin: 0;
+
+        font-size: 1.15rem;
+        font-weight: 800;
+    }
+
+    .kucsa-card-header p {
+        margin: 4px 0 0;
+
+        color: rgba(255, 255, 255, 0.8);
+
+        font-size: 0.81rem;
+    }
+
+    /* =========================================================
+       CONTACT INFORMATION
+       ========================================================= */
+
+    .kucsa-contact-info-body {
+        padding: 28px;
+    }
+
+    .kucsa-contact-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+
+        padding: 17px 0;
+
+        border-bottom: 1px solid var(--kucsa-border);
+    }
+
+    .kucsa-contact-item:first-child {
+        padding-top: 0;
+    }
+
+    .kucsa-contact-item:last-child {
+        padding-bottom: 0;
+        border-bottom: 0;
+    }
+
+    .kucsa-contact-item-icon {
+        width: 43px;
+        height: 43px;
+
+        flex: 0 0 43px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 13px;
+
+        background: var(--kucsa-primary-soft);
+        color: var(--kucsa-primary);
+    }
+
+    .kucsa-contact-item h4 {
+        margin: 0 0 5px;
+
+        color: var(--kucsa-dark);
+
+        font-size: 0.88rem;
+        font-weight: 800;
+    }
+
+    .kucsa-contact-item p {
+        margin: 0;
+
+        color: var(--kucsa-muted);
+
+        font-size: 0.89rem;
+        line-height: 1.6;
+
+        overflow-wrap: anywhere;
+    }
+
+    /* =========================================================
+       FORM
+       ========================================================= */
+
+    .kucsa-message-body {
+        padding: 30px;
+    }
+
+    .kucsa-form-row {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 18px;
+    }
+
+    .kucsa-form-group {
+        margin-bottom: 20px;
+    }
+
+    .kucsa-form-label {
+        display: block;
+
+        margin-bottom: 8px;
+
+        color: var(--kucsa-dark);
+
+        font-size: 0.86rem;
+        font-weight: 750;
+    }
+
+    .kucsa-required {
+        color: #dc3545;
+    }
+
+    .kucsa-form-control {
+        width: 100%;
+        min-height: 48px;
+
+        padding: 12px 14px;
+
+        border: 1px solid #dce2ea;
+        border-radius: 13px;
+
+        background: #fff;
+        color: var(--kucsa-text);
+
+        font-size: 0.93rem;
+
+        outline: none;
+
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .kucsa-form-control::placeholder {
+        color: #9aa4b2;
+    }
+
+    .kucsa-form-control:hover {
+        border-color: #c6ced9;
+    }
+
+    .kucsa-form-control:focus {
+        border-color: var(--kucsa-primary);
+
+        box-shadow:
+            0 0 0 4px rgba(13, 110, 253, 0.1);
+    }
+
+    .kucsa-form-control.is-invalid {
+        border-color: #dc3545;
+    }
+
+    textarea.kucsa-form-control {
+        min-height: 155px;
+        resize: vertical;
+    }
+
+    .kucsa-message-counter {
+        display: flex;
+        justify-content: flex-end;
+
+        margin-top: 6px;
+
+        color: var(--kucsa-muted);
+
+        font-size: 0.75rem;
+    }
+
+    .kucsa-response-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+
+        margin: 5px 0 22px;
+
+        padding: 15px;
+
+        border: 1px solid rgba(13, 110, 253, 0.1);
+        border-radius: 14px;
+
+        background: var(--kucsa-primary-soft);
+    }
+
+    .kucsa-response-note i {
+        color: var(--kucsa-primary);
+        margin-top: 2px;
+    }
+
+    .kucsa-response-note p {
+        margin: 0;
+
+        color: var(--kucsa-muted);
+
+        font-size: 0.8rem;
+        line-height: 1.6;
+    }
+
+    .kucsa-submit-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 18px;
+    }
+
+    .kucsa-form-note {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+
+        color: var(--kucsa-muted);
+
+        font-size: 0.77rem;
+    }
+
+    .kucsa-submit-button {
+        min-height: 49px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+
+        padding: 12px 22px;
+
+        border: 0;
+        border-radius: 13px;
+
+        background:
+            linear-gradient(
+                135deg,
+                var(--kucsa-success),
+                var(--kucsa-success-dark)
+            );
+
+        color: #fff;
+
+        font-size: 0.92rem;
+        font-weight: 750;
+
+        box-shadow:
+            0 10px 24px rgba(25, 135, 84, 0.2);
+
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            opacity 0.2s ease;
+    }
+
+    .kucsa-submit-button:hover {
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 14px 30px rgba(25, 135, 84, 0.25);
+    }
+
+    .kucsa-submit-button:disabled {
+        cursor: not-allowed;
+        opacity: 0.75;
+        transform: none;
+    }
+
+    /* =========================================================
+       GOOGLE MAP
+       ========================================================= */
+
+    .kucsa-map-card {
+        border: 1px solid var(--kucsa-border);
+        border-radius: var(--kucsa-radius);
+
+        background: #fff;
+
+        box-shadow: var(--kucsa-shadow);
+
+        overflow: hidden;
+    }
+
+    .kucsa-map-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 20px;
+
+        padding: 25px 28px;
+
+        border-bottom: 1px solid var(--kucsa-border);
+    }
+
+    .kucsa-map-heading {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .kucsa-map-icon {
+        width: 48px;
+        height: 48px;
+
+        flex: 0 0 48px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 15px;
+
+        background: var(--kucsa-primary-soft);
+        color: var(--kucsa-primary);
+
+        font-size: 1.3rem;
+    }
+
+    .kucsa-map-heading h3 {
+        margin: 0;
+
+        color: var(--kucsa-dark);
+
+        font-size: 1.1rem;
+        font-weight: 800;
+    }
+
+    .kucsa-map-heading p {
+        margin: 4px 0 0;
+
+        color: var(--kucsa-muted);
+
+        font-size: 0.8rem;
+    }
+
+    .kucsa-map-open {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+
+        padding: 9px 14px;
+
+        border: 1px solid rgba(13, 110, 253, 0.14);
+        border-radius: 10px;
+
+        background: var(--kucsa-primary-soft);
+        color: var(--kucsa-primary);
+
+        font-size: 0.8rem;
+        font-weight: 750;
+
+        text-decoration: none;
+
+        white-space: nowrap;
+
+        transition:
+            background 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .kucsa-map-open:hover {
+        background: rgba(13, 110, 253, 0.13);
+        color: var(--kucsa-primary-dark);
+
+        transform: translateY(-1px);
+    }
+
+    .kucsa-map-wrapper {
+        position: relative;
+
+        width: 100%;
+
+        aspect-ratio: 16 / 7;
+
+        min-height: 330px;
+
+        background: #e9eef5;
+    }
+
+    .kucsa-map-wrapper iframe {
+        width: 100%;
+        height: 100%;
+
+        display: block;
+
+        border: 0;
+    }
+
+    .kucsa-map-footer {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        padding: 16px 22px;
+
+        border-top: 1px solid var(--kucsa-border);
+
+        color: var(--kucsa-muted);
+
+        font-size: 0.8rem;
+    }
+
+    .kucsa-map-footer i {
+        color: var(--kucsa-primary);
+    }
+
+    /* =========================================================
+       REVEAL
+       ========================================================= */
+
+    .kucsa-reveal {
+        opacity: 0;
+
+        transform: translateY(20px);
+
+        transition:
+            opacity 0.6s ease,
+            transform 0.6s ease;
+    }
+
+    .kucsa-reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .kucsa-delay-1 {
+        transition-delay: 0.08s;
+    }
+
+    .kucsa-delay-2 {
+        transition-delay: 0.16s;
+    }
+
+    .kucsa-delay-3 {
+        transition-delay: 0.24s;
+    }
+
+    /* =========================================================
+       ACCESSIBILITY
+       ========================================================= */
+
+    .kucsa-contact-page a:focus-visible,
+    .kucsa-contact-page button:focus-visible,
+    .kucsa-contact-page input:focus-visible,
+    .kucsa-contact-page textarea:focus-visible {
+        outline: 3px solid rgba(13, 110, 253, 0.23);
+        outline-offset: 3px;
+    }
+
+    /* =========================================================
+       LARGE TABLETS
+       ========================================================= */
+
+    @media (max-width: 1100px) {
+
+        .kucsa-leadership-grid {
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    /* =========================================================
+       TABLET
+       ========================================================= */
+
+    @media (max-width: 991.98px) {
+
+        .kucsa-contact-container {
+            width: min(100% - 30px, 900px);
+        }
+
+        .kucsa-contact-hero {
+            padding: 70px 0 65px;
+        }
+
+        .kucsa-main-contact-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .kucsa-leadership-grid {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+
+        .kucsa-map-wrapper {
+            aspect-ratio: 16 / 9;
+            min-height: 320px;
+        }
+    }
+
+    /* =========================================================
+       MOBILE
+       ========================================================= */
+
+    @media (max-width: 767.98px) {
+
+        .kucsa-contact-container {
+            width: min(100% - 24px, 680px);
+        }
+
+        .kucsa-contact-hero {
+            padding: 58px 0 55px;
+        }
+
+        .kucsa-hero-title {
+            font-size: clamp(2.2rem, 10vw, 3.1rem);
+        }
+
+        .kucsa-hero-description {
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .kucsa-contact-section {
+            padding: 58px 0;
+        }
+
+        .kucsa-section-heading {
+            margin-bottom: 34px;
+        }
+
+        .kucsa-section-heading h2 {
+            font-size: 1.85rem;
+        }
+
+        .kucsa-leadership-grid {
+            gap: 16px;
+        }
+
+        .kucsa-leader-card {
+            min-height: 255px;
+
+            padding: 24px 16px;
+
+            border-radius: 18px;
+        }
+
+        .kucsa-leader-avatar {
+            width: 58px;
+            height: 58px;
+
+            margin-bottom: 15px;
+
+            border-radius: 18px;
+
+            font-size: 1.4rem;
+        }
+
+        .kucsa-leader-role {
+            font-size: 0.9rem;
+        }
+
+        .kucsa-leader-name {
+            font-size: 0.82rem;
+        }
+
+        .kucsa-leader-description {
+            font-size: 0.78rem;
+        }
+
+        .kucsa-card-header,
+        .kucsa-contact-info-body,
+        .kucsa-message-body {
+            padding: 24px;
+        }
+
+        .kucsa-form-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+
+        .kucsa-submit-row {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .kucsa-submit-button {
+            width: 100%;
+        }
+
+        .kucsa-form-note {
+            justify-content: center;
+        }
+
+        .kucsa-map-header {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 22px;
+        }
+
+        .kucsa-map-open {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .kucsa-map-wrapper {
+            aspect-ratio: 4 / 3;
+            min-height: 300px;
+        }
+    }
+
+    /* =========================================================
+       SMALL PHONES
+       ========================================================= */
+
+    @media (max-width: 575.98px) {
+
+        .kucsa-contact-container {
+            width: calc(100% - 20px);
+        }
+
+        .kucsa-contact-hero {
+            padding: 50px 0 48px;
+        }
+
+        .kucsa-eyebrow {
+            font-size: 0.67rem;
+            padding: 7px 11px;
+        }
+
+        .kucsa-hero-title {
+            font-size: 2.05rem;
+        }
+
+        .kucsa-hero-description {
+            font-size: 0.9rem;
+        }
+
+        .kucsa-hero-icon {
+            width: 67px;
+            height: 67px;
+
+            border-radius: 21px;
+
+            font-size: 1.75rem;
+        }
+
+        .kucsa-contact-section {
+            padding: 48px 0;
+        }
+
+        .kucsa-section-heading h2 {
+            font-size: 1.65rem;
+        }
+
+        .kucsa-section-heading p {
+            font-size: 0.87rem;
+        }
+
+        .kucsa-leadership-grid {
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .kucsa-leader-card {
+            min-height: auto;
+            padding: 22px 20px;
+        }
+
+        .kucsa-leader-contact {
+            margin-top: 17px;
+        }
+
+        .kucsa-card-header,
+        .kucsa-contact-info-body,
+        .kucsa-message-body {
+            padding: 21px;
+        }
+
+        .kucsa-contact-item {
+            gap: 12px;
+        }
+
+        .kucsa-contact-item-icon {
+            width: 39px;
+            height: 39px;
+            flex-basis: 39px;
+        }
+
+        .kucsa-contact-item p {
+            font-size: 0.83rem;
+        }
+
+        .kucsa-form-control {
+            min-height: 46px;
+            font-size: 0.89rem;
+        }
+
+        textarea.kucsa-form-control {
+            min-height: 135px;
+        }
+
+        .kucsa-map-wrapper {
+            aspect-ratio: 1 / 1;
+            min-height: 285px;
+        }
+
+        .kucsa-map-footer {
+            align-items: flex-start;
+            padding: 14px 17px;
+        }
+    }
+
+    /* =========================================================
+       VERY SMALL PHONES
+       ========================================================= */
+
+    @media (max-width: 359.98px) {
+
+        .kucsa-contact-container {
+            width: calc(100% - 16px);
+        }
+
+        .kucsa-hero-title {
+            font-size: 1.85rem;
+        }
+
+        .kucsa-hero-description {
+            font-size: 0.85rem;
+        }
+
+        .kucsa-section-heading h2 {
+            font-size: 1.5rem;
+        }
+    }
+
+    /* =========================================================
+       REDUCED MOTION
+       ========================================================= */
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .kucsa-contact-page *,
+        .kucsa-contact-page *::before,
+        .kucsa-contact-page *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
+
+        .kucsa-reveal {
+            opacity: 1;
+            transform: none;
+        }
+    }
+</style>
+
+
+<div class="kucsa-contact-page">
+
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
+
+    <section class="kucsa-contact-hero">
+
+        <span class="kucsa-hero-decoration kucsa-decoration-one"></span>
+        <span class="kucsa-hero-decoration kucsa-decoration-two"></span>
+
+        <div class="kucsa-contact-container">
+
+            <div class="kucsa-hero-content kucsa-reveal">
+
+                <div class="kucsa-eyebrow">
+                    <i class="bi bi-chat-dots-fill"></i>
+                    KUCSA Support Centre
+                </div>
+
+                <h1 class="kucsa-hero-title">
+                    Contact
+                    <span>KUCSA</span>
+                </h1>
+
+                <p class="kucsa-hero-description">
+                    Have a question, suggestion, concern, or need
+                    assistance? Reach out to the KUCSA leadership team
+                    or send us a message through the platform.
+                </p>
+
+                <div class="kucsa-hero-icon" aria-hidden="true">
+                    <i class="bi bi-headset"></i>
+                </div>
+
+            </div>
 
         </div>
 
-        <div class="row">
+    </section>
 
-            <!-- Contact Information -->
 
-            <div class="col-lg-5 mb-4">
+    <!-- =====================================================
+         KUCSA LEADERSHIP
+         ===================================================== -->
 
-                <div class="card shadow-sm border-0 h-100">
+    <section class="kucsa-contact-section kucsa-contact-section-soft">
 
-                    <div class="card-header bg-primary text-white">
+        <div class="kucsa-contact-container">
 
-                        <h4 class="mb-0">
+            <div class="kucsa-section-heading kucsa-reveal">
 
-                            Contact Information
+                <div class="kucsa-eyebrow">
+                    <i class="bi bi-people-fill"></i>
+                    KUCSA Leadership
+                </div>
 
-                        </h4>
+                <h2>
+                    Connect With KUCSA Leadership
+                </h2>
+
+                <p>
+                    Our leadership structure provides different points
+                    of contact for members, students, and other members
+                    of the computing community.
+                </p>
+
+            </div>
+
+
+            <div class="kucsa-leadership-grid">
+
+                <!-- =================================================
+                     PATRON
+                     ================================================= -->
+
+                <article class="kucsa-leader-card kucsa-reveal">
+
+                    <div class="kucsa-leader-avatar">
+                        <i class="bi bi-person-badge-fill"></i>
+                    </div>
+
+                    <div class="kucsa-leader-role">
+                        Patron
+                    </div>
+
+                    <!-- Replace with official Patron's name -->
+
+                    <div class="kucsa-leader-name">
+                        Patron's Name
+                    </div>
+
+                    <p class="kucsa-leader-description">
+                        Provides guidance, mentorship, and institutional
+                        support to the association.
+                    </p>
+
+                    <div class="kucsa-leader-contact">
+                        <span class="kucsa-leader-contact-placeholder">
+                            <i class="bi bi-envelope"></i>
+                            Official Contact
+                        </span>
+                    </div>
+
+                </article>
+
+
+                <!-- =================================================
+                     CHAIRPERSON
+                     ================================================= -->
+
+                <article class="kucsa-leader-card kucsa-reveal kucsa-delay-1">
+
+                    <div class="kucsa-leader-avatar">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+
+                    <div class="kucsa-leader-role">
+                        Chairperson
+                    </div>
+
+                    <!-- Replace with official Chairperson's name -->
+
+                    <div class="kucsa-leader-name">
+                        Chairperson's Name
+                    </div>
+
+                    <p class="kucsa-leader-description">
+                        Provides overall leadership and direction for
+                        KUCSA activities and initiatives.
+                    </p>
+
+                    <div class="kucsa-leader-contact">
+                        <span class="kucsa-leader-contact-placeholder">
+                            <i class="bi bi-envelope"></i>
+                            Official Contact
+                        </span>
+                    </div>
+
+                </article>
+
+
+                <!-- =================================================
+                     VICE CHAIRPERSON
+                     ================================================= -->
+
+                <article class="kucsa-leader-card kucsa-reveal kucsa-delay-2">
+
+                    <div class="kucsa-leader-avatar">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+
+                    <div class="kucsa-leader-role">
+                        Vice Chairperson
+                    </div>
+
+                    <!-- Replace with official Vice Chairperson's name -->
+
+                    <div class="kucsa-leader-name">
+                        Vice Chairperson's Name
+                    </div>
+
+                    <p class="kucsa-leader-description">
+                        Supports the Chairperson and assists in coordinating
+                        KUCSA programs and activities.
+                    </p>
+
+                    <div class="kucsa-leader-contact">
+                        <span class="kucsa-leader-contact-placeholder">
+                            <i class="bi bi-envelope"></i>
+                            Official Contact
+                        </span>
+                    </div>
+
+                </article>
+
+
+                <!-- =================================================
+                     SECRETARY GENERAL
+                     ================================================= -->
+
+                <article class="kucsa-leader-card kucsa-reveal kucsa-delay-3">
+
+                    <div class="kucsa-leader-avatar">
+                        <i class="bi bi-file-earmark-text-fill"></i>
+                    </div>
+
+                    <div class="kucsa-leader-role">
+                        Secretary General
+                    </div>
+
+                    <!-- Replace with official Secretary General's name -->
+
+                    <div class="kucsa-leader-name">
+                        Secretary General's Name
+                    </div>
+
+                    <p class="kucsa-leader-description">
+                        Coordinates official communication, records,
+                        correspondence, and administrative matters.
+                    </p>
+
+                    <div class="kucsa-leader-contact">
+                        <span class="kucsa-leader-contact-placeholder">
+                            <i class="bi bi-envelope"></i>
+                            Official Contact
+                        </span>
+                    </div>
+
+                </article>
+
+
+                <!-- =================================================
+                     ORGANIZING SECRETARY
+                     ================================================= -->
+
+                <article class="kucsa-leader-card kucsa-reveal">
+
+                    <div class="kucsa-leader-avatar">
+                        <i class="bi bi-calendar2-check-fill"></i>
+                    </div>
+
+                    <div class="kucsa-leader-role">
+                        Organizing Secretary
+                    </div>
+
+                    <!-- Replace with official Organizing Secretary's name -->
+
+                    <div class="kucsa-leader-name">
+                        Organizing Secretary's Name
+                    </div>
+
+                    <p class="kucsa-leader-description">
+                        Coordinates events, meetings, programs, and
+                        association activities.
+                    </p>
+
+                    <div class="kucsa-leader-contact">
+                        <span class="kucsa-leader-contact-placeholder">
+                            <i class="bi bi-envelope"></i>
+                            Official Contact
+                        </span>
+                    </div>
+
+                </article>
+
+
+                <!-- =================================================
+                     SECRETARY
+                     ================================================= -->
+
+                <article class="kucsa-leader-card kucsa-reveal kucsa-delay-1">
+
+                    <div class="kucsa-leader-avatar">
+                        <i class="bi bi-journal-text"></i>
+                    </div>
+
+                    <div class="kucsa-leader-role">
+                        Secretary
+                    </div>
+
+                    <!-- Replace with official Secretary's name -->
+
+                    <div class="kucsa-leader-name">
+                        Secretary's Name
+                    </div>
+
+                    <p class="kucsa-leader-description">
+                        Supports administrative coordination and
+                        documentation of association activities.
+                    </p>
+
+                    <div class="kucsa-leader-contact">
+                        <span class="kucsa-leader-contact-placeholder">
+                            <i class="bi bi-envelope"></i>
+                            Official Contact
+                        </span>
+                    </div>
+
+                </article>
+
+
+                <!-- =================================================
+                     TREASURER
+                     ================================================= -->
+
+                <article class="kucsa-leader-card kucsa-reveal kucsa-delay-2">
+
+                    <div class="kucsa-leader-avatar">
+                        <i class="bi bi-wallet2"></i>
+                    </div>
+
+                    <div class="kucsa-leader-role">
+                        Treasurer
+                    </div>
+
+                    <!-- Replace with official Treasurer's name -->
+
+                    <div class="kucsa-leader-name">
+                        Treasurer's Name
+                    </div>
+
+                    <p class="kucsa-leader-description">
+                        Coordinates financial matters and supports
+                        responsible management of association funds.
+                    </p>
+
+                    <div class="kucsa-leader-contact">
+                        <span class="kucsa-leader-contact-placeholder">
+                            <i class="bi bi-envelope"></i>
+                            Official Contact
+                        </span>
+                    </div>
+
+                </article>
+
+
+                <!-- =================================================
+                     PUBLICITY SECRETARY
+                     ================================================= -->
+
+                <article class="kucsa-leader-card kucsa-reveal kucsa-delay-3">
+
+                    <div class="kucsa-leader-avatar">
+                        <i class="bi bi-megaphone-fill"></i>
+                    </div>
+
+                    <div class="kucsa-leader-role">
+                        Publicity Secretary
+                    </div>
+
+                    <!-- Replace with official Publicity Secretary's name -->
+
+                    <div class="kucsa-leader-name">
+                        Publicity Secretary's Name
+                    </div>
+
+                    <p class="kucsa-leader-description">
+                        Coordinates publicity, announcements, public
+                        communication, and member engagement.
+                    </p>
+
+                    <div class="kucsa-leader-contact">
+                        <span class="kucsa-leader-contact-placeholder">
+                            <i class="bi bi-envelope"></i>
+                            Official Contact
+                        </span>
+                    </div>
+
+                </article>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         OFFICIAL CONTACT + MESSAGE FORM
+         ===================================================== -->
+
+    <section class="kucsa-contact-section">
+
+        <div class="kucsa-contact-container">
+
+            <div class="kucsa-section-heading kucsa-reveal">
+
+                <div class="kucsa-eyebrow">
+                    <i class="bi bi-envelope-paper-fill"></i>
+                    Get In Touch
+                </div>
+
+                <h2>
+                    We're Here to Help
+                </h2>
+
+                <p>
+                    Contact KUCSA through the official communication
+                    channels or send the team a message directly.
+                </p>
+
+            </div>
+
+
+            <div class="kucsa-main-contact-grid">
+
+                <!-- =================================================
+                     OFFICIAL CONTACT INFORMATION
+                     ================================================= -->
+
+                <div class="kucsa-contact-card kucsa-reveal">
+
+                    <div class="kucsa-card-header">
+
+                        <div class="kucsa-card-header-content">
+
+                            <div class="kucsa-card-header-icon">
+                                <i class="bi bi-info-circle-fill"></i>
+                            </div>
+
+                            <div>
+
+                                <h3>
+                                    Official Contact
+                                </h3>
+
+                                <p>
+                                    KUCSA communication information
+                                </p>
+
+                            </div>
+
+                        </div>
 
                     </div>
 
-                    <div class="card-body">
 
-                        <div class="mb-4">
+                    <div class="kucsa-contact-info-body">
 
-                            <h6>
+                        <!-- Organization -->
 
-                                <i class="bi bi-building me-2 text-primary"></i>
+                        <div class="kucsa-contact-item">
 
-                                Organization
+                            <div class="kucsa-contact-item-icon">
+                                <i class="bi bi-building"></i>
+                            </div>
 
-                            </h6>
+                            <div>
 
-                            <p class="mb-0">
+                                <h4>
+                                    Organization
+                                </h4>
 
-                                Kisii University Computing Students Association (KUCSA)
+                                <p>
+                                    Kisii University Computing Students
+                                    Association (KUCSA)
+                                </p>
 
-                            </p>
-
-                        </div>
-
-                        <div class="mb-4">
-
-                            <h6>
-
-                                <i class="bi bi-envelope-fill me-2 text-primary"></i>
-
-                                Email
-
-                            </h6>
-
-                            <p class="mb-0">
-
-                                kucsa@students.kisiiuniversity.ac.ke
-
-                            </p>
+                            </div>
 
                         </div>
 
-                        <div class="mb-4">
 
-                            <h6>
+                        <!-- Email -->
 
-                                <i class="bi bi-telephone-fill me-2 text-primary"></i>
+                        <div class="kucsa-contact-item">
 
-                                Phone
+                            <div class="kucsa-contact-item-icon">
+                                <i class="bi bi-envelope-fill"></i>
+                            </div>
 
-                            </h6>
+                            <div>
 
-                            <p class="mb-0">
+                                <h4>
+                                    Official Email
+                                </h4>
 
-                                +254 XXX XXX XXX
+                                <p>
+                                    kucsa@students.kisiiuniversity.ac.ke
+                                </p>
 
-                            </p>
-
-                        </div>
-
-                        <div class="mb-4">
-
-                            <h6>
-
-                                <i class="bi bi-geo-alt-fill me-2 text-primary"></i>
-
-                                Location
-
-                            </h6>
-
-                            <p class="mb-0">
-
-                                School of Computing and Information Sciences<br>
-                                Kisii University<br>
-                                Kisii, Kenya
-
-                            </p>
+                            </div>
 
                         </div>
 
-                        <div>
 
-                            <h6>
+                        <!-- Phone -->
 
-                                <i class="bi bi-clock-fill me-2 text-primary"></i>
+                        <div class="kucsa-contact-item">
 
-                                Office Hours
+                            <div class="kucsa-contact-item-icon">
+                                <i class="bi bi-telephone-fill"></i>
+                            </div>
 
-                            </h6>
+                            <div>
 
-                            <p class="mb-0">
+                                <h4>
+                                    Official Phone
+                                </h4>
 
-                                Monday - Friday<br>
+                                <p>
+                                    +254 XXX XXX XXX
+                                </p>
 
-                                8:00 AM - 5:00 PM
+                            </div>
 
-                            </p>
+                        </div>
+
+
+                        <!-- Location -->
+
+                        <div class="kucsa-contact-item">
+
+                            <div class="kucsa-contact-item-icon">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+
+                            <div>
+
+                                <h4>
+                                    Location
+                                </h4>
+
+                                <p>
+                                    School of Computing and Information
+                                    Sciences<br>
+                                    Kisii University<br>
+                                    Kisii, Kenya
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Office Hours -->
+
+                        <div class="kucsa-contact-item">
+
+                            <div class="kucsa-contact-item-icon">
+                                <i class="bi bi-clock-fill"></i>
+                            </div>
+
+                            <div>
+
+                                <h4>
+                                    Office Hours
+                                </h4>
+
+                                <p>
+                                    Monday - Friday<br>
+                                    8:00 AM - 5:00 PM
+                                </p>
+
+                            </div>
 
                         </div>
 
@@ -146,107 +1742,205 @@ Contact Us | KUCSA Platform
 
                 </div>
 
-            </div>
 
-            <!-- Contact Form -->
+                <!-- =================================================
+                     MESSAGE FORM
+                     ================================================= -->
 
-            <div class="col-lg-7">
+                <div class="kucsa-contact-card kucsa-reveal kucsa-delay-1">
 
-                <div class="card shadow-sm border-0">
+                    <div class="kucsa-card-header kucsa-card-header-success">
 
-                    <div class="card-header bg-success text-white">
+                        <div class="kucsa-card-header-content">
 
-                        <h4 class="mb-0">
+                            <div class="kucsa-card-header-icon">
+                                <i class="bi bi-send-fill"></i>
+                            </div>
 
-                            Send Us a Message
+                            <div>
 
-                        </h4>
+                                <h3>
+                                    Send Us a Message
+                                </h3>
+
+                                <p>
+                                    Questions, feedback, or assistance
+                                </p>
+
+                            </div>
+
+                        </div>
 
                     </div>
 
-                    <div class="card-body">
 
-                        <form method="post">
+                    <div class="kucsa-message-body">
+
+                        <form
+                            method="post"
+                            id="kucsaContactForm"
+                            novalidate
+                        >
 
                             {% csrf_token %}
 
-                            <div class="row">
 
-                                <div class="col-md-6 mb-3">
+                            <!-- Name + Email -->
 
-                                    <label class="form-label">
+                            <div class="kucsa-form-row">
 
+                                <div class="kucsa-form-group">
+
+                                    <label
+                                        for="kucsaContactName"
+                                        class="kucsa-form-label"
+                                    >
                                         Full Name
-
+                                        <span class="kucsa-required">*</span>
                                     </label>
 
                                     <input
                                         type="text"
-                                        class="form-control"
+                                        class="kucsa-form-control"
+                                        id="kucsaContactName"
                                         name="name"
-                                        placeholder="Enter your full name">
+                                        placeholder="Enter your full name"
+                                        autocomplete="name"
+                                        required
+                                    >
 
                                 </div>
 
-                                <div class="col-md-6 mb-3">
 
-                                    <label class="form-label">
+                                <div class="kucsa-form-group">
 
+                                    <label
+                                        for="kucsaContactEmail"
+                                        class="kucsa-form-label"
+                                    >
                                         Email Address
-
+                                        <span class="kucsa-required">*</span>
                                     </label>
 
                                     <input
                                         type="email"
-                                        class="form-control"
+                                        class="kucsa-form-control"
+                                        id="kucsaContactEmail"
                                         name="email"
-                                        placeholder="Enter your email">
+                                        placeholder="Enter your email address"
+                                        autocomplete="email"
+                                        required
+                                    >
 
                                 </div>
 
                             </div>
 
-                            <div class="mb-3">
 
-                                <label class="form-label">
+                            <!-- Subject -->
 
+                            <div class="kucsa-form-group">
+
+                                <label
+                                    for="kucsaContactSubject"
+                                    class="kucsa-form-label"
+                                >
                                     Subject
-
+                                    <span class="kucsa-required">*</span>
                                 </label>
 
                                 <input
                                     type="text"
-                                    class="form-control"
+                                    class="kucsa-form-control"
+                                    id="kucsaContactSubject"
                                     name="subject"
-                                    placeholder="Enter the subject">
+                                    placeholder="What would you like to ask about?"
+                                    autocomplete="off"
+                                    required
+                                >
 
                             </div>
 
-                            <div class="mb-4">
 
-                                <label class="form-label">
+                            <!-- Message -->
 
+                            <div class="kucsa-form-group">
+
+                                <label
+                                    for="kucsaContactMessage"
+                                    class="kucsa-form-label"
+                                >
                                     Message
-
+                                    <span class="kucsa-required">*</span>
                                 </label>
 
                                 <textarea
-                                    class="form-control"
-                                    rows="6"
+                                    class="kucsa-form-control"
+                                    id="kucsaContactMessage"
                                     name="message"
-                                    placeholder="Write your message here..."></textarea>
+                                    rows="6"
+                                    maxlength="2000"
+                                    placeholder="Write your message here..."
+                                    required
+                                ></textarea>
+
+                                <div
+                                    class="kucsa-message-counter"
+                                    id="kucsaMessageCounter"
+                                >
+                                    0 / 2000
+                                </div>
 
                             </div>
 
-                            <button
-                                type="submit"
-                                class="btn btn-success">
 
-                                <i class="bi bi-send-fill me-2"></i>
+                            <!-- Security -->
 
-                                Send Message
+                            <div class="kucsa-response-note">
 
-                            </button>
+                                <i class="bi bi-shield-check"></i>
+
+                                <p>
+                                    Please do not include passwords, M-Pesa
+                                    PINs, or other sensitive account
+                                    information in your message.
+                                </p>
+
+                            </div>
+
+
+                            <!-- Submit -->
+
+                            <div class="kucsa-submit-row">
+
+                                <div class="kucsa-form-note">
+
+                                    <i class="bi bi-chat-heart"></i>
+
+                                    <span>
+                                        We value your feedback.
+                                    </span>
+
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    class="kucsa-submit-button"
+                                    id="kucsaContactSubmit"
+                                >
+
+                                    <i
+                                        class="bi bi-send-fill"
+                                        id="kucsaSubmitIcon"
+                                    ></i>
+
+                                    <span id="kucsaSubmitText">
+                                        Send Message
+                                    </span>
+
+                                </button>
+
+                            </div>
 
                         </form>
 
@@ -258,8 +1952,467 @@ Contact Us | KUCSA Platform
 
         </div>
 
-    </div>
+    </section>
 
-</section>
+
+    <!-- =====================================================
+         GOOGLE MAP
+         ===================================================== -->
+
+    <section class="kucsa-contact-section kucsa-contact-section-soft">
+
+        <div class="kucsa-contact-container">
+
+            <div class="kucsa-section-heading kucsa-reveal">
+
+                <div class="kucsa-eyebrow">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    Find KUCSA
+                </div>
+
+                <h2>
+                    Where We Are Located
+                </h2>
+
+                <p>
+                    Find the Kisii University campus and the School of
+                    Computing and Information Sciences using the map below.
+                </p>
+
+            </div>
+
+
+            <div class="kucsa-map-card kucsa-reveal">
+
+                <div class="kucsa-map-header">
+
+                    <div class="kucsa-map-heading">
+
+                        <div class="kucsa-map-icon">
+                            <i class="bi bi-geo-alt-fill"></i>
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Kisii University
+                            </h3>
+
+                            <p>
+                                Kisii, Kenya
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!--
+                        Opens Google Maps in a new tab.
+                    -->
+
+                    <a
+                        href="https://www.google.com/maps/search/?api=1&query=Kisii+University%2C+Kisii%2C+Kenya"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="kucsa-map-open"
+                    >
+                        <i class="bi bi-box-arrow-up-right"></i>
+                        Open in Google Maps
+                    </a>
+
+                </div>
+
+
+                <div class="kucsa-map-wrapper">
+
+                    <iframe
+                        src="https://www.google.com/maps?q=Kisii%20University%2C%20Kisii%2C%20Kenya&output=embed"
+                        title="Map showing Kisii University, Kisii, Kenya"
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"
+                        allowfullscreen
+                    ></iframe>
+
+                </div>
+
+
+                <div class="kucsa-map-footer">
+
+                    <i class="bi bi-pin-map-fill"></i>
+
+                    <span>
+                        Kisii University · School of Computing and
+                        Information Sciences · Kisii, Kenya
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CLOSING MESSAGE
+         ===================================================== -->
+
+    <section class="kucsa-contact-section">
+
+        <div class="kucsa-contact-container">
+
+            <div class="kucsa-section-heading kucsa-reveal">
+
+                <div class="kucsa-eyebrow">
+                    <i class="bi bi-heart-fill"></i>
+                    KUCSA Community
+                </div>
+
+                <h2>
+                    Your Voice Matters
+                </h2>
+
+                <p>
+                    Whether you have a question, an idea, feedback, or need
+                    assistance with the KUCSA platform, reaching out helps
+                    us build a stronger, more connected, and more innovative
+                    computing community.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<script>
+(function () {
+
+    "use strict";
+
+    const page = document.querySelector(
+        ".kucsa-contact-page"
+    );
+
+    if (!page) {
+        return;
+    }
+
+
+    /* =========================================================
+       REDUCED MOTION
+       ========================================================= */
+
+    const reducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+
+    /* =========================================================
+       SCROLL REVEAL
+       ========================================================= */
+
+    const revealItems = page.querySelectorAll(
+        ".kucsa-reveal"
+    );
+
+    if (
+        reducedMotion ||
+        !("IntersectionObserver" in window)
+    ) {
+
+        revealItems.forEach(function (element) {
+
+            element.classList.add(
+                "is-visible"
+            );
+
+        });
+
+    } else {
+
+        const observer =
+            new IntersectionObserver(
+                function (
+                    entries,
+                    observerInstance
+                ) {
+
+                    entries.forEach(
+                        function (entry) {
+
+                            if (
+                                entry.isIntersecting
+                            ) {
+
+                                entry.target.classList.add(
+                                    "is-visible"
+                                );
+
+                                observerInstance.unobserve(
+                                    entry.target
+                                );
+                            }
+
+                        }
+                    );
+
+                },
+                {
+                    threshold: 0.1,
+                    rootMargin:
+                        "0px 0px -35px 0px"
+                }
+            );
+
+
+        revealItems.forEach(
+            function (element) {
+
+                observer.observe(
+                    element
+                );
+
+            }
+        );
+    }
+
+
+    /* =========================================================
+       MESSAGE CHARACTER COUNTER
+       ========================================================= */
+
+    const message =
+        document.getElementById(
+            "kucsaContactMessage"
+        );
+
+    const counter =
+        document.getElementById(
+            "kucsaMessageCounter"
+        );
+
+
+    if (message && counter) {
+
+        function updateCounter() {
+
+            counter.textContent =
+                message.value.length +
+                " / 2000";
+
+        }
+
+
+        message.addEventListener(
+            "input",
+            updateCounter
+        );
+
+
+        updateCounter();
+    }
+
+
+    /* =========================================================
+       CONTACT FORM
+       ========================================================= */
+
+    const form =
+        document.getElementById(
+            "kucsaContactForm"
+        );
+
+    const submitButton =
+        document.getElementById(
+            "kucsaContactSubmit"
+        );
+
+    const submitIcon =
+        document.getElementById(
+            "kucsaSubmitIcon"
+        );
+
+    const submitText =
+        document.getElementById(
+            "kucsaSubmitText"
+        );
+
+
+    if (form && submitButton) {
+
+        form.addEventListener(
+            "submit",
+            function (event) {
+
+                const name =
+                    document.getElementById(
+                        "kucsaContactName"
+                    );
+
+                const email =
+                    document.getElementById(
+                        "kucsaContactEmail"
+                    );
+
+                const subject =
+                    document.getElementById(
+                        "kucsaContactSubject"
+                    );
+
+                const messageField =
+                    document.getElementById(
+                        "kucsaContactMessage"
+                    );
+
+
+                const fields = [
+                    name,
+                    email,
+                    subject,
+                    messageField
+                ];
+
+
+                let firstInvalid = null;
+
+
+                fields.forEach(
+                    function (field) {
+
+                        if (!field) {
+                            return;
+                        }
+
+
+                        const empty =
+                            !field.value.trim();
+
+
+                        if (empty) {
+
+                            field.classList.add(
+                                "is-invalid"
+                            );
+
+                            if (!firstInvalid) {
+                                firstInvalid = field;
+                            }
+
+                        } else {
+
+                            field.classList.remove(
+                                "is-invalid"
+                            );
+
+                        }
+
+                    }
+                );
+
+
+                if (firstInvalid) {
+
+                    event.preventDefault();
+
+                    firstInvalid.focus();
+
+                    return;
+                }
+
+
+                /*
+                 * Prevent accidental double submission.
+                 */
+
+                submitButton.disabled = true;
+
+
+                if (submitIcon) {
+
+                    submitIcon.className =
+                        "spinner-border spinner-border-sm";
+
+                }
+
+
+                if (submitText) {
+
+                    submitText.textContent =
+                        "Sending Message...";
+
+                }
+
+            }
+        );
+
+
+        /*
+         * Remove validation styling while
+         * the user corrects the field.
+         */
+
+        form.querySelectorAll(
+            "input, textarea"
+        ).forEach(
+            function (field) {
+
+                field.addEventListener(
+                    "input",
+                    function () {
+
+                        field.classList.remove(
+                            "is-invalid"
+                        );
+
+                    }
+                );
+
+            }
+        );
+    }
+
+
+    /* =========================================================
+       RESTORE BUTTON STATE AFTER BFCACHE
+       ========================================================= */
+
+    window.addEventListener(
+        "pageshow",
+        function () {
+
+            if (submitButton) {
+
+                submitButton.disabled =
+                    false;
+
+            }
+
+
+            if (submitIcon) {
+
+                submitIcon.className =
+                    "bi bi-send-fill";
+
+            }
+
+
+            if (submitText) {
+
+                submitText.textContent =
+                    "Send Message";
+
+            }
+
+        }
+    );
+
+})();
+</script>
 
 {% endblock %}

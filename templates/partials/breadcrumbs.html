@@ -1,8 +1,464 @@
+<!-- =========================================================
+     KUCSA RESPONSIVE BREADCRUMBS
+     ========================================================= -->
+
+<style>
+    /* =========================================================
+       KUCSA BREADCRUMB SYSTEM
+       Scoped to .kucsa-breadcrumbs
+       ========================================================= */
+
+    .kucsa-breadcrumbs {
+        --kucsa-breadcrumb-primary: #0d6efd;
+        --kucsa-breadcrumb-primary-soft: rgba(13, 110, 253, 0.08);
+        --kucsa-breadcrumb-text: #475467;
+        --kucsa-breadcrumb-muted: #667085;
+        --kucsa-breadcrumb-current: #1d2939;
+        --kucsa-breadcrumb-border: #eaecf0;
+        --kucsa-breadcrumb-bg: #ffffff;
+
+        width: 100%;
+
+        margin:
+            0 0
+            1.25rem;
+
+        padding: 0;
+
+        position: relative;
+    }
+
+
+    /* =========================================================
+       BREADCRUMB CONTAINER
+       ========================================================= */
+
+    .kucsa-breadcrumbs .kucsa-breadcrumb-list {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+
+        gap: 0.25rem;
+
+        width: 100%;
+
+        margin: 0;
+        padding:
+            0.65rem
+            0.85rem;
+
+        list-style: none;
+
+        border:
+            1px solid
+            var(--kucsa-breadcrumb-border);
+
+        border-radius: 12px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #ffffff 0%,
+                #f8fafc 100%
+            );
+
+        box-shadow:
+            0 2px 8px rgba(16, 24, 40, 0.035);
+
+        overflow: hidden;
+    }
+
+
+    /* =========================================================
+       BREADCRUMB ITEM
+       ========================================================= */
+
+    .kucsa-breadcrumbs .breadcrumb-item {
+        display: inline-flex;
+        align-items: center;
+
+        min-width: 0;
+
+        color:
+            var(--kucsa-breadcrumb-muted);
+
+        font-size: 0.8rem;
+        line-height: 1.45;
+        font-weight: 550;
+    }
+
+
+    /* =========================================================
+       SEPARATOR
+       ========================================================= */
+
+    .kucsa-breadcrumbs
+    .breadcrumb-item + .breadcrumb-item::before {
+
+        content: "\f285";
+
+        padding:
+            0 0.5rem;
+
+        color:
+            #98a2b3;
+
+        font-family:
+            "bootstrap-icons";
+
+        font-size: 0.62rem;
+
+        opacity: 0.8;
+    }
+
+
+    /* =========================================================
+       LINK
+       ========================================================= */
+
+    .kucsa-breadcrumbs .kucsa-breadcrumb-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+
+        max-width: 100%;
+
+        padding:
+            0.35rem
+            0.5rem;
+
+        border-radius: 8px;
+
+        color:
+            var(--kucsa-breadcrumb-text);
+
+        text-decoration: none;
+
+        white-space: nowrap;
+
+        transition:
+            color 0.2s ease,
+            background-color 0.2s ease,
+            transform 0.2s ease;
+    }
+
+
+    /* =========================================================
+       LINK ICON
+       ========================================================= */
+
+    .kucsa-breadcrumbs .kucsa-breadcrumb-link i {
+        color:
+            var(--kucsa-breadcrumb-muted);
+
+        font-size: 0.75rem;
+
+        transition:
+            color 0.2s ease,
+            transform 0.2s ease;
+    }
+
+
+    /* =========================================================
+       LINK HOVER
+       ========================================================= */
+
+    .kucsa-breadcrumbs
+    .kucsa-breadcrumb-link:hover {
+
+        color:
+            var(--kucsa-breadcrumb-primary);
+
+        background:
+            var(--kucsa-breadcrumb-primary-soft);
+
+        transform:
+            translateY(-1px);
+    }
+
+    .kucsa-breadcrumbs
+    .kucsa-breadcrumb-link:hover i {
+
+        color:
+            var(--kucsa-breadcrumb-primary);
+
+        transform:
+            translateX(-1px);
+    }
+
+
+    /* =========================================================
+       LINK FOCUS
+       ========================================================= */
+
+    .kucsa-breadcrumbs
+    .kucsa-breadcrumb-link:focus-visible {
+
+        outline: none;
+
+        color:
+            var(--kucsa-breadcrumb-primary);
+
+        background:
+            var(--kucsa-breadcrumb-primary-soft);
+
+        box-shadow:
+            0 0 0 3px
+            rgba(13, 110, 253, 0.13);
+    }
+
+
+    /* =========================================================
+       CURRENT PAGE
+       ========================================================= */
+
+    .kucsa-breadcrumbs
+    .breadcrumb-item.active {
+
+        display: inline-flex;
+        align-items: center;
+
+        max-width: min(420px, 100%);
+
+        padding:
+            0.35rem
+            0.55rem;
+
+        border-radius: 8px;
+
+        background:
+            rgba(16, 24, 40, 0.035);
+
+        color:
+            var(--kucsa-breadcrumb-current);
+
+        font-weight: 700;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+
+    /* =========================================================
+       HOME LINK
+       ========================================================= */
+
+    .kucsa-breadcrumbs
+    .kucsa-breadcrumb-home {
+
+        color:
+            var(--kucsa-breadcrumb-primary);
+
+        font-weight: 650;
+    }
+
+    .kucsa-breadcrumbs
+    .kucsa-breadcrumb-home i {
+
+        color:
+            var(--kucsa-breadcrumb-primary);
+    }
+
+
+    /* =========================================================
+       SUBTLE LEADING ACCENT
+       ========================================================= */
+
+    .kucsa-breadcrumbs .kucsa-breadcrumb-list::before {
+
+        content: "";
+
+        width: 3px;
+        min-width: 3px;
+
+        height: 18px;
+
+        border-radius: 99px;
+
+        background:
+            linear-gradient(
+                180deg,
+                var(--kucsa-breadcrumb-primary),
+                #72a7ff
+            );
+
+        opacity: 0.9;
+    }
+
+
+    /* =========================================================
+       TABLET
+       ========================================================= */
+
+    @media (max-width: 767.98px) {
+
+        .kucsa-breadcrumbs {
+            margin-bottom: 1rem;
+        }
+
+        .kucsa-breadcrumbs
+        .kucsa-breadcrumb-list {
+
+            padding:
+                0.55rem
+                0.7rem;
+
+            border-radius: 11px;
+        }
+
+        .kucsa-breadcrumbs
+        .breadcrumb-item {
+
+            font-size: 0.77rem;
+        }
+
+    }
+
+
+    /* =========================================================
+       MOBILE
+       ========================================================= */
+
+    @media (max-width: 575.98px) {
+
+        .kucsa-breadcrumbs {
+            margin-bottom: 0.9rem;
+        }
+
+        .kucsa-breadcrumbs
+        .kucsa-breadcrumb-list {
+
+            flex-wrap: nowrap;
+
+            gap: 0.15rem;
+
+            padding:
+                0.5rem
+                0.6rem;
+
+            overflow-x: auto;
+            overflow-y: hidden;
+
+            scrollbar-width: none;
+
+            -webkit-overflow-scrolling: touch;
+
+            overscroll-behavior-x: contain;
+        }
+
+        .kucsa-breadcrumbs
+        .kucsa-breadcrumb-list::-webkit-scrollbar {
+            display: none;
+        }
+
+        .kucsa-breadcrumbs
+        .breadcrumb-item {
+
+            flex: 0 0 auto;
+
+            font-size: 0.74rem;
+        }
+
+        .kucsa-breadcrumbs
+        .breadcrumb-item + .breadcrumb-item::before {
+
+            padding:
+                0 0.3rem;
+
+            font-size: 0.56rem;
+        }
+
+        .kucsa-breadcrumbs
+        .kucsa-breadcrumb-link {
+
+            min-height: 34px;
+
+            padding:
+                0.35rem
+                0.45rem;
+        }
+
+        .kucsa-breadcrumbs
+        .breadcrumb-item.active {
+
+            max-width: 190px;
+
+            min-height: 34px;
+
+            padding:
+                0.35rem
+                0.5rem;
+        }
+
+        .kucsa-breadcrumbs
+        .kucsa-breadcrumb-list::before {
+
+            height: 16px;
+        }
+
+    }
+
+
+    /* =========================================================
+       VERY SMALL PHONES
+       ========================================================= */
+
+    @media (max-width: 359.98px) {
+
+        .kucsa-breadcrumbs
+        .kucsa-breadcrumb-list {
+
+            padding:
+                0.45rem
+                0.5rem;
+        }
+
+        .kucsa-breadcrumbs
+        .breadcrumb-item {
+
+            font-size: 0.7rem;
+        }
+
+        .kucsa-breadcrumbs
+        .breadcrumb-item.active {
+
+            max-width: 150px;
+        }
+
+    }
+
+
+    /* =========================================================
+       REDUCED MOTION
+       ========================================================= */
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .kucsa-breadcrumbs *,
+        .kucsa-breadcrumbs *::before,
+        .kucsa-breadcrumbs *::after {
+
+            transition-duration:
+                0.01ms !important;
+
+            animation-duration:
+                0.01ms !important;
+        }
+
+    }
+</style>
+
+
 {% if breadcrumbs %}
 
-<nav aria-label="breadcrumb" class="mb-4">
+<nav
+    aria-label="Breadcrumb"
+    class="kucsa-breadcrumbs"
+>
 
-    <ol class="breadcrumb bg-light p-3 rounded shadow-sm">
+    <ol class="kucsa-breadcrumb-list">
+
 
         {% for crumb in breadcrumbs %}
 
@@ -10,16 +466,40 @@
 
                 <li class="breadcrumb-item">
 
-                    <a href="{% url crumb.url %}" class="text-decoration-none">
-                        {{ crumb.title }}
+                    <a
+                        href="{% url crumb.url %}"
+                        class="
+                            kucsa-breadcrumb-link
+                            {% if forloop.first %}
+                                kucsa-breadcrumb-home
+                            {% endif %}
+                        "
+                    >
+
+                        {% if forloop.first %}
+
+                            <i
+                                class="bi bi-house-door-fill"
+                                aria-hidden="true"
+                            ></i>
+
+                        {% endif %}
+
+                        <span>
+                            {{ crumb.title }}
+                        </span>
+
                     </a>
 
                 </li>
 
             {% else %}
 
-                <li class="breadcrumb-item active"
-                    aria-current="page">
+                <li
+                    class="breadcrumb-item active"
+                    aria-current="page"
+                    title="{{ crumb.title }}"
+                >
 
                     {{ crumb.title }}
 
@@ -34,3 +514,204 @@
 </nav>
 
 {% endif %}
+
+
+<script>
+(function () {
+
+    "use strict";
+
+
+    /* =========================================================
+       KUCSA BREADCRUMB INTERACTIONS
+       ========================================================= */
+
+    function initKucsaBreadcrumbs() {
+
+        const breadcrumb =
+            document.querySelector(
+                ".kucsa-breadcrumbs"
+            );
+
+        if (!breadcrumb) {
+            return;
+        }
+
+
+        const list =
+            breadcrumb.querySelector(
+                ".kucsa-breadcrumb-list"
+            );
+
+        if (!list) {
+            return;
+        }
+
+
+        /* =====================================================
+           MOBILE: KEEP CURRENT PAGE VISIBLE
+           ===================================================== */
+
+        function scrollToCurrent() {
+
+            if (
+                window.innerWidth >
+                575
+            ) {
+                return;
+            }
+
+
+            const current =
+                list.querySelector(
+                    ".breadcrumb-item.active"
+                );
+
+            if (!current) {
+                return;
+            }
+
+
+            /*
+             * Scroll the current page into view
+             * without jumping the entire document.
+             */
+
+            try {
+
+                current.scrollIntoView({
+                    behavior:
+                        window.matchMedia(
+                            "(prefers-reduced-motion: reduce)"
+                        ).matches
+                            ? "auto"
+                            : "smooth",
+
+                    block: "nearest",
+                    inline: "end"
+                });
+
+            } catch (error) {
+
+                /*
+                 * Graceful fallback for older browsers.
+                 */
+
+                list.scrollLeft =
+                    list.scrollWidth;
+
+            }
+
+        }
+
+
+        /* =====================================================
+           INITIAL MOBILE POSITION
+           ===================================================== */
+
+        window.requestAnimationFrame(
+            scrollToCurrent
+        );
+
+
+        /* =====================================================
+           RESIZE HANDLING
+           ===================================================== */
+
+        let resizeTimer = null;
+
+        window.addEventListener(
+            "resize",
+            function () {
+
+                window.clearTimeout(
+                    resizeTimer
+                );
+
+                resizeTimer =
+                    window.setTimeout(
+                        scrollToCurrent,
+                        120
+                    );
+
+            },
+            {
+                passive: true
+            }
+        );
+
+
+        /* =====================================================
+           LINK NAVIGATION FEEDBACK
+           ===================================================== */
+
+        const links =
+            breadcrumb.querySelectorAll(
+                ".kucsa-breadcrumb-link"
+            );
+
+        links.forEach(function (link) {
+
+            link.addEventListener(
+                "click",
+                function () {
+
+                    link.setAttribute(
+                        "aria-busy",
+                        "true"
+                    );
+
+                }
+            );
+
+        });
+
+
+        /* =====================================================
+           BROWSER BACK / FORWARD
+           ===================================================== */
+
+        window.addEventListener(
+            "pageshow",
+            function () {
+
+                links.forEach(function (link) {
+
+                    link.removeAttribute(
+                        "aria-busy"
+                    );
+
+                });
+
+                scrollToCurrent();
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       INITIALIZE
+       ========================================================= */
+
+    if (
+        document.readyState === "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            initKucsaBreadcrumbs,
+            {
+                once: true
+            }
+        );
+
+    } else {
+
+        initKucsaBreadcrumbs();
+
+    }
+
+})();
+</script>

@@ -1,55 +1,617 @@
-<!-- Reusable Confirmation Modal -->
+<!-- =========================================================
+     KUCSA REUSABLE CONFIRMATION MODAL
+     ========================================================= -->
+
+<style>
+    /* =========================================================
+       KUCSA CONFIRMATION MODAL
+       Fully scoped to #confirmationModal
+       ========================================================= */
+
+    #confirmationModal {
+        --kucsa-modal-primary: #0d6efd;
+        --kucsa-modal-danger: #dc3545;
+        --kucsa-modal-warning: #ffc107;
+        --kucsa-modal-success: #198754;
+        --kucsa-modal-text: #1d2939;
+        --kucsa-modal-muted: #667085;
+        --kucsa-modal-border: #eaecf0;
+        --kucsa-modal-surface: #ffffff;
+        --kucsa-modal-radius: 18px;
+        --kucsa-modal-transition:
+            0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+
+    /* =========================================================
+       BACKDROP
+       ========================================================= */
+
+    #confirmationModal + * {
+        box-sizing: border-box;
+    }
+
+    .modal-backdrop.show {
+        opacity: 0.55;
+    }
+
+
+    /* =========================================================
+       DIALOG
+       ========================================================= */
+
+    #confirmationModal .modal-dialog {
+        width: calc(100% - 2rem);
+        max-width: 500px;
+        margin: 1.75rem auto;
+    }
+
+
+    /* =========================================================
+       CONTENT
+       ========================================================= */
+
+    #confirmationModal .modal-content {
+        position: relative;
+        overflow: hidden;
+
+        border: 1px solid rgba(16, 24, 40, 0.08);
+        border-radius: var(--kucsa-modal-radius);
+
+        background:
+            linear-gradient(
+                180deg,
+                #ffffff 0%,
+                #fbfcfe 100%
+            );
+
+        color: var(--kucsa-modal-text);
+
+        box-shadow:
+            0 24px 70px rgba(16, 24, 40, 0.18),
+            0 8px 24px rgba(16, 24, 40, 0.08);
+
+        isolation: isolate;
+    }
+
+
+    /* =========================================================
+       TOP ACCENT
+       ========================================================= */
+
+    #confirmationModal .modal-content::before {
+        content: "";
+        position: absolute;
+
+        top: 0;
+        left: 0;
+        right: 0;
+
+        height: 4px;
+
+        background:
+            linear-gradient(
+                90deg,
+                var(--kucsa-modal-primary),
+                #4f8dfd
+            );
+
+        z-index: 2;
+    }
+
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+
+    #confirmationModal .modal-header {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+
+        padding: 1.35rem 1.35rem 1rem;
+
+        border-bottom: 1px solid var(--kucsa-modal-border);
+        background: rgba(255, 255, 255, 0.94);
+    }
+
+
+    /* =========================================================
+       HEADER ICON
+       ========================================================= */
+
+    #confirmationModal .modal-header::before {
+        content: "?";
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        flex: 0 0 38px;
+
+        width: 38px;
+        height: 38px;
+
+        border-radius: 12px;
+
+        background: rgba(13, 110, 253, 0.09);
+        color: var(--kucsa-modal-primary);
+
+        font-size: 1rem;
+        font-weight: 800;
+
+        box-shadow:
+            inset 0 0 0 1px rgba(13, 110, 253, 0.08);
+    }
+
+
+    /* =========================================================
+       TITLE
+       ========================================================= */
+
+    #confirmationModal .modal-title {
+        margin: 0;
+
+        color: var(--kucsa-modal-text);
+
+        font-size: 1rem;
+        line-height: 1.35;
+        font-weight: 750;
+        letter-spacing: -0.01em;
+    }
+
+
+    /* =========================================================
+       CLOSE BUTTON
+       ========================================================= */
+
+    #confirmationModal .btn-close {
+        flex: 0 0 auto;
+
+        width: 34px;
+        height: 34px;
+
+        margin: 0 0 0 auto;
+        padding: 0;
+
+        border-radius: 10px;
+
+        background-size: 0.8rem;
+
+        opacity: 0.55;
+
+        transition:
+            background-color var(--kucsa-modal-transition),
+            opacity var(--kucsa-modal-transition),
+            transform var(--kucsa-modal-transition);
+    }
+
+    #confirmationModal .btn-close:hover {
+        background-color: #f2f4f7;
+        opacity: 1;
+        transform: rotate(4deg);
+    }
+
+    #confirmationModal .btn-close:focus {
+        box-shadow:
+            0 0 0 3px rgba(13, 110, 253, 0.15);
+        opacity: 1;
+    }
+
+
+    /* =========================================================
+       BODY
+       ========================================================= */
+
+    #confirmationModal .modal-body {
+        padding: 1.35rem;
+
+        color: var(--kucsa-modal-muted);
+
+        font-size: 0.9rem;
+        line-height: 1.7;
+    }
+
+
+    /* =========================================================
+       MESSAGE CONTAINER
+       ========================================================= */
+
+    #confirmationModal .modal-message-content {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.85rem;
+
+        padding: 0.95rem 1rem;
+
+        border: 1px solid #eaecf0;
+        border-radius: 13px;
+
+        background: #f8fafc;
+
+        color: #475467;
+    }
+
+    #confirmationModal .modal-message-icon {
+        flex: 0 0 auto;
+
+        width: 30px;
+        height: 30px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 9px;
+
+        background: rgba(13, 110, 253, 0.09);
+        color: var(--kucsa-modal-primary);
+
+        font-size: 0.85rem;
+    }
+
+    #confirmationModal .modal-message-text {
+        min-width: 0;
+
+        margin: 0;
+
+        color: #475467;
+
+        font-size: 0.88rem;
+        line-height: 1.65;
+    }
+
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+
+    #confirmationModal .modal-footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.65rem;
+
+        padding: 1rem 1.35rem 1.25rem;
+
+        border-top: 1px solid var(--kucsa-modal-border);
+
+        background: #ffffff;
+    }
+
+
+    /* =========================================================
+       BUTTONS
+       ========================================================= */
+
+    #confirmationModal .modal-footer .btn {
+        min-height: 42px;
+
+        padding: 0.6rem 1rem;
+
+        border-radius: 10px;
+
+        font-size: 0.82rem;
+        font-weight: 650;
+
+        transition:
+            background-color var(--kucsa-modal-transition),
+            border-color var(--kucsa-modal-transition),
+            color var(--kucsa-modal-transition),
+            box-shadow var(--kucsa-modal-transition),
+            transform var(--kucsa-modal-transition);
+    }
+
+
+    /* =========================================================
+       CANCEL
+       ========================================================= */
+
+    #confirmationModal .modal-footer .btn-secondary {
+        border-color: #d0d5dd;
+
+        background: #ffffff;
+        color: #344054;
+
+        box-shadow:
+            0 1px 2px rgba(16, 24, 40, 0.04);
+    }
+
+    #confirmationModal .modal-footer .btn-secondary:hover {
+        border-color: #98a2b3;
+
+        background: #f9fafb;
+        color: #1d2939;
+
+        transform: translateY(-1px);
+
+        box-shadow:
+            0 4px 10px rgba(16, 24, 40, 0.08);
+    }
+
+
+    /* =========================================================
+       CONFIRM BUTTON
+       ========================================================= */
+
+    #confirmationModal .modal-footer
+    #confirmationModalButton {
+        min-width: 105px;
+
+        border: 1px solid transparent;
+
+        box-shadow:
+            0 4px 12px rgba(220, 53, 69, 0.16);
+    }
+
+    #confirmationModal .modal-footer
+    #confirmationModalButton:hover {
+        transform: translateY(-1px);
+
+        box-shadow:
+            0 7px 18px rgba(220, 53, 69, 0.22);
+    }
+
+    #confirmationModal .modal-footer
+    #confirmationModalButton:focus-visible,
+    #confirmationModal .modal-footer
+    .btn:focus-visible {
+        outline: none;
+
+        box-shadow:
+            0 0 0 3px rgba(13, 110, 253, 0.16),
+            0 4px 12px rgba(16, 24, 40, 0.08);
+    }
+
+
+    /* =========================================================
+       LOADING STATE
+       ========================================================= */
+
+    #confirmationModal #confirmationModalButton.is-loading {
+        position: relative;
+
+        pointer-events: none;
+
+        opacity: 0.78;
+    }
+
+    #confirmationModal #confirmationModalButton.is-loading
+    .kucsa-confirm-spinner {
+        display: inline-block;
+
+        width: 14px;
+        height: 14px;
+
+        margin-right: 0.45rem;
+
+        border: 2px solid currentColor;
+        border-right-color: transparent;
+
+        border-radius: 50%;
+
+        vertical-align: -2px;
+
+        animation:
+            kucsaConfirmSpin 0.65s linear infinite;
+    }
+
+    @keyframes kucsaConfirmSpin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+
+    /* =========================================================
+       MOBILE
+       ========================================================= */
+
+    @media (max-width: 575.98px) {
+
+        #confirmationModal .modal-dialog {
+            width: calc(100% - 1rem);
+
+            margin:
+                0.5rem auto;
+        }
+
+        #confirmationModal .modal-content {
+            border-radius: 16px;
+        }
+
+        #confirmationModal .modal-header {
+            padding:
+                1.15rem
+                1rem
+                0.9rem;
+        }
+
+        #confirmationModal .modal-header::before {
+            flex-basis: 35px;
+
+            width: 35px;
+            height: 35px;
+
+            border-radius: 10px;
+        }
+
+        #confirmationModal .modal-title {
+            font-size: 0.95rem;
+        }
+
+        #confirmationModal .modal-body {
+            padding: 1rem;
+        }
+
+        #confirmationModal .modal-footer {
+            padding:
+                0.85rem
+                1rem
+                1rem;
+        }
+
+        #confirmationModal .modal-footer .btn {
+            min-height: 44px;
+            flex: 1 1 0;
+        }
+
+        #confirmationModal
+        #confirmationModalButton {
+            min-width: 0;
+        }
+    }
+
+
+    /* =========================================================
+       VERY SMALL PHONES
+       ========================================================= */
+
+    @media (max-width: 359.98px) {
+
+        #confirmationModal .modal-dialog {
+            width: calc(100% - 0.75rem);
+        }
+
+        #confirmationModal .modal-header {
+            gap: 0.65rem;
+        }
+
+        #confirmationModal .modal-header::before {
+            flex-basis: 32px;
+
+            width: 32px;
+            height: 32px;
+        }
+
+        #confirmationModal .modal-body {
+            font-size: 0.84rem;
+        }
+
+        #confirmationModal .modal-message-content {
+            padding: 0.8rem;
+        }
+
+        #confirmationModal .modal-footer {
+            gap: 0.5rem;
+        }
+
+        #confirmationModal .modal-footer .btn {
+            padding:
+                0.55rem
+                0.7rem;
+
+            font-size: 0.76rem;
+        }
+    }
+
+
+    /* =========================================================
+       REDUCED MOTION
+       ========================================================= */
+
+    @media (prefers-reduced-motion: reduce) {
+
+        #confirmationModal *,
+        #confirmationModal *::before,
+        #confirmationModal *::after {
+            transition-duration: 0.01ms !important;
+            animation-duration: 0.01ms !important;
+        }
+    }
+</style>
+
+
+<!-- =========================================================
+     REUSABLE CONFIRMATION MODAL
+     ========================================================= -->
 
 <div
     class="modal fade"
     id="confirmationModal"
     tabindex="-1"
     aria-labelledby="confirmationModalLabel"
-    aria-hidden="true">
+    aria-describedby="confirmationModalBody"
+    aria-hidden="true"
+    data-bs-backdrop="static"
+    data-bs-keyboard="true"
+>
 
-    <div class="modal-dialog modal-dialog-centered">
+    <div
+        class="modal-dialog modal-dialog-centered"
+        role="document"
+    >
 
         <div class="modal-content">
 
-            <!-- Header -->
+
+            <!-- =================================================
+                 HEADER
+                 ================================================= -->
 
             <div class="modal-header">
 
                 <h5
                     class="modal-title"
-                    id="confirmationModalLabel">
-
+                    id="confirmationModalLabel"
+                >
                     Confirmation
-
                 </h5>
 
                 <button
                     type="button"
                     class="btn-close"
                     data-bs-dismiss="modal"
-                    aria-label="Close">
-                </button>
+                    aria-label="Close confirmation dialog"
+                ></button>
 
             </div>
 
-            <!-- Body -->
+
+            <!-- =================================================
+                 BODY
+                 ================================================= -->
 
             <div
                 class="modal-body"
-                id="confirmationModalBody">
+                id="confirmationModalBody"
+            >
 
-                Are you sure you want to continue?
+                <div class="modal-message-content">
+
+                    <div
+                        class="modal-message-icon"
+                        aria-hidden="true"
+                    >
+                        <i class="bi bi-question-lg"></i>
+                    </div>
+
+                    <p class="modal-message-text">
+                        Are you sure you want to continue?
+                    </p>
+
+                </div>
 
             </div>
 
-            <!-- Footer -->
+
+            <!-- =================================================
+                 FOOTER
+                 ================================================= -->
 
             <div class="modal-footer">
 
                 <button
                     type="button"
                     class="btn btn-secondary"
-                    data-bs-dismiss="modal">
+                    data-bs-dismiss="modal"
+                    id="confirmationModalCancel"
+                >
+
+                    <i
+                        class="bi bi-x-lg me-1"
+                        aria-hidden="true"
+                    ></i>
 
                     Cancel
 
@@ -58,9 +620,17 @@
                 <a
                     href="#"
                     class="btn btn-danger"
-                    id="confirmationModalButton">
+                    id="confirmationModalButton"
+                >
 
-                    Confirm
+                    <i
+                        class="bi bi-check2 me-1"
+                        aria-hidden="true"
+                    ></i>
+
+                    <span class="confirmation-button-text">
+                        Confirm
+                    </span>
 
                 </a>
 
@@ -72,58 +642,448 @@
 
 </div>
 
+
 <script>
+(function () {
 
-document.addEventListener("DOMContentLoaded", function () {
+    "use strict";
 
-    const confirmationModal =
-        document.getElementById("confirmationModal");
 
-    confirmationModal.addEventListener(
-        "show.bs.modal",
-        function (event) {
+    /* =========================================================
+       KUCSA CONFIRMATION MODAL
+       ========================================================= */
 
-            const button = event.relatedTarget;
+    function initKucsaConfirmationModal() {
 
-            const title =
-                button.getAttribute("data-modal-title");
+        const confirmationModal =
+            document.getElementById(
+                "confirmationModal"
+            );
 
-            const message =
-                button.getAttribute("data-modal-message");
+        if (!confirmationModal) {
+            return;
+        }
 
-            const url =
-                button.getAttribute("data-modal-url");
 
-            const btnClass =
-                button.getAttribute("data-modal-class");
-
-            const btnText =
-                button.getAttribute("data-modal-button");
-
+        const modalLabel =
             document.getElementById(
                 "confirmationModalLabel"
-            ).textContent = title || "Confirmation";
+            );
 
+        const modalBody =
             document.getElementById(
                 "confirmationModalBody"
-            ).textContent =
-                message || "Are you sure you want to continue?";
+            );
 
-            const confirmButton =
-                document.getElementById(
-                    "confirmationModalButton"
+        const confirmButton =
+            document.getElementById(
+                "confirmationModalButton"
+            );
+
+        const cancelButton =
+            document.getElementById(
+                "confirmationModalCancel"
+            );
+
+
+        if (
+            !modalLabel ||
+            !modalBody ||
+            !confirmButton
+        ) {
+            return;
+        }
+
+
+        /* =====================================================
+           DEFAULT VALUES
+           ===================================================== */
+
+        const defaultTitle =
+            "Confirmation";
+
+        const defaultMessage =
+            "Are you sure you want to continue?";
+
+        const defaultButtonText =
+            "Confirm";
+
+
+        /* =====================================================
+           OPEN MODAL
+           ===================================================== */
+
+        confirmationModal.addEventListener(
+            "show.bs.modal",
+            function (event) {
+
+                const trigger =
+                    event.relatedTarget;
+
+                if (!trigger) {
+                    return;
+                }
+
+
+                const title =
+                    trigger.getAttribute(
+                        "data-modal-title"
+                    );
+
+                const message =
+                    trigger.getAttribute(
+                        "data-modal-message"
+                    );
+
+                const url =
+                    trigger.getAttribute(
+                        "data-modal-url"
+                    );
+
+                const buttonClass =
+                    trigger.getAttribute(
+                        "data-modal-class"
+                    );
+
+                const buttonText =
+                    trigger.getAttribute(
+                        "data-modal-button"
+                    );
+
+
+                /* =================================================
+                   TITLE
+                   ================================================= */
+
+                modalLabel.textContent =
+                    title || defaultTitle;
+
+
+                /* =================================================
+                   MESSAGE
+                   ================================================= */
+
+                const messageText =
+                    modalBody.querySelector(
+                        ".modal-message-text"
+                    );
+
+                if (messageText) {
+
+                    messageText.textContent =
+                        message || defaultMessage;
+
+                } else {
+
+                    modalBody.textContent =
+                        message || defaultMessage;
+
+                }
+
+
+                /* =================================================
+                   CONFIRM URL
+                   ================================================= */
+
+                confirmButton.href =
+                    url || "#";
+
+
+                /* =================================================
+                   BUTTON TEXT
+                   ================================================= */
+
+                const buttonTextElement =
+                    confirmButton.querySelector(
+                        ".confirmation-button-text"
+                    );
+
+                if (buttonTextElement) {
+
+                    buttonTextElement.textContent =
+                        buttonText || defaultButtonText;
+
+                } else {
+
+                    confirmButton.textContent =
+                        buttonText || defaultButtonText;
+
+                }
+
+
+                /* =================================================
+                   BUTTON STYLE
+                   ================================================= */
+
+                confirmButton.className =
+                    "btn " +
+                    (
+                        buttonClass ||
+                        "btn-danger"
+                    );
+
+                confirmButton.id =
+                    "confirmationModalButton";
+
+
+                /*
+                 * Restore the icon and text after className
+                 * replacement.
+                 */
+
+                confirmButton.innerHTML = `
+                    <i
+                        class="bi bi-check2 me-1"
+                        aria-hidden="true"
+                    ></i>
+
+                    <span class="confirmation-button-text">
+                        ${
+                            buttonText ||
+                            defaultButtonText
+                        }
+                    </span>
+                `;
+
+
+                /* =================================================
+                   RESET LOADING STATE
+                   ================================================= */
+
+                confirmButton.classList.remove(
+                    "is-loading"
                 );
 
-            confirmButton.href = url || "#";
+                confirmButton.removeAttribute(
+                    "aria-disabled"
+                );
 
-            confirmButton.textContent =
-                btnText || "Confirm";
+                confirmButton.removeAttribute(
+                    "aria-busy"
+                );
 
-            confirmButton.className =
-                "btn " + (btnClass || "btn-danger");
 
-        });
+                /*
+                 * Give the confirmation action an accessible
+                 * label.
+                 */
 
-});
+                confirmButton.setAttribute(
+                    "aria-label",
+                    buttonText ||
+                    defaultButtonText
+                );
 
+            }
+        );
+
+
+        /* =====================================================
+           CONFIRM ACTION
+           ===================================================== */
+
+        confirmButton.addEventListener(
+            "click",
+            function (event) {
+
+                const destination =
+                    this.getAttribute("href");
+
+
+                /*
+                 * Do not process empty placeholder links.
+                 */
+
+                if (
+                    !destination ||
+                    destination === "#"
+                ) {
+
+                    event.preventDefault();
+
+                    return;
+                }
+
+
+                /*
+                 * Prevent accidental double-clicks.
+                 */
+
+                if (
+                    this.classList.contains(
+                        "is-loading"
+                    )
+                ) {
+
+                    event.preventDefault();
+
+                    return;
+                }
+
+
+                this.classList.add(
+                    "is-loading"
+                );
+
+                this.setAttribute(
+                    "aria-busy",
+                    "true"
+                );
+
+                this.setAttribute(
+                    "aria-disabled",
+                    "true"
+                );
+
+
+                const buttonTextElement =
+                    this.querySelector(
+                        ".confirmation-button-text"
+                    );
+
+
+                if (buttonTextElement) {
+
+                    buttonTextElement.textContent =
+                        "Processing...";
+
+                }
+
+
+                /*
+                 * Replace the normal icon with a
+                 * lightweight loading spinner.
+                 */
+
+                const icon =
+                    this.querySelector("i");
+
+                if (icon) {
+
+                    icon.className =
+                        "kucsa-confirm-spinner";
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           MODAL CLOSED
+           ===================================================== */
+
+        confirmationModal.addEventListener(
+            "hidden.bs.modal",
+            function () {
+
+                confirmButton.classList.remove(
+                    "is-loading"
+                );
+
+                confirmButton.removeAttribute(
+                    "aria-busy"
+                );
+
+                confirmButton.removeAttribute(
+                    "aria-disabled"
+                );
+
+
+                /*
+                 * Restore the normal confirmation icon.
+                 */
+
+                confirmButton.innerHTML = `
+                    <i
+                        class="bi bi-check2 me-1"
+                        aria-hidden="true"
+                    ></i>
+
+                    <span class="confirmation-button-text">
+                        ${defaultButtonText}
+                    </span>
+                `;
+
+            }
+        );
+
+
+        /* =====================================================
+           ESCAPE / CANCEL CLEANUP
+           ===================================================== */
+
+        if (cancelButton) {
+
+            cancelButton.addEventListener(
+                "click",
+                function () {
+
+                    confirmButton.classList.remove(
+                        "is-loading"
+                    );
+
+                    confirmButton.removeAttribute(
+                        "aria-busy"
+                    );
+
+                    confirmButton.removeAttribute(
+                        "aria-disabled"
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           PAGE RESTORATION
+           ===================================================== */
+
+        window.addEventListener(
+            "pageshow",
+            function () {
+
+                confirmButton.classList.remove(
+                    "is-loading"
+                );
+
+                confirmButton.removeAttribute(
+                    "aria-busy"
+                );
+
+                confirmButton.removeAttribute(
+                    "aria-disabled"
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       INITIALIZE SAFELY
+       ========================================================= */
+
+    if (
+        document.readyState === "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            initKucsaConfirmationModal,
+            {
+                once: true
+            }
+        );
+
+    } else {
+
+        initKucsaConfirmationModal();
+
+    }
+
+})();
 </script>

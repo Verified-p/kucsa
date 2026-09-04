@@ -1,431 +1,1605 @@
 <style>
-    :root {
-        --kucsa-primary: #0d6efd;
-        --kucsa-primary-rgb: 13, 110, 253;
-        --kucsa-dark: #212529;
-        --kucsa-gray-light: #f8f9fa;
-        --kucsa-border: rgba(0, 0, 0, 0.08);
-        --kucsa-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+    /* ============================================================
+       KUCSA NAVBAR — MODERN PRODUCTION UI
+       Scoped to .kucsa-navbar-wrapper / .kucsa-navbar
+       ============================================================ */
 
-    .kucsa-navbar {
-        min-height: 70px;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid var(--kucsa-border);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    .kucsa-navbar-wrapper {
+        --kucsa-nav-primary: #0d6efd;
+        --kucsa-nav-primary-rgb: 13, 110, 253;
+        --kucsa-nav-dark: #172033;
+        --kucsa-nav-text: #3f4857;
+        --kucsa-nav-muted: #737d8c;
+        --kucsa-nav-border: rgba(20, 35, 55, 0.08);
+        --kucsa-nav-surface: rgba(255, 255, 255, 0.96);
+        --kucsa-nav-soft: #f5f7fa;
+        --kucsa-nav-success: #198754;
+        --kucsa-nav-warning: #ffc107;
+        --kucsa-nav-danger: #dc3545;
+        --kucsa-nav-radius: 12px;
+        --kucsa-nav-transition: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+
+        position: relative;
         z-index: 1030;
-        transition: var(--kucsa-transition);
     }
 
-    .kucsa-navbar .navbar-brand {
-        font-weight: 800;
-        color: var(--kucsa-dark);
-        letter-spacing: -0.02em;
-        font-size: 1.25rem;
-        transition: var(--kucsa-transition);
+    /* ============================================================
+       MAIN NAVBAR
+       ============================================================ */
+
+    .kucsa-navbar-wrapper .kucsa-navbar {
+        min-height: 70px;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+
+        background: var(--kucsa-nav-surface);
+        border-bottom: 1px solid var(--kucsa-nav-border);
+
+        box-shadow:
+            0 1px 2px rgba(0, 0, 0, 0.02),
+            0 8px 28px rgba(20, 35, 55, 0.045);
+
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+
+        transition:
+            box-shadow var(--kucsa-nav-transition),
+            background var(--kucsa-nav-transition);
     }
 
-    .kucsa-navbar .navbar-brand:hover {
-        opacity: 0.85;
+    .kucsa-navbar-wrapper .kucsa-navbar.is-scrolled {
+        box-shadow:
+            0 1px 2px rgba(0, 0, 0, 0.03),
+            0 10px 30px rgba(20, 35, 55, 0.08);
     }
 
-    .kucsa-navbar .navbar-brand small {
-        display: block;
-        font-size: 0.62rem;
-        font-weight: 600;
-        color: #6c757d;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-        margin-top: -3px;
+    /* ============================================================
+       NAVBAR CONTAINER
+       ============================================================ */
+
+    .kucsa-navbar-wrapper .kucsa-navbar > .container-fluid {
+        min-height: 58px;
     }
 
-    .kucsa-navbar .navbar-toggler {
-        border: 1px solid var(--kucsa-border);
-        padding: 0.4rem 0.6rem;
-        border-radius: 8px;
-        background: var(--kucsa-gray-light);
-        transition: var(--kucsa-transition);
-    }
+    /* ============================================================
+       BRAND
+       ============================================================ */
 
-    .kucsa-navbar .navbar-toggler:focus {
-        box-shadow: 0 0 0 3px rgba(var(--kucsa-primary-rgb), 0.15);
-        border-color: var(--kucsa-primary);
-    }
-
-    .kucsa-navbar .nav-link {
-        color: #495057;
-        font-size: 0.88rem;
-        font-weight: 500;
-        padding: 0.6rem 0.85rem;
-        border-radius: 8px;
-        transition: var(--kucsa-transition);
+    .kucsa-navbar-wrapper .navbar-brand {
         display: inline-flex;
-        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+
+        min-width: 0;
+        padding: 0.25rem 0;
+
+        color: var(--kucsa-nav-dark);
+        text-decoration: none;
+
+        font-size: 1.22rem;
+        font-weight: 850;
+        line-height: 1;
+
+        letter-spacing: -0.025em;
+
+        transition:
+            color var(--kucsa-nav-transition),
+            transform var(--kucsa-nav-transition),
+            opacity var(--kucsa-nav-transition);
     }
 
-    .kucsa-navbar .nav-link:hover {
-        background: rgba(var(--kucsa-primary-rgb), 0.06);
-        color: var(--kucsa-primary);
+    .kucsa-navbar-wrapper .navbar-brand:hover {
+        color: var(--kucsa-nav-primary);
         transform: translateY(-1px);
     }
 
-    .kucsa-navbar .nav-link.active {
-        background: rgba(var(--kucsa-primary-rgb), 0.1);
-        color: var(--kucsa-primary);
-        font-weight: 600;
+    .kucsa-navbar-wrapper .navbar-brand > span {
+        white-space: nowrap;
     }
 
-    /* =========================================================
-       USER MENU & AVATAR
-       ========================================================= */
+    .kucsa-navbar-wrapper .navbar-brand small {
+        display: block;
 
-    .kucsa-navbar .navbar-user {
-        display: flex;
-        align-items: center;
-        gap: 0.65rem;
-        padding: 0.2rem 0.4rem;
-        border-radius: 30px;
-        transition: var(--kucsa-transition);
+        margin-top: 0.34rem;
+
+        color: var(--kucsa-nav-muted);
+
+        font-size: 0.58rem;
+        font-weight: 700;
+        line-height: 1;
+
+        letter-spacing: 0.095em;
+        text-transform: uppercase;
+
+        white-space: nowrap;
     }
 
-    .kucsa-navbar .navbar-user:hover {
-        background: var(--kucsa-gray-light);
-    }
+    /* ============================================================
+       LEFT MOBILE SIDEBAR BUTTON
+       This is intentionally on the LEFT side.
+       ============================================================ */
 
-    .kucsa-navbar .navbar-avatar {
-        width: 38px;
-        height: 38px;
-        object-fit: cover;
-        border-radius: 50%;
-        border: 2px solid #fff;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
+    .kucsa-navbar-wrapper .kucsa-sidebar-toggle {
+        width: 42px;
+        height: 42px;
 
-    .kucsa-navbar .navbar-default-avatar {
-        width: 38px;
-        height: 38px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.8rem;
-        color: #6c757d;
-        background: #e9ecef;
-        border-radius: 50%;
+
+        flex-shrink: 0;
+
+        padding: 0;
+
+        border: 1px solid var(--kucsa-nav-border);
+        border-radius: 11px;
+
+        background: var(--kucsa-nav-soft);
+        color: var(--kucsa-nav-dark);
+
+        box-shadow: 0 2px 8px rgba(20, 35, 55, 0.035);
+
+        transition:
+            background var(--kucsa-nav-transition),
+            border-color var(--kucsa-nav-transition),
+            color var(--kucsa-nav-transition),
+            transform var(--kucsa-nav-transition),
+            box-shadow var(--kucsa-nav-transition);
     }
 
-    .kucsa-navbar .navbar-user-name {
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--kucsa-dark);
-        line-height: 1.2;
+    .kucsa-navbar-wrapper .kucsa-sidebar-toggle:hover {
+        background: rgba(var(--kucsa-nav-primary-rgb), 0.08);
+        border-color: rgba(var(--kucsa-nav-primary-rgb), 0.2);
+        color: var(--kucsa-nav-primary);
+        transform: translateY(-1px);
+        box-shadow: 0 5px 14px rgba(var(--kucsa-nav-primary-rgb), 0.1);
     }
 
-    .kucsa-navbar .navbar-user-role {
-        font-size: 0.68rem;
-        font-weight: 500;
-        color: #6c757d;
-        line-height: 1.1;
-        margin-top: 1px;
+    .kucsa-navbar-wrapper .kucsa-sidebar-toggle:active {
+        transform: scale(0.96);
     }
 
-    /* =========================================================
-       DROPDOWN ANIMATION & STYLING
-       ========================================================= */
-
-    .kucsa-navbar .dropdown-menu {
-        min-width: 240px;
-        margin-top: 0.75rem;
-        border: 1px solid var(--kucsa-border);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        border-radius: 12px;
-        padding: 0.5rem;
-        animation: dropdownFade 0.2s ease-in-out;
+    .kucsa-navbar-wrapper .kucsa-sidebar-toggle:focus-visible {
+        outline: none;
+        border-color: var(--kucsa-nav-primary);
+        box-shadow:
+            0 0 0 3px rgba(var(--kucsa-nav-primary-rgb), 0.14),
+            0 5px 14px rgba(var(--kucsa-nav-primary-rgb), 0.1);
     }
 
-    @keyframes dropdownFade {
-        from {
-            opacity: 0;
-            transform: translateY(8px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    .kucsa-navbar-wrapper .kucsa-sidebar-toggle i {
+        font-size: 1.25rem;
+        line-height: 1;
     }
 
-    .kucsa-navbar .dropdown-header {
-        padding: 0.75rem 1rem;
-        background: var(--kucsa-gray-light);
-        border-radius: 8px;
-        margin-bottom: 0.35rem;
-    }
+    /* ============================================================
+       RIGHT NAVBAR MENU TOGGLE
+       ============================================================ */
 
-    .kucsa-navbar .dropdown-item {
-        font-size: 0.85rem;
-        font-weight: 500;
-        padding: 0.6rem 1rem;
-        border-radius: 8px;
-        transition: var(--kucsa-transition);
-        color: #495057;
-    }
+    .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle {
+        width: 42px;
+        height: 42px;
 
-    .kucsa-navbar .dropdown-item i {
-        width: 22px;
-        margin-right: 0.5rem;
-        color: #6c757d;
-        transition: var(--kucsa-transition);
-    }
-
-    .kucsa-navbar .dropdown-item:hover {
-        background: rgba(var(--kucsa-primary-rgb), 0.08);
-        color: var(--kucsa-primary);
-    }
-
-    .kucsa-navbar .dropdown-item:hover i {
-        color: var(--kucsa-primary);
-    }
-
-    .kucsa-navbar .dropdown-item.logout-item {
-        color: #dc3545;
-    }
-
-    .kucsa-navbar .dropdown-item.logout-item i {
-        color: #dc3545;
-    }
-
-    .kucsa-navbar .dropdown-item.logout-item:hover {
-        background: rgba(220, 53, 69, 0.08);
-        color: #bd2130;
-    }
-
-    /* =========================================================
-       PAYMENT ALERT BADGES
-       ========================================================= */
-
-    .kucsa-navbar .payment-alert {
         display: inline-flex;
         align-items: center;
-        gap: 0.4rem;
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: #856404;
-        background: rgba(255, 193, 7, 0.12);
-        border: 1px solid rgba(255, 193, 7, 0.25);
-        padding: 0.45rem 0.8rem;
-        border-radius: 8px;
-        text-decoration: none;
-        transition: var(--kucsa-transition);
+        justify-content: center;
+
+        padding: 0;
+
+        border: 1px solid var(--kucsa-nav-border);
+        border-radius: 11px;
+
+        background: #fff;
+        color: var(--kucsa-nav-text);
+
+        transition:
+            background var(--kucsa-nav-transition),
+            border-color var(--kucsa-nav-transition),
+            color var(--kucsa-nav-transition),
+            transform var(--kucsa-nav-transition);
     }
 
-    .kucsa-navbar .payment-alert:hover {
-        background: rgba(255, 193, 7, 0.2);
-        color: #533f03;
+    .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle:hover {
+        background: var(--kucsa-nav-soft);
+        border-color: rgba(var(--kucsa-nav-primary-rgb), 0.2);
+        color: var(--kucsa-nav-primary);
+    }
+
+    .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle:focus-visible {
+        outline: none;
+        border-color: var(--kucsa-nav-primary);
+        box-shadow: 0 0 0 3px rgba(var(--kucsa-nav-primary-rgb), 0.14);
+    }
+
+    /* ============================================================
+       DESKTOP NAVIGATION
+       ============================================================ */
+
+    .kucsa-navbar-wrapper .navbar-nav {
+        gap: 0.18rem;
+    }
+
+    .kucsa-navbar-wrapper .nav-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        min-height: 40px;
+
+        padding: 0.55rem 0.8rem;
+
+        border-radius: 9px;
+
+        color: var(--kucsa-nav-text);
+
+        font-size: 0.86rem;
+        font-weight: 550;
+        line-height: 1.2;
+
+        text-decoration: none;
+
+        transition:
+            background var(--kucsa-nav-transition),
+            color var(--kucsa-nav-transition),
+            transform var(--kucsa-nav-transition);
+    }
+
+    .kucsa-navbar-wrapper .nav-link i {
+        font-size: 0.95rem;
+        transition: transform var(--kucsa-nav-transition);
+    }
+
+    .kucsa-navbar-wrapper .nav-link:hover {
+        background: rgba(var(--kucsa-nav-primary-rgb), 0.065);
+        color: var(--kucsa-nav-primary);
         transform: translateY(-1px);
     }
 
-    /* =========================================================
-       RESPONSIVE ADAPTATIONS
-       ========================================================= */
+    .kucsa-navbar-wrapper .nav-link:hover i {
+        transform: translateY(-1px);
+    }
 
-    @media (max-width: 991.98px) {
-        .kucsa-navbar .navbar-collapse {
-            background: #fff;
-            padding: 1rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            margin-top: 0.75rem;
-            border: 1px solid var(--kucsa-border);
-        }
-        
-        .kucsa-navbar .navbar-user {
-            justify-content: flex-start;
-            padding: 0.5rem;
+    .kucsa-navbar-wrapper .nav-link.active {
+        background: rgba(var(--kucsa-nav-primary-rgb), 0.1);
+        color: var(--kucsa-nav-primary);
+        font-weight: 650;
+    }
+
+    .kucsa-navbar-wrapper .nav-link:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(var(--kucsa-nav-primary-rgb), 0.13);
+    }
+
+    /* ============================================================
+       PAYMENT STATUS ALERT
+       ============================================================ */
+
+    .kucsa-navbar-wrapper .payment-alert {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.45rem;
+
+        min-height: 38px;
+
+        padding: 0.48rem 0.78rem;
+
+        border: 1px solid rgba(255, 193, 7, 0.25);
+        border-radius: 9px;
+
+        background: rgba(255, 193, 7, 0.1);
+        color: #765900;
+
+        font-size: 0.73rem;
+        font-weight: 700;
+        line-height: 1.2;
+
+        text-decoration: none;
+
+        white-space: nowrap;
+
+        transition:
+            background var(--kucsa-nav-transition),
+            border-color var(--kucsa-nav-transition),
+            color var(--kucsa-nav-transition),
+            transform var(--kucsa-nav-transition),
+            box-shadow var(--kucsa-nav-transition);
+    }
+
+    .kucsa-navbar-wrapper .payment-alert i {
+        font-size: 0.9rem;
+    }
+
+    .kucsa-navbar-wrapper .payment-alert:hover {
+        background: rgba(255, 193, 7, 0.17);
+        border-color: rgba(255, 193, 7, 0.38);
+        color: #5b4500;
+        transform: translateY(-1px);
+        box-shadow: 0 5px 14px rgba(255, 193, 7, 0.12);
+    }
+
+    /* ============================================================
+       USER MENU
+       ============================================================ */
+
+    .kucsa-navbar-wrapper .navbar-user-trigger {
+        min-height: 44px;
+
+        display: inline-flex;
+        align-items: center;
+
+        padding: 0.18rem 0.28rem 0.18rem 0.2rem;
+
+        border: 1px solid transparent;
+        border-radius: 24px;
+
+        background: transparent;
+
+        transition:
+            background var(--kucsa-nav-transition),
+            border-color var(--kucsa-nav-transition),
+            box-shadow var(--kucsa-nav-transition);
+    }
+
+    .kucsa-navbar-wrapper .navbar-user-trigger:hover {
+        background: var(--kucsa-nav-soft);
+        border-color: var(--kucsa-nav-border);
+    }
+
+    .kucsa-navbar-wrapper .navbar-user-trigger:focus-visible {
+        outline: none;
+        border-color: rgba(var(--kucsa-nav-primary-rgb), 0.3);
+        box-shadow: 0 0 0 3px rgba(var(--kucsa-nav-primary-rgb), 0.1);
+    }
+
+    .kucsa-navbar-wrapper .navbar-user {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.62rem;
+    }
+
+    .kucsa-navbar-wrapper .navbar-avatar,
+    .kucsa-navbar-wrapper .navbar-default-avatar {
+        width: 39px;
+        height: 39px;
+
+        flex: 0 0 39px;
+
+        border-radius: 50%;
+    }
+
+    .kucsa-navbar-wrapper .navbar-avatar {
+        object-fit: cover;
+
+        border: 2px solid #fff;
+
+        background: #f1f3f5;
+
+        box-shadow:
+            0 2px 7px rgba(20, 35, 55, 0.12),
+            0 0 0 1px rgba(20, 35, 55, 0.06);
+    }
+
+    .kucsa-navbar-wrapper .navbar-default-avatar {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        background: #edf0f4;
+        color: #697586;
+
+        font-size: 1.65rem;
+    }
+
+    .kucsa-navbar-wrapper .navbar-user-name {
+        display: block;
+
+        max-width: 170px;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        color: var(--kucsa-nav-dark);
+
+        font-size: 0.82rem;
+        font-weight: 700;
+        line-height: 1.25;
+    }
+
+    .kucsa-navbar-wrapper .navbar-user-role {
+        display: block;
+
+        margin-top: 0.12rem;
+
+        color: var(--kucsa-nav-muted);
+
+        font-size: 0.66rem;
+        font-weight: 550;
+        line-height: 1.15;
+    }
+
+    /* ============================================================
+       DROPDOWN
+       ============================================================ */
+
+    .kucsa-navbar-wrapper .dropdown-menu {
+        min-width: 255px;
+
+        margin-top: 0.65rem !important;
+        padding: 0.45rem;
+
+        border: 1px solid var(--kucsa-nav-border);
+        border-radius: 14px;
+
+        background: rgba(255, 255, 255, 0.98);
+
+        box-shadow:
+            0 18px 50px rgba(20, 35, 55, 0.13),
+            0 3px 10px rgba(20, 35, 55, 0.05);
+
+        animation: kucsaNavbarDropdown 180ms ease-out both;
+    }
+
+    @keyframes kucsaNavbarDropdown {
+        from {
+            opacity: 0;
+            transform: translateY(7px) scale(0.985);
         }
 
-        .kucsa-navbar .navbar-user-name,
-        .kucsa-navbar .navbar-user-role {
-            display: block !important; /* Ensure user details show nicely inside mobile drawer menu */
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
     }
 
-    @media (max-width: 575.98px) {
-        .kucsa-navbar {
-            min-height: 62px;
+    .kucsa-navbar-wrapper .dropdown-header {
+        padding: 0.82rem 0.85rem;
+
+        margin-bottom: 0.25rem;
+
+        border-radius: 10px;
+
+        background: var(--kucsa-nav-soft);
+    }
+
+    .kucsa-navbar-wrapper .dropdown-header strong {
+        color: var(--kucsa-nav-dark);
+        font-size: 0.86rem;
+    }
+
+    .kucsa-navbar-wrapper .dropdown-header .text-muted {
+        color: var(--kucsa-nav-muted) !important;
+    }
+
+    .kucsa-navbar-wrapper .dropdown-divider {
+        opacity: 0.65;
+    }
+
+    .kucsa-navbar-wrapper .dropdown-item {
+        display: flex;
+        align-items: center;
+
+        min-height: 40px;
+
+        padding: 0.58rem 0.72rem;
+
+        border-radius: 9px;
+
+        color: var(--kucsa-nav-text);
+
+        font-size: 0.82rem;
+        font-weight: 550;
+
+        transition:
+            background var(--kucsa-nav-transition),
+            color var(--kucsa-nav-transition),
+            transform var(--kucsa-nav-transition);
+    }
+
+    .kucsa-navbar-wrapper .dropdown-item i {
+        width: 23px;
+
+        margin-right: 0.42rem;
+
+        color: #7b8594;
+
+        font-size: 0.95rem;
+
+        transition:
+            color var(--kucsa-nav-transition),
+            transform var(--kucsa-nav-transition);
+    }
+
+    .kucsa-navbar-wrapper .dropdown-item:hover,
+    .kucsa-navbar-wrapper .dropdown-item:focus {
+        background: rgba(var(--kucsa-nav-primary-rgb), 0.075);
+        color: var(--kucsa-nav-primary);
+    }
+
+    .kucsa-navbar-wrapper .dropdown-item:hover i,
+    .kucsa-navbar-wrapper .dropdown-item:focus i {
+        color: var(--kucsa-nav-primary);
+        transform: translateX(1px);
+    }
+
+    .kucsa-navbar-wrapper .dropdown-item:focus-visible {
+        outline: none;
+        box-shadow: inset 0 0 0 2px rgba(var(--kucsa-nav-primary-rgb), 0.15);
+    }
+
+    .kucsa-navbar-wrapper .dropdown-item.logout-item {
+        color: var(--kucsa-nav-danger);
+    }
+
+    .kucsa-navbar-wrapper .dropdown-item.logout-item i {
+        color: var(--kucsa-nav-danger);
+    }
+
+    .kucsa-navbar-wrapper .dropdown-item.logout-item:hover {
+        background: rgba(220, 53, 69, 0.07);
+        color: #b02a37;
+    }
+
+    /* ============================================================
+       LOGGED-OUT NAVIGATION
+       ============================================================ */
+
+    .kucsa-navbar-wrapper .kucsa-login-link {
+        min-height: 40px;
+    }
+
+    .kucsa-navbar-wrapper .kucsa-register-button {
+        min-height: 40px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        padding-left: 1rem;
+        padding-right: 1rem;
+
+        border-radius: 10px !important;
+
+        font-size: 0.82rem;
+        font-weight: 650;
+
+        box-shadow: 0 4px 12px rgba(var(--kucsa-nav-primary-rgb), 0.15);
+
+        transition:
+            transform var(--kucsa-nav-transition),
+            box-shadow var(--kucsa-nav-transition);
+    }
+
+    .kucsa-navbar-wrapper .kucsa-register-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 7px 18px rgba(var(--kucsa-nav-primary-rgb), 0.2);
+    }
+
+    /* ============================================================
+       MOBILE / TABLET NAVIGATION
+       ============================================================ */
+
+    @media (max-width: 991.98px) {
+
+        .kucsa-navbar-wrapper .kucsa-navbar {
+            min-height: 64px;
+            padding-top: 0.4rem;
+            padding-bottom: 0.4rem;
         }
-        .kucsa-navbar .navbar-brand {
-            font-size: 1.1rem;
+
+        .kucsa-navbar-wrapper .kucsa-navbar > .container-fluid {
+            min-height: 54px;
+        }
+
+        /*
+         * Navbar collapse becomes a clean mobile panel.
+         */
+
+        .kucsa-navbar-wrapper .navbar-collapse {
+            margin-top: 0.65rem;
+            padding: 0.7rem;
+
+            border: 1px solid var(--kucsa-nav-border);
+            border-radius: 14px;
+
+            background: rgba(255, 255, 255, 0.99);
+
+            box-shadow:
+                0 15px 40px rgba(20, 35, 55, 0.09);
+
+            max-height: calc(100vh - 82px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .kucsa-navbar-wrapper .navbar-collapse .navbar-nav {
+            gap: 0.2rem;
+        }
+
+        .kucsa-navbar-wrapper .navbar-collapse .nav-link {
+            width: 100%;
+            justify-content: flex-start;
+
+            min-height: 44px;
+
+            padding: 0.68rem 0.75rem;
+
+            border-radius: 10px;
+        }
+
+        .kucsa-navbar-wrapper .navbar-collapse .payment-alert {
+            width: 100%;
+            justify-content: flex-start;
+
+            min-height: 44px;
+
+            margin-top: 0.45rem;
+        }
+
+        .kucsa-navbar-wrapper .navbar-collapse > .dropdown {
+            margin-top: 0.55rem;
+            padding-top: 0.65rem;
+
+            border-top: 1px solid var(--kucsa-nav-border);
+        }
+
+        .kucsa-navbar-wrapper .navbar-user-trigger {
+            width: 100%;
+            justify-content: flex-start;
+
+            padding: 0.35rem;
+        }
+
+        .kucsa-navbar-wrapper .navbar-user-name,
+        .kucsa-navbar-wrapper .navbar-user-role {
+            display: block !important;
+        }
+
+        .kucsa-navbar-wrapper .dropdown-menu {
+            width: 100%;
+            margin-top: 0.45rem !important;
+        }
+    }
+
+    /* ============================================================
+       MOBILE PHONES
+       ============================================================ */
+
+    @media (max-width: 767.98px) {
+
+        .kucsa-navbar-wrapper .kucsa-navbar > .container-fluid {
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+        }
+
+        /*
+         * Keep the left sidebar hamburger visible.
+         * This is the primary mobile navigation trigger.
+         */
+
+        .kucsa-navbar-wrapper .kucsa-sidebar-toggle {
+            display: inline-flex !important;
+        }
+
+        .kucsa-navbar-wrapper .navbar-brand {
+            font-size: 1.08rem;
+        }
+
+        .kucsa-navbar-wrapper .navbar-brand small {
+            font-size: 0.5rem;
+            letter-spacing: 0.075em;
+        }
+
+        .kucsa-navbar-wrapper .navbar-menu-toggle {
+            margin-left: auto;
+        }
+
+        .kucsa-navbar-wrapper .navbar-collapse {
+            max-height: calc(100vh - 76px);
+        }
+    }
+
+    /* ============================================================
+       SMALL PHONES
+       ============================================================ */
+
+    @media (max-width: 575.98px) {
+
+        .kucsa-navbar-wrapper .kucsa-navbar {
+            min-height: 60px;
+        }
+
+        .kucsa-navbar-wrapper .kucsa-navbar > .container-fluid {
+            min-height: 50px;
+        }
+
+        .kucsa-navbar-wrapper .kucsa-sidebar-toggle,
+        .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle {
+            width: 39px;
+            height: 39px;
+
+            border-radius: 10px;
+        }
+
+        .kucsa-navbar-wrapper .kucsa-sidebar-toggle i,
+        .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle i {
+            font-size: 1.12rem;
+        }
+
+        .kucsa-navbar-wrapper .navbar-brand {
+            font-size: 1rem;
+        }
+
+        .kucsa-navbar-wrapper .navbar-brand small {
+            margin-top: 0.25rem;
+            font-size: 0.46rem;
+        }
+
+        .kucsa-navbar-wrapper .navbar-collapse {
+            margin-top: 0.5rem;
+            padding: 0.55rem;
+            border-radius: 12px;
+        }
+
+        .kucsa-navbar-wrapper .dropdown-menu {
+            min-width: 0;
+        }
+    }
+
+    /* ============================================================
+       VERY SMALL PHONES
+       ============================================================ */
+
+    @media (max-width: 359.98px) {
+
+        .kucsa-navbar-wrapper .kucsa-sidebar-toggle,
+        .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle {
+            width: 36px;
+            height: 36px;
+        }
+
+        .kucsa-navbar-wrapper .navbar-brand {
+            font-size: 0.94rem;
+        }
+
+        .kucsa-navbar-wrapper .navbar-brand small {
+            display: none;
+        }
+    }
+
+    /* ============================================================
+       ACCESSIBILITY
+       ============================================================ */
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .kucsa-navbar-wrapper *,
+        .kucsa-navbar-wrapper *::before,
+        .kucsa-navbar-wrapper *::after {
+            scroll-behavior: auto !important;
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+
+    /* ============================================================
+       DESKTOP SIDEBAR COMPATIBILITY
+       ============================================================ */
+
+    @media (min-width: 992px) {
+
+        /*
+         * The sidebar hamburger belongs to mobile navigation.
+         * On desktop the sidebar itself should remain visible.
+         */
+
+        .kucsa-navbar-wrapper .kucsa-sidebar-toggle {
+            display: none !important;
+        }
+
+        /*
+         * The three-dots navbar menu remains available for
+         * account actions/navigation on smaller layouts.
+         */
+
+        .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle {
+            display: none !important;
         }
     }
 </style>
 
 
-<nav class="navbar navbar-expand-lg kucsa-navbar sticky-top">
-    <div class="container-fluid px-3 px-lg-4">
+<!-- ================================================================
+     KUCSA NAVBAR
+================================================================= -->
 
-        <button
-            class="navbar-toggler d-md-none me-2"
-            type="button"
-            data-bs-toggle="offcanvas"
-            data-bs-target="#kucsaSidebarOffcanvas"
-            aria-controls="kucsaSidebarOffcanvas"
-            aria-label="Toggle sidebar navigation"
-        >
-            <i class="bi bi-list fs-5"></i>
-        </button>
+<div class="kucsa-navbar-wrapper">
 
-        <a
-            class="navbar-brand d-flex flex-column"
-            href="{% if user.is_authenticated %}{% if user.is_kucsa_admin %}{% url 'admin:index' %}{% elif user.is_executive %}{% url 'executives:dashboard' %}{% elif user.has_platform_access %}{% url 'dashboard:student_dashboard' %}{% else %}{% url 'payments:payment_create' %}{% endif %}{% else %}{% url 'core:home' %}{% endif %}"
-        >
-            <span>KUCSA</span>
-            <small>Computing Association</small>
-        </a>
+    <nav
+        class="navbar navbar-expand-lg kucsa-navbar sticky-top"
+        id="kucsaMainNavbar"
+        aria-label="Main navigation"
+    >
 
-        <button
-            class="navbar-toggler ms-auto"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#kucsaNavbarContent"
-            aria-controls="kucsaNavbarContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-        >
-            <i class="bi bi-three-dots-vertical fs-5"></i>
-        </button>
+        <div class="container-fluid px-3 px-lg-4">
 
-        <div class="collapse navbar-collapse" id="kucsaNavbarContent">
+            <!-- =====================================================
+                 MOBILE SIDEBAR TOGGLE
+                 IMPORTANT:
+                 This stays on the LEFT side of the navbar.
+                 It opens the sidebar offcanvas.
+            ====================================================== -->
 
-            {% if user.is_authenticated %}
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+            <button
+                class="kucsa-sidebar-toggle d-md-none me-2"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#kucsaSidebarOffcanvas"
+                aria-controls="kucsaSidebarOffcanvas"
+                aria-label="Open navigation menu"
+                title="Open navigation menu"
+            >
+                <i class="bi bi-list" aria-hidden="true"></i>
+            </button>
 
-                    {% if user.is_kucsa_admin %}
-                        <li class="nav-item">
-                            <a href="{% url 'admin:index' %}" class="nav-link {% if request.resolver_match.url_name == 'index' and request.resolver_match.app_name == 'admin' %}active{% endif %}">
-                                <i class="bi bi-speedometer2 me-1"></i> Dashboard
+
+            <!-- =====================================================
+                 BRAND
+            ====================================================== -->
+
+            <a
+                class="navbar-brand"
+                href="{% if user.is_authenticated %}{% if user.is_kucsa_admin %}{% url 'admin:index' %}{% elif user.is_executive %}{% url 'executives:dashboard' %}{% elif user.has_platform_access %}{% url 'dashboard:student_dashboard' %}{% else %}{% url 'payments:payment_create' %}{% endif %}{% else %}{% url 'core:home' %}{% endif %}"
+                aria-label="KUCSA home"
+            >
+                <span>KUCSA</span>
+                <small>Computing Association</small>
+            </a>
+
+
+            <!-- =====================================================
+                 MOBILE NAVBAR ACTION TOGGLE
+            ====================================================== -->
+
+            <button
+                class="navbar-toggler kucsa-navbar-menu-toggle ms-auto"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#kucsaNavbarContent"
+                aria-controls="kucsaNavbarContent"
+                aria-expanded="false"
+                aria-label="Open account and navigation options"
+            >
+                <i
+                    class="bi bi-three-dots-vertical"
+                    aria-hidden="true"
+                ></i>
+            </button>
+
+
+            <!-- =====================================================
+                 NAVBAR CONTENT
+            ====================================================== -->
+
+            <div
+                class="collapse navbar-collapse"
+                id="kucsaNavbarContent"
+            >
+
+                {% if user.is_authenticated %}
+
+                    <!-- =================================================
+                         PRIMARY NAVIGATION
+                    ================================================== -->
+
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+
+                        {% if user.is_kucsa_admin %}
+
+                            <li class="nav-item">
+
+                                <a
+                                    href="{% url 'admin:index' %}"
+                                    class="nav-link {% if request.resolver_match.url_name == 'index' and request.resolver_match.app_name == 'admin' %}active{% endif %}"
+                                >
+
+                                    <i
+                                        class="bi bi-speedometer2 me-1"
+                                        aria-hidden="true"
+                                    ></i>
+
+                                    Dashboard
+
+                                </a>
+
+                            </li>
+
+                        {% elif user.is_executive %}
+
+                            <li class="nav-item">
+
+                                <a
+                                    href="{% url 'executives:dashboard' %}"
+                                    class="nav-link {% if request.resolver_match.app_name == 'executives' %}active{% endif %}"
+                                >
+
+                                    <i
+                                        class="bi bi-speedometer2 me-1"
+                                        aria-hidden="true"
+                                    ></i>
+
+                                    Dashboard
+
+                                </a>
+
+                            </li>
+
+                        {% elif user.has_platform_access %}
+
+                            <li class="nav-item">
+
+                                <a
+                                    href="{% url 'dashboard:student_dashboard' %}"
+                                    class="nav-link {% if request.resolver_match.app_name == 'dashboard' %}active{% endif %}"
+                                >
+
+                                    <i
+                                        class="bi bi-speedometer2 me-1"
+                                        aria-hidden="true"
+                                    ></i>
+
+                                    Dashboard
+
+                                </a>
+
+                            </li>
+
+                        {% endif %}
+
+
+                        {% if user.is_kucsa_admin or user.has_platform_access %}
+
+                            <li class="nav-item">
+
+                                <a
+                                    href="{% url 'events:list' %}"
+                                    class="nav-link {% if request.resolver_match.app_name == 'events' %}active{% endif %}"
+                                >
+
+                                    <i
+                                        class="bi bi-calendar-event me-1"
+                                        aria-hidden="true"
+                                    ></i>
+
+                                    Events
+
+                                </a>
+
+                            </li>
+
+
+                            <li class="nav-item">
+
+                                <a
+                                    href="{% url 'announcements:list' %}"
+                                    class="nav-link {% if request.resolver_match.app_name == 'announcements' %}active{% endif %}"
+                                >
+
+                                    <i
+                                        class="bi bi-megaphone me-1"
+                                        aria-hidden="true"
+                                    ></i>
+
+                                    Announcements
+
+                                </a>
+
+                            </li>
+
+                        {% endif %}
+
+                    </ul>
+
+
+                    <!-- =================================================
+                         PAYMENT STATUS
+                    ================================================== -->
+
+                    {% if not user.is_kucsa_admin %}
+
+                        {% if user.payment_state == "REQUIRED" %}
+
+                            <a
+                                href="{% url 'payments:payment_create' %}"
+                                class="payment-alert me-lg-3 mb-2 mb-lg-0"
+                                title="Complete your KUCSA membership payment"
+                            >
+
+                                <i
+                                    class="bi bi-credit-card"
+                                    aria-hidden="true"
+                                ></i>
+
+                                <span>
+                                    Complete Membership Payment
+                                </span>
+
                             </a>
-                        </li>
-                    {% elif user.is_executive %}
-                        <li class="nav-item">
-                            <a href="{% url 'executives:dashboard' %}" class="nav-link {% if request.resolver_match.app_name == 'executives' %}active{% endif %}">
-                                <i class="bi bi-speedometer2 me-1"></i> Dashboard
-                            </a>
-                        </li>
-                    {% elif user.has_platform_access %}
-                        <li class="nav-item">
-                            <a href="{% url 'dashboard:student_dashboard' %}" class="nav-link {% if request.resolver_match.app_name == 'dashboard' %}active{% endif %}">
-                                <i class="bi bi-speedometer2 me-1"></i> Dashboard
-                            </a>
-                        </li>
+
+                        {% elif user.payment_state == "PENDING" %}
+
+                            <span
+                                class="payment-alert me-lg-3 mb-2 mb-lg-0"
+                                role="status"
+                                aria-live="polite"
+                            >
+
+                                <i
+                                    class="bi bi-hourglass-split"
+                                    aria-hidden="true"
+                                ></i>
+
+                                <span>
+                                    Payment Pending Verification
+                                </span>
+
+                            </span>
+
+                        {% endif %}
+
                     {% endif %}
 
-                    {% if user.is_kucsa_admin or user.has_platform_access %}
-                        <li class="nav-item">
-                            <a href="{% url 'events:list' %}" class="nav-link {% if request.resolver_match.app_name == 'events' %}active{% endif %}">
-                                <i class="bi bi-calendar-event me-1"></i> Events
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'announcements:list' %}" class="nav-link {% if request.resolver_match.app_name == 'announcements' %}active{% endif %}">
-                                <i class="bi bi-megaphone me-1"></i> Announcements
-                            </a>
-                        </li>
-                    {% endif %}
 
-                </ul>
+                    <!-- =================================================
+                         USER ACCOUNT MENU
+                    ================================================== -->
 
-                {% if not user.is_kucsa_admin %}
-                    {% if user.payment_state == "REQUIRED" %}
-                        <a href="{% url 'payments:payment_create' %}" class="payment-alert me-lg-3 mb-2 mb-lg-0">
-                            <i class="bi bi-credit-card"></i> Complete Membership Payment
-                        </a>
-                    {% elif user.payment_state == "PENDING" %}
-                        <span class="payment-alert me-lg-3 mb-2 mb-lg-0">
-                            <i class="bi bi-hourglass-split"></i> Payment Pending Verification
-                        </span>
-                    {% endif %}
+                    <div class="dropdown">
+
+                        <button
+                            class="btn btn-link text-decoration-none dropdown-toggle border-0 navbar-user-trigger"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                            aria-label="Open user account menu"
+                        >
+
+                            <span class="navbar-user">
+
+                                {% if user.profile_picture %}
+
+                                    <img
+                                        src="{{ user.profile_picture.url }}"
+                                        class="navbar-avatar"
+                                        alt="{{ user.full_name|default:user.username }}"
+                                    >
+
+                                {% else %}
+
+                                    <span
+                                        class="navbar-default-avatar"
+                                        aria-hidden="true"
+                                    >
+
+                                        <i class="bi bi-person-circle"></i>
+
+                                    </span>
+
+                                {% endif %}
+
+
+                                <span class="text-start d-none d-lg-block">
+
+                                    <span class="navbar-user-name">
+                                        {{ user.full_name|default:user.username }}
+                                    </span>
+
+                                    <span class="navbar-user-role">
+                                        {{ user.get_role_display|default:user.role }}
+                                    </span>
+
+                                </span>
+
+                            </span>
+
+                        </button>
+
+
+                        <!-- =================================================
+                             USER DROPDOWN
+                        ================================================== -->
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+
+                            <li>
+
+                                <div class="dropdown-header">
+
+                                    <strong class="text-dark d-block">
+
+                                        {{ user.full_name|default:user.username }}
+
+                                    </strong>
+
+
+                                    {% if user.email %}
+
+                                        <div
+                                            class="text-muted small text-truncate"
+                                            style="max-width: 210px;"
+                                        >
+                                            {{ user.email }}
+                                        </div>
+
+                                    {% endif %}
+
+
+                                    {% if user.membership_number %}
+
+                                        <div
+                                            class="text-muted small mt-1 font-monospace"
+                                        >
+                                            ID: {{ user.membership_number }}
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </li>
+
+
+                            <li>
+                                <hr class="dropdown-divider my-1">
+                            </li>
+
+
+                            <!-- PROFILE -->
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{% url 'accounts:profile' %}"
+                                >
+
+                                    <i
+                                        class="bi bi-person"
+                                        aria-hidden="true"
+                                    ></i>
+
+                                    My Profile
+
+                                </a>
+
+                            </li>
+
+
+                            <!-- PAYMENTS -->
+
+                            {% if not user.is_kucsa_admin %}
+
+                                <li>
+
+                                    <a
+                                        class="dropdown-item"
+                                        href="{% url 'payments:payment_list' %}"
+                                    >
+
+                                        <i
+                                            class="bi bi-wallet2"
+                                            aria-hidden="true"
+                                        ></i>
+
+                                        My Payments
+
+                                    </a>
+
+                                </li>
+
+                            {% endif %}
+
+
+                            <!-- PASSWORD -->
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{% url 'accounts:change_password' %}"
+                                >
+
+                                    <i
+                                        class="bi bi-key"
+                                        aria-hidden="true"
+                                    ></i>
+
+                                    Change Password
+
+                                </a>
+
+                            </li>
+
+
+                            <!-- ADMINISTRATION -->
+
+                            {% if user.is_kucsa_admin %}
+
+                                <li>
+                                    <hr class="dropdown-divider my-1">
+                                </li>
+
+                                <li>
+
+                                    <a
+                                        class="dropdown-item"
+                                        href="{% url 'admin:index' %}"
+                                    >
+
+                                        <i
+                                            class="bi bi-shield-lock"
+                                            aria-hidden="true"
+                                        ></i>
+
+                                        Administration
+
+                                    </a>
+
+                                </li>
+
+                            {% endif %}
+
+
+                            <li>
+                                <hr class="dropdown-divider my-1">
+                            </li>
+
+
+                            <!-- LOGOUT -->
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item logout-item"
+                                    href="{% url 'accounts:logout' %}"
+                                >
+
+                                    <i
+                                        class="bi bi-box-arrow-right"
+                                        aria-hidden="true"
+                                    ></i>
+
+                                    Logout
+
+                                </a>
+
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+
+                {% else %}
+
+                    <!-- =================================================
+                         LOGGED OUT NAVIGATION
+                    ================================================== -->
+
+                    <ul class="navbar-nav ms-auto align-items-lg-center">
+
+                        <li class="nav-item">
+
+                            <a
+                                href="{% url 'accounts:login' %}"
+                                class="nav-link kucsa-login-link"
+                            >
+
+                                <i
+                                    class="bi bi-box-arrow-in-right me-1"
+                                    aria-hidden="true"
+                                ></i>
+
+                                Login
+
+                            </a>
+
+                        </li>
+
+
+                        <li class="nav-item mt-2 mt-lg-0">
+
+                            <a
+                                href="{% url 'accounts:register' %}"
+                                class="btn btn-primary btn-sm kucsa-register-button ms-lg-2"
+                            >
+
+                                <i
+                                    class="bi bi-person-plus me-1"
+                                    aria-hidden="true"
+                                ></i>
+
+                                Register
+
+                            </a>
+
+                        </li>
+
+                    </ul>
+
                 {% endif %}
 
-                <div class="dropdown">
-                    <button class="btn btn-link text-decoration-none dropdown-toggle p-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <span class="navbar-user">
-                            {% if user.profile_picture %}
-                                <img src="{{ user.profile_picture.url }}" class="navbar-avatar" alt="{{ user.full_name|default:user.username }}">
-                            {% else %}
-                                <span class="navbar-default-avatar" aria-hidden="true">
-                                    <i class="bi bi-person-circle"></i>
-                                </span>
-                            {% endif %}
-                            <span class="text-start d-none d-lg-block">
-                                <span class="navbar-user-name">{{ user.full_name|default:user.username }}</span>
-                                <span class="navbar-user-role">{{ user.get_role_display|default:user.role }}</span>
-                            </span>
-                        </span>
-                    </button>
-
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li>
-                            <div class="dropdown-header">
-                                <strong class="text-dark d-block">{{ user.full_name|default:user.username }}</strong>
-                                {% if user.email %}
-                                    <div class="text-muted small text-truncate" style="max-width: 200px;">{{ user.email }}</div>
-                                {% endif %}
-                                {% if user.membership_number %}
-                                    <div class="text-muted small mt-1 font-monospace">ID: {{ user.membership_number }}</div>
-                                {% endif %}
-                            </div>
-                        </li>
-                        <li><hr class="dropdown-divider my-1"></li>
-                        <li>
-                            <a class="dropdown-item" href="{% url 'accounts:profile' %}">
-                                <i class="bi bi-person"></i> My Profile
-                            </a>
-                        </li>
-                        {% if not user.is_kucsa_admin %}
-                            <li>
-                                <a class="dropdown-item" href="{% url 'payments:payment_list' %}">
-                                    <i class="bi bi-wallet2"></i> My Payments
-                                </a>
-                            </li>
-                        {% endif %}
-                        <li>
-                            <a class="dropdown-item" href="{% url 'accounts:change_password' %}">
-                                <i class="bi bi-key"></i> Change Password
-                            </a>
-                        </li>
-                        {% if user.is_kucsa_admin %}
-                            <li><hr class="dropdown-divider my-1"></li>
-                            <li>
-                                <a class="dropdown-item" href="{% url 'admin:index' %}">
-                                    <i class="bi bi-shield-lock"></i> Django Administration
-                                </a>
-                            </li>
-                        {% endif %}
-                        <li><hr class="dropdown-divider my-1"></li>
-                        <li>
-                            <a class="dropdown-item logout-item" href="{% url 'accounts:logout' %}">
-                                <i class="bi bi-box-arrow-right"></i> Logout
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-            {% else %}
-                <ul class="navbar-nav ms-auto align-items-lg-center">
-                    <li class="nav-item">
-                        <a href="{% url 'accounts:login' %}" class="nav-link">
-                            <i class="bi bi-box-arrow-in-right me-1"></i> Login
-                        </a>
-                    </li>
-                    <li class="nav-item mt-2 mt-lg-0">
-                        <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-sm px-3 ms-lg-2 rounded-pill shadow-sm">
-                            <i class="bi bi-person-plus me-1"></i> Register
-                        </a>
-                    </li>
-                </ul>
-            {% endif %}
+            </div>
 
         </div>
-    </div>
-</nav>
+
+    </nav>
+
+</div>
+
+
+<!-- ================================================================
+     NAVBAR JAVASCRIPT
+================================================================= -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const navbar =
+        document.getElementById("kucsaMainNavbar");
+
+    const sidebarToggle =
+        document.querySelector(
+            '.kucsa-sidebar-toggle'
+        );
+
+    const navbarCollapse =
+        document.getElementById(
+            "kucsaNavbarContent"
+        );
+
+
+    /* =========================================================
+       NAVBAR SCROLL EFFECT
+       ========================================================= */
+
+    function updateNavbarState() {
+
+        if (!navbar) {
+            return;
+        }
+
+        if (window.scrollY > 8) {
+
+            navbar.classList.add(
+                "is-scrolled"
+            );
+
+        } else {
+
+            navbar.classList.remove(
+                "is-scrolled"
+            );
+
+        }
+
+    }
+
+
+    updateNavbarState();
+
+    window.addEventListener(
+        "scroll",
+        updateNavbarState,
+        {
+            passive: true
+        }
+    );
+
+
+    /* =========================================================
+       CLOSE MOBILE NAVBAR AFTER NAVIGATION
+       ========================================================= */
+
+    if (navbarCollapse) {
+
+        const navigationLinks =
+            navbarCollapse.querySelectorAll(
+                "a[href]"
+            );
+
+        navigationLinks.forEach(
+            function (link) {
+
+                link.addEventListener(
+                    "click",
+                    function () {
+
+                        /*
+                         * Bootstrap handles the actual collapse.
+                         * We only provide a clean transition when
+                         * the user navigates from the mobile menu.
+                         */
+
+                        if (
+                            window.innerWidth <= 991 &&
+                            window.bootstrap
+                        ) {
+
+                            const collapse =
+                                bootstrap.Collapse
+                                .getInstance(
+                                    navbarCollapse
+                                );
+
+                            if (collapse) {
+                                collapse.hide();
+                            }
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       SIDEBAR TOGGLE — MOBILE ONLY
+       ========================================================= */
+
+    if (sidebarToggle) {
+
+        sidebarToggle.addEventListener(
+            "click",
+            function () {
+
+                /*
+                 * The Bootstrap offcanvas component attached to
+                 * #kucsaSidebarOffcanvas is responsible for opening
+                 * and closing the actual sidebar.
+                 *
+                 * We intentionally do not duplicate that behavior
+                 * here. This prevents conflicts with Bootstrap.
+                 */
+
+                if (navbarCollapse) {
+
+                    if (
+                        window.innerWidth <= 991 &&
+                        navbarCollapse.classList.contains("show") &&
+                        window.bootstrap
+                    ) {
+
+                        const collapse =
+                            bootstrap.Collapse
+                            .getInstance(
+                                navbarCollapse
+                            );
+
+                        if (collapse) {
+                            collapse.hide();
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       KEYBOARD ACCESSIBILITY
+       ========================================================= */
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            /*
+             * Escape closes the mobile navbar if Bootstrap
+             * currently has it open.
+             */
+
+            if (
+                event.key === "Escape" &&
+                navbarCollapse &&
+                navbarCollapse.classList.contains("show") &&
+                window.innerWidth <= 991 &&
+                window.bootstrap
+            ) {
+
+                const collapse =
+                    bootstrap.Collapse
+                    .getInstance(
+                        navbarCollapse
+                    );
+
+                if (collapse) {
+                    collapse.hide();
+                }
+
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       PROFILE IMAGE FALLBACK
+       ========================================================= */
+
+    const profileImages =
+        document.querySelectorAll(
+            ".kucsa-navbar-wrapper .navbar-avatar"
+        );
+
+    profileImages.forEach(
+        function (image) {
+
+            image.addEventListener(
+                "error",
+                function () {
+
+                    const fallback =
+                        document.createElement(
+                            "span"
+                        );
+
+                    fallback.className =
+                        "navbar-default-avatar";
+
+                    fallback.setAttribute(
+                        "aria-hidden",
+                        "true"
+                    );
+
+                    fallback.innerHTML =
+                        '<i class="bi bi-person-circle"></i>';
+
+                    image.replaceWith(
+                        fallback
+                    );
+
+                },
+                {
+                    once: true
+                }
+            );
+
+        }
+    );
+
+
+    /* =========================================================
+       RESET MOBILE NAVIGATION AFTER BFCACHE RETURN
+       ========================================================= */
+
+    window.addEventListener(
+        "pageshow",
+        function () {
+
+            if (
+                navbarCollapse &&
+                window.innerWidth > 991
+            ) {
+
+                navbarCollapse.classList.remove(
+                    "show"
+                );
+
+            }
+
+        }
+    );
+
+});
+</script>

@@ -6,241 +6,1730 @@ Frequently Asked Questions | KUCSA Platform
 
 {% block content %}
 
-<section class="py-5">
+<style>
+    /* =========================================================
+       KUCSA FAQ PAGE
+       All styling is scoped to this page.
+       ========================================================= */
 
-    <div class="container">
+    .kucsa-faq-page {
+        --kucsa-primary: #0d6efd;
+        --kucsa-primary-dark: #0a58ca;
+        --kucsa-primary-soft: rgba(13, 110, 253, 0.08);
 
-        <!-- Page Header -->
+        --kucsa-success: #198754;
+        --kucsa-success-dark: #157347;
+        --kucsa-success-soft: rgba(25, 135, 84, 0.08);
 
-        <div class="text-center mb-5">
+        --kucsa-dark: #14213d;
+        --kucsa-text: #26354d;
+        --kucsa-muted: #6c757d;
+        --kucsa-border: rgba(20, 33, 61, 0.09);
 
-            <h1 class="fw-bold">
+        --kucsa-surface: #ffffff;
+        --kucsa-surface-soft: #f7f9fc;
 
-                Frequently Asked Questions
+        --kucsa-radius: 20px;
 
-            </h1>
+        --kucsa-shadow:
+            0 14px 40px rgba(20, 33, 61, 0.07);
 
-            <p class="lead text-muted">
+        --kucsa-shadow-hover:
+            0 20px 48px rgba(20, 33, 61, 0.11);
 
-                Find answers to common questions about KUCSA and the Digital Computing Community Platform.
+        position: relative;
+        overflow: hidden;
 
-            </p>
+        color: var(--kucsa-text);
+
+        background:
+            radial-gradient(
+                circle at 0% 0%,
+                rgba(13, 110, 253, 0.055),
+                transparent 28%
+            ),
+            radial-gradient(
+                circle at 100% 30%,
+                rgba(25, 135, 84, 0.04),
+                transparent 25%
+            ),
+            #ffffff;
+    }
+
+    .kucsa-faq-page *,
+    .kucsa-faq-page *::before,
+    .kucsa-faq-page *::after {
+        box-sizing: border-box;
+    }
+
+    .kucsa-faq-container {
+        width: min(980px, calc(100% - 32px));
+        margin: 0 auto;
+    }
+
+    /* =========================================================
+       HERO
+       ========================================================= */
+
+    .kucsa-faq-hero {
+        position: relative;
+        overflow: hidden;
+
+        padding: clamp(65px, 9vw, 105px) 0 78px;
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(13, 110, 253, 0.065),
+                rgba(255, 255, 255, 0.97) 52%,
+                rgba(25, 135, 84, 0.045)
+            );
+
+        border-bottom: 1px solid var(--kucsa-border);
+    }
+
+    .kucsa-faq-decoration {
+        position: absolute;
+
+        border-radius: 50%;
+
+        pointer-events: none;
+    }
+
+    .kucsa-faq-decoration-one {
+        width: 260px;
+        height: 260px;
+
+        top: -140px;
+        left: -80px;
+
+        background: rgba(13, 110, 253, 0.06);
+    }
+
+    .kucsa-faq-decoration-two {
+        width: 320px;
+        height: 320px;
+
+        right: -170px;
+        bottom: -190px;
+
+        background: rgba(25, 135, 84, 0.05);
+    }
+
+    .kucsa-faq-hero-content {
+        position: relative;
+        z-index: 2;
+
+        max-width: 800px;
+
+        margin: 0 auto;
+
+        text-align: center;
+    }
+
+    .kucsa-faq-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+
+        padding: 8px 14px;
+        margin-bottom: 20px;
+
+        border: 1px solid rgba(13, 110, 253, 0.12);
+        border-radius: 999px;
+
+        background: rgba(255, 255, 255, 0.92);
+
+        color: var(--kucsa-primary);
+
+        font-size: 0.74rem;
+        font-weight: 800;
+
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+
+        box-shadow:
+            0 8px 25px rgba(13, 110, 253, 0.05);
+    }
+
+    .kucsa-faq-title {
+        margin: 0;
+
+        color: var(--kucsa-dark);
+
+        font-size: clamp(2.35rem, 5vw, 4rem);
+        line-height: 1.06;
+
+        letter-spacing: -0.045em;
+
+        font-weight: 800;
+    }
+
+    .kucsa-faq-title span {
+        color: var(--kucsa-primary);
+    }
+
+    .kucsa-faq-description {
+        max-width: 700px;
+
+        margin: 20px auto 0;
+
+        color: var(--kucsa-muted);
+
+        font-size: clamp(0.96rem, 1.8vw, 1.1rem);
+
+        line-height: 1.8;
+    }
+
+    .kucsa-faq-hero-icon {
+        width: 76px;
+        height: 76px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        margin: 30px auto 0;
+
+        border-radius: 24px;
+
+        background:
+            linear-gradient(
+                135deg,
+                var(--kucsa-primary),
+                var(--kucsa-primary-dark)
+            );
+
+        color: #fff;
+
+        font-size: 1.9rem;
+
+        box-shadow:
+            0 18px 35px rgba(13, 110, 253, 0.22),
+            0 0 0 10px rgba(13, 110, 253, 0.05);
+    }
+
+    /* =========================================================
+       MAIN FAQ SECTION
+       ========================================================= */
+
+    .kucsa-faq-section {
+        padding: clamp(55px, 8vw, 90px) 0;
+    }
+
+    /* =========================================================
+       SEARCH PANEL
+       ========================================================= */
+
+    .kucsa-faq-tools {
+        margin-bottom: 34px;
+
+        padding: 22px;
+
+        border: 1px solid var(--kucsa-border);
+        border-radius: var(--kucsa-radius);
+
+        background: rgba(255, 255, 255, 0.96);
+
+        box-shadow: var(--kucsa-shadow);
+    }
+
+    .kucsa-faq-search-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .kucsa-faq-search-box {
+        position: relative;
+        flex: 1;
+    }
+
+    .kucsa-faq-search-icon {
+        position: absolute;
+
+        top: 50%;
+        left: 15px;
+
+        transform: translateY(-50%);
+
+        color: var(--kucsa-muted);
+
+        pointer-events: none;
+
+        z-index: 2;
+    }
+
+    .kucsa-faq-search-input {
+        width: 100%;
+        min-height: 50px;
+
+        padding: 12px 46px;
+
+        border: 1px solid #dce2ea;
+        border-radius: 13px;
+
+        background: #fff;
+        color: var(--kucsa-text);
+
+        font-size: 0.92rem;
+
+        outline: none;
+
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .kucsa-faq-search-input::placeholder {
+        color: #9aa4b2;
+    }
+
+    .kucsa-faq-search-input:focus {
+        border-color: var(--kucsa-primary);
+
+        box-shadow:
+            0 0 0 4px rgba(13, 110, 253, 0.1);
+    }
+
+    .kucsa-faq-clear {
+        position: absolute;
+
+        top: 50%;
+        right: 12px;
+
+        width: 30px;
+        height: 30px;
+
+        display: none;
+        align-items: center;
+        justify-content: center;
+
+        transform: translateY(-50%);
+
+        border: 0;
+        border-radius: 9px;
+
+        background: var(--kucsa-surface-soft);
+        color: var(--kucsa-muted);
+
+        cursor: pointer;
+    }
+
+    .kucsa-faq-clear:hover {
+        background: #e9edf3;
+        color: var(--kucsa-dark);
+    }
+
+    .kucsa-faq-controls {
+        display: flex;
+        gap: 8px;
+    }
+
+    .kucsa-faq-control {
+        min-height: 44px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+
+        padding: 9px 13px;
+
+        border: 1px solid var(--kucsa-border);
+        border-radius: 11px;
+
+        background: #fff;
+        color: var(--kucsa-dark);
+
+        font-size: 0.78rem;
+        font-weight: 750;
+
+        cursor: pointer;
+
+        transition:
+            background 0.2s ease,
+            color 0.2s ease,
+            border-color 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .kucsa-faq-control:hover {
+        border-color: rgba(13, 110, 253, 0.2);
+
+        background: var(--kucsa-primary-soft);
+        color: var(--kucsa-primary);
+
+        transform: translateY(-1px);
+    }
+
+    .kucsa-faq-results {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 15px;
+
+        margin-top: 16px;
+
+        color: var(--kucsa-muted);
+
+        font-size: 0.78rem;
+    }
+
+    .kucsa-faq-results strong {
+        color: var(--kucsa-dark);
+    }
+
+    .kucsa-search-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .kucsa-search-status i {
+        color: var(--kucsa-primary);
+    }
+
+    /* =========================================================
+       FAQ ACCORDION
+       ========================================================= */
+
+    .kucsa-faq-list {
+        display: flex;
+        flex-direction: column;
+        gap: 13px;
+    }
+
+    .kucsa-faq-item {
+        position: relative;
+
+        border: 1px solid var(--kucsa-border);
+        border-radius: 17px;
+
+        background: #fff;
+
+        box-shadow:
+            0 7px 25px rgba(20, 33, 61, 0.045);
+
+        overflow: hidden;
+
+        transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease,
+            border-color 0.25s ease;
+    }
+
+    .kucsa-faq-item:hover {
+        border-color: rgba(13, 110, 253, 0.15);
+
+        box-shadow:
+            0 12px 32px rgba(20, 33, 61, 0.08);
+    }
+
+    .kucsa-faq-item.is-hidden {
+        display: none;
+    }
+
+    .kucsa-faq-item.is-highlighted {
+        border-color: rgba(13, 110, 253, 0.3);
+
+        box-shadow:
+            0 14px 36px rgba(13, 110, 253, 0.09);
+    }
+
+    .kucsa-faq-button {
+        width: 100%;
+
+        display: flex;
+        align-items: center;
+
+        gap: 15px;
+
+        padding: 20px 22px;
+
+        border: 0;
+
+        background: #fff;
+        color: var(--kucsa-dark);
+
+        text-align: left;
+
+        cursor: pointer;
+    }
+
+    .kucsa-faq-number {
+        width: 37px;
+        height: 37px;
+
+        flex: 0 0 37px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 11px;
+
+        background: var(--kucsa-primary-soft);
+        color: var(--kucsa-primary);
+
+        font-size: 0.76rem;
+        font-weight: 800;
+    }
+
+    .kucsa-faq-question {
+        flex: 1;
+
+        font-size: 0.94rem;
+        line-height: 1.5;
+
+        font-weight: 750;
+    }
+
+    .kucsa-faq-chevron {
+        width: 32px;
+        height: 32px;
+
+        flex: 0 0 32px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 9px;
+
+        background: var(--kucsa-surface-soft);
+        color: var(--kucsa-muted);
+
+        transition:
+            transform 0.3s ease,
+            background 0.2s ease,
+            color 0.2s ease;
+    }
+
+    .kucsa-faq-button:not(.collapsed) {
+        color: var(--kucsa-primary);
+    }
+
+    .kucsa-faq-button:not(.collapsed)
+    .kucsa-faq-number {
+        background:
+            linear-gradient(
+                135deg,
+                var(--kucsa-primary),
+                var(--kucsa-primary-dark)
+            );
+
+        color: #fff;
+    }
+
+    .kucsa-faq-button:not(.collapsed)
+    .kucsa-faq-chevron {
+        transform: rotate(180deg);
+
+        background: var(--kucsa-primary-soft);
+        color: var(--kucsa-primary);
+    }
+
+    .kucsa-faq-body {
+        padding: 0 22px 22px 74px;
+
+        color: var(--kucsa-muted);
+
+        font-size: 0.89rem;
+        line-height: 1.8;
+    }
+
+    .kucsa-faq-body::before {
+        content: "";
+
+        display: block;
+
+        height: 1px;
+
+        margin-bottom: 17px;
+
+        background:
+            linear-gradient(
+                90deg,
+                rgba(13, 110, 253, 0.16),
+                transparent
+            );
+    }
+
+    .kucsa-faq-body strong {
+        color: var(--kucsa-dark);
+    }
+
+    /* =========================================================
+       EMPTY SEARCH STATE
+       ========================================================= */
+
+    .kucsa-faq-empty {
+        display: none;
+
+        padding: 50px 25px;
+
+        border: 1px dashed #ccd4df;
+        border-radius: 18px;
+
+        background: var(--kucsa-surface-soft);
+
+        text-align: center;
+    }
+
+    .kucsa-faq-empty.is-visible {
+        display: block;
+    }
+
+    .kucsa-faq-empty-icon {
+        width: 60px;
+        height: 60px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        margin: 0 auto 17px;
+
+        border-radius: 18px;
+
+        background: var(--kucsa-primary-soft);
+        color: var(--kucsa-primary);
+
+        font-size: 1.5rem;
+    }
+
+    .kucsa-faq-empty h3 {
+        margin: 0;
+
+        color: var(--kucsa-dark);
+
+        font-size: 1.05rem;
+        font-weight: 800;
+    }
+
+    .kucsa-faq-empty p {
+        max-width: 470px;
+
+        margin: 8px auto 0;
+
+        color: var(--kucsa-muted);
+
+        font-size: 0.84rem;
+        line-height: 1.7;
+    }
+
+    /* =========================================================
+       CONTACT CTA
+       ========================================================= */
+
+    .kucsa-faq-cta {
+        position: relative;
+
+        margin-top: 55px;
+
+        padding: 36px;
+
+        border-radius: 23px;
+
+        background:
+            radial-gradient(
+                circle at 100% 0%,
+                rgba(255, 255, 255, 0.14),
+                transparent 28%
+            ),
+            linear-gradient(
+                135deg,
+                var(--kucsa-primary),
+                var(--kucsa-primary-dark)
+            );
+
+        color: #fff;
+
+        overflow: hidden;
+
+        box-shadow:
+            0 18px 45px rgba(13, 110, 253, 0.18);
+    }
+
+    .kucsa-faq-cta::after {
+        content: "";
+
+        position: absolute;
+
+        width: 180px;
+        height: 180px;
+
+        right: -75px;
+        bottom: -100px;
+
+        border-radius: 50%;
+
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .kucsa-faq-cta-content {
+        position: relative;
+        z-index: 2;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 25px;
+    }
+
+    .kucsa-faq-cta-icon {
+        width: 50px;
+        height: 50px;
+
+        flex: 0 0 50px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 15px;
+
+        background: rgba(255, 255, 255, 0.13);
+
+        font-size: 1.25rem;
+    }
+
+    .kucsa-faq-cta-main {
+        flex: 1;
+    }
+
+    .kucsa-faq-cta h3 {
+        margin: 0;
+
+        font-size: 1.15rem;
+        font-weight: 800;
+    }
+
+    .kucsa-faq-cta p {
+        margin: 6px 0 0;
+
+        color: rgba(255, 255, 255, 0.8);
+
+        font-size: 0.84rem;
+        line-height: 1.6;
+    }
+
+    .kucsa-faq-cta-button {
+        min-height: 45px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+
+        padding: 10px 17px;
+
+        border-radius: 11px;
+
+        background: #fff;
+        color: var(--kucsa-primary);
+
+        font-size: 0.82rem;
+        font-weight: 800;
+
+        text-decoration: none;
+
+        white-space: nowrap;
+
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .kucsa-faq-cta-button:hover {
+        color: var(--kucsa-primary-dark);
+
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 10px 25px rgba(0, 0, 0, 0.13);
+    }
+
+    /* =========================================================
+       REVEAL ANIMATION
+       ========================================================= */
+
+    .kucsa-faq-reveal {
+        opacity: 0;
+
+        transform: translateY(18px);
+
+        transition:
+            opacity 0.55s ease,
+            transform 0.55s ease;
+    }
+
+    .kucsa-faq-reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* =========================================================
+       ACCESSIBILITY
+       ========================================================= */
+
+    .kucsa-faq-page
+    button:focus-visible,
+    .kucsa-faq-page
+    input:focus-visible,
+    .kucsa-faq-page
+    a:focus-visible {
+        outline: 3px solid rgba(13, 110, 253, 0.24);
+        outline-offset: 3px;
+    }
+
+    /* =========================================================
+       TABLET
+       ========================================================= */
+
+    @media (max-width: 767.98px) {
+
+        .kucsa-faq-container {
+            width: min(100% - 24px, 680px);
+        }
+
+        .kucsa-faq-hero {
+            padding: 58px 0 58px;
+        }
+
+        .kucsa-faq-title {
+            font-size: clamp(2.15rem, 9vw, 3rem);
+        }
+
+        .kucsa-faq-description {
+            font-size: 0.92rem;
+            line-height: 1.7;
+        }
+
+        .kucsa-faq-section {
+            padding: 55px 0;
+        }
+
+        .kucsa-faq-tools {
+            padding: 17px;
+        }
+
+        .kucsa-faq-search-row {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .kucsa-faq-controls {
+            width: 100%;
+        }
+
+        .kucsa-faq-control {
+            flex: 1;
+        }
+
+        .kucsa-faq-results {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .kucsa-faq-button {
+            padding: 17px;
+            gap: 11px;
+        }
+
+        .kucsa-faq-number {
+            width: 34px;
+            height: 34px;
+
+            flex-basis: 34px;
+
+            border-radius: 10px;
+
+            font-size: 0.7rem;
+        }
+
+        .kucsa-faq-question {
+            font-size: 0.88rem;
+        }
+
+        .kucsa-faq-chevron {
+            width: 29px;
+            height: 29px;
+
+            flex-basis: 29px;
+        }
+
+        .kucsa-faq-body {
+            padding:
+                0
+                17px
+                19px
+                62px;
+
+            font-size: 0.84rem;
+            line-height: 1.75;
+        }
+
+        .kucsa-faq-cta {
+            padding: 28px 23px;
+        }
+
+        .kucsa-faq-cta-content {
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .kucsa-faq-cta-main {
+            min-width: calc(100% - 65px);
+        }
+
+        .kucsa-faq-cta-button {
+            width: 100%;
+        }
+    }
+
+    /* =========================================================
+       MOBILE
+       ========================================================= */
+
+    @media (max-width: 575.98px) {
+
+        .kucsa-faq-container {
+            width: calc(100% - 20px);
+        }
+
+        .kucsa-faq-hero {
+            padding: 50px 0 50px;
+        }
+
+        .kucsa-faq-eyebrow {
+            padding: 7px 11px;
+
+            font-size: 0.66rem;
+        }
+
+        .kucsa-faq-title {
+            font-size: 2.05rem;
+        }
+
+        .kucsa-faq-description {
+            font-size: 0.87rem;
+        }
+
+        .kucsa-faq-hero-icon {
+            width: 66px;
+            height: 66px;
+
+            margin-top: 25px;
+
+            border-radius: 21px;
+
+            font-size: 1.65rem;
+        }
+
+        .kucsa-faq-section {
+            padding: 45px 0;
+        }
+
+        .kucsa-faq-tools {
+            margin-bottom: 23px;
+
+            border-radius: 17px;
+        }
+
+        .kucsa-faq-control {
+            padding: 8px 10px;
+
+            font-size: 0.72rem;
+        }
+
+        .kucsa-faq-control i {
+            font-size: 0.8rem;
+        }
+
+        .kucsa-faq-item {
+            border-radius: 15px;
+        }
+
+        .kucsa-faq-button {
+            padding: 15px 13px;
+        }
+
+        .kucsa-faq-question {
+            font-size: 0.82rem;
+            line-height: 1.45;
+        }
+
+        .kucsa-faq-number {
+            width: 31px;
+            height: 31px;
+
+            flex-basis: 31px;
+
+            border-radius: 9px;
+        }
+
+        .kucsa-faq-chevron {
+            width: 27px;
+            height: 27px;
+
+            flex-basis: 27px;
+        }
+
+        .kucsa-faq-body {
+            padding:
+                0
+                14px
+                17px
+                57px;
+
+            font-size: 0.8rem;
+        }
+
+        .kucsa-faq-cta {
+            margin-top: 38px;
+
+            padding: 24px 19px;
+
+            border-radius: 19px;
+        }
+
+        .kucsa-faq-cta-content {
+            gap: 15px;
+        }
+
+        .kucsa-faq-cta-icon {
+            width: 44px;
+            height: 44px;
+
+            flex-basis: 44px;
+
+            border-radius: 13px;
+        }
+
+        .kucsa-faq-cta-main {
+            min-width: calc(100% - 59px);
+        }
+
+        .kucsa-faq-cta h3 {
+            font-size: 1rem;
+        }
+
+        .kucsa-faq-cta p {
+            font-size: 0.78rem;
+        }
+    }
+
+    /* =========================================================
+       VERY SMALL PHONES
+       ========================================================= */
+
+    @media (max-width: 359.98px) {
+
+        .kucsa-faq-container {
+            width: calc(100% - 16px);
+        }
+
+        .kucsa-faq-title {
+            font-size: 1.85rem;
+        }
+
+        .kucsa-faq-question {
+            font-size: 0.78rem;
+        }
+
+        .kucsa-faq-body {
+            padding-left: 52px;
+        }
+
+        .kucsa-faq-control {
+            font-size: 0.67rem;
+        }
+    }
+
+    /* =========================================================
+       REDUCED MOTION
+       ========================================================= */
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .kucsa-faq-page *,
+        .kucsa-faq-page *::before,
+        .kucsa-faq-page *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
+
+        .kucsa-faq-reveal {
+            opacity: 1;
+            transform: none;
+        }
+    }
+</style>
+
+
+<div class="kucsa-faq-page">
+
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
+
+    <section class="kucsa-faq-hero">
+
+        <span
+            class="kucsa-faq-decoration kucsa-faq-decoration-one"
+            aria-hidden="true">
+        </span>
+
+        <span
+            class="kucsa-faq-decoration kucsa-faq-decoration-two"
+            aria-hidden="true">
+        </span>
+
+        <div class="kucsa-faq-container">
+
+            <div class="kucsa-faq-hero-content kucsa-faq-reveal">
+
+                <div class="kucsa-faq-eyebrow">
+
+                    <i class="bi bi-question-circle-fill"></i>
+
+                    KUCSA Help Centre
+
+                </div>
+
+                <h1 class="kucsa-faq-title">
+
+                    Frequently Asked
+                    <span>Questions</span>
+
+                </h1>
+
+                <p class="kucsa-faq-description">
+
+                    Find quick answers to common questions about KUCSA,
+                    membership, events, the Digital Computing Community
+                    Platform, and getting support.
+
+                </p>
+
+                <div
+                    class="kucsa-faq-hero-icon"
+                    aria-hidden="true">
+
+                    <i class="bi bi-patch-question-fill"></i>
+
+                </div>
+
+            </div>
 
         </div>
 
-        <div class="accordion" id="faqAccordion">
+    </section>
 
-            <!-- Question 1 -->
 
-            <div class="accordion-item">
+    <!-- =====================================================
+         FAQ CONTENT
+         ===================================================== -->
 
-                <h2 class="accordion-header" id="headingOne">
+    <section class="kucsa-faq-section">
 
-                    <button
-                        class="accordion-button"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseOne"
-                        aria-expanded="true"
-                        aria-controls="collapseOne">
+        <div class="kucsa-faq-container">
 
-                        Who can join KUCSA?
 
-                    </button>
+            <!-- =================================================
+                 SEARCH + CONTROLS
+                 ================================================= -->
 
-                </h2>
+            <div class="kucsa-faq-tools kucsa-faq-reveal">
 
-                <div
-                    id="collapseOne"
-                    class="accordion-collapse collapse show"
-                    aria-labelledby="headingOne"
-                    data-bs-parent="#faqAccordion">
+                <div class="kucsa-faq-search-row">
 
-                    <div class="accordion-body">
+                    <div class="kucsa-faq-search-box">
 
-                        Any student enrolled in a computing-related programme at Kisii University is welcome to join KUCSA by creating an account, applying for membership, and completing the membership registration process.
+                        <i
+                            class="bi bi-search kucsa-faq-search-icon"
+                            aria-hidden="true">
+                        </i>
+
+                        <input
+                            type="search"
+                            id="kucsaFaqSearch"
+                            class="kucsa-faq-search-input"
+                            placeholder="Search frequently asked questions..."
+                            aria-label="Search frequently asked questions"
+                            autocomplete="off"
+                        >
+
+                        <button
+                            type="button"
+                            id="kucsaFaqClear"
+                            class="kucsa-faq-clear"
+                            aria-label="Clear FAQ search"
+                            title="Clear search"
+                        >
+
+                            <i class="bi bi-x-lg"></i>
+
+                        </button>
+
+                    </div>
+
+
+                    <div class="kucsa-faq-controls">
+
+                        <button
+                            type="button"
+                            class="kucsa-faq-control"
+                            id="kucsaExpandAll"
+                        >
+
+                            <i class="bi bi-arrows-expand"></i>
+
+                            <span>
+                                Expand All
+                            </span>
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="kucsa-faq-control"
+                            id="kucsaCollapseAll"
+                        >
+
+                            <i class="bi bi-arrows-collapse"></i>
+
+                            <span>
+                                Collapse All
+                            </span>
+
+                        </button>
 
                     </div>
 
                 </div>
 
-            </div>
 
-            <!-- Question 2 -->
+                <div class="kucsa-faq-results">
 
-            <div class="accordion-item">
+                    <div class="kucsa-search-status">
 
-                <h2 class="accordion-header" id="headingTwo">
+                        <i class="bi bi-info-circle-fill"></i>
 
-                    <button
-                        class="accordion-button collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseTwo"
-                        aria-expanded="false"
-                        aria-controls="collapseTwo">
-
-                        How do I become a verified member?
-
-                    </button>
-
-                </h2>
-
-                <div
-                    id="collapseTwo"
-                    class="accordion-collapse collapse"
-                    aria-labelledby="headingTwo"
-                    data-bs-parent="#faqAccordion">
-
-                    <div class="accordion-body">
-
-                        Register an account, submit your membership application, upload proof of payment, and wait for verification by the KUCSA executive team. Once approved, you will gain full access to member features.
+                        <span id="kucsaFaqResultText">
+                            Showing all 6 frequently asked questions
+                        </span>
 
                     </div>
+
+                    <span>
+                        Select a question to view the answer.
+                    </span>
 
                 </div>
 
             </div>
 
-            <!-- Question 3 -->
 
-            <div class="accordion-item">
+            <!-- =================================================
+                 FAQ LIST
+                 ================================================= -->
 
-                <h2 class="accordion-header" id="headingThree">
+            <div
+                class="kucsa-faq-list"
+                id="kucsaFaqList"
+            >
 
-                    <button
-                        class="accordion-button collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseThree"
-                        aria-expanded="false"
-                        aria-controls="collapseThree">
 
-                        What can I do after joining?
-
-                    </button>
-
-                </h2>
+                <!-- =================================================
+                     QUESTION 1
+                     ================================================= -->
 
                 <div
-                    id="collapseThree"
-                    class="accordion-collapse collapse"
-                    aria-labelledby="headingThree"
-                    data-bs-parent="#faqAccordion">
+                    class="kucsa-faq-item kucsa-faq-reveal"
+                    data-faq-item
+                    data-faq-search="who can join kucsa computing students kisii university join membership"
+                >
 
-                    <div class="accordion-body">
+                    <h2
+                        class="mb-0"
+                        id="headingOne"
+                    >
 
-                        Members can view announcements, register for events, monitor attendance, update their profiles, and participate in KUCSA activities through the platform.
+                        <button
+                            class="kucsa-faq-button"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseOne"
+                            aria-expanded="true"
+                            aria-controls="collapseOne"
+                        >
+
+                            <span
+                                class="kucsa-faq-number"
+                                aria-hidden="true">
+                                01
+                            </span>
+
+                            <span class="kucsa-faq-question">
+                                Who can join KUCSA?
+                            </span>
+
+                            <span
+                                class="kucsa-faq-chevron"
+                                aria-hidden="true">
+
+                                <i class="bi bi-chevron-down"></i>
+
+                            </span>
+
+                        </button>
+
+                    </h2>
+
+
+                    <div
+                        id="collapseOne"
+                        class="accordion-collapse collapse show"
+                        aria-labelledby="headingOne"
+                        data-bs-parent="#faqAccordion"
+                    >
+
+                        <div class="kucsa-faq-body">
+
+                            Any student enrolled in a computing-related
+                            programme at Kisii University is welcome to join
+                            KUCSA by creating an account, applying for
+                            membership, and completing the membership
+                            registration process.
+
+                        </div>
 
                     </div>
 
                 </div>
 
-            </div>
 
-            <!-- Question 4 -->
-
-            <div class="accordion-item">
-
-                <h2 class="accordion-header" id="headingFour">
-
-                    <button
-                        class="accordion-button collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseFour"
-                        aria-expanded="false"
-                        aria-controls="collapseFour">
-
-                        How do I know if my membership has been approved?
-
-                    </button>
-
-                </h2>
+                <!-- =================================================
+                     QUESTION 2
+                     ================================================= -->
 
                 <div
-                    id="collapseFour"
-                    class="accordion-collapse collapse"
-                    aria-labelledby="headingFour"
-                    data-bs-parent="#faqAccordion">
+                    class="kucsa-faq-item kucsa-faq-reveal"
+                    data-faq-item
+                    data-faq-search="how become verified member verification membership application proof payment executive team approved"
+                >
 
-                    <div class="accordion-body">
+                    <h2
+                        class="mb-0"
+                        id="headingTwo"
+                    >
 
-                        Your dashboard will display your membership status. You may also receive a notification once your membership has been verified by the executive team.
+                        <button
+                            class="kucsa-faq-button collapsed"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseTwo"
+                            aria-expanded="false"
+                            aria-controls="collapseTwo"
+                        >
+
+                            <span
+                                class="kucsa-faq-number"
+                                aria-hidden="true">
+                                02
+                            </span>
+
+                            <span class="kucsa-faq-question">
+                                How do I become a verified member?
+                            </span>
+
+                            <span
+                                class="kucsa-faq-chevron"
+                                aria-hidden="true">
+
+                                <i class="bi bi-chevron-down"></i>
+
+                            </span>
+
+                        </button>
+
+                    </h2>
+
+
+                    <div
+                        id="collapseTwo"
+                        class="accordion-collapse collapse"
+                        aria-labelledby="headingTwo"
+                        data-bs-parent="#faqAccordion"
+                    >
+
+                        <div class="kucsa-faq-body">
+
+                            Register an account, submit your membership
+                            application, upload proof of payment, and wait
+                            for verification by the KUCSA executive team.
+                            Once approved, you will gain full access to
+                            member features.
+
+                        </div>
 
                     </div>
 
                 </div>
 
-            </div>
 
-            <!-- Question 5 -->
-
-            <div class="accordion-item">
-
-                <h2 class="accordion-header" id="headingFive">
-
-                    <button
-                        class="accordion-button collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseFive"
-                        aria-expanded="false"
-                        aria-controls="collapseFive">
-
-                        I forgot my password. What should I do?
-
-                    </button>
-
-                </h2>
+                <!-- =================================================
+                     QUESTION 3
+                     ================================================= -->
 
                 <div
-                    id="collapseFive"
-                    class="accordion-collapse collapse"
-                    aria-labelledby="headingFive"
-                    data-bs-parent="#faqAccordion">
+                    class="kucsa-faq-item kucsa-faq-reveal"
+                    data-faq-item
+                    data-faq-search="what can do after joining membership features announcements events attendance profile activities"
+                >
 
-                    <div class="accordion-body">
+                    <h2
+                        class="mb-0"
+                        id="headingThree"
+                    >
 
-                        Click the <strong>Forgot Password</strong> link on the login page and follow the instructions to reset your password.
+                        <button
+                            class="kucsa-faq-button collapsed"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseThree"
+                            aria-expanded="false"
+                            aria-controls="collapseThree"
+                        >
+
+                            <span
+                                class="kucsa-faq-number"
+                                aria-hidden="true">
+                                03
+                            </span>
+
+                            <span class="kucsa-faq-question">
+                                What can I do after joining?
+                            </span>
+
+                            <span
+                                class="kucsa-faq-chevron"
+                                aria-hidden="true">
+
+                                <i class="bi bi-chevron-down"></i>
+
+                            </span>
+
+                        </button>
+
+                    </h2>
+
+
+                    <div
+                        id="collapseThree"
+                        class="accordion-collapse collapse"
+                        aria-labelledby="headingThree"
+                        data-bs-parent="#faqAccordion"
+                    >
+
+                        <div class="kucsa-faq-body">
+
+                            Members can view announcements, register for
+                            events, monitor attendance, update their
+                            profiles, and participate in KUCSA activities
+                            through the platform.
+
+                        </div>
 
                     </div>
 
                 </div>
 
-            </div>
 
-            <!-- Question 6 -->
-
-            <div class="accordion-item">
-
-                <h2 class="accordion-header" id="headingSix">
-
-                    <button
-                        class="accordion-button collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseSix"
-                        aria-expanded="false"
-                        aria-controls="collapseSix">
-
-                        Who should I contact if I need help?
-
-                    </button>
-
-                </h2>
+                <!-- =================================================
+                     QUESTION 4
+                     ================================================= -->
 
                 <div
-                    id="collapseSix"
-                    class="accordion-collapse collapse"
-                    aria-labelledby="headingSix"
-                    data-bs-parent="#faqAccordion">
+                    class="kucsa-faq-item kucsa-faq-reveal"
+                    data-faq-item
+                    data-faq-search="membership approved approval status dashboard notification executive verification"
+                >
 
-                    <div class="accordion-body">
+                    <h2
+                        class="mb-0"
+                        id="headingFour"
+                    >
 
-                        You can visit the Contact page and send a message to the KUCSA executive team, or reach them using the contact information provided.
+                        <button
+                            class="kucsa-faq-button collapsed"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseFour"
+                            aria-expanded="false"
+                            aria-controls="collapseFour"
+                        >
+
+                            <span
+                                class="kucsa-faq-number"
+                                aria-hidden="true">
+                                04
+                            </span>
+
+                            <span class="kucsa-faq-question">
+                                How do I know if my membership has been approved?
+                            </span>
+
+                            <span
+                                class="kucsa-faq-chevron"
+                                aria-hidden="true">
+
+                                <i class="bi bi-chevron-down"></i>
+
+                            </span>
+
+                        </button>
+
+                    </h2>
+
+
+                    <div
+                        id="collapseFour"
+                        class="accordion-collapse collapse"
+                        aria-labelledby="headingFour"
+                        data-bs-parent="#faqAccordion"
+                    >
+
+                        <div class="kucsa-faq-body">
+
+                            Your dashboard will display your membership
+                            status. You may also receive a notification once
+                            your membership has been verified by the
+                            executive team.
+
+                        </div>
 
                     </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     QUESTION 5
+                     ================================================= -->
+
+                <div
+                    class="kucsa-faq-item kucsa-faq-reveal"
+                    data-faq-item
+                    data-faq-search="forgot password reset password login forgot password account"
+                >
+
+                    <h2
+                        class="mb-0"
+                        id="headingFive"
+                    >
+
+                        <button
+                            class="kucsa-faq-button collapsed"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseFive"
+                            aria-expanded="false"
+                            aria-controls="collapseFive"
+                        >
+
+                            <span
+                                class="kucsa-faq-number"
+                                aria-hidden="true">
+                                05
+                            </span>
+
+                            <span class="kucsa-faq-question">
+                                I forgot my password. What should I do?
+                            </span>
+
+                            <span
+                                class="kucsa-faq-chevron"
+                                aria-hidden="true">
+
+                                <i class="bi bi-chevron-down"></i>
+
+                            </span>
+
+                        </button>
+
+                    </h2>
+
+
+                    <div
+                        id="collapseFive"
+                        class="accordion-collapse collapse"
+                        aria-labelledby="headingFive"
+                        data-bs-parent="#faqAccordion"
+                    >
+
+                        <div class="kucsa-faq-body">
+
+                            Click the
+                            <strong>Forgot Password</strong>
+                            link on the login page and follow the
+                            instructions to reset your password.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     QUESTION 6
+                     ================================================= -->
+
+                <div
+                    class="kucsa-faq-item kucsa-faq-reveal"
+                    data-faq-item
+                    data-faq-search="who contact help assistance contact page executive team information"
+                >
+
+                    <h2
+                        class="mb-0"
+                        id="headingSix"
+                    >
+
+                        <button
+                            class="kucsa-faq-button collapsed"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseSix"
+                            aria-expanded="false"
+                            aria-controls="collapseSix"
+                        >
+
+                            <span
+                                class="kucsa-faq-number"
+                                aria-hidden="true">
+                                06
+                            </span>
+
+                            <span class="kucsa-faq-question">
+                                Who should I contact if I need help?
+                            </span>
+
+                            <span
+                                class="kucsa-faq-chevron"
+                                aria-hidden="true">
+
+                                <i class="bi bi-chevron-down"></i>
+
+                            </span>
+
+                        </button>
+
+                    </h2>
+
+
+                    <div
+                        id="collapseSix"
+                        class="accordion-collapse collapse"
+                        aria-labelledby="headingSix"
+                        data-bs-parent="#faqAccordion"
+                    >
+
+                        <div class="kucsa-faq-body">
+
+                            You can visit the Contact page and send a
+                            message to the KUCSA executive team, or reach
+                            them using the contact information provided.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 NO SEARCH RESULTS
+                 ================================================= -->
+
+            <div
+                class="kucsa-faq-empty"
+                id="kucsaFaqEmpty"
+            >
+
+                <div class="kucsa-faq-empty-icon">
+
+                    <i class="bi bi-search"></i>
+
+                </div>
+
+                <h3>
+                    No matching questions found
+                </h3>
+
+                <p>
+                    We couldn't find an FAQ matching your search.
+                    Try using a different keyword such as
+                    <strong>membership</strong>,
+                    <strong>events</strong>,
+                    <strong>password</strong>, or
+                    <strong>help</strong>.
+                </p>
+
+            </div>
+
+
+            <!-- =================================================
+                 CONTACT CTA
+                 ================================================= -->
+
+            <div class="kucsa-faq-cta kucsa-faq-reveal">
+
+                <div class="kucsa-faq-cta-content">
+
+                    <div class="kucsa-faq-cta-icon">
+
+                        <i class="bi bi-chat-heart-fill"></i>
+
+                    </div>
+
+                    <div class="kucsa-faq-cta-main">
+
+                        <h3>
+                            Still need help?
+                        </h3>
+
+                        <p>
+                            If you couldn't find the answer you're looking
+                            for, reach out to the KUCSA team and we'll be
+                            happy to assist you.
+                        </p>
+
+                    </div>
+
+                    <a
+                        href="{% url 'core:contact' %}"
+                        class="kucsa-faq-cta-button"
+                    >
+
+                        <i class="bi bi-envelope-fill"></i>
+
+                        Contact KUCSA
+
+                    </a>
 
                 </div>
 
@@ -248,8 +1737,601 @@ Frequently Asked Questions | KUCSA Platform
 
         </div>
 
-    </div>
+    </section>
 
-</section>
+</div>
+
+
+<script>
+(function () {
+
+    "use strict";
+
+
+    /* =========================================================
+       PAGE INITIALIZATION
+       ========================================================= */
+
+    const page =
+        document.querySelector(
+            ".kucsa-faq-page"
+        );
+
+    if (!page) {
+        return;
+    }
+
+
+    const reducedMotion =
+        window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+        ).matches;
+
+
+    /* =========================================================
+       FAQ ELEMENTS
+       ========================================================= */
+
+    const searchInput =
+        document.getElementById(
+            "kucsaFaqSearch"
+        );
+
+    const clearButton =
+        document.getElementById(
+            "kucsaFaqClear"
+        );
+
+    const expandAllButton =
+        document.getElementById(
+            "kucsaExpandAll"
+        );
+
+    const collapseAllButton =
+        document.getElementById(
+            "kucsaCollapseAll"
+        );
+
+    const resultText =
+        document.getElementById(
+            "kucsaFaqResultText"
+        );
+
+    const emptyState =
+        document.getElementById(
+            "kucsaFaqEmpty"
+        );
+
+    const faqItems =
+        Array.from(
+            page.querySelectorAll(
+                "[data-faq-item]"
+            )
+        );
+
+
+    const totalFaqs =
+        faqItems.length;
+
+
+    /* =========================================================
+       SEARCH FAQS
+       ========================================================= */
+
+    function searchFaqs() {
+
+        if (!searchInput) {
+            return;
+        }
+
+
+        const query =
+            searchInput.value
+                .trim()
+                .toLowerCase();
+
+
+        let visibleCount = 0;
+
+
+        faqItems.forEach(
+            function (item) {
+
+                const searchableText =
+                    (
+                        item.dataset.faqSearch ||
+                        item.textContent
+                    ).toLowerCase();
+
+
+                const matches =
+                    !query ||
+                    searchableText.includes(
+                        query
+                    );
+
+
+                if (matches) {
+
+                    item.classList.remove(
+                        "is-hidden"
+                    );
+
+                    visibleCount++;
+
+                } else {
+
+                    item.classList.add(
+                        "is-hidden"
+                    );
+
+                    /*
+                     * Close an FAQ that disappears
+                     * because of the search.
+                     */
+
+                    const collapse =
+                        item.querySelector(
+                            ".accordion-collapse.show"
+                        );
+
+
+                    if (
+                        collapse &&
+                        window.bootstrap
+                    ) {
+
+                        const instance =
+                            bootstrap.Collapse
+                                .getInstance(
+                                    collapse
+                                ) ||
+                            bootstrap.Collapse
+                                .getOrCreateInstance(
+                                    collapse,
+                                    {
+                                        toggle: false
+                                    }
+                                );
+
+                        instance.hide();
+                    }
+
+                }
+
+            }
+        );
+
+
+        /* -----------------------------------------------------
+           Result text
+           ----------------------------------------------------- */
+
+        if (!query) {
+
+            resultText.textContent =
+                "Showing all " +
+                totalFaqs +
+                " frequently asked questions.";
+
+        } else if (visibleCount === 0) {
+
+            resultText.textContent =
+                "No questions match your search.";
+
+        } else {
+
+            resultText.textContent =
+                "Showing " +
+                visibleCount +
+                " of " +
+                totalFaqs +
+                " frequently asked questions.";
+
+        }
+
+
+        /* -----------------------------------------------------
+           Empty state
+           ----------------------------------------------------- */
+
+        if (emptyState) {
+
+            if (
+                query &&
+                visibleCount === 0
+            ) {
+
+                emptyState.classList.add(
+                    "is-visible"
+                );
+
+            } else {
+
+                emptyState.classList.remove(
+                    "is-visible"
+                );
+
+            }
+
+        }
+
+
+        /* -----------------------------------------------------
+           Clear button
+           ----------------------------------------------------- */
+
+        if (clearButton) {
+
+            clearButton.style.display =
+                query
+                    ? "flex"
+                    : "none";
+
+        }
+
+    }
+
+
+    if (searchInput) {
+
+        searchInput.addEventListener(
+            "input",
+            searchFaqs
+        );
+
+    }
+
+
+    /* =========================================================
+       CLEAR SEARCH
+       ========================================================= */
+
+    if (clearButton) {
+
+        clearButton.addEventListener(
+            "click",
+            function () {
+
+                searchInput.value = "";
+
+                searchFaqs();
+
+                searchInput.focus();
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       ESCAPE KEY
+       ========================================================= */
+
+    if (searchInput) {
+
+        searchInput.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Escape" &&
+                    searchInput.value
+                ) {
+
+                    event.preventDefault();
+
+                    searchInput.value = "";
+
+                    searchFaqs();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       EXPAND ALL
+       ========================================================= */
+
+    if (expandAllButton) {
+
+        expandAllButton.addEventListener(
+            "click",
+            function () {
+
+                faqItems.forEach(
+                    function (item) {
+
+                        if (
+                            item.classList.contains(
+                                "is-hidden"
+                            )
+                        ) {
+                            return;
+                        }
+
+
+                        const collapse =
+                            item.querySelector(
+                                ".accordion-collapse"
+                            );
+
+
+                        if (
+                            collapse &&
+                            window.bootstrap
+                        ) {
+
+                            const instance =
+                                bootstrap.Collapse
+                                    .getInstance(
+                                        collapse
+                                    ) ||
+                                bootstrap.Collapse
+                                    .getOrCreateInstance(
+                                        collapse,
+                                        {
+                                            toggle: false
+                                        }
+                                    );
+
+                            instance.show();
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       COLLAPSE ALL
+       ========================================================= */
+
+    if (collapseAllButton) {
+
+        collapseAllButton.addEventListener(
+            "click",
+            function () {
+
+                faqItems.forEach(
+                    function (item) {
+
+                        const collapse =
+                            item.querySelector(
+                                ".accordion-collapse"
+                            );
+
+
+                        if (
+                            collapse &&
+                            window.bootstrap
+                        ) {
+
+                            const instance =
+                                bootstrap.Collapse
+                                    .getInstance(
+                                        collapse
+                                    ) ||
+                                bootstrap.Collapse
+                                    .getOrCreateInstance(
+                                        collapse,
+                                        {
+                                            toggle: false
+                                        }
+                                    );
+
+                            instance.hide();
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       HIGHLIGHT OPEN FAQ
+       ========================================================= */
+
+    faqItems.forEach(
+        function (item) {
+
+            const collapse =
+                item.querySelector(
+                    ".accordion-collapse"
+                );
+
+
+            if (!collapse) {
+                return;
+            }
+
+
+            collapse.addEventListener(
+                "shown.bs.collapse",
+                function () {
+
+                    item.classList.add(
+                        "is-highlighted"
+                    );
+
+                }
+            );
+
+
+            collapse.addEventListener(
+                "hidden.bs.collapse",
+                function () {
+
+                    item.classList.remove(
+                        "is-highlighted"
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    /* =========================================================
+       SCROLL REVEAL
+       ========================================================= */
+
+    const revealItems =
+        page.querySelectorAll(
+            ".kucsa-faq-reveal"
+        );
+
+
+    if (
+        reducedMotion ||
+        !("IntersectionObserver" in window)
+    ) {
+
+        revealItems.forEach(
+            function (element) {
+
+                element.classList.add(
+                    "is-visible"
+                );
+
+            }
+        );
+
+    } else {
+
+        const observer =
+            new IntersectionObserver(
+                function (
+                    entries,
+                    observerInstance
+                ) {
+
+                    entries.forEach(
+                        function (entry) {
+
+                            if (
+                                entry.isIntersecting
+                            ) {
+
+                                entry.target.classList.add(
+                                    "is-visible"
+                                );
+
+                                observerInstance.unobserve(
+                                    entry.target
+                                );
+
+                            }
+
+                        }
+                    );
+
+                },
+                {
+                    threshold: 0.08,
+                    rootMargin:
+                        "0px 0px -30px 0px"
+                }
+            );
+
+
+        revealItems.forEach(
+            function (element) {
+
+                observer.observe(
+                    element
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       FAQ BUTTON KEYBOARD SUPPORT
+       ========================================================= */
+
+    page.querySelectorAll(
+        ".kucsa-faq-button"
+    ).forEach(
+        function (button) {
+
+            button.addEventListener(
+                "keydown",
+                function (event) {
+
+                    /*
+                     * Let Bootstrap handle Enter/Space
+                     * normally, while providing a familiar
+                     * keyboard interaction.
+                     */
+
+                    if (
+                        event.key === "Enter" ||
+                        event.key === " "
+                    ) {
+
+                        event.stopPropagation();
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+    /* =========================================================
+       INITIAL STATE
+       ========================================================= */
+
+    searchFaqs();
+
+
+    /* =========================================================
+       RESTORE AFTER BFCACHE
+       ========================================================= */
+
+    window.addEventListener(
+        "pageshow",
+        function () {
+
+            /*
+             * Reset search only when returning from
+             * browser history/cache.
+             */
+
+            if (
+                searchInput &&
+                !searchInput.value
+            ) {
+
+                searchFaqs();
+
+            }
+
+        }
+    );
+
+})();
+</script>
 
 {% endblock %}

@@ -1,792 +1,431 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KUCSA Navbar</title>
-    
-    <!-- Bootstrap 5 CSS (CDN) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Bootstrap Icons (CDN) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+    :root {
+        --kucsa-primary: #0d6efd;
+        --kucsa-primary-rgb: 13, 110, 253;
+        --kucsa-dark: #212529;
+        --kucsa-gray-light: #f8f9fa;
+        --kucsa-border: rgba(0, 0, 0, 0.08);
+        --kucsa-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-    <!-- Google Fonts (Modern typography) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-</head>
-<body>
-    <style>
-        :root {
-            --kucsa-primary: #0d6efd;
-            --kucsa-primary-rgb: 13, 110, 253;
-            --kucsa-primary-dark: #0b5ed7;
-            --kucsa-dark: #1a1a2e;
-            --kucsa-gray-light: #f8f9fa;
-            --kucsa-gray: #6c757d;
-            --kucsa-border: rgba(0, 0, 0, 0.08);
-            --kucsa-transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            --kucsa-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-            --kucsa-shadow-md: 0 8px 30px rgba(0, 0, 0, 0.08);
-            --kucsa-radius: 12px;
-            --kucsa-radius-sm: 8px;
+    .kucsa-navbar {
+        min-height: 70px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--kucsa-border);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        z-index: 1030;
+        transition: var(--kucsa-transition);
+    }
+
+    .kucsa-navbar .navbar-brand {
+        font-weight: 800;
+        color: var(--kucsa-dark);
+        letter-spacing: -0.02em;
+        font-size: 1.25rem;
+        transition: var(--kucsa-transition);
+    }
+
+    .kucsa-navbar .navbar-brand:hover {
+        opacity: 0.85;
+    }
+
+    .kucsa-navbar .navbar-brand small {
+        display: block;
+        font-size: 0.62rem;
+        font-weight: 600;
+        color: #6c757d;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        margin-top: -3px;
+    }
+
+    .kucsa-navbar .navbar-toggler {
+        border: 1px solid var(--kucsa-border);
+        padding: 0.4rem 0.6rem;
+        border-radius: 8px;
+        background: var(--kucsa-gray-light);
+        transition: var(--kucsa-transition);
+    }
+
+    .kucsa-navbar .navbar-toggler:focus {
+        box-shadow: 0 0 0 3px rgba(var(--kucsa-primary-rgb), 0.15);
+        border-color: var(--kucsa-primary);
+    }
+
+    .kucsa-navbar .nav-link {
+        color: #495057;
+        font-size: 0.88rem;
+        font-weight: 500;
+        padding: 0.6rem 0.85rem;
+        border-radius: 8px;
+        transition: var(--kucsa-transition);
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .kucsa-navbar .nav-link:hover {
+        background: rgba(var(--kucsa-primary-rgb), 0.06);
+        color: var(--kucsa-primary);
+        transform: translateY(-1px);
+    }
+
+    .kucsa-navbar .nav-link.active {
+        background: rgba(var(--kucsa-primary-rgb), 0.1);
+        color: var(--kucsa-primary);
+        font-weight: 600;
+    }
+
+    /* =========================================================
+       USER MENU & AVATAR
+       ========================================================= */
+
+    .kucsa-navbar .navbar-user {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.2rem 0.4rem;
+        border-radius: 30px;
+        transition: var(--kucsa-transition);
+    }
+
+    .kucsa-navbar .navbar-user:hover {
+        background: var(--kucsa-gray-light);
+    }
+
+    .kucsa-navbar .navbar-avatar {
+        width: 38px;
+        height: 38px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .kucsa-navbar .navbar-default-avatar {
+        width: 38px;
+        height: 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        color: #6c757d;
+        background: #e9ecef;
+        border-radius: 50%;
+    }
+
+    .kucsa-navbar .navbar-user-name {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--kucsa-dark);
+        line-height: 1.2;
+    }
+
+    .kucsa-navbar .navbar-user-role {
+        font-size: 0.68rem;
+        font-weight: 500;
+        color: #6c757d;
+        line-height: 1.1;
+        margin-top: 1px;
+    }
+
+    /* =========================================================
+       DROPDOWN ANIMATION & STYLING
+       ========================================================= */
+
+    .kucsa-navbar .dropdown-menu {
+        min-width: 240px;
+        margin-top: 0.75rem;
+        border: 1px solid var(--kucsa-border);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border-radius: 12px;
+        padding: 0.5rem;
+        animation: dropdownFade 0.2s ease-in-out;
+    }
+
+    @keyframes dropdownFade {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
         }
-
-        * {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-
-        /* =========================================================
-           NAVBAR CONTAINER
-           ========================================================= */
-
-        .kucsa-navbar {
-            min-height: 72px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(16px) saturate(180%);
-            -webkit-backdrop-filter: blur(16px) saturate(180%);
-            border-bottom: 1px solid var(--kucsa-border);
-            box-shadow: var(--kucsa-shadow-sm);
-            z-index: 1030;
-            transition: var(--kucsa-transition);
-            padding: 0.5rem 0;
-        }
-
-        .kucsa-navbar.scrolled {
-            box-shadow: var(--kucsa-shadow-md);
-            background: rgba(255, 255, 255, 0.98);
-        }
-
-        /* =========================================================
-           BRAND
-           ========================================================= */
-
-        .kucsa-navbar .navbar-brand {
-            font-weight: 800;
-            color: var(--kucsa-dark);
-            letter-spacing: -0.025em;
-            font-size: 1.35rem;
-            transition: var(--kucsa-transition);
-            padding: 0.25rem 0;
-            line-height: 1.1;
-        }
-
-        .kucsa-navbar .navbar-brand:hover {
-            color: var(--kucsa-primary);
-            transform: scale(1.02);
-        }
-
-        .kucsa-navbar .navbar-brand small {
-            display: block;
-            font-size: 0.6rem;
-            font-weight: 600;
-            color: var(--kucsa-gray);
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            margin-top: -2px;
-            opacity: 0.8;
-        }
-
-        /* =========================================================
-           TOGGLER BUTTONS
-           ========================================================= */
-
-        .kucsa-navbar .navbar-toggler {
-            border: 1px solid var(--kucsa-border);
-            padding: 0.45rem 0.7rem;
-            border-radius: var(--kucsa-radius-sm);
-            background: var(--kucsa-gray-light);
-            transition: var(--kucsa-transition);
-            color: var(--kucsa-dark);
-        }
-
-        .kucsa-navbar .navbar-toggler:hover {
-            background: #e9ecef;
-            transform: scale(1.05);
-        }
-
-        .kucsa-navbar .navbar-toggler:focus {
-            box-shadow: 0 0 0 3px rgba(var(--kucsa-primary-rgb), 0.2);
-            border-color: var(--kucsa-primary);
-        }
-
-        .kucsa-navbar .navbar-toggler i {
-            font-size: 1.25rem;
-        }
-
-        /* =========================================================
-           NAVIGATION LINKS
-           ========================================================= */
-
-        .kucsa-navbar .nav-link {
-            color: #495057;
-            font-size: 0.875rem;
-            font-weight: 500;
-            padding: 0.6rem 1rem;
-            border-radius: var(--kucsa-radius-sm);
-            transition: var(--kucsa-transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-            position: relative;
-        }
-
-        .kucsa-navbar .nav-link i {
-            font-size: 1.1rem;
-            opacity: 0.8;
-            transition: var(--kucsa-transition);
-        }
-
-        .kucsa-navbar .nav-link:hover {
-            background: rgba(var(--kucsa-primary-rgb), 0.07);
-            color: var(--kucsa-primary);
-            transform: translateY(-1px);
-        }
-
-        .kucsa-navbar .nav-link:hover i {
+        to {
             opacity: 1;
+            transform: translateY(0);
         }
+    }
 
-        .kucsa-navbar .nav-link.active {
-            background: rgba(var(--kucsa-primary-rgb), 0.1);
-            color: var(--kucsa-primary);
-            font-weight: 600;
-        }
+    .kucsa-navbar .dropdown-header {
+        padding: 0.75rem 1rem;
+        background: var(--kucsa-gray-light);
+        border-radius: 8px;
+        margin-bottom: 0.35rem;
+    }
 
-        .kucsa-navbar .nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: 2px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20px;
-            height: 2.5px;
-            background: var(--kucsa-primary);
-            border-radius: 4px;
-        }
+    .kucsa-navbar .dropdown-item {
+        font-size: 0.85rem;
+        font-weight: 500;
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        transition: var(--kucsa-transition);
+        color: #495057;
+    }
 
-        /* =========================================================
-           USER MENU & AVATAR
-           ========================================================= */
+    .kucsa-navbar .dropdown-item i {
+        width: 22px;
+        margin-right: 0.5rem;
+        color: #6c757d;
+        transition: var(--kucsa-transition);
+    }
 
-        .kucsa-navbar .navbar-user {
-            display: flex;
-            align-items: center;
-            gap: 0.65rem;
-            padding: 0.25rem 0.5rem 0.25rem 0.25rem;
-            border-radius: 50px;
-            transition: var(--kucsa-transition);
-            border: 1px solid transparent;
-        }
+    .kucsa-navbar .dropdown-item:hover {
+        background: rgba(var(--kucsa-primary-rgb), 0.08);
+        color: var(--kucsa-primary);
+    }
 
-        .kucsa-navbar .navbar-user:hover {
-            background: var(--kucsa-gray-light);
-            border-color: var(--kucsa-border);
-        }
+    .kucsa-navbar .dropdown-item:hover i {
+        color: var(--kucsa-primary);
+    }
 
-        .kucsa-navbar .navbar-avatar {
-            width: 40px;
-            height: 40px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 2px solid #fff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            transition: var(--kucsa-transition);
-        }
+    .kucsa-navbar .dropdown-item.logout-item {
+        color: #dc3545;
+    }
 
-        .kucsa-navbar .navbar-user:hover .navbar-avatar {
-            transform: scale(1.05);
-            border-color: var(--kucsa-primary);
-        }
+    .kucsa-navbar .dropdown-item.logout-item i {
+        color: #dc3545;
+    }
 
-        .kucsa-navbar .navbar-default-avatar {
-            width: 40px;
-            height: 40px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: var(--kucsa-gray);
-            background: #e9ecef;
-            border-radius: 50%;
-            transition: var(--kucsa-transition);
-        }
+    .kucsa-navbar .dropdown-item.logout-item:hover {
+        background: rgba(220, 53, 69, 0.08);
+        color: #bd2130;
+    }
 
-        .kucsa-navbar .navbar-user:hover .navbar-default-avatar {
-            background: #dee2e6;
-            color: var(--kucsa-primary);
-        }
+    /* =========================================================
+       PAYMENT ALERT BADGES
+       ========================================================= */
 
-        .kucsa-navbar .navbar-user-name {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--kucsa-dark);
-            line-height: 1.2;
-        }
+    .kucsa-navbar .payment-alert {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #856404;
+        background: rgba(255, 193, 7, 0.12);
+        border: 1px solid rgba(255, 193, 7, 0.25);
+        padding: 0.45rem 0.8rem;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: var(--kucsa-transition);
+    }
 
-        .kucsa-navbar .navbar-user-role {
-            font-size: 0.68rem;
-            font-weight: 500;
-            color: var(--kucsa-gray);
-            line-height: 1.1;
-            margin-top: 1px;
-        }
+    .kucsa-navbar .payment-alert:hover {
+        background: rgba(255, 193, 7, 0.2);
+        color: #533f03;
+        transform: translateY(-1px);
+    }
 
-        /* =========================================================
-           DROPDOWN STYLING
-           ========================================================= */
+    /* =========================================================
+       RESPONSIVE ADAPTATIONS
+       ========================================================= */
 
-        .kucsa-navbar .dropdown-toggle::after {
-            display: none; /* Hide default caret, we use custom one */
-        }
-
-        .kucsa-navbar .dropdown-menu {
-            min-width: 260px;
-            margin-top: 0.5rem;
+    @media (max-width: 991.98px) {
+        .kucsa-navbar .navbar-collapse {
+            background: #fff;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-top: 0.75rem;
             border: 1px solid var(--kucsa-border);
-            box-shadow: var(--kucsa-shadow-md);
-            border-radius: var(--kucsa-radius);
+        }
+        
+        .kucsa-navbar .navbar-user {
+            justify-content: flex-start;
             padding: 0.5rem;
-            animation: dropdownFade 0.25s ease-in-out;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(8px);
         }
 
-        @keyframes dropdownFade {
-            from {
-                opacity: 0;
-                transform: translateY(-8px) scale(0.98);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+        .kucsa-navbar .navbar-user-name,
+        .kucsa-navbar .navbar-user-role {
+            display: block !important; /* Ensure user details show nicely inside mobile drawer menu */
         }
+    }
 
-        .kucsa-navbar .dropdown-header {
-            padding: 0.75rem 1rem;
-            background: var(--kucsa-gray-light);
-            border-radius: var(--kucsa-radius-sm);
-            margin-bottom: 0.35rem;
+    @media (max-width: 575.98px) {
+        .kucsa-navbar {
+            min-height: 62px;
         }
-
-        .kucsa-navbar .dropdown-header strong {
-            font-size: 0.9rem;
-            color: var(--kucsa-dark);
-        }
-
-        .kucsa-navbar .dropdown-header .text-muted {
-            font-size: 0.78rem;
-        }
-
-        .kucsa-navbar .dropdown-item {
-            font-size: 0.85rem;
-            font-weight: 500;
-            padding: 0.6rem 1rem;
-            border-radius: var(--kucsa-radius-sm);
-            transition: var(--kucsa-transition);
-            color: #495057;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .kucsa-navbar .dropdown-item i {
-            width: 22px;
+        .kucsa-navbar .navbar-brand {
             font-size: 1.1rem;
-            color: var(--kucsa-gray);
-            transition: var(--kucsa-transition);
         }
+    }
+</style>
 
-        .kucsa-navbar .dropdown-item:hover {
-            background: rgba(var(--kucsa-primary-rgb), 0.08);
-            color: var(--kucsa-primary);
-            transform: translateX(4px);
-        }
 
-        .kucsa-navbar .dropdown-item:hover i {
-            color: var(--kucsa-primary);
-        }
+<nav class="navbar navbar-expand-lg kucsa-navbar sticky-top">
+    <div class="container-fluid px-3 px-lg-4">
 
-        .kucsa-navbar .dropdown-divider {
-            margin: 0.35rem 0;
-            opacity: 0.5;
-        }
+        <button
+            class="navbar-toggler d-md-none me-2"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#kucsaSidebarOffcanvas"
+            aria-controls="kucsaSidebarOffcanvas"
+            aria-label="Toggle sidebar navigation"
+        >
+            <i class="bi bi-list fs-5"></i>
+        </button>
 
-        /* Logout item special styling */
-        .kucsa-navbar .dropdown-item.logout-item {
-            color: #dc3545;
-        }
+        <a
+            class="navbar-brand d-flex flex-column"
+            href="{% if user.is_authenticated %}{% if user.is_kucsa_admin %}{% url 'admin:index' %}{% elif user.is_executive %}{% url 'executives:dashboard' %}{% elif user.has_platform_access %}{% url 'dashboard:student_dashboard' %}{% else %}{% url 'payments:payment_create' %}{% endif %}{% else %}{% url 'core:home' %}{% endif %}"
+        >
+            <span>KUCSA</span>
+            <small>Computing Association</small>
+        </a>
 
-        .kucsa-navbar .dropdown-item.logout-item i {
-            color: #dc3545;
-        }
+        <button
+            class="navbar-toggler ms-auto"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#kucsaNavbarContent"
+            aria-controls="kucsaNavbarContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
+            <i class="bi bi-three-dots-vertical fs-5"></i>
+        </button>
 
-        .kucsa-navbar .dropdown-item.logout-item:hover {
-            background: rgba(220, 53, 69, 0.08);
-            color: #bd2130;
-        }
+        <div class="collapse navbar-collapse" id="kucsaNavbarContent">
 
-        .kucsa-navbar .dropdown-item.logout-item:hover i {
-            color: #bd2130;
-        }
-
-        /* =========================================================
-           PAYMENT ALERT BADGES
-           ========================================================= */
-
-        .kucsa-navbar .payment-alert {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-            text-decoration: none;
-            transition: var(--kucsa-transition);
-            white-space: nowrap;
-        }
-
-        .kucsa-navbar .payment-alert.required {
-            color: #856404;
-            background: rgba(255, 193, 7, 0.12);
-            border: 1px solid rgba(255, 193, 7, 0.25);
-        }
-
-        .kucsa-navbar .payment-alert.required:hover {
-            background: rgba(255, 193, 7, 0.2);
-            color: #533f03;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);
-        }
-
-        .kucsa-navbar .payment-alert.pending {
-            color: #0c5460;
-            background: rgba(23, 162, 184, 0.1);
-            border: 1px solid rgba(23, 162, 184, 0.2);
-        }
-
-        .kucsa-navbar .payment-alert i {
-            font-size: 1rem;
-        }
-
-        /* =========================================================
-           RESPONSIVE ADAPTATIONS
-           ========================================================= */
-
-        /* Tablet and below */
-        @media (max-width: 991.98px) {
-            .kucsa-navbar .navbar-collapse {
-                background: #fff;
-                padding: 1.25rem;
-                border-radius: var(--kucsa-radius);
-                box-shadow: var(--kucsa-shadow-md);
-                margin-top: 0.75rem;
-                border: 1px solid var(--kucsa-border);
-                max-height: 80vh;
-                overflow-y: auto;
-            }
-
-            .kucsa-navbar .navbar-nav {
-                gap: 0.25rem;
-            }
-
-            .kucsa-navbar .nav-link {
-                padding: 0.7rem 1rem;
-                width: 100%;
-            }
-
-            .kucsa-navbar .nav-link.active::after {
-                display: none;
-            }
-
-            .kucsa-navbar .navbar-user {
-                justify-content: flex-start;
-                padding: 0.5rem;
-                width: 100%;
-            }
-
-            .kucsa-navbar .navbar-user-name,
-            .kucsa-navbar .navbar-user-role {
-                display: block !important;
-            }
-
-            .kucsa-navbar .payment-alert {
-                width: 100%;
-                justify-content: center;
-                margin: 0.5rem 0;
-            }
-        }
-
-        /* Mobile phones */
-        @media (max-width: 575.98px) {
-            .kucsa-navbar {
-                min-height: 62px;
-                padding: 0.25rem 0;
-            }
-
-            .kucsa-navbar .navbar-brand {
-                font-size: 1.1rem;
-            }
-
-            .kucsa-navbar .navbar-brand small {
-                font-size: 0.55rem;
-            }
-
-            .kucsa-navbar .navbar-avatar,
-            .kucsa-navbar .navbar-default-avatar {
-                width: 34px;
-                height: 34px;
-                font-size: 1.6rem;
-            }
-
-            .kucsa-navbar .navbar-user-name {
-                font-size: 0.8rem;
-            }
-
-            .kucsa-navbar .navbar-user-role {
-                font-size: 0.65rem;
-            }
-
-            .kucsa-navbar .dropdown-menu {
-                min-width: 200px;
-                margin-right: -0.5rem;
-            }
-
-            .kucsa-navbar .payment-alert {
-                font-size: 0.7rem;
-                padding: 0.4rem 0.8rem;
-            }
-        }
-
-        /* Very small screens */
-        @media (max-width: 380px) {
-            .kucsa-navbar .navbar-brand {
-                font-size: 0.95rem;
-            }
-
-            .kucsa-navbar .navbar-brand small {
-                font-size: 0.5rem;
-            }
-        }
-
-        /* =========================================================
-           SCROLL BEHAVIOR
-           ========================================================= */
-
-        .kucsa-navbar.scrolled .navbar-brand {
-            font-size: 1.2rem;
-        }
-
-        .kucsa-navbar.scrolled .navbar-brand small {
-            font-size: 0.55rem;
-        }
-
-        /* =========================================================
-           UTILITY - HIDE/SHOW ELEMENTS
-           ========================================================= */
-
-        .d-none-mobile {
-            display: inline;
-        }
-
-        @media (max-width: 575.98px) {
-            .d-none-mobile {
-                display: none !important;
-            }
-        }
-    </style>
-
-    <!-- =========================================================
-    NAVBAR
-    ========================================================= -->
-    <nav class="navbar navbar-expand-lg kucsa-navbar sticky-top" id="kucsaNavbar">
-        <div class="container-fluid px-3 px-lg-4">
-
-            <!-- Mobile Sidebar Toggle -->
-            <button
-                class="navbar-toggler d-md-none me-2"
-                type="button"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#kucsaSidebarOffcanvas"
-                aria-controls="kucsaSidebarOffcanvas"
-                aria-label="Toggle sidebar navigation"
-            >
-                <i class="bi bi-list"></i>
-            </button>
-
-            <!-- Brand -->
-            <a
-                class="navbar-brand d-flex flex-column"
-                href="#"
-            >
-                <span>KUCSA</span>
-                <small>Computing Association</small>
-            </a>
-
-            <!-- Main Toggler -->
-            <button
-                class="navbar-toggler ms-auto"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#kucsaNavbarContent"
-                aria-controls="kucsaNavbarContent"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-            >
-                <i class="bi bi-three-dots-vertical"></i>
-            </button>
-
-            <!-- Navbar Content -->
-            <div class="collapse navbar-collapse" id="kucsaNavbarContent">
-
-                <!-- Left Navigation -->
+            {% if user.is_authenticated %}
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
 
-                    <!-- Dashboard -->
-                    <li class="nav-item">
-                        <a href="#" class="nav-link active">
-                            <i class="bi bi-speedometer2"></i> Dashboard
-                        </a>
-                    </li>
+                    {% if user.is_kucsa_admin %}
+                        <li class="nav-item">
+                            <a href="{% url 'admin:index' %}" class="nav-link {% if request.resolver_match.url_name == 'index' and request.resolver_match.app_name == 'admin' %}active{% endif %}">
+                                <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                            </a>
+                        </li>
+                    {% elif user.is_executive %}
+                        <li class="nav-item">
+                            <a href="{% url 'executives:dashboard' %}" class="nav-link {% if request.resolver_match.app_name == 'executives' %}active{% endif %}">
+                                <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                            </a>
+                        </li>
+                    {% elif user.has_platform_access %}
+                        <li class="nav-item">
+                            <a href="{% url 'dashboard:student_dashboard' %}" class="nav-link {% if request.resolver_match.app_name == 'dashboard' %}active{% endif %}">
+                                <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                            </a>
+                        </li>
+                    {% endif %}
 
-                    <!-- Events -->
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="bi bi-calendar-event"></i> Events
-                        </a>
-                    </li>
-
-                    <!-- Announcements -->
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="bi bi-megaphone"></i> Announcements
-                        </a>
-                    </li>
+                    {% if user.is_kucsa_admin or user.has_platform_access %}
+                        <li class="nav-item">
+                            <a href="{% url 'events:list' %}" class="nav-link {% if request.resolver_match.app_name == 'events' %}active{% endif %}">
+                                <i class="bi bi-calendar-event me-1"></i> Events
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'announcements:list' %}" class="nav-link {% if request.resolver_match.app_name == 'announcements' %}active{% endif %}">
+                                <i class="bi bi-megaphone me-1"></i> Announcements
+                            </a>
+                        </li>
+                    {% endif %}
 
                 </ul>
 
-                <!-- Payment Alert -->
-                <a href="#" class="payment-alert required me-lg-3 mb-2 mb-lg-0">
-                    <i class="bi bi-credit-card"></i>
-                    <span class="d-none-mobile">Complete Membership Payment</span>
-                    <span class="d-sm-none">Payment</span>
-                </a>
+                {% if not user.is_kucsa_admin %}
+                    {% if user.payment_state == "REQUIRED" %}
+                        <a href="{% url 'payments:payment_create' %}" class="payment-alert me-lg-3 mb-2 mb-lg-0">
+                            <i class="bi bi-credit-card"></i> Complete Membership Payment
+                        </a>
+                    {% elif user.payment_state == "PENDING" %}
+                        <span class="payment-alert me-lg-3 mb-2 mb-lg-0">
+                            <i class="bi bi-hourglass-split"></i> Payment Pending Verification
+                        </span>
+                    {% endif %}
+                {% endif %}
 
-                <!-- User Dropdown -->
                 <div class="dropdown">
-                    <button
-                        class="btn btn-link text-decoration-none dropdown-toggle p-0 border-0"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                        aria-label="User menu"
-                    >
+                    <button class="btn btn-link text-decoration-none dropdown-toggle p-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="navbar-user">
-                            <!-- Avatar -->
-                            <span class="navbar-default-avatar" aria-hidden="true">
-                                <i class="bi bi-person-circle"></i>
-                            </span>
-                            <!-- User Info -->
+                            {% if user.profile_picture %}
+                                <img src="{{ user.profile_picture.url }}" class="navbar-avatar" alt="{{ user.full_name|default:user.username }}">
+                            {% else %}
+                                <span class="navbar-default-avatar" aria-hidden="true">
+                                    <i class="bi bi-person-circle"></i>
+                                </span>
+                            {% endif %}
                             <span class="text-start d-none d-lg-block">
-                                <span class="navbar-user-name">John Doe</span>
-                                <span class="navbar-user-role">Student</span>
+                                <span class="navbar-user-name">{{ user.full_name|default:user.username }}</span>
+                                <span class="navbar-user-role">{{ user.get_role_display|default:user.role }}</span>
                             </span>
                         </span>
                     </button>
 
-                    <!-- Dropdown Menu -->
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li>
                             <div class="dropdown-header">
-                                <strong class="text-dark d-block">John Doe</strong>
-                                <div class="text-muted small text-truncate" style="max-width: 200px;">
-                                    john.doe@example.com
-                                </div>
-                                <div class="text-muted small mt-1 font-monospace">
-                                    ID: KUCSA-2024-001
-                                </div>
+                                <strong class="text-dark d-block">{{ user.full_name|default:user.username }}</strong>
+                                {% if user.email %}
+                                    <div class="text-muted small text-truncate" style="max-width: 200px;">{{ user.email }}</div>
+                                {% endif %}
+                                {% if user.membership_number %}
+                                    <div class="text-muted small mt-1 font-monospace">ID: {{ user.membership_number }}</div>
+                                {% endif %}
                             </div>
                         </li>
                         <li><hr class="dropdown-divider my-1"></li>
                         <li>
-                            <a class="dropdown-item" href="#">
+                            <a class="dropdown-item" href="{% url 'accounts:profile' %}">
                                 <i class="bi bi-person"></i> My Profile
                             </a>
                         </li>
+                        {% if not user.is_kucsa_admin %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'payments:payment_list' %}">
+                                    <i class="bi bi-wallet2"></i> My Payments
+                                </a>
+                            </li>
+                        {% endif %}
                         <li>
-                            <a class="dropdown-item" href="#">
-                                <i class="bi bi-wallet2"></i> My Payments
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#">
+                            <a class="dropdown-item" href="{% url 'accounts:change_password' %}">
                                 <i class="bi bi-key"></i> Change Password
                             </a>
                         </li>
+                        {% if user.is_kucsa_admin %}
+                            <li><hr class="dropdown-divider my-1"></li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'admin:index' %}">
+                                    <i class="bi bi-shield-lock"></i> Django Administration
+                                </a>
+                            </li>
+                        {% endif %}
                         <li><hr class="dropdown-divider my-1"></li>
                         <li>
-                            <a class="dropdown-item logout-item" href="#">
+                            <a class="dropdown-item logout-item" href="{% url 'accounts:logout' %}">
                                 <i class="bi bi-box-arrow-right"></i> Logout
                             </a>
                         </li>
                     </ul>
                 </div>
 
-            </div>
+            {% else %}
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+                    <li class="nav-item">
+                        <a href="{% url 'accounts:login' %}" class="nav-link">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                        </a>
+                    </li>
+                    <li class="nav-item mt-2 mt-lg-0">
+                        <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-sm px-3 ms-lg-2 rounded-pill shadow-sm">
+                            <i class="bi bi-person-plus me-1"></i> Register
+                        </a>
+                    </li>
+                </ul>
+            {% endif %}
+
         </div>
-    </nav>
-
-    <!-- =========================================================
-    JAVASCRIPT
-    ========================================================= -->
-    <script>
-        // =========================================================
-        // 1. NAVBAR SCROLL EFFECT
-        // =========================================================
-        (function() {
-            const navbar = document.getElementById('kucsaNavbar');
-            if (!navbar) return;
-
-            let lastScrollY = window.scrollY;
-
-            function handleScroll() {
-                const currentScrollY = window.scrollY;
-
-                // Add shadow when scrolling down
-                if (currentScrollY > 10) {
-                    navbar.classList.add('scrolled');
-                } else {
-                    navbar.classList.remove('scrolled');
-                }
-
-                // Optional: Hide navbar on scroll down, show on scroll up
-                // This creates a smoother user experience
-                if (currentScrollY > lastScrollY && currentScrollY > 100) {
-                    navbar.style.transform = 'translateY(-100%)';
-                    navbar.style.transition = 'transform 0.3s ease-in-out';
-                } else {
-                    navbar.style.transform = 'translateY(0)';
-                }
-
-                lastScrollY = currentScrollY;
-            }
-
-            // Throttle scroll events for performance
-            let ticking = false;
-            window.addEventListener('scroll', function() {
-                if (!ticking) {
-                    window.requestAnimationFrame(function() {
-                        handleScroll();
-                        ticking = false;
-                    });
-                    ticking = true;
-                }
-            });
-
-            // Initial check
-            handleScroll();
-        })();
-
-
-        // =========================================================
-        // 2. DROPDOWN CLOSE ON OUTSIDE CLICK (Accessibility)
-        // =========================================================
-        document.addEventListener('click', function(event) {
-            const dropdowns = document.querySelectorAll('.dropdown');
-            dropdowns.forEach(function(dropdown) {
-                const toggle = dropdown.querySelector('.dropdown-toggle');
-                const menu = dropdown.querySelector('.dropdown-menu');
-
-                if (!dropdown.contains(event.target)) {
-                    const bsDropdown = bootstrap.Dropdown.getInstance(toggle);
-                    if (bsDropdown && menu.classList.contains('show')) {
-                        bsDropdown.hide();
-                    }
-                }
-            });
-        });
-
-
-        // =========================================================
-        // 3. RESPONSIVE NAVBAR TOGGLE CLOSE ON NAV LINK CLICK
-        // =========================================================
-        document.addEventListener('DOMContentLoaded', function() {
-            const navLinks = document.querySelectorAll('.kucsa-navbar .nav-link');
-            const navbarCollapse = document.getElementById('kucsaNavbarContent');
-
-            navLinks.forEach(function(link) {
-                link.addEventListener('click', function() {
-                    // Only on mobile/tablet (navbar is collapsed)
-                    if (window.innerWidth <= 991.98) {
-                        const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
-                        if (bsCollapse) {
-                            bsCollapse.hide();
-                        }
-                    }
-                });
-            });
-        });
-
-
-        // =========================================================
-        // 4. KEYBOARD ACCESSIBILITY - ENTER/SPACE on dropdown toggle
-        // =========================================================
-        document.querySelectorAll('.kucsa-navbar .dropdown-toggle').forEach(function(toggle) {
-            toggle.addEventListener('keydown', function(event) {
-                if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    this.click();
-                }
-            });
-        });
-
-
-        // =========================================================
-        // 5. DYNAMIC PAYMENT STATE (Demo - Replace with actual logic)
-        // =========================================================
-        // This shows how you could dynamically update payment alerts
-        // based on user state from your backend
-        function updatePaymentState(state) {
-            const alert = document.querySelector('.payment-alert');
-            if (!alert) return;
-
-            // Remove existing classes
-            alert.classList.remove('required', 'pending');
-
-            if (state === 'REQUIRED') {
-                alert.classList.add('required');
-                alert.innerHTML = `
-                    <i class="bi bi-credit-card"></i>
-                    <span class="d-none-mobile">Complete Membership Payment</span>
-                    <span class="d-sm-none">Payment</span>
-                `;
-                alert.style.display = 'inline-flex';
-            } else if (state === 'PENDING') {
-                alert.classList.add('pending');
-                alert.innerHTML = `
-                    <i class="bi bi-hourglass-split"></i>
-                    <span class="d-none-mobile">Payment Pending Verification</span>
-                    <span class="d-sm-none">Pending</span>
-                `;
-                alert.style.display = 'inline-flex';
-            } else {
-                // PAID or VERIFIED - hide alert
-                alert.style.display = 'none';
-            }
-        }
-
-        // Example usage (uncomment to test):
-        // updatePaymentState('REQUIRED');
-        // updatePaymentState('PENDING');
-        // updatePaymentState('PAID');
-
-
-        console.log('🏛️ KUCSA Navigation System initialized');
-        console.log('📱 Responsive ready | ✨ Modern UI | 🎯 Accessible');
-    </script>
-
-    <!-- Bootstrap 5 JS Bundle (CDN) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    </div>
+</nav>

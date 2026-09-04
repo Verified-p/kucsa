@@ -4,206 +4,323 @@
      ========================================================= -->
 
 <style>
-    :root {
-        --kucsa-primary: #0d6efd;
-        --kucsa-primary-rgb: 13, 110, 253;
-        --kucsa-dark: #212529;
-        --kucsa-gray-light: #f8f9fa;
-        --kucsa-border: rgba(0, 0, 0, 0.08);
-        --kucsa-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+    /* =========================================================
+       SIDEBAR BASE
+       ========================================================= */
 
     .kucsa-sidebar {
-        width: 280px;
-        height: 100%;
-        background: #ffffff;
-        border-right: 1px solid var(--kucsa-border);
-        display: flex;
-        flex-direction: column;
+        background: #212529;
+        color: #fff;
+        min-height: 100%;
+        height: 100vh;
+        overflow-x: hidden;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
-        transition: var(--kucsa-transition);
+        transition: all 0.3s ease;
+        box-shadow: 4px 0 25px rgba(0, 0, 0, 0.15);
     }
 
-    /* Custom Scrollbar for Sidebar */
+    .kucsa-sidebar * {
+        box-sizing: border-box;
+    }
+
+    /* Modern Custom Scrollbar */
     .kucsa-sidebar::-webkit-scrollbar {
-        width: 6px;
+        width: 5px;
     }
     .kucsa-sidebar::-webkit-scrollbar-track {
-        background: transparent;
+        background: rgba(255, 255, 255, 0.02);
     }
     .kucsa-sidebar::-webkit-scrollbar-thumb {
-        background: rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.15);
         border-radius: 10px;
     }
     .kucsa-sidebar::-webkit-scrollbar-thumb:hover {
-        background: rgba(0, 0, 0, 0.2);
+        background: rgba(255, 255, 255, 0.3);
     }
 
+
     /* =========================================================
-       USER PROFILE HEADER
+       PROFILE HEADER
        ========================================================= */
 
     .kucsa-sidebar .sidebar-header {
-        padding: 1.5rem 1.25rem 1rem 1.25rem;
+        padding: 1.75rem 1rem 1.25rem 1rem;
         text-align: center;
-        border-bottom: 1px solid var(--kucsa-border);
-        background: linear-gradient(180deg, rgba(var(--kucsa-primary-rgb), 0.03) 0%, rgba(255, 255, 255, 0) 100%);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(0, 0, 0, 0) 100%);
     }
 
     .kucsa-sidebar .sidebar-profile-picture {
-        width: 72px;
-        height: 72px;
+        width: 82px;
+        height: 82px;
         object-fit: cover;
         border-radius: 50%;
-        border: 3px solid #fff;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        margin-bottom: 0.75rem;
+        border: 3px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        transition: transform 0.2s ease;
+    }
+
+    .kucsa-sidebar .sidebar-profile-picture:hover {
+        transform: scale(1.03);
     }
 
     .kucsa-sidebar .sidebar-default-avatar {
-        font-size: 4rem;
-        color: #adb5bd;
-        line-height: 1;
-        margin-bottom: 0.5rem;
         display: inline-block;
+        font-size: 4.5rem;
+        line-height: 1;
+        color: rgba(255, 255, 255, 0.85);
     }
 
     .kucsa-sidebar .sidebar-user-name {
-        font-size: 0.95rem;
+        color: #fff;
+        font-size: 1rem;
         font-weight: 700;
-        color: var(--kucsa-dark);
-        margin-bottom: 0.15rem;
+        margin-top: 0.75rem;
+        margin-bottom: 0.2rem;
+        letter-spacing: -0.01em;
     }
 
     .kucsa-sidebar .sidebar-user-role {
+        color: #0dcaf0;
         font-size: 0.75rem;
         font-weight: 600;
-        color: var(--kucsa-primary);
         text-transform: uppercase;
         letter-spacing: 0.04em;
-        margin-bottom: 0.25rem;
     }
 
     .kucsa-sidebar .sidebar-membership-number {
-        font-size: 0.72rem;
-        color: #6c757d;
+        color: rgba(255, 255, 255, 0.45);
+        font-size: 0.7rem;
         font-family: monospace;
-        margin-bottom: 0.65rem;
+        margin-top: 0.35rem;
     }
 
+
+    /* =========================================================
+       STATUS BADGES
+       ========================================================= */
+
     .kucsa-sidebar .sidebar-status {
-        margin-top: 0.5rem;
+        margin-top: 0.85rem;
     }
 
     .kucsa-sidebar .sidebar-status .badge {
-        font-size: 0.7rem;
+        font-size: 0.68rem;
         font-weight: 600;
-        padding: 0.35rem 0.65rem;
+        padding: 0.4rem 0.75rem;
         border-radius: 20px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
 
+
     /* =========================================================
-       NAVIGATION LIST & SECTIONS
+       NAVIGATION
        ========================================================= */
 
     .kucsa-sidebar .sidebar-nav {
-        padding: 1rem 0.75rem 2rem 0.75rem;
-        gap: 0.15rem;
-    }
-
-    .kucsa-sidebar .sidebar-section {
-        padding: 1rem 0.75rem 0.35rem 0.75rem;
-    }
-
-    .kucsa-sidebar .sidebar-section-title {
-        font-size: 0.68rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: #adb5bd;
+        padding: 1rem 0.75rem 2.5rem 0.75rem;
+        margin: 0;
     }
 
     .kucsa-sidebar .nav-item {
+        list-style: none;
         width: 100%;
     }
 
     .kucsa-sidebar .nav-link {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
-        font-size: 0.85rem;
-        font-weight: 500;
-        color: #495057;
+        min-height: 44px;
+        margin: 3px 0;
         padding: 0.65rem 0.85rem;
         border-radius: 9px;
-        transition: var(--kucsa-transition);
+        color: rgba(255, 255, 255, 0.8) !important;
+        text-decoration: none;
+        font-size: 0.86rem;
+        font-weight: 500;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
     }
 
     .kucsa-sidebar .nav-link i {
-        font-size: 1.05rem;
-        color: #6c757d;
-        transition: var(--kucsa-transition);
-        width: 20px;
+        width: 22px;
+        min-width: 22px;
+        margin-right: 0.75rem;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 1rem;
         text-align: center;
+        transition: color 0.2s ease;
+    }
+
+    .kucsa-sidebar .nav-link span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .kucsa-sidebar .nav-link:hover {
-        background: rgba(var(--kucsa-primary-rgb), 0.06);
-        color: var(--kucsa-primary);
-        transform: translateX(3px);
+        background: rgba(255, 255, 255, 0.07);
+        color: #fff !important;
+        transform: translateX(4px);
     }
 
     .kucsa-sidebar .nav-link:hover i {
-        color: var(--kucsa-primary);
+        color: #fff;
     }
 
     .kucsa-sidebar .nav-link.active {
-        background: rgba(var(--kucsa-primary-rgb), 0.12);
-        color: var(--kucsa-primary);
+        background: linear-gradient(90deg, rgba(13, 110, 253, 0.25) 0%, rgba(255, 255, 255, 0.1) 100%);
+        color: #fff !important;
         font-weight: 600;
+        border-left: 3px solid #0d6efd;
     }
 
     .kucsa-sidebar .nav-link.active i {
-        color: var(--kucsa-primary);
+        color: #0d6efd;
     }
 
-    /* Dividers */
-    .kucsa-sidebar .sidebar-divider {
-        border-top: 1px solid var(--kucsa-border);
-        margin: 0.75rem 0.5rem;
-    }
 
     /* =========================================================
-       PAYMENT & STATUS ALERT BOXES INSIDE SIDEBAR
+       SECTION TITLES
+       ========================================================= */
+
+    .kucsa-sidebar .sidebar-section {
+        margin-top: 1.25rem;
+        margin-bottom: 0.35rem;
+        padding: 0 0.5rem;
+    }
+
+    .kucsa-sidebar .sidebar-section-title {
+        display: block;
+        color: rgba(255, 255, 255, 0.38) !important;
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+
+    /* =========================================================
+       DIVIDERS
+       ========================================================= */
+
+    .kucsa-sidebar .sidebar-divider {
+        margin: 1rem 0.5rem;
+        border: 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+
+    /* =========================================================
+       PAYMENT NOTICES
        ========================================================= */
 
     .kucsa-sidebar .payment-required-box,
     .kucsa-sidebar .payment-pending-box {
-        font-size: 0.78rem;
-        padding: 0.75rem;
+        margin: 0.5rem 0;
+        padding: 0.85rem;
         border-radius: 9px;
-        margin: 0.35rem 0.5rem;
-        line-height: 1.4;
+        font-size: 0.75rem;
+        line-height: 1.5;
+        color: rgba(255, 255, 255, 0.85);
     }
 
     .kucsa-sidebar .payment-required-box {
-        background: rgba(255, 193, 7, 0.1);
-        border: 1px solid rgba(255, 193, 7, 0.25);
-        color: #856404;
+        background: rgba(255, 193, 7, 0.08);
+        border: 1px solid rgba(255, 193, 7, 0.2);
+    }
+
+    .kucsa-sidebar .payment-required-box strong {
+        display: block;
+        color: #ffc107;
+        margin-bottom: 0.25rem;
     }
 
     .kucsa-sidebar .payment-pending-box {
-        background: rgba(13, 202, 240, 0.1);
-        border: 1px solid rgba(13, 202, 240, 0.25);
-        color: #055160;
+        background: rgba(13, 202, 240, 0.08);
+        border: 1px solid rgba(13, 202, 240, 0.2);
     }
 
-    /* Responsive Adjustments for Offcanvas / Mobile */
+    .kucsa-sidebar .payment-pending-box strong {
+        display: block;
+        color: #0dcaf0;
+        margin-bottom: 0.25rem;
+    }
+
+
+    /* =========================================================
+       ACCOUNT STATUS
+       ========================================================= */
+
+    .kucsa-sidebar .account-state-box {
+        margin: 0.5rem 0;
+        padding: 0.75rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 8px;
+        font-size: 0.72rem;
+    }
+
+    .kucsa-sidebar .account-state-label {
+        color: rgba(255, 255, 255, 0.4);
+        display: block;
+        margin-bottom: 0.15rem;
+    }
+
+    .kucsa-sidebar .account-state-value {
+        color: rgba(255, 255, 255, 0.85);
+        font-weight: 500;
+    }
+
+
+    /* =========================================================
+       LOGOUT
+       ========================================================= */
+
+    .kucsa-sidebar .logout-link {
+        color: #ff6b6b !important;
+    }
+
+    .kucsa-sidebar .logout-link i {
+        color: #ff6b6b !important;
+    }
+
+    .kucsa-sidebar .logout-link:hover {
+        background: rgba(220, 53, 69, 0.15);
+        color: #ff8585 !important;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE ADAPTATIONS (MOBILE, TABLET, LAPTOP, DESKTOP)
+       ========================================================= */
+
     @media (max-width: 991.98px) {
         .kucsa-sidebar {
+            height: 100%;
             width: 100%;
-            border-right: none;
+            box-shadow: none;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .kucsa-sidebar .sidebar-header {
+            padding: 1.25rem 0.75rem;
+        }
+
+        .kucsa-sidebar .sidebar-profile-picture {
+            width: 72px;
+            height: 72px;
+        }
+
+        .kucsa-sidebar .sidebar-default-avatar {
+            font-size: 3.8rem;
+        }
+
+        .kucsa-sidebar .nav-link {
+            padding: 0.6rem 0.75rem;
+            margin: 2px 0;
         }
     }
 </style>
@@ -1740,6 +1857,7 @@
     </ul>
 
 </div>
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const sidebarLinks = document.querySelectorAll('.kucsa-sidebar .nav-link');

@@ -1,4 +1,3 @@
-
 # finance/permissions.py
 
 """
@@ -51,6 +50,26 @@ The service layer can use:
     require_permission(user, permission_function)
 
 which raises PermissionDenied when access is not allowed.
+
+IMPORTANT FINANCE RULE
+----------------------
+
+Viewing financial records is different from managing financial
+records.
+
+Therefore:
+
+    ADMIN
+        Full access.
+
+    TREASURER
+        Full access.
+
+    EXECUTIVE
+        Read-only access.
+
+    MEMBER / STUDENT
+        No finance access.
 """
 
 
@@ -90,6 +109,7 @@ def require_permission(user, permission):
 
             can_manage_finance
             can_manage_expenses
+            can_view_income
             can_view_audit_logs
 
     Returns
@@ -101,14 +121,6 @@ def require_permission(user, permission):
     ------
     PermissionDenied
         When permission is not granted.
-
-    Example
-    -------
-
-        require_permission(
-            user,
-            can_manage_expenses,
-        )
     """
 
     if not callable(permission):
@@ -241,11 +253,38 @@ def can_manage_finance(user):
 
         ADMIN
         TREASURER
+
+    This permission MUST NOT be used for simple
+    read-only finance pages.
     """
 
     return (
         is_admin(user)
         or is_treasurer(user)
+    )
+
+
+# =============================================================================
+# GENERAL FINANCE VIEW ACCESS
+# =============================================================================
+
+def can_view_finance(user):
+    """
+    General finance read access.
+
+    Allowed:
+
+        ADMIN
+        TREASURER
+        EXECUTIVE
+
+    This is the basic read-only finance permission.
+    """
+
+    return (
+        is_admin(user)
+        or is_treasurer(user)
+        or is_executive(user)
     )
 
 
@@ -266,11 +305,7 @@ def can_access_finance_dashboard(user):
     Executives receive read-only access.
     """
 
-    return (
-        is_admin(user)
-        or is_treasurer(user)
-        or is_executive(user)
-    )
+    return can_view_finance(user)
 
 
 # =============================================================================
@@ -302,11 +337,7 @@ def can_view_financial_transactions(user):
         EXECUTIVE
     """
 
-    return (
-        is_admin(user)
-        or is_treasurer(user)
-        or is_executive(user)
-    )
+    return can_view_finance(user)
 
 
 def can_edit_transaction(
@@ -337,14 +368,35 @@ def can_edit_transaction(
 # INCOME
 # =============================================================================
 
-def can_manage_income(user):
+def can_view_income(user):
     """
-    Manage financial income.
+    View income records.
 
     Allowed:
 
         ADMIN
         TREASURER
+        EXECUTIVE
+
+    EXECUTIVE users have read-only access.
+    They cannot create, edit, or otherwise manage income.
+    """
+
+    return can_view_finance(user)
+
+
+def can_manage_income(user):
+    """
+    Create, edit, post, update, or otherwise manage
+    financial income.
+
+    Allowed:
+
+        ADMIN
+        TREASURER
+
+    EXECUTIVE users are intentionally excluded because
+    their finance access is read-only.
     """
 
     return can_manage_finance(user)
@@ -357,6 +409,8 @@ def can_create_income_from_payment(
     """
     Determine whether a user can create income
     from a completed payment.
+
+    Only ADMIN and TREASURER may perform this action.
 
     The service layer additionally verifies that:
 
@@ -416,6 +470,9 @@ def can_manage_expenses(user):
 def can_submit_expense(user):
     """
     Submit an expense.
+
+    Only ADMIN and TREASURER may submit expenses
+    under the current finance authorization model.
     """
 
     return can_manage_expenses(user)
@@ -424,6 +481,11 @@ def can_submit_expense(user):
 def can_approve_expense(user):
     """
     Approve an expense.
+
+    Allowed:
+
+        ADMIN
+        TREASURER
     """
 
     return can_manage_expenses(user)
@@ -432,6 +494,11 @@ def can_approve_expense(user):
 def can_reject_expense(user):
     """
     Reject an expense.
+
+    Allowed:
+
+        ADMIN
+        TREASURER
     """
 
     return can_manage_expenses(user)
@@ -440,6 +507,11 @@ def can_reject_expense(user):
 def can_pay_expense(user):
     """
     Pay an approved expense.
+
+    Allowed:
+
+        ADMIN
+        TREASURER
     """
 
     return can_manage_expenses(user)
@@ -448,6 +520,11 @@ def can_pay_expense(user):
 def can_void_expense(user):
     """
     Void an expense.
+
+    Allowed:
+
+        ADMIN
+        TREASURER
     """
 
     return can_manage_expenses(user)
@@ -486,11 +563,7 @@ def can_view_expenses(user):
         EXECUTIVE
     """
 
-    return (
-        is_admin(user)
-        or is_treasurer(user)
-        or is_executive(user)
-    )
+    return can_view_finance(user)
 
 
 # =============================================================================
@@ -593,11 +666,7 @@ def can_view_reconciliation(user):
         EXECUTIVE
     """
 
-    return (
-        is_admin(user)
-        or is_treasurer(user)
-        or is_executive(user)
-    )
+    return can_view_finance(user)
 
 
 # =============================================================================
@@ -612,6 +681,9 @@ def can_view_financial_reports(user):
 
         ADMIN
         TREASURER
+
+    Executives do not receive access to detailed
+    financial reports under this permission model.
     """
 
     return can_manage_finance(user)
@@ -657,28 +729,8 @@ def can_delete_financial_records(user):
 
     They should be voided instead so that financial history
     remains traceable.
+
+    Therefore physical deletion is never permitted.
     """
 
     return False
-
-
-# =============================================================================
-# OPTIONAL GENERAL FINANCE VIEW ACCESS
-# =============================================================================
-
-def can_view_finance(user):
-    """
-    General finance read access.
-
-    Allowed:
-
-        ADMIN
-        TREASURER
-        EXECUTIVE
-    """
-
-    return (
-        is_admin(user)
-        or is_treasurer(user)
-        or is_executive(user)
-    )

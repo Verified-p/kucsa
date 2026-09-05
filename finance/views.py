@@ -92,6 +92,7 @@ from .permissions import (
     can_view_audit_logs,
     can_view_expenses,
     can_view_financial_transactions,
+    can_view_income,
     can_view_reconciliation,
 )
 
@@ -785,12 +786,19 @@ def income(request):
     """
     Display all Finance income transactions.
 
+    Access:
+        ADMIN
+        TREASURER
+        EXECUTIVE
+
+    EXECUTIVE users have read-only access.
+
     Only POSTED income affects accounting.
     """
 
     _require_permission(
         request.user,
-        can_view_financial_transactions,
+        can_view_income,
     )
 
     income_transactions = (

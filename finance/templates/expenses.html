@@ -4,199 +4,1027 @@
 
 {% block content %}
 
-<div class="container-fluid py-4">
+<style>
+    /* ============================================================
+       KUCSA FINANCE — EXPENSES PAGE
+       Page-scoped styling to avoid affecting the rest of the system
+    ============================================================ */
 
-    <!-- =====================================================
+    .kucsa-expenses-page {
+        --kucsa-primary: #0d6efd;
+        --kucsa-primary-dark: #0a58ca;
+        --kucsa-surface: #ffffff;
+        --kucsa-surface-soft: #f8fafc;
+        --kucsa-border: #e9edf3;
+        --kucsa-text: #172033;
+        --kucsa-muted: #6b7280;
+        --kucsa-radius: 16px;
+        --kucsa-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
+
+        color: var(--kucsa-text);
+        padding-bottom: 2rem;
+    }
+
+    /* ============================================================
+       PAGE HEADER
+    ============================================================ */
+
+    .kucsa-expenses-page .expenses-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .kucsa-expenses-page .header-icon {
+        width: 52px;
+        height: 52px;
+        min-width: 52px;
+        border-radius: 15px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #fff1f2, #ffe4e6);
+        color: #dc3545;
+        font-size: 1.35rem;
+        box-shadow: inset 0 0 0 1px rgba(220, 53, 69, 0.08);
+    }
+
+    .kucsa-expenses-page .page-title {
+        font-size: clamp(1.35rem, 2vw, 1.75rem);
+        letter-spacing: -0.02em;
+        color: #111827;
+    }
+
+    .kucsa-expenses-page .page-subtitle {
+        font-size: 0.92rem;
+        color: var(--kucsa-muted);
+        line-height: 1.5;
+    }
+
+    .kucsa-expenses-page .record-expense-btn {
+        min-height: 44px;
+        border-radius: 11px;
+        padding: 0.65rem 1rem;
+        font-weight: 600;
+        white-space: nowrap;
+        box-shadow: 0 5px 14px rgba(13, 110, 253, 0.18);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .kucsa-expenses-page .record-expense-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(13, 110, 253, 0.24);
+    }
+
+    /* ============================================================
+       SUMMARY CARDS
+    ============================================================ */
+
+    .kucsa-expenses-page .summary-card {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--kucsa-border) !important;
+        border-radius: var(--kucsa-radius);
+        background: var(--kucsa-surface);
+        box-shadow: var(--kucsa-shadow);
+        transition:
+            transform 0.22s ease,
+            box-shadow 0.22s ease,
+            border-color 0.22s ease;
+    }
+
+    .kucsa-expenses-page .summary-card::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 3px;
+        background: currentColor;
+        opacity: 0.1;
+    }
+
+    .kucsa-expenses-page .summary-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 14px 34px rgba(15, 23, 42, 0.09);
+        border-color: #dce2ea !important;
+    }
+
+    .kucsa-expenses-page .summary-card .card-body {
+        padding: 1.15rem;
+    }
+
+    .kucsa-expenses-page .summary-label {
+        display: block;
+        color: var(--kucsa-muted);
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.045em;
+    }
+
+    .kucsa-expenses-page .summary-value {
+        margin-top: 0.3rem;
+        font-size: clamp(1.05rem, 2vw, 1.35rem);
+        color: #111827;
+        letter-spacing: -0.02em;
+        white-space: nowrap;
+    }
+
+    .kucsa-expenses-page .summary-icon {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        border-radius: 13px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.05rem;
+    }
+
+    .kucsa-expenses-page .summary-card.total {
+        color: #dc3545;
+    }
+
+    .kucsa-expenses-page .summary-card.total .summary-icon {
+        background: #fff1f2;
+        color: #dc3545;
+    }
+
+    .kucsa-expenses-page .summary-card.paid {
+        color: #198754;
+    }
+
+    .kucsa-expenses-page .summary-card.paid .summary-icon {
+        background: #ecfdf3;
+        color: #198754;
+    }
+
+    .kucsa-expenses-page .summary-card.pending {
+        color: #d97706;
+    }
+
+    .kucsa-expenses-page .summary-card.pending .summary-icon {
+        background: #fff7ed;
+        color: #d97706;
+    }
+
+    .kucsa-expenses-page .summary-card.rejected {
+        color: #6b7280;
+    }
+
+    .kucsa-expenses-page .summary-card.rejected .summary-icon {
+        background: #f3f4f6;
+        color: #6b7280;
+    }
+
+    /* ============================================================
+       FILTER CARD
+    ============================================================ */
+
+    .kucsa-expenses-page .filter-card {
+        border: 1px solid var(--kucsa-border) !important;
+        border-radius: var(--kucsa-radius);
+        background: var(--kucsa-surface);
+        box-shadow: var(--kucsa-shadow);
+    }
+
+    .kucsa-expenses-page .filter-card .card-body {
+        padding: 1.15rem;
+    }
+
+    .kucsa-expenses-page .filter-title {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .kucsa-expenses-page .filter-title-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #eff6ff;
+        color: var(--kucsa-primary);
+    }
+
+    .kucsa-expenses-page .form-label {
+        margin-bottom: 0.45rem;
+        color: #374151;
+        font-size: 0.84rem;
+    }
+
+    .kucsa-expenses-page .form-control,
+    .kucsa-expenses-page .form-select {
+        min-height: 44px;
+        border: 1px solid #dfe4ea;
+        border-radius: 10px;
+        color: #1f2937;
+        background-color: #fff;
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            background-color 0.2s ease;
+    }
+
+    .kucsa-expenses-page .form-control:focus,
+    .kucsa-expenses-page .form-select:focus {
+        border-color: rgba(13, 110, 253, 0.55);
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.09);
+    }
+
+    .kucsa-expenses-page .filter-btn {
+        min-height: 44px;
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+    .kucsa-expenses-page .clear-filter-btn {
+        width: 44px;
+        min-width: 44px;
+        min-height: 44px;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* ============================================================
+       EXPENSE RECORD CARD
+    ============================================================ */
+
+    .kucsa-expenses-page .records-card {
+        border: 1px solid var(--kucsa-border) !important;
+        border-radius: var(--kucsa-radius);
+        overflow: hidden;
+        background: var(--kucsa-surface);
+        box-shadow: var(--kucsa-shadow);
+    }
+
+    .kucsa-expenses-page .records-header {
+        padding: 1rem 1.15rem;
+        background: #fff;
+        border-bottom: 1px solid var(--kucsa-border);
+    }
+
+    .kucsa-expenses-page .records-title {
+        font-size: 1rem;
+        color: #111827;
+    }
+
+    .kucsa-expenses-page .records-count {
+        border: 1px solid #e5e7eb;
+        background: #f8fafc !important;
+        color: #4b5563 !important;
+        border-radius: 999px;
+        padding: 0.4rem 0.7rem;
+        font-weight: 600;
+    }
+
+    /* ============================================================
+       DESKTOP TABLE
+    ============================================================ */
+
+    .kucsa-expenses-page .expense-table {
+        margin: 0;
+        min-width: 980px;
+    }
+
+    .kucsa-expenses-page .expense-table thead th {
+        padding: 0.85rem 0.75rem;
+        border-bottom: 1px solid var(--kucsa-border);
+        background: #f8fafc;
+        color: #6b7280;
+        font-size: 0.73rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.045em;
+        white-space: nowrap;
+    }
+
+    .kucsa-expenses-page .expense-table tbody td {
+        padding: 0.95rem 0.75rem;
+        border-color: #f0f2f5;
+        color: #374151;
+        font-size: 0.88rem;
+        vertical-align: middle;
+    }
+
+    .kucsa-expenses-page .expense-table tbody tr {
+        transition: background-color 0.18s ease;
+    }
+
+    .kucsa-expenses-page .expense-table tbody tr:hover {
+        background-color: #f8fbff;
+    }
+
+    .kucsa-expenses-page .expense-title {
+        max-width: 230px;
+        color: #1f2937;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .kucsa-expenses-page .expense-number {
+        font-size: 0.72rem;
+        color: #8a94a6;
+        letter-spacing: 0.02em;
+    }
+
+    .kucsa-expenses-page .amount-value {
+        color: #111827;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .kucsa-expenses-page .payment-reference {
+        display: block;
+        max-width: 145px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: #8a94a6;
+        font-size: 0.72rem;
+        margin-top: 2px;
+    }
+
+    /* ============================================================
+       STATUS BADGES
+    ============================================================ */
+
+    .kucsa-expenses-page .expense-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        border-radius: 999px;
+        padding: 0.42rem 0.65rem;
+        font-size: 0.72rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .kucsa-expenses-page .expense-status::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        opacity: 0.75;
+    }
+
+    .kucsa-expenses-page .status-draft {
+        background: #f1f3f5;
+        color: #59636e;
+    }
+
+    .kucsa-expenses-page .status-submitted {
+        background: #fff8e6;
+        color: #a16207;
+    }
+
+    .kucsa-expenses-page .status-approved {
+        background: #e8f5ff;
+        color: #087ea4;
+    }
+
+    .kucsa-expenses-page .status-paid {
+        background: #eaf8f0;
+        color: #16794c;
+    }
+
+    .kucsa-expenses-page .status-rejected {
+        background: #fff0f1;
+        color: #c92a3b;
+    }
+
+    .kucsa-expenses-page .status-voided {
+        background: #eceff1;
+        color: #343a40;
+    }
+
+    /* ============================================================
+       ACTION BUTTON
+    ============================================================ */
+
+    .kucsa-expenses-page .view-expense-btn {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        border-radius: 9px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+            transform 0.18s ease,
+            background-color 0.18s ease;
+    }
+
+    .kucsa-expenses-page .view-expense-btn:hover {
+        transform: translateY(-1px);
+    }
+
+    /* ============================================================
+       MOBILE EXPENSE CARDS
+    ============================================================ */
+
+    .kucsa-expenses-page .mobile-expense-list {
+        display: none;
+    }
+
+    .kucsa-expenses-page .mobile-expense-card {
+        margin: 0.8rem;
+        padding: 1rem;
+        border: 1px solid #e8ebef;
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: 0 4px 15px rgba(15, 23, 42, 0.045);
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .kucsa-expenses-page .mobile-expense-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07);
+    }
+
+    .kucsa-expenses-page .mobile-expense-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding-bottom: 0.85rem;
+        border-bottom: 1px solid #f0f2f5;
+    }
+
+    .kucsa-expenses-page .mobile-expense-title {
+        min-width: 0;
+    }
+
+    .kucsa-expenses-page .mobile-expense-title strong {
+        display: block;
+        color: #1f2937;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
+    }
+
+    .kucsa-expenses-page .mobile-expense-number {
+        display: block;
+        margin-top: 0.2rem;
+        color: #8a94a6;
+        font-size: 0.72rem;
+    }
+
+    .kucsa-expenses-page .mobile-expense-amount {
+        margin-top: 0.85rem;
+        color: #111827;
+        font-size: 1.05rem;
+        font-weight: 800;
+    }
+
+    .kucsa-expenses-page .mobile-expense-details {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.8rem;
+        margin-top: 0.9rem;
+    }
+
+    .kucsa-expenses-page .mobile-detail-label {
+        display: block;
+        color: #8a94a6;
+        font-size: 0.69rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 0.2rem;
+    }
+
+    .kucsa-expenses-page .mobile-detail-value {
+        color: #374151;
+        font-size: 0.82rem;
+        overflow-wrap: anywhere;
+    }
+
+    .kucsa-expenses-page .mobile-expense-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin-top: 1rem;
+        padding-top: 0.85rem;
+        border-top: 1px solid #f0f2f5;
+    }
+
+    /* ============================================================
+       PAGINATION
+    ============================================================ */
+
+    .kucsa-expenses-page .pagination-wrapper {
+        padding: 1rem;
+        border-top: 1px solid var(--kucsa-border);
+        background: #fff;
+    }
+
+    .kucsa-expenses-page .pagination {
+        gap: 0.3rem;
+    }
+
+    .kucsa-expenses-page .page-link {
+        border-radius: 9px !important;
+        border: 1px solid #e2e6eb;
+        color: #4b5563;
+        min-width: 38px;
+        min-height: 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.82rem;
+        transition:
+            background-color 0.18s ease,
+            color 0.18s ease,
+            border-color 0.18s ease;
+    }
+
+    .kucsa-expenses-page .page-link:hover {
+        background: #f3f7ff;
+        border-color: #cbdaf5;
+        color: var(--kucsa-primary);
+    }
+
+    .kucsa-expenses-page .page-item.active .page-link {
+        background: var(--kucsa-primary);
+        border-color: var(--kucsa-primary);
+        color: #fff;
+        font-weight: 700;
+    }
+
+    /* ============================================================
+       EMPTY STATE
+    ============================================================ */
+
+    .kucsa-expenses-page .empty-state {
+        padding: 4rem 1.5rem;
+        text-align: center;
+    }
+
+    .kucsa-expenses-page .empty-icon {
+        width: 76px;
+        height: 76px;
+        margin: 0 auto 1rem;
+        border-radius: 22px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8fafc;
+        color: #94a3b8;
+        font-size: 2rem;
+        border: 1px solid #e8edf2;
+    }
+
+    .kucsa-expenses-page .empty-state h5 {
+        color: #1f2937;
+    }
+
+    .kucsa-expenses-page .empty-state p {
+        max-width: 430px;
+        margin-left: auto;
+        margin-right: auto;
+        color: #7b8492;
+        line-height: 1.6;
+    }
+
+    /* ============================================================
+       LOADING STATE
+    ============================================================ */
+
+    .kucsa-expenses-page .btn-loading {
+        pointer-events: none;
+        opacity: 0.75;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+
+    @media (max-width: 991.98px) {
+        .kucsa-expenses-page {
+            padding-bottom: 1.25rem;
+        }
+
+        .kucsa-expenses-page .expense-table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .kucsa-expenses-page .expense-table-wrapper::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .kucsa-expenses-page .expense-table-wrapper::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 999px;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .kucsa-expenses-page .expenses-header {
+            align-items: stretch !important;
+        }
+
+        .kucsa-expenses-page .header-content {
+            width: 100%;
+        }
+
+        .kucsa-expenses-page .record-expense-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .kucsa-expenses-page .filter-card .card-body {
+            padding: 1rem;
+        }
+
+        .kucsa-expenses-page .filter-actions {
+            width: 100%;
+        }
+
+        .kucsa-expenses-page .filter-actions .filter-btn {
+            flex: 1;
+        }
+
+        .kucsa-expenses-page .desktop-expense-table {
+            display: none;
+        }
+
+        .kucsa-expenses-page .mobile-expense-list {
+            display: block;
+        }
+
+        .kucsa-expenses-page .records-header {
+            padding: 0.95rem 1rem;
+        }
+
+        .kucsa-expenses-page .empty-state {
+            padding: 3rem 1rem;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .kucsa-expenses-page {
+            padding-bottom: 1rem;
+        }
+
+        .kucsa-expenses-page .page-title {
+            font-size: 1.3rem;
+        }
+
+        .kucsa-expenses-page .page-subtitle {
+            font-size: 0.84rem;
+        }
+
+        .kucsa-expenses-page .header-icon {
+            width: 46px;
+            height: 46px;
+            min-width: 46px;
+            border-radius: 13px;
+        }
+
+        .kucsa-expenses-page .summary-card .card-body {
+            padding: 1rem;
+        }
+
+        .kucsa-expenses-page .summary-icon {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+        }
+
+        .kucsa-expenses-page .summary-value {
+            font-size: 1.05rem;
+        }
+
+        .kucsa-expenses-page .mobile-expense-details {
+            grid-template-columns: 1fr;
+            gap: 0.65rem;
+        }
+
+        .kucsa-expenses-page .mobile-expense-card {
+            margin: 0.7rem;
+            padding: 0.9rem;
+        }
+
+        .kucsa-expenses-page .mobile-expense-bottom {
+            align-items: stretch;
+        }
+
+        .kucsa-expenses-page .mobile-expense-bottom .view-expense-btn {
+            width: 42px;
+            height: 42px;
+        }
+
+        .kucsa-expenses-page .form-control,
+        .kucsa-expenses-page .form-select,
+        .kucsa-expenses-page .filter-btn,
+        .kucsa-expenses-page .clear-filter-btn {
+            min-height: 46px;
+        }
+
+        /*
+         * Prevent iOS Safari from automatically zooming into
+         * form controls.
+         */
+        .kucsa-expenses-page input,
+        .kucsa-expenses-page select {
+            font-size: 16px;
+        }
+
+        .kucsa-expenses-page .pagination-wrapper {
+            padding: 0.9rem 0.65rem;
+        }
+
+        .kucsa-expenses-page .pagination {
+            flex-wrap: wrap;
+        }
+
+        .kucsa-expenses-page .page-link {
+            min-width: 36px;
+            min-height: 36px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .kucsa-expenses-page *,
+        .kucsa-expenses-page *::before,
+        .kucsa-expenses-page *::after {
+            scroll-behavior: auto !important;
+            transition: none !important;
+            animation: none !important;
+        }
+    }
+</style>
+
+
+<div class="container-fluid py-4 kucsa-expenses-page">
+
+    <!-- ============================================================
          PAGE HEADER
-    ====================================================== -->
-    <div class="d-flex flex-column flex-md-row
-                justify-content-between align-items-md-center
-                gap-3 mb-4">
+    ============================================================= -->
 
-        <div>
-            <h3 class="fw-bold mb-1">
-                <i class="bi bi-wallet2 me-2"></i>
-                Expenses
-            </h3>
+    <div class="expenses-header d-flex flex-column flex-md-row
+                justify-content-between align-items-md-center gap-3">
 
-            <p class="text-muted mb-0">
-                Manage and monitor KUCSA financial expenses.
-            </p>
+        <div class="header-content d-flex align-items-center gap-3">
+
+            <div class="header-icon">
+                <i class="bi bi-wallet2"></i>
+            </div>
+
+            <div>
+                <h3 class="page-title fw-bold mb-1">
+                    Expenses
+                </h3>
+
+                <p class="page-subtitle mb-0">
+                    Manage and monitor KUCSA financial expenses.
+                </p>
+            </div>
+
         </div>
 
+
         {% if can_manage_expenses %}
+
             <a href="{% url 'finance:expense_create' %}"
-               class="btn btn-primary">
-                <i class="bi bi-plus-circle me-1"></i>
+               class="btn btn-primary record-expense-btn d-inline-flex
+                      align-items-center">
+
+                <i class="bi bi-plus-circle me-2"></i>
+
                 Record Expense
+
             </a>
+
         {% endif %}
 
     </div>
 
 
-    <!-- =====================================================
+    <!-- ============================================================
          SUMMARY CARDS
-    ====================================================== -->
+    ============================================================= -->
+
     <div class="row g-3 mb-4">
 
         <!-- Total Expenses -->
+
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border-0 shadow-sm h-100">
+
+            <div class="card summary-card total h-100">
+
                 <div class="card-body">
 
                     <div class="d-flex justify-content-between
-                                align-items-start">
+                                align-items-start gap-3">
 
-                        <div>
-                            <small class="text-muted">
+                        <div class="min-w-0">
+
+                            <span class="summary-label">
                                 Total Expenses
-                            </small>
+                            </span>
 
-                            <h4 class="fw-bold mb-0 mt-1">
+                            <h4 class="summary-value fw-bold mb-0">
                                 KES {{ total_expenses|default:"0.00"|floatformat:2 }}
                             </h4>
+
                         </div>
 
-                        <div class="rounded-circle bg-danger bg-opacity-10
-                                    p-2">
-                            <i class="bi bi-wallet2 text-danger"></i>
+                        <div class="summary-icon">
+                            <i class="bi bi-wallet2"></i>
                         </div>
 
                     </div>
 
                 </div>
+
             </div>
+
         </div>
 
 
         <!-- Paid -->
+
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border-0 shadow-sm h-100">
+
+            <div class="card summary-card paid h-100">
+
                 <div class="card-body">
 
                     <div class="d-flex justify-content-between
-                                align-items-start">
+                                align-items-start gap-3">
 
-                        <div>
-                            <small class="text-muted">
+                        <div class="min-w-0">
+
+                            <span class="summary-label">
                                 Paid
-                            </small>
+                            </span>
 
-                            <h4 class="fw-bold mb-0 mt-1">
+                            <h4 class="summary-value fw-bold mb-0">
                                 KES {{ paid_expenses|default:"0.00"|floatformat:2 }}
                             </h4>
+
                         </div>
 
-                        <div class="rounded-circle bg-success bg-opacity-10
-                                    p-2">
-                            <i class="bi bi-check-circle text-success"></i>
+                        <div class="summary-icon">
+                            <i class="bi bi-check-circle"></i>
                         </div>
 
                     </div>
 
                 </div>
+
             </div>
+
         </div>
 
 
         <!-- Pending -->
+
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border-0 shadow-sm h-100">
+
+            <div class="card summary-card pending h-100">
+
                 <div class="card-body">
 
                     <div class="d-flex justify-content-between
-                                align-items-start">
+                                align-items-start gap-3">
 
-                        <div>
-                            <small class="text-muted">
+                        <div class="min-w-0">
+
+                            <span class="summary-label">
                                 Pending
-                            </small>
+                            </span>
 
-                            <h4 class="fw-bold mb-0 mt-1">
+                            <h4 class="summary-value fw-bold mb-0">
                                 KES {{ pending_expenses|default:"0.00"|floatformat:2 }}
                             </h4>
+
                         </div>
 
-                        <div class="rounded-circle bg-warning bg-opacity-10
-                                    p-2">
-                            <i class="bi bi-hourglass-split text-warning"></i>
+                        <div class="summary-icon">
+                            <i class="bi bi-hourglass-split"></i>
                         </div>
 
                     </div>
 
                 </div>
+
             </div>
+
         </div>
 
 
         <!-- Rejected -->
+
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border-0 shadow-sm h-100">
+
+            <div class="card summary-card rejected h-100">
+
                 <div class="card-body">
 
                     <div class="d-flex justify-content-between
-                                align-items-start">
+                                align-items-start gap-3">
 
-                        <div>
-                            <small class="text-muted">
+                        <div class="min-w-0">
+
+                            <span class="summary-label">
                                 Rejected
-                            </small>
+                            </span>
 
-                            <h4 class="fw-bold mb-0 mt-1">
+                            <h4 class="summary-value fw-bold mb-0">
                                 KES {{ rejected_expenses|default:"0.00"|floatformat:2 }}
                             </h4>
+
                         </div>
 
-                        <div class="rounded-circle bg-secondary bg-opacity-10
-                                    p-2">
-                            <i class="bi bi-x-circle text-secondary"></i>
+                        <div class="summary-icon">
+                            <i class="bi bi-x-circle"></i>
                         </div>
 
                     </div>
 
                 </div>
+
             </div>
+
         </div>
 
     </div>
 
 
-    <!-- =====================================================
+    <!-- ============================================================
          FILTERS
-    ====================================================== -->
-    <div class="card border-0 shadow-sm mb-4">
+    ============================================================= -->
+
+    <div class="card filter-card mb-4">
 
         <div class="card-body">
 
-            <form method="get">
+            <div class="filter-title">
+
+                <span class="filter-title-icon">
+                    <i class="bi bi-funnel"></i>
+                </span>
+
+                <span>Find Expenses</span>
+
+            </div>
+
+
+            <form method="get" id="expenseFilterForm">
 
                 <div class="row g-3 align-items-end">
 
                     <!-- Search -->
+
                     <div class="col-12 col-md-4">
 
                         <label for="search"
                                class="form-label fw-semibold">
+
                             Search
+
                         </label>
 
-                        <input type="text"
-                               name="search"
-                               id="search"
-                               class="form-control"
-                               placeholder="Expense number, title or payee..."
-                               value="{{ request.GET.search|default:'' }}">
+                        <div class="position-relative">
+
+                            <i class="bi bi-search position-absolute
+                                      top-50 start-0 translate-middle-y
+                                      ms-3 text-muted"></i>
+
+                            <input type="text"
+                                   name="search"
+                                   id="search"
+                                   class="form-control ps-5"
+                                   placeholder="Expense number, title or payee..."
+                                   value="{{ request.GET.search|default:'' }}"
+                                   autocomplete="off">
+
+                        </div>
 
                     </div>
 
 
                     <!-- Status -->
+
                     <div class="col-12 col-md-3">
 
                         <label for="status"
                                class="form-label fw-semibold">
+
                             Status
+
                         </label>
 
                         <select name="status"
@@ -243,11 +1071,14 @@
 
 
                     <!-- Category -->
+
                     <div class="col-12 col-md-3">
 
                         <label for="category"
                                class="form-label fw-semibold">
+
                             Category
+
                         </label>
 
                         <select name="category"
@@ -259,12 +1090,16 @@
                             </option>
 
                             {% for category in categories %}
+
                                 <option value="{{ category.id }}"
                                     {% if request.GET.category == category.id|stringformat:"s" %}
                                         selected
                                     {% endif %}>
+
                                     {{ category.name }}
+
                                 </option>
+
                             {% endfor %}
 
                         </select>
@@ -273,20 +1108,29 @@
 
 
                     <!-- Buttons -->
+
                     <div class="col-12 col-md-2">
 
-                        <div class="d-flex gap-2">
+                        <div class="d-flex gap-2 filter-actions">
 
                             <button type="submit"
-                                    class="btn btn-primary flex-grow-1">
+                                    class="btn btn-primary filter-btn flex-grow-1"
+                                    id="filterButton">
+
                                 <i class="bi bi-funnel me-1"></i>
+
                                 Filter
+
                             </button>
 
                             <a href="{% url 'finance:expenses' %}"
-                               class="btn btn-outline-secondary"
-                               title="Clear filters">
+                               class="btn btn-outline-secondary
+                                      clear-filter-btn"
+                               title="Clear filters"
+                               aria-label="Clear filters">
+
                                 <i class="bi bi-arrow-counterclockwise"></i>
+
                             </a>
 
                         </div>
@@ -298,25 +1142,39 @@
             </form>
 
         </div>
+
     </div>
 
 
-    <!-- =====================================================
-         EXPENSE TABLE
-    ====================================================== -->
-    <div class="card border-0 shadow-sm">
+    <!-- ============================================================
+         EXPENSE RECORDS
+    ============================================================= -->
 
-        <div class="card-header bg-white border-0 py-3">
+    <div class="card records-card">
+
+        <!-- RECORD HEADER -->
+
+        <div class="records-header">
 
             <div class="d-flex justify-content-between
-                        align-items-center">
+                        align-items-center gap-3">
 
-                <h5 class="fw-bold mb-0">
-                    Expense Records
-                </h5>
+                <div class="d-flex align-items-center gap-2">
 
-                <span class="badge bg-light text-dark">
-                    {{ expenses|length }} record{{ expenses|length|pluralize }}
+                    <i class="bi bi-list-ul text-primary"></i>
+
+                    <h5 class="records-title fw-bold mb-0">
+                        Expense Records
+                    </h5>
+
+                </div>
+
+                <span class="badge records-count">
+
+                    {{ expenses|length }}
+
+                    record{{ expenses|length|pluralize }}
+
                 </span>
 
             </div>
@@ -328,11 +1186,16 @@
 
             {% if expenses %}
 
-                <div class="table-responsive">
+                <!-- ====================================================
+                     DESKTOP / TABLET TABLE
+                ===================================================== -->
 
-                    <table class="table table-hover align-middle mb-0">
+                <div class="desktop-expense-table expense-table-wrapper">
 
-                        <thead class="table-light">
+                    <table class="table table-hover align-middle
+                                  expense-table">
+
+                        <thead>
 
                             <tr>
 
@@ -380,117 +1243,150 @@
                                 <tr>
 
                                     <!-- Expense -->
+
                                     <td class="ps-3">
 
-                                        <div class="fw-semibold">
+                                        <div class="expense-title fw-semibold"
+                                             title="{{ expense.title }}">
+
                                             {{ expense.title }}
+
                                         </div>
 
-                                        <small class="text-muted">
+                                        <small class="expense-number">
+
                                             {{ expense.expense_number }}
+
                                         </small>
 
                                     </td>
 
 
                                     <!-- Category -->
+
                                     <td>
+
                                         <span class="text-muted">
+
                                             {{ expense.category.name }}
+
                                         </span>
+
                                     </td>
 
 
                                     <!-- Payee -->
+
                                     <td>
+
                                         {{ expense.payee|default:"—" }}
+
                                     </td>
 
 
                                     <!-- Amount -->
+
                                     <td>
 
-                                        <span class="fw-semibold">
+                                        <span class="amount-value">
+
                                             KES {{ expense.amount|floatformat:2 }}
+
                                         </span>
 
                                     </td>
 
 
                                     <!-- Payment -->
+
                                     <td>
 
                                         {% if expense.payment_source %}
 
-                                            <div>
+                                            <div class="fw-medium">
+
                                                 {{ expense.get_payment_source_display }}
+
                                             </div>
 
                                             {% if expense.payment_reference %}
-                                                <small class="text-muted">
+
+                                                <span class="payment-reference"
+                                                      title="{{ expense.payment_reference }}">
+
                                                     {{ expense.payment_reference }}
-                                                </small>
+
+                                                </span>
+
                                             {% endif %}
 
                                         {% else %}
+
                                             <span class="text-muted">
                                                 —
                                             </span>
+
                                         {% endif %}
 
                                     </td>
 
 
                                     <!-- Date -->
+
                                     <td>
-                                        <span class="text-nowrap">
+
+                                        <span class="text-nowrap text-muted">
+
                                             {{ expense.expense_date|date:"d M Y" }}
+
                                         </span>
+
                                     </td>
 
 
                                     <!-- Status -->
+
                                     <td>
 
                                         {% if expense.status == "DRAFT" %}
 
-                                            <span class="badge bg-secondary">
+                                            <span class="expense-status status-draft">
                                                 Draft
                                             </span>
 
                                         {% elif expense.status == "SUBMITTED" %}
 
-                                            <span class="badge bg-warning text-dark">
+                                            <span class="expense-status status-submitted">
                                                 Submitted
                                             </span>
 
                                         {% elif expense.status == "APPROVED" %}
 
-                                            <span class="badge bg-info text-dark">
+                                            <span class="expense-status status-approved">
                                                 Approved
                                             </span>
 
                                         {% elif expense.status == "PAID" %}
 
-                                            <span class="badge bg-success">
+                                            <span class="expense-status status-paid">
                                                 Paid
                                             </span>
 
                                         {% elif expense.status == "REJECTED" %}
 
-                                            <span class="badge bg-danger">
+                                            <span class="expense-status status-rejected">
                                                 Rejected
                                             </span>
 
                                         {% elif expense.status == "VOIDED" %}
 
-                                            <span class="badge bg-dark">
+                                            <span class="expense-status status-voided">
                                                 Voided
                                             </span>
 
                                         {% else %}
 
-                                            <span class="badge bg-secondary">
+                                            <span class="expense-status status-draft">
                                                 {{ expense.get_status_display }}
                                             </span>
 
@@ -500,11 +1396,14 @@
 
 
                                     <!-- Action -->
+
                                     <td class="text-end pe-3">
 
                                         <a href="{% url 'finance:expense_detail' expense.pk %}"
-                                           class="btn btn-sm btn-outline-primary"
-                                           title="View expense">
+                                           class="btn btn-sm btn-outline-primary
+                                                  view-expense-btn"
+                                           title="View expense"
+                                           aria-label="View expense {{ expense.expense_number }}">
 
                                             <i class="bi bi-eye"></i>
 
@@ -523,16 +1422,218 @@
                 </div>
 
 
-                <!-- =================================================
+                <!-- ====================================================
+                     MOBILE EXPENSE CARDS
+                ===================================================== -->
+
+                <div class="mobile-expense-list">
+
+                    {% for expense in expenses %}
+
+                        <article class="mobile-expense-card">
+
+                            <div class="mobile-expense-top">
+
+                                <div class="mobile-expense-title">
+
+                                    <strong>
+                                        {{ expense.title }}
+                                    </strong>
+
+                                    <span class="mobile-expense-number">
+                                        {{ expense.expense_number }}
+                                    </span>
+
+                                </div>
+
+
+                                <!-- Status -->
+
+                                <div>
+
+                                    {% if expense.status == "DRAFT" %}
+
+                                        <span class="expense-status status-draft">
+                                            Draft
+                                        </span>
+
+                                    {% elif expense.status == "SUBMITTED" %}
+
+                                        <span class="expense-status status-submitted">
+                                            Submitted
+                                        </span>
+
+                                    {% elif expense.status == "APPROVED" %}
+
+                                        <span class="expense-status status-approved">
+                                            Approved
+                                        </span>
+
+                                    {% elif expense.status == "PAID" %}
+
+                                        <span class="expense-status status-paid">
+                                            Paid
+                                        </span>
+
+                                    {% elif expense.status == "REJECTED" %}
+
+                                        <span class="expense-status status-rejected">
+                                            Rejected
+                                        </span>
+
+                                    {% elif expense.status == "VOIDED" %}
+
+                                        <span class="expense-status status-voided">
+                                            Voided
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="expense-status status-draft">
+                                            {{ expense.get_status_display }}
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="mobile-expense-amount">
+
+                                KES {{ expense.amount|floatformat:2 }}
+
+                            </div>
+
+
+                            <div class="mobile-expense-details">
+
+                                <!-- Category -->
+
+                                <div>
+
+                                    <span class="mobile-detail-label">
+                                        Category
+                                    </span>
+
+                                    <span class="mobile-detail-value">
+
+                                        {{ expense.category.name }}
+
+                                    </span>
+
+                                </div>
+
+
+                                <!-- Payee -->
+
+                                <div>
+
+                                    <span class="mobile-detail-label">
+                                        Payee
+                                    </span>
+
+                                    <span class="mobile-detail-value">
+
+                                        {{ expense.payee|default:"—" }}
+
+                                    </span>
+
+                                </div>
+
+
+                                <!-- Payment -->
+
+                                <div>
+
+                                    <span class="mobile-detail-label">
+                                        Payment
+                                    </span>
+
+                                    <span class="mobile-detail-value">
+
+                                        {% if expense.payment_source %}
+
+                                            {{ expense.get_payment_source_display }}
+
+                                            {% if expense.payment_reference %}
+
+                                                <br>
+
+                                                <small class="text-muted">
+                                                    {{ expense.payment_reference }}
+                                                </small>
+
+                                            {% endif %}
+
+                                        {% else %}
+
+                                            —
+
+                                        {% endif %}
+
+                                    </span>
+
+                                </div>
+
+
+                                <!-- Date -->
+
+                                <div>
+
+                                    <span class="mobile-detail-label">
+                                        Date
+                                    </span>
+
+                                    <span class="mobile-detail-value">
+
+                                        {{ expense.expense_date|date:"d M Y" }}
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="mobile-expense-bottom">
+
+                                <span class="small text-muted">
+                                    Expense record
+                                </span>
+
+                                <a href="{% url 'finance:expense_detail' expense.pk %}"
+                                   class="btn btn-outline-primary
+                                          view-expense-btn"
+                                   aria-label="View expense {{ expense.expense_number }}"
+                                   title="View expense">
+
+                                    <i class="bi bi-arrow-right"></i>
+
+                                </a>
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- ====================================================
                      PAGINATION
-                ================================================== -->
+                ===================================================== -->
+
                 {% if is_paginated %}
 
-                    <div class="card-footer bg-white border-0">
+                    <div class="pagination-wrapper">
 
                         <nav aria-label="Expense pagination">
 
-                            <ul class="pagination justify-content-center mb-0">
+                            <ul class="pagination justify-content-center
+                                       align-items-center mb-0">
 
                                 {% if page_obj.has_previous %}
 
@@ -541,7 +1642,11 @@
                                         <a class="page-link"
                                            href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
 
-                                            Previous
+                                            <i class="bi bi-chevron-left me-1"></i>
+
+                                            <span class="d-none d-sm-inline">
+                                                Previous
+                                            </span>
 
                                         </a>
 
@@ -550,9 +1655,17 @@
                                 {% else %}
 
                                     <li class="page-item disabled">
+
                                         <span class="page-link">
-                                            Previous
+
+                                            <i class="bi bi-chevron-left me-1"></i>
+
+                                            <span class="d-none d-sm-inline">
+                                                Previous
+                                            </span>
+
                                         </span>
+
                                     </li>
 
                                 {% endif %}
@@ -560,8 +1673,11 @@
 
                                 <li class="page-item active">
 
-                                    <span class="page-link">
+                                    <span class="page-link"
+                                          aria-current="page">
+
                                         {{ page_obj.number }}
+
                                     </span>
 
                                 </li>
@@ -574,7 +1690,11 @@
                                         <a class="page-link"
                                            href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
 
-                                            Next
+                                            <span class="d-none d-sm-inline">
+                                                Next
+                                            </span>
+
+                                            <i class="bi bi-chevron-right ms-1"></i>
 
                                         </a>
 
@@ -583,9 +1703,17 @@
                                 {% else %}
 
                                     <li class="page-item disabled">
+
                                         <span class="page-link">
-                                            Next
+
+                                            <span class="d-none d-sm-inline">
+                                                Next
+                                            </span>
+
+                                            <i class="bi bi-chevron-right ms-1"></i>
+
                                         </span>
+
                                     </li>
 
                                 {% endif %}
@@ -601,32 +1729,40 @@
 
             {% else %}
 
-                <!-- =================================================
+                <!-- ====================================================
                      EMPTY STATE
-                ================================================== -->
-                <div class="text-center py-5 px-3">
+                ===================================================== -->
 
-                    <div class="mb-3">
+                <div class="empty-state">
 
-                        <i class="bi bi-wallet2 display-4 text-muted"></i>
+                    <div class="empty-icon">
+
+                        <i class="bi bi-wallet2"></i>
 
                     </div>
 
-                    <h5 class="fw-semibold">
+
+                    <h5 class="fw-bold mb-2">
                         No expenses found
                     </h5>
 
-                    <p class="text-muted mb-4">
+
+                    <p class="mb-4">
+
                         There are no expense records matching
                         your current filters.
+
                     </p>
+
 
                     {% if can_manage_expenses %}
 
                         <a href="{% url 'finance:expense_create' %}"
-                           class="btn btn-primary">
+                           class="btn btn-primary record-expense-btn
+                                  d-inline-flex align-items-center">
 
-                            <i class="bi bi-plus-circle me-1"></i>
+                            <i class="bi bi-plus-circle me-2"></i>
+
                             Record First Expense
 
                         </a>
@@ -642,5 +1778,215 @@
     </div>
 
 </div>
+
+
+<!-- ================================================================
+     PAGE JAVASCRIPT
+================================================================ -->
+
+<script>
+(function () {
+    "use strict";
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const page = document.querySelector(".kucsa-expenses-page");
+
+        if (!page) {
+            return;
+        }
+
+
+        /* ============================================================
+           FILTER FORM
+        ============================================================ */
+
+        const filterForm = document.getElementById("expenseFilterForm");
+        const filterButton = document.getElementById("filterButton");
+
+        if (filterForm && filterButton) {
+
+            filterForm.addEventListener("submit", function () {
+
+                filterButton.classList.add("btn-loading");
+
+                filterButton.innerHTML =
+                    '<span class="spinner-border spinner-border-sm me-2" ' +
+                    'role="status" aria-hidden="true"></span>' +
+                    'Filtering...';
+
+            });
+
+        }
+
+
+        /* ============================================================
+           SEARCH SHORTCUT
+           Press "/" to focus search when not typing elsewhere.
+        ============================================================ */
+
+        const searchInput = document.getElementById("search");
+
+        document.addEventListener("keydown", function (event) {
+
+            const activeElement = document.activeElement;
+            const tagName = activeElement
+                ? activeElement.tagName.toLowerCase()
+                : "";
+
+            const isTyping =
+                tagName === "input" ||
+                tagName === "textarea" ||
+                tagName === "select" ||
+                activeElement?.isContentEditable;
+
+            if (event.key === "/" && !isTyping && searchInput) {
+
+                event.preventDefault();
+
+                searchInput.focus();
+
+                searchInput.select();
+
+            }
+
+        });
+
+
+        /* ============================================================
+           SEARCH CLEAR WITH ESCAPE
+        ============================================================ */
+
+        if (searchInput) {
+
+            searchInput.addEventListener("keydown", function (event) {
+
+                if (event.key === "Escape" && searchInput.value) {
+
+                    searchInput.value = "";
+
+                    searchInput.focus();
+
+                }
+
+            });
+
+        }
+
+
+        /* ============================================================
+           ACTIVE FILTER VISUAL FEEDBACK
+        ============================================================ */
+
+        const statusSelect = document.getElementById("status");
+        const categorySelect = document.getElementById("category");
+
+        function updateFilterState() {
+
+            const hasSearch =
+                searchInput && searchInput.value.trim() !== "";
+
+            const hasStatus =
+                statusSelect && statusSelect.value !== "";
+
+            const hasCategory =
+                categorySelect && categorySelect.value !== "";
+
+            const hasFilters =
+                hasSearch || hasStatus || hasCategory;
+
+            const filterTitle = page.querySelector(".filter-title");
+
+            if (filterTitle) {
+
+                if (hasFilters) {
+
+                    filterTitle.setAttribute(
+                        "data-active",
+                        "true"
+                    );
+
+                } else {
+
+                    filterTitle.removeAttribute(
+                        "data-active"
+                    );
+
+                }
+
+            }
+
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener(
+                "input",
+                updateFilterState
+            );
+        }
+
+        if (statusSelect) {
+            statusSelect.addEventListener(
+                "change",
+                updateFilterState
+            );
+        }
+
+        if (categorySelect) {
+            categorySelect.addEventListener(
+                "change",
+                updateFilterState
+            );
+        }
+
+        updateFilterState();
+
+
+        /* ============================================================
+           SMOOTH PAGE FEEDBACK FOR TABLE ACTIONS
+        ============================================================ */
+
+        const expenseLinks =
+            page.querySelectorAll(
+                'a[href*="expense_detail"]'
+            );
+
+        expenseLinks.forEach(function (link) {
+
+            link.addEventListener("click", function () {
+
+                link.style.opacity = "0.7";
+
+            });
+
+        });
+
+
+        /* ============================================================
+           AUTO FOCUS SEARCH WHEN URL CONTAINS A SEARCH
+        ============================================================ */
+
+        if (
+            searchInput &&
+            searchInput.value.trim() !== "" &&
+            window.innerWidth >= 768
+        ) {
+
+            /*
+             * Do not automatically select the text.
+             * Just keep the page state visually consistent.
+             */
+
+            searchInput.setAttribute(
+                "aria-label",
+                "Search expense records"
+            );
+
+        }
+
+    });
+
+})();
+</script>
 
 {% endblock %}

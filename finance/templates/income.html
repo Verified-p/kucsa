@@ -1,35 +1,816 @@
-```html
 {% extends "base.html" %}
 
 {% block title %}Income | KUCSA Finance{% endblock %}
 
 {% block content %}
 
-<div class="container-fluid py-4">
+<style>
+    /* ============================================================
+       KUCSA FINANCE — INCOME PAGE
+       Page-scoped styles only
+    ============================================================ */
 
-    <!-- =====================================================
+    .kucsa-income-page {
+        --income-primary: #198754;
+        --income-primary-dark: #146c43;
+        --income-blue: #0d6efd;
+        --income-text: #172033;
+        --income-muted: #6b7280;
+        --income-border: #e8edf2;
+        --income-surface: #ffffff;
+        --income-soft: #f8fafc;
+        --income-radius: 16px;
+        --income-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
+
+        color: var(--income-text);
+        padding-bottom: 2rem;
+    }
+
+    /* ============================================================
+       PAGE HEADER
+    ============================================================ */
+
+    .kucsa-income-page .income-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .kucsa-income-page .income-header-icon {
+        width: 52px;
+        height: 52px;
+        min-width: 52px;
+        border-radius: 15px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #ecfdf3, #d1fae5);
+        color: var(--income-primary);
+        font-size: 1.35rem;
+        box-shadow: inset 0 0 0 1px rgba(25, 135, 84, 0.08);
+    }
+
+    .kucsa-income-page .page-title {
+        color: #111827;
+        font-size: clamp(1.35rem, 2vw, 1.75rem);
+        letter-spacing: -0.02em;
+    }
+
+    .kucsa-income-page .page-subtitle {
+        color: var(--income-muted);
+        font-size: 0.92rem;
+        line-height: 1.5;
+    }
+
+    .kucsa-income-page .transactions-btn {
+        min-height: 44px;
+        border-radius: 10px;
+        padding: 0.65rem 1rem;
+        font-weight: 600;
+        white-space: nowrap;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            background-color 0.2s ease;
+    }
+
+    .kucsa-income-page .transactions-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 7px 18px rgba(15, 23, 42, 0.08);
+    }
+
+    /* ============================================================
+       SUMMARY CARDS
+    ============================================================ */
+
+    .kucsa-income-page .summary-card {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--income-border) !important;
+        border-radius: var(--income-radius);
+        background: var(--income-surface);
+        box-shadow: var(--income-shadow);
+        transition:
+            transform 0.22s ease,
+            box-shadow 0.22s ease,
+            border-color 0.22s ease;
+    }
+
+    .kucsa-income-page .summary-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 14px 34px rgba(15, 23, 42, 0.09);
+        border-color: #dce3ea !important;
+    }
+
+    .kucsa-income-page .summary-card::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 3px;
+        background: currentColor;
+        opacity: 0.12;
+    }
+
+    .kucsa-income-page .summary-card .card-body {
+        padding: 1.15rem;
+    }
+
+    .kucsa-income-page .summary-label {
+        display: block;
+        color: var(--income-muted);
+        font-size: 0.76rem;
+        font-weight: 700;
+        letter-spacing: 0.045em;
+        text-transform: uppercase;
+    }
+
+    .kucsa-income-page .summary-value {
+        margin-top: 0.3rem;
+        color: #111827;
+        font-size: clamp(1.08rem, 2vw, 1.38rem);
+        letter-spacing: -0.02em;
+        white-space: nowrap;
+    }
+
+    .kucsa-income-page .summary-description {
+        display: block;
+        margin-top: 0.3rem;
+        color: #8a94a6;
+        font-size: 0.74rem;
+        line-height: 1.4;
+    }
+
+    .kucsa-income-page .summary-icon {
+        width: 45px;
+        height: 45px;
+        min-width: 45px;
+        border-radius: 13px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+    }
+
+    .kucsa-income-page .summary-total {
+        color: #198754;
+    }
+
+    .kucsa-income-page .summary-total .summary-icon {
+        background: #ecfdf3;
+        color: #198754;
+    }
+
+    .kucsa-income-page .summary-posted {
+        color: #0d6efd;
+    }
+
+    .kucsa-income-page .summary-posted .summary-icon {
+        background: #eff6ff;
+        color: #0d6efd;
+    }
+
+    .kucsa-income-page .summary-records {
+        color: #0891b2;
+    }
+
+    .kucsa-income-page .summary-records .summary-icon {
+        background: #ecfeff;
+        color: #0891b2;
+    }
+
+    /* ============================================================
+       INFORMATION NOTICE
+    ============================================================ */
+
+    .kucsa-income-page .income-notice {
+        border: 1px solid #fde68a !important;
+        border-radius: 14px;
+        background: #fffbeb;
+        color: #713f12;
+        box-shadow: 0 6px 20px rgba(120, 80, 0, 0.04);
+        padding: 1rem 1.1rem;
+    }
+
+    .kucsa-income-page .income-notice-icon {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #fef3c7;
+        color: #b45309;
+    }
+
+    .kucsa-income-page .notice-title {
+        color: #78350f;
+        font-size: 0.9rem;
+    }
+
+    .kucsa-income-page .notice-text {
+        color: #92400e;
+        font-size: 0.8rem;
+        line-height: 1.5;
+    }
+
+    /* ============================================================
+       FILTER CARD
+    ============================================================ */
+
+    .kucsa-income-page .filter-card {
+        border: 1px solid var(--income-border) !important;
+        border-radius: var(--income-radius);
+        background: var(--income-surface);
+        box-shadow: var(--income-shadow);
+    }
+
+    .kucsa-income-page .filter-card .card-body {
+        padding: 1.15rem;
+    }
+
+    .kucsa-income-page .filter-heading {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        margin-bottom: 1rem;
+        color: #111827;
+        font-weight: 700;
+    }
+
+    .kucsa-income-page .filter-heading-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #eff6ff;
+        color: var(--income-blue);
+    }
+
+    .kucsa-income-page .form-label {
+        margin-bottom: 0.45rem;
+        color: #374151;
+        font-size: 0.84rem;
+    }
+
+    .kucsa-income-page .form-control,
+    .kucsa-income-page .form-select {
+        min-height: 44px;
+        border: 1px solid #dfe4ea;
+        border-radius: 10px;
+        color: #1f2937;
+        background: #fff;
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .kucsa-income-page .form-control:focus,
+    .kucsa-income-page .form-select:focus {
+        border-color: rgba(13, 110, 253, 0.55);
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.09);
+    }
+
+    .kucsa-income-page .search-wrapper {
+        position: relative;
+    }
+
+    .kucsa-income-page .search-wrapper .search-icon {
+        position: absolute;
+        top: 50%;
+        left: 0.9rem;
+        transform: translateY(-50%);
+        color: #9ca3af;
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    .kucsa-income-page .search-wrapper .form-control {
+        padding-left: 2.55rem;
+    }
+
+    .kucsa-income-page .filter-btn {
+        min-height: 44px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition:
+            transform 0.18s ease,
+            box-shadow 0.18s ease;
+    }
+
+    .kucsa-income-page .filter-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 15px rgba(13, 110, 253, 0.15);
+    }
+
+    .kucsa-income-page .filter-btn.loading {
+        pointer-events: none;
+        opacity: 0.75;
+    }
+
+    /* ============================================================
+       RECORDS CARD
+    ============================================================ */
+
+    .kucsa-income-page .records-card {
+        border: 1px solid var(--income-border) !important;
+        border-radius: var(--income-radius);
+        overflow: hidden;
+        background: #fff;
+        box-shadow: var(--income-shadow);
+    }
+
+    .kucsa-income-page .records-header {
+        padding: 1rem 1.15rem;
+        background: #fff;
+        border-bottom: 1px solid var(--income-border);
+    }
+
+    .kucsa-income-page .records-title {
+        color: #111827;
+        font-size: 1rem;
+    }
+
+    .kucsa-income-page .records-subtitle {
+        color: #8a94a6;
+        font-size: 0.75rem;
+    }
+
+    .kucsa-income-page .records-count {
+        padding: 0.4rem 0.7rem;
+        border: 1px solid #e4e8ed;
+        border-radius: 999px;
+        background: #f8fafc !important;
+        color: #4b5563 !important;
+        font-weight: 600;
+    }
+
+    /* ============================================================
+       DESKTOP TABLE
+    ============================================================ */
+
+    .kucsa-income-page .income-table {
+        min-width: 980px;
+        margin: 0;
+    }
+
+    .kucsa-income-page .income-table thead th {
+        padding: 0.85rem 0.75rem;
+        border-bottom: 1px solid var(--income-border);
+        background: #f8fafc;
+        color: #6b7280;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.045em;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .kucsa-income-page .income-table tbody td {
+        padding: 0.95rem 0.75rem;
+        border-color: #f0f2f5;
+        color: #374151;
+        font-size: 0.86rem;
+        vertical-align: middle;
+    }
+
+    .kucsa-income-page .income-table tbody tr {
+        transition: background-color 0.18s ease;
+    }
+
+    .kucsa-income-page .income-table tbody tr:hover {
+        background: #f8fcfa;
+    }
+
+    .kucsa-income-page .transaction-number {
+        color: #1f2937;
+        font-weight: 700;
+        font-size: 0.83rem;
+    }
+
+    .kucsa-income-page .transaction-description {
+        display: block;
+        max-width: 230px;
+        margin-top: 0.18rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: #8a94a6;
+        font-size: 0.72rem;
+    }
+
+    .kucsa-income-page .transaction-date {
+        color: #374151;
+        white-space: nowrap;
+    }
+
+    .kucsa-income-page .transaction-time {
+        color: #8a94a6;
+        font-size: 0.72rem;
+    }
+
+    .kucsa-income-page .reference-value {
+        display: inline-block;
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: #4b5563;
+        font-size: 0.75rem;
+    }
+
+    .kucsa-income-page .income-amount {
+        color: #198754;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    /* ============================================================
+       SOURCE BADGES
+    ============================================================ */
+
+    .kucsa-income-page .source-badge,
+    .kucsa-income-page .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        border-radius: 999px;
+        padding: 0.4rem 0.62rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .kucsa-income-page .source-mpesa {
+        background: #ecfdf3;
+        color: #16794c;
+    }
+
+    .kucsa-income-page .source-bank {
+        background: #eff6ff;
+        color: #1759a6;
+    }
+
+    .kucsa-income-page .source-cash {
+        background: #fff7ed;
+        color: #9a5b0b;
+    }
+
+    .kucsa-income-page .source-other {
+        background: #f3f4f6;
+        color: #5b6470;
+    }
+
+    /* ============================================================
+       STATUS BADGES
+    ============================================================ */
+
+    .kucsa-income-page .status-posted {
+        background: #eaf8f0;
+        color: #16794c;
+    }
+
+    .kucsa-income-page .status-draft {
+        background: #fff8e6;
+        color: #a16207;
+    }
+
+    .kucsa-income-page .status-voided {
+        background: #fff0f1;
+        color: #c92a3b;
+    }
+
+    .kucsa-income-page .status-other {
+        background: #f1f3f5;
+        color: #59636e;
+    }
+
+    /* ============================================================
+       VIEW BUTTON
+    ============================================================ */
+
+    .kucsa-income-page .view-transaction-btn {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        border-radius: 9px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+            transform 0.18s ease,
+            background-color 0.18s ease;
+    }
+
+    .kucsa-income-page .view-transaction-btn:hover {
+        transform: translateY(-1px);
+    }
+
+    /* ============================================================
+       MOBILE RECORD CARDS
+    ============================================================ */
+
+    .kucsa-income-page .mobile-income-list {
+        display: none;
+    }
+
+    .kucsa-income-page .mobile-income-card {
+        margin: 0.8rem;
+        padding: 1rem;
+        border: 1px solid #e8ebef;
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: 0 4px 15px rgba(15, 23, 42, 0.045);
+        transition:
+            transform 0.18s ease,
+            box-shadow 0.18s ease;
+    }
+
+    .kucsa-income-page .mobile-income-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07);
+    }
+
+    .kucsa-income-page .mobile-income-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding-bottom: 0.85rem;
+        border-bottom: 1px solid #f0f2f5;
+    }
+
+    .kucsa-income-page .mobile-transaction-number {
+        min-width: 0;
+        color: #1f2937;
+        font-weight: 700;
+        font-size: 0.88rem;
+        overflow-wrap: anywhere;
+    }
+
+    .kucsa-income-page .mobile-description {
+        margin-top: 0.25rem;
+        color: #8a94a6;
+        font-size: 0.72rem;
+        line-height: 1.4;
+    }
+
+    .kucsa-income-page .mobile-income-amount {
+        margin-top: 0.9rem;
+        color: #198754;
+        font-size: 1.12rem;
+        font-weight: 800;
+    }
+
+    .kucsa-income-page .mobile-income-details {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.85rem;
+        margin-top: 1rem;
+    }
+
+    .kucsa-income-page .mobile-detail-label {
+        display: block;
+        margin-bottom: 0.2rem;
+        color: #8a94a6;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    .kucsa-income-page .mobile-detail-value {
+        color: #374151;
+        font-size: 0.8rem;
+        overflow-wrap: anywhere;
+    }
+
+    .kucsa-income-page .mobile-income-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin-top: 1rem;
+        padding-top: 0.85rem;
+        border-top: 1px solid #f0f2f5;
+    }
+
+    /* ============================================================
+       EMPTY STATE
+    ============================================================ */
+
+    .kucsa-income-page .empty-state {
+        padding: 4rem 1.5rem;
+        text-align: center;
+    }
+
+    .kucsa-income-page .empty-icon {
+        width: 76px;
+        height: 76px;
+        margin: 0 auto 1rem;
+        border-radius: 22px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8fafc;
+        color: #94a3b8;
+        border: 1px solid #e8edf2;
+        font-size: 2rem;
+    }
+
+    .kucsa-income-page .empty-state h5 {
+        color: #1f2937;
+    }
+
+    .kucsa-income-page .empty-state p {
+        max-width: 460px;
+        margin-right: auto;
+        margin-left: auto;
+        color: #7b8492;
+        line-height: 1.6;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+
+    @media (max-width: 991.98px) {
+        .kucsa-income-page .income-table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .kucsa-income-page .income-table-wrapper::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .kucsa-income-page .income-table-wrapper::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 999px;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .kucsa-income-page .income-header {
+            align-items: stretch !important;
+        }
+
+        .kucsa-income-page .header-content {
+            width: 100%;
+        }
+
+        .kucsa-income-page .transactions-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .kucsa-income-page .filter-card .card-body {
+            padding: 1rem;
+        }
+
+        .kucsa-income-page .desktop-income-table {
+            display: none;
+        }
+
+        .kucsa-income-page .mobile-income-list {
+            display: block;
+        }
+
+        .kucsa-income-page .records-header {
+            padding: 0.95rem 1rem;
+        }
+
+        .kucsa-income-page .income-notice {
+            padding: 0.9rem;
+        }
+
+        .kucsa-income-page .empty-state {
+            padding: 3rem 1rem;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .kucsa-income-page {
+            padding-bottom: 1rem;
+        }
+
+        .kucsa-income-page .income-header-icon {
+            width: 46px;
+            height: 46px;
+            min-width: 46px;
+            border-radius: 13px;
+        }
+
+        .kucsa-income-page .page-title {
+            font-size: 1.3rem;
+        }
+
+        .kucsa-income-page .page-subtitle {
+            font-size: 0.84rem;
+        }
+
+        .kucsa-income-page .summary-card .card-body {
+            padding: 1rem;
+        }
+
+        .kucsa-income-page .summary-icon {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+        }
+
+        .kucsa-income-page .summary-value {
+            font-size: 1.05rem;
+        }
+
+        .kucsa-income-page .mobile-income-card {
+            margin: 0.7rem;
+            padding: 0.9rem;
+        }
+
+        .kucsa-income-page .mobile-income-details {
+            grid-template-columns: 1fr;
+            gap: 0.7rem;
+        }
+
+        .kucsa-income-page .mobile-income-bottom {
+            align-items: stretch;
+        }
+
+        .kucsa-income-page .view-transaction-btn {
+            width: 42px;
+            height: 42px;
+        }
+
+        .kucsa-income-page .form-control,
+        .kucsa-income-page .form-select,
+        .kucsa-income-page .filter-btn {
+            min-height: 46px;
+        }
+
+        /*
+         * Prevent automatic zoom on iOS Safari.
+         */
+        .kucsa-income-page input,
+        .kucsa-income-page select {
+            font-size: 16px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .kucsa-income-page *,
+        .kucsa-income-page *::before,
+        .kucsa-income-page *::after {
+            scroll-behavior: auto !important;
+            transition: none !important;
+            animation: none !important;
+        }
+    }
+</style>
+
+
+<div class="container-fluid py-4 kucsa-income-page">
+
+    <!-- ============================================================
          PAGE HEADER
-    ====================================================== -->
-    <div class="d-flex flex-column flex-md-row
-                justify-content-between align-items-md-center
-                gap-3 mb-4">
+    ============================================================= -->
 
-        <div>
-            <h2 class="fw-bold mb-1">
-                Income
-            </h2>
+    <div class="income-header d-flex flex-column flex-md-row
+                justify-content-between align-items-md-center gap-3">
 
-            <p class="text-muted mb-0">
-                View and manage KUCSA financial income records.
-            </p>
+        <div class="header-content d-flex align-items-center gap-3">
+
+            <div class="income-header-icon">
+                <i class="bi bi-arrow-down-circle"></i>
+            </div>
+
+            <div>
+
+                <h2 class="page-title fw-bold mb-1">
+                    Income
+                </h2>
+
+                <p class="page-subtitle mb-0">
+                    View and manage KUCSA financial income records.
+                </p>
+
+            </div>
+
         </div>
+
 
         <div class="d-flex gap-2">
 
             <a href="{% url 'finance:transactions' %}"
-               class="btn btn-outline-secondary">
-                <i class="bi bi-list-ul me-1"></i>
+               class="btn btn-outline-secondary transactions-btn
+                      d-inline-flex align-items-center">
+
+                <i class="bi bi-list-ul me-2"></i>
+
                 All Transactions
+
             </a>
 
         </div>
@@ -37,42 +818,44 @@
     </div>
 
 
-    <!-- =====================================================
+    <!-- ============================================================
          INCOME SUMMARY
-    ====================================================== -->
+    ============================================================= -->
+
     <div class="row g-3 mb-4">
 
         <!-- Total Income -->
-        <div class="col-md-4">
 
-            <div class="card border-0 shadow-sm h-100">
+        <div class="col-12 col-sm-6 col-lg-4">
+
+            <div class="card summary-card summary-total h-100">
 
                 <div class="card-body">
 
                     <div class="d-flex justify-content-between
-                                align-items-center">
+                                align-items-start gap-3">
 
-                        <div>
+                        <div class="min-w-0">
 
-                            <small class="text-muted d-block mb-1">
+                            <span class="summary-label">
                                 Total Income
-                            </small>
+                            </span>
 
-                            <h4 class="fw-bold mb-0 text-success">
+                            <h4 class="summary-value fw-bold mb-0">
+
                                 KES {{ total_income|default:"0.00"|floatformat:2 }}
+
                             </h4>
 
-                            <small class="text-muted">
+                            <span class="summary-description">
                                 All recorded income
-                            </small>
+                            </span>
 
                         </div>
 
-                        <div class="bg-success bg-opacity-10
-                                    rounded-circle p-3">
+                        <div class="summary-icon">
 
-                            <i class="bi bi-arrow-down-circle
-                                      text-success fs-4"></i>
+                            <i class="bi bi-arrow-down-circle"></i>
 
                         </div>
 
@@ -86,36 +869,37 @@
 
 
         <!-- Posted Income -->
-        <div class="col-md-4">
 
-            <div class="card border-0 shadow-sm h-100">
+        <div class="col-12 col-sm-6 col-lg-4">
+
+            <div class="card summary-card summary-posted h-100">
 
                 <div class="card-body">
 
                     <div class="d-flex justify-content-between
-                                align-items-center">
+                                align-items-start gap-3">
 
-                        <div>
+                        <div class="min-w-0">
 
-                            <small class="text-muted d-block mb-1">
+                            <span class="summary-label">
                                 Posted Income
-                            </small>
+                            </span>
 
-                            <h4 class="fw-bold mb-0 text-primary">
+                            <h4 class="summary-value fw-bold mb-0">
+
                                 KES {{ posted_income|default:"0.00"|floatformat:2 }}
+
                             </h4>
 
-                            <small class="text-muted">
+                            <span class="summary-description">
                                 Income affecting the balance
-                            </small>
+                            </span>
 
                         </div>
 
-                        <div class="bg-primary bg-opacity-10
-                                    rounded-circle p-3">
+                        <div class="summary-icon">
 
-                            <i class="bi bi-check-circle
-                                      text-primary fs-4"></i>
+                            <i class="bi bi-check-circle"></i>
 
                         </div>
 
@@ -129,36 +913,37 @@
 
 
         <!-- Income Records -->
-        <div class="col-md-4">
 
-            <div class="card border-0 shadow-sm h-100">
+        <div class="col-12 col-sm-6 col-lg-4">
+
+            <div class="card summary-card summary-records h-100">
 
                 <div class="card-body">
 
                     <div class="d-flex justify-content-between
-                                align-items-center">
+                                align-items-start gap-3">
 
-                        <div>
+                        <div class="min-w-0">
 
-                            <small class="text-muted d-block mb-1">
+                            <span class="summary-label">
                                 Income Records
-                            </small>
+                            </span>
 
-                            <h4 class="fw-bold mb-0">
+                            <h4 class="summary-value fw-bold mb-0">
+
                                 {{ income_transactions|length }}
+
                             </h4>
 
-                            <small class="text-muted">
+                            <span class="summary-description">
                                 Records currently displayed
-                            </small>
+                            </span>
 
                         </div>
 
-                        <div class="bg-info bg-opacity-10
-                                    rounded-circle p-3">
+                        <div class="summary-icon">
 
-                            <i class="bi bi-receipt
-                                      text-info fs-4"></i>
+                            <i class="bi bi-receipt"></i>
 
                         </div>
 
@@ -173,23 +958,36 @@
     </div>
 
 
-    <!-- =====================================================
+    <!-- ============================================================
          INFORMATION NOTICE
-    ====================================================== -->
+    ============================================================= -->
+
     {% if total_income > posted_income %}
 
-        <div class="alert alert-warning border-0 shadow-sm
-                    d-flex align-items-start gap-3 mb-4">
+        <div class="income-notice d-flex align-items-start gap-3 mb-4">
 
-            <i class="bi bi-info-circle-fill fs-5"></i>
+            <div class="income-notice-icon">
+
+                <i class="bi bi-info-circle-fill"></i>
+
+            </div>
 
             <div>
-                <strong>Income posting status</strong>
-                <div class="small mt-1">
-                    Some recorded income has not yet been posted.
-                    Draft income does not affect the available financial balance
-                    until it is posted.
+
+                <div class="notice-title fw-bold">
+
+                    Income posting status
+
                 </div>
+
+                <div class="notice-text mt-1">
+
+                    Some recorded income has not yet been posted.
+                    Draft income does not affect the available financial
+                    balance until it is posted.
+
+                </div>
+
             </div>
 
         </div>
@@ -197,41 +995,69 @@
     {% endif %}
 
 
-    <!-- =====================================================
+    <!-- ============================================================
          FILTERS
-    ====================================================== -->
-    <div class="card border-0 shadow-sm mb-4">
+    ============================================================= -->
+
+    <div class="card filter-card mb-4">
 
         <div class="card-body">
 
-            <form method="get">
+            <div class="filter-heading">
+
+                <span class="filter-heading-icon">
+
+                    <i class="bi bi-funnel"></i>
+
+                </span>
+
+                <span>Find Income Records</span>
+
+            </div>
+
+
+            <form method="get"
+                  id="incomeFilterForm">
 
                 <div class="row g-3 align-items-end">
 
                     <!-- Search -->
-                    <div class="col-md-4">
+
+                    <div class="col-12 col-md-4">
 
                         <label for="search"
                                class="form-label fw-semibold">
+
                             Search
+
                         </label>
 
-                        <input type="text"
-                               name="search"
-                               id="search"
-                               class="form-control"
-                               value="{{ request.GET.search }}"
-                               placeholder="Transaction number, reference...">
+                        <div class="search-wrapper">
+
+                            <i class="bi bi-search search-icon"></i>
+
+                            <input type="text"
+                                   name="search"
+                                   id="search"
+                                   class="form-control"
+                                   value="{{ request.GET.search|default:'' }}"
+                                   placeholder="Transaction number, reference..."
+                                   autocomplete="off">
+
+                        </div>
 
                     </div>
 
 
                     <!-- Category -->
-                    <div class="col-md-3">
+
+                    <div class="col-12 col-md-3">
 
                         <label for="category"
                                class="form-label fw-semibold">
+
                             Category
+
                         </label>
 
                         <select name="category"
@@ -248,7 +1074,9 @@
                                     {% if request.GET.category == category.pk|stringformat:"s" %}
                                         selected
                                     {% endif %}>
+
                                     {{ category.name }}
+
                                 </option>
 
                             {% endfor %}
@@ -259,11 +1087,14 @@
 
 
                     <!-- Payment Source -->
-                    <div class="col-md-3">
+
+                    <div class="col-12 col-md-3">
 
                         <label for="source"
                                class="form-label fw-semibold">
+
                             Payment Source
+
                         </label>
 
                         <select name="source"
@@ -278,28 +1109,36 @@
                                 {% if request.GET.source == "MPESA" %}
                                     selected
                                 {% endif %}>
+
                                 M-Pesa
+
                             </option>
 
                             <option value="CASH"
                                 {% if request.GET.source == "CASH" %}
                                     selected
                                 {% endif %}>
+
                                 Cash
+
                             </option>
 
                             <option value="BANK"
                                 {% if request.GET.source == "BANK" %}
                                     selected
                                 {% endif %}>
+
                                 Bank
+
                             </option>
 
                             <option value="OTHER"
                                 {% if request.GET.source == "OTHER" %}
                                     selected
                                 {% endif %}>
+
                                 Other
+
                             </option>
 
                         </select>
@@ -308,12 +1147,15 @@
 
 
                     <!-- Filter -->
-                    <div class="col-md-2">
+
+                    <div class="col-12 col-md-2">
 
                         <button type="submit"
-                                class="btn btn-primary w-100">
+                                class="btn btn-primary w-100 filter-btn"
+                                id="incomeFilterButton">
 
                             <i class="bi bi-search me-1"></i>
+
                             Filter
 
                         </button>
@@ -329,33 +1171,38 @@
     </div>
 
 
-    <!-- =====================================================
-         INCOME TABLE
-    ====================================================== -->
-    <div class="card border-0 shadow-sm">
+    <!-- ============================================================
+         INCOME RECORDS
+    ============================================================= -->
 
-        <!-- Table Header -->
-        <div class="card-header bg-white py-3">
+    <div class="card records-card">
 
-            <div class="d-flex flex-column flex-md-row
+        <!-- Records Header -->
+
+        <div class="records-header">
+
+            <div class="d-flex flex-column flex-sm-row
                         justify-content-between
-                        align-items-md-center gap-2">
+                        align-items-sm-center gap-2">
 
                 <div>
 
-                    <h5 class="fw-bold mb-1">
+                    <h5 class="records-title fw-bold mb-1">
                         Income Records
                     </h5>
 
-                    <small class="text-muted">
+                    <small class="records-subtitle">
                         Recorded income transactions
                     </small>
 
                 </div>
 
-                <span class="badge bg-light text-dark border">
+                <span class="badge records-count">
+
                     {{ income_transactions|length }}
+
                     record{{ income_transactions|length|pluralize }}
+
                 </span>
 
             </div>
@@ -363,17 +1210,22 @@
         </div>
 
 
-        <!-- Table Body -->
+        <!-- Records Body -->
+
         <div class="card-body p-0">
 
             {% if income_transactions %}
 
-                <div class="table-responsive">
+                <!-- ====================================================
+                     DESKTOP / TABLET TABLE
+                ===================================================== -->
+
+                <div class="desktop-income-table income-table-wrapper">
 
                     <table class="table table-hover
-                                  align-middle mb-0">
+                                  align-middle income-table">
 
-                        <thead class="table-light">
+                        <thead>
 
                             <tr>
 
@@ -421,23 +1273,29 @@
                                 <tr>
 
                                     <!-- Transaction -->
+
                                     <td class="px-3">
 
-                                        <div class="fw-semibold">
+                                        <div class="transaction-number">
+
                                             {{ transaction.transaction_number }}
+
                                         </div>
 
                                         {% if transaction.description %}
 
-                                            <small class="text-muted">
+                                            <span class="transaction-description"
+                                                  title="{{ transaction.description }}">
+
                                                 {{ transaction.description|truncatechars:45 }}
-                                            </small>
+
+                                            </span>
 
                                         {% else %}
 
-                                            <small class="text-muted">
+                                            <span class="transaction-description">
                                                 Income transaction
-                                            </small>
+                                            </span>
 
                                         {% endif %}
 
@@ -445,19 +1303,22 @@
 
 
                                     <!-- Date -->
+
                                     <td>
 
                                         {% if transaction.transaction_date %}
 
-                                            <small>
+                                            <div class="transaction-date">
+
                                                 {{ transaction.transaction_date|date:"d M Y" }}
-                                            </small>
 
-                                            <br>
+                                            </div>
 
-                                            <small class="text-muted">
+                                            <div class="transaction-time">
+
                                                 {{ transaction.transaction_date|date:"H:i" }}
-                                            </small>
+
+                                            </div>
 
                                         {% else %}
 
@@ -471,11 +1332,16 @@
 
 
                                     <!-- Category -->
+
                                     <td>
 
                                         {% if transaction.category %}
 
-                                            {{ transaction.category.name }}
+                                            <span class="text-muted">
+
+                                                {{ transaction.category.name }}
+
+                                            </span>
 
                                         {% else %}
 
@@ -489,42 +1355,43 @@
 
 
                                     <!-- Source -->
+
                                     <td>
 
                                         {% if transaction.payment_source == "MPESA" %}
 
-                                            <span class="badge
-                                                         bg-success-subtle
-                                                         text-success">
-                                                <i class="bi bi-phone me-1"></i>
+                                            <span class="source-badge source-mpesa">
+
+                                                <i class="bi bi-phone"></i>
                                                 M-Pesa
+
                                             </span>
 
                                         {% elif transaction.payment_source == "BANK" %}
 
-                                            <span class="badge
-                                                         bg-primary-subtle
-                                                         text-primary">
-                                                <i class="bi bi-bank me-1"></i>
+                                            <span class="source-badge source-bank">
+
+                                                <i class="bi bi-bank"></i>
                                                 Bank
+
                                             </span>
 
                                         {% elif transaction.payment_source == "CASH" %}
 
-                                            <span class="badge
-                                                         bg-warning-subtle
-                                                         text-dark">
-                                                <i class="bi bi-cash-stack me-1"></i>
+                                            <span class="source-badge source-cash">
+
+                                                <i class="bi bi-cash-stack"></i>
                                                 Cash
+
                                             </span>
 
                                         {% else %}
 
-                                            <span class="badge
-                                                         bg-secondary-subtle
-                                                         text-secondary">
-                                                <i class="bi bi-wallet2 me-1"></i>
+                                            <span class="source-badge source-other">
+
+                                                <i class="bi bi-wallet2"></i>
                                                 Other
+
                                             </span>
 
                                         {% endif %}
@@ -533,12 +1400,16 @@
 
 
                                     <!-- Reference -->
+
                                     <td>
 
                                         {% if transaction.reference %}
 
-                                            <span class="font-monospace small">
+                                            <span class="reference-value font-monospace"
+                                                  title="{{ transaction.reference }}">
+
                                                 {{ transaction.reference }}
+
                                             </span>
 
                                         {% else %}
@@ -553,43 +1424,55 @@
 
 
                                     <!-- Amount -->
+
                                     <td class="text-end">
 
-                                        <span class="fw-bold text-success">
+                                        <span class="income-amount">
+
                                             + KES {{ transaction.amount|floatformat:2 }}
+
                                         </span>
 
                                     </td>
 
 
                                     <!-- Status -->
+
                                     <td>
 
                                         {% if transaction.is_posted %}
 
-                                            <span class="badge bg-success">
-                                                <i class="bi bi-check-circle me-1"></i>
+                                            <span class="status-badge status-posted">
+
+                                                <i class="bi bi-check-circle"></i>
                                                 Posted
+
                                             </span>
 
                                         {% elif transaction.is_draft %}
 
-                                            <span class="badge bg-warning text-dark">
-                                                <i class="bi bi-clock me-1"></i>
+                                            <span class="status-badge status-draft">
+
+                                                <i class="bi bi-clock"></i>
                                                 Draft
+
                                             </span>
 
                                         {% elif transaction.is_voided %}
 
-                                            <span class="badge bg-danger">
-                                                <i class="bi bi-x-circle me-1"></i>
+                                            <span class="status-badge status-voided">
+
+                                                <i class="bi bi-x-circle"></i>
                                                 Voided
+
                                             </span>
 
                                         {% else %}
 
-                                            <span class="badge bg-secondary">
+                                            <span class="status-badge status-other">
+
                                                 {{ transaction.status|title }}
+
                                             </span>
 
                                         {% endif %}
@@ -598,12 +1481,14 @@
 
 
                                     <!-- Action -->
+
                                     <td class="text-end px-3">
 
                                         <a href="{% url 'finance:transaction_detail' transaction.pk %}"
-                                           class="btn btn-sm btn-outline-primary"
+                                           class="btn btn-sm btn-outline-primary
+                                                  view-transaction-btn"
                                            title="View transaction"
-                                           aria-label="View transaction">
+                                           aria-label="View transaction {{ transaction.transaction_number }}">
 
                                             <i class="bi bi-eye"></i>
 
@@ -621,37 +1506,276 @@
 
                 </div>
 
+
+                <!-- ====================================================
+                     MOBILE INCOME CARDS
+                ===================================================== -->
+
+                <div class="mobile-income-list">
+
+                    {% for transaction in income_transactions %}
+
+                        <article class="mobile-income-card">
+
+                            <div class="mobile-income-top">
+
+                                <div class="min-w-0">
+
+                                    <div class="mobile-transaction-number">
+
+                                        {{ transaction.transaction_number }}
+
+                                    </div>
+
+                                    {% if transaction.description %}
+
+                                        <div class="mobile-description">
+
+                                            {{ transaction.description|truncatechars:70 }}
+
+                                        </div>
+
+                                    {% else %}
+
+                                        <div class="mobile-description">
+
+                                            Income transaction
+
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <!-- Status -->
+
+                                <div>
+
+                                    {% if transaction.is_posted %}
+
+                                        <span class="status-badge status-posted">
+
+                                            <i class="bi bi-check-circle"></i>
+                                            Posted
+
+                                        </span>
+
+                                    {% elif transaction.is_draft %}
+
+                                        <span class="status-badge status-draft">
+
+                                            <i class="bi bi-clock"></i>
+                                            Draft
+
+                                        </span>
+
+                                    {% elif transaction.is_voided %}
+
+                                        <span class="status-badge status-voided">
+
+                                            <i class="bi bi-x-circle"></i>
+                                            Voided
+
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="status-badge status-other">
+
+                                            {{ transaction.status|title }}
+
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="mobile-income-amount">
+
+                                + KES {{ transaction.amount|floatformat:2 }}
+
+                            </div>
+
+
+                            <div class="mobile-income-details">
+
+                                <!-- Date -->
+
+                                <div>
+
+                                    <span class="mobile-detail-label">
+                                        Date
+                                    </span>
+
+                                    <span class="mobile-detail-value">
+
+                                        {% if transaction.transaction_date %}
+
+                                            {{ transaction.transaction_date|date:"d M Y" }}
+
+                                            <br>
+
+                                            <small class="text-muted">
+
+                                                {{ transaction.transaction_date|date:"H:i" }}
+
+                                            </small>
+
+                                        {% else %}
+
+                                            —
+
+                                        {% endif %}
+
+                                    </span>
+
+                                </div>
+
+
+                                <!-- Category -->
+
+                                <div>
+
+                                    <span class="mobile-detail-label">
+                                        Category
+                                    </span>
+
+                                    <span class="mobile-detail-value">
+
+                                        {% if transaction.category %}
+
+                                            {{ transaction.category.name }}
+
+                                        {% else %}
+
+                                            —
+
+                                        {% endif %}
+
+                                    </span>
+
+                                </div>
+
+
+                                <!-- Source -->
+
+                                <div>
+
+                                    <span class="mobile-detail-label">
+                                        Source
+                                    </span>
+
+                                    <span class="mobile-detail-value">
+
+                                        {% if transaction.payment_source == "MPESA" %}
+
+                                            M-Pesa
+
+                                        {% elif transaction.payment_source == "BANK" %}
+
+                                            Bank
+
+                                        {% elif transaction.payment_source == "CASH" %}
+
+                                            Cash
+
+                                        {% else %}
+
+                                            Other
+
+                                        {% endif %}
+
+                                    </span>
+
+                                </div>
+
+
+                                <!-- Reference -->
+
+                                <div>
+
+                                    <span class="mobile-detail-label">
+                                        Reference
+                                    </span>
+
+                                    <span class="mobile-detail-value font-monospace">
+
+                                        {% if transaction.reference %}
+
+                                            {{ transaction.reference }}
+
+                                        {% else %}
+
+                                            —
+
+                                        {% endif %}
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="mobile-income-bottom">
+
+                                <span class="small text-muted">
+
+                                    Income record
+
+                                </span>
+
+
+                                <a href="{% url 'finance:transaction_detail' transaction.pk %}"
+                                   class="btn btn-outline-primary
+                                          view-transaction-btn"
+                                   title="View transaction"
+                                   aria-label="View transaction {{ transaction.transaction_number }}">
+
+                                    <i class="bi bi-arrow-right"></i>
+
+                                </a>
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+
             {% else %}
 
-                <!-- =================================================
+                <!-- ====================================================
                      EMPTY STATE
-                ================================================== -->
-                <div class="text-center py-5 px-3">
+                ===================================================== -->
 
-                    <div class="mb-3">
+                <div class="empty-state">
 
-                        <div class="d-inline-flex
-                                    align-items-center
-                                    justify-content-center
-                                    bg-light rounded-circle"
-                             style="width:72px;height:72px;">
+                    <div class="empty-icon">
 
-                            <i class="bi bi-wallet2
-                                      text-muted fs-2">
-                            </i>
-
-                        </div>
+                        <i class="bi bi-wallet2"></i>
 
                     </div>
+
 
                     <h5 class="fw-bold mb-2">
                         No Income Records
                     </h5>
 
-                    <p class="text-muted mb-3">
+
+                    <p class="mb-3">
+
                         There are currently no income transactions
                         matching your search or selected filters.
+
                     </p>
+
 
                     {% if request.GET.search or request.GET.category or request.GET.source %}
 
@@ -659,6 +1783,7 @@
                            class="btn btn-outline-secondary btn-sm">
 
                             <i class="bi bi-arrow-counterclockwise me-1"></i>
+
                             Clear Filters
 
                         </a>
@@ -674,5 +1799,249 @@
     </div>
 
 </div>
+
+
+<!-- ================================================================
+     PAGE JAVASCRIPT
+================================================================ -->
+
+<script>
+(function () {
+    "use strict";
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const page =
+            document.querySelector(".kucsa-income-page");
+
+        if (!page) {
+            return;
+        }
+
+
+        /* ============================================================
+           FILTER FORM LOADING STATE
+        ============================================================ */
+
+        const filterForm =
+            document.getElementById("incomeFilterForm");
+
+        const filterButton =
+            document.getElementById("incomeFilterButton");
+
+        if (filterForm && filterButton) {
+
+            filterForm.addEventListener("submit", function () {
+
+                filterButton.classList.add("loading");
+
+                filterButton.innerHTML =
+                    '<span class="spinner-border spinner-border-sm me-2" ' +
+                    'role="status" aria-hidden="true"></span>' +
+                    'Filtering...';
+
+            });
+
+        }
+
+
+        /* ============================================================
+           SEARCH SHORTCUT
+           Press "/" anywhere on the page to focus Search.
+        ============================================================ */
+
+        const searchInput =
+            document.getElementById("search");
+
+        document.addEventListener("keydown", function (event) {
+
+            const activeElement = document.activeElement;
+
+            const tagName = activeElement
+                ? activeElement.tagName.toLowerCase()
+                : "";
+
+            const isTyping =
+                tagName === "input" ||
+                tagName === "textarea" ||
+                tagName === "select" ||
+                activeElement?.isContentEditable;
+
+            if (
+                event.key === "/" &&
+                !isTyping &&
+                searchInput
+            ) {
+
+                event.preventDefault();
+
+                searchInput.focus();
+
+                searchInput.select();
+
+            }
+
+        });
+
+
+        /* ============================================================
+           ESCAPE TO CLEAR SEARCH
+        ============================================================ */
+
+        if (searchInput) {
+
+            searchInput.addEventListener("keydown", function (event) {
+
+                if (
+                    event.key === "Escape" &&
+                    searchInput.value.trim() !== ""
+                ) {
+
+                    searchInput.value = "";
+
+                    searchInput.focus();
+
+                }
+
+            });
+
+        }
+
+
+        /* ============================================================
+           SELECTED FILTER FEEDBACK
+        ============================================================ */
+
+        const categorySelect =
+            document.getElementById("category");
+
+        const sourceSelect =
+            document.getElementById("source");
+
+        function updateFilterIndicators() {
+
+            const hasSearch =
+                searchInput &&
+                searchInput.value.trim() !== "";
+
+            const hasCategory =
+                categorySelect &&
+                categorySelect.value !== "";
+
+            const hasSource =
+                sourceSelect &&
+                sourceSelect.value !== "";
+
+            const hasFilters =
+                hasSearch ||
+                hasCategory ||
+                hasSource;
+
+            const heading =
+                page.querySelector(".filter-heading");
+
+            if (heading) {
+
+                if (hasFilters) {
+
+                    heading.setAttribute(
+                        "data-active",
+                        "true"
+                    );
+
+                } else {
+
+                    heading.removeAttribute(
+                        "data-active"
+                    );
+
+                }
+
+            }
+
+        }
+
+
+        if (searchInput) {
+
+            searchInput.addEventListener(
+                "input",
+                updateFilterIndicators
+            );
+
+        }
+
+
+        if (categorySelect) {
+
+            categorySelect.addEventListener(
+                "change",
+                updateFilterIndicators
+            );
+
+        }
+
+
+        if (sourceSelect) {
+
+            sourceSelect.addEventListener(
+                "change",
+                updateFilterIndicators
+            );
+
+        }
+
+
+        updateFilterIndicators();
+
+
+        /* ============================================================
+           TRANSACTION LINK FEEDBACK
+        ============================================================ */
+
+        const transactionLinks =
+            page.querySelectorAll(
+                'a[href*="transaction_detail"]'
+            );
+
+        transactionLinks.forEach(function (link) {
+
+            link.addEventListener("click", function () {
+
+                link.style.opacity = "0.65";
+
+            });
+
+        });
+
+
+        /* ============================================================
+           DOUBLE-SUBMIT PROTECTION
+        ============================================================ */
+
+        let navigating = false;
+
+        transactionLinks.forEach(function (link) {
+
+            link.addEventListener("click", function (event) {
+
+                if (navigating) {
+
+                    event.preventDefault();
+
+                    return;
+
+                }
+
+                navigating = true;
+
+            });
+
+        });
+
+    });
+
+})();
+</script>
 
 {% endblock %}

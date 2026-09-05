@@ -4,508 +4,1493 @@
 
 {% block content %}
 
-<div class="container-fluid py-4">
+<style>
+    /* ============================================================
+       KUCSA FINANCE — EXPENSE FORM
+       Modern responsive production UI
+    ============================================================ */
 
-<!-- =====================================================
-     PAGE HEADER
-====================================================== -->
-<div class="d-flex flex-column flex-md-row
-            justify-content-between align-items-md-center
-            gap-3 mb-4">
+    .kucsa-expense-form {
+        --ef-primary: #0d6efd;
+        --ef-primary-soft: #e7f1ff;
+        --ef-success: #198754;
+        --ef-danger: #dc3545;
+        --ef-warning: #ffc107;
+        --ef-dark: #172033;
+        --ef-muted: #6c757d;
+        --ef-border: #e5e9ef;
+        --ef-surface: #ffffff;
+        --ef-soft: #f8fafc;
+        --ef-radius: 16px;
+        --ef-radius-sm: 11px;
+        --ef-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
+        --ef-shadow-hover: 0 12px 34px rgba(15, 23, 42, 0.09);
+    }
 
-    <div>
-        <h2 class="fw-bold mb-1">
-            {% if expense %}
-                Edit Expense
-            {% else %}
-                Record Expense
-            {% endif %}
-        </h2>
+    /* ============================================================
+       PAGE
+    ============================================================ */
 
-        <p class="text-muted mb-0">
-            {% if expense %}
-                Update the expense details below.
-            {% else %}
-                Record a new KUCSA expense for approval and payment.
-            {% endif %}
-        </p>
-    </div>
+    .kucsa-expense-form {
+        padding-bottom: 2rem;
+    }
 
-    <div>
-        <a href="{% url 'finance:expenses' %}"
-           class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i>
-            Back to Expenses
-        </a>
-    </div>
+    .ef-page-header {
+        margin-bottom: 1.5rem;
+    }
 
-</div>
+    .ef-page-title {
+        color: var(--ef-dark);
+        font-size: clamp(1.45rem, 3vw, 2rem);
+        font-weight: 800;
+        line-height: 1.2;
+        margin-bottom: 0.4rem;
+    }
+
+    .ef-page-subtitle {
+        color: var(--ef-muted);
+        font-size: 0.92rem;
+        margin: 0;
+        max-width: 700px;
+        line-height: 1.6;
+    }
+
+    /* ============================================================
+       BACK BUTTON
+    ============================================================ */
+
+    .ef-back-btn {
+        min-height: 44px;
+        border-radius: 11px;
+        font-weight: 600;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .ef-back-btn:hover {
+        transform: translateY(-1px);
+    }
+
+    /* ============================================================
+       MAIN FORM CARD
+    ============================================================ */
+
+    .ef-form-card {
+        background: var(--ef-surface);
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        border-radius: var(--ef-radius);
+        box-shadow: var(--ef-shadow);
+        overflow: hidden;
+    }
+
+    .ef-form-header {
+        padding: 1.25rem 1.4rem;
+        border-bottom: 1px solid var(--ef-border);
+        background:
+            linear-gradient(
+                135deg,
+                #ffffff 0%,
+                #f8fbff 100%
+            );
+    }
+
+    .ef-header-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: #f8d7da;
+        color: var(--ef-danger);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1.25rem;
+    }
+
+    .ef-header-title {
+        color: var(--ef-dark);
+        font-size: 1.05rem;
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .ef-header-description {
+        color: var(--ef-muted);
+        font-size: 0.8rem;
+        margin-top: 0.2rem;
+    }
+
+    .ef-form-body {
+        padding: 1.5rem;
+    }
+
+    /* ============================================================
+       SECTION NAVIGATION
+    ============================================================ */
+
+    .ef-section-nav {
+        position: sticky;
+        top: 1rem;
+        z-index: 10;
+        margin-bottom: 1.5rem;
+        padding: 0.45rem;
+        background: rgba(248, 250, 252, 0.92);
+        border: 1px solid var(--ef-border);
+        border-radius: 13px;
+        backdrop-filter: blur(10px);
+    }
+
+    .ef-section-nav-inner {
+        display: flex;
+        gap: 0.35rem;
+        overflow-x: auto;
+        scrollbar-width: thin;
+        padding-bottom: 1px;
+    }
+
+    .ef-section-nav a {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        min-height: 38px;
+        padding: 0.45rem 0.75rem;
+        border-radius: 9px;
+        color: var(--ef-muted);
+        text-decoration: none;
+        font-size: 0.78rem;
+        font-weight: 700;
+        white-space: nowrap;
+        transition:
+            color 0.2s ease,
+            background 0.2s ease;
+    }
+
+    .ef-section-nav a:hover,
+    .ef-section-nav a.active {
+        color: var(--ef-primary);
+        background: #ffffff;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+    }
+
+    /* ============================================================
+       FORM SECTIONS
+    ============================================================ */
+
+    .ef-section {
+        scroll-margin-top: 85px;
+        margin-bottom: 2rem;
+    }
+
+    .ef-section:last-of-type {
+        margin-bottom: 1rem;
+    }
+
+    .ef-section-heading {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding-bottom: 0.85rem;
+        margin-bottom: 1.15rem;
+        border-bottom: 1px solid var(--ef-border);
+    }
+
+    .ef-section-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--ef-primary-soft);
+        color: var(--ef-primary);
+        flex-shrink: 0;
+    }
+
+    .ef-section-title {
+        color: var(--ef-dark);
+        font-size: 0.98rem;
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .ef-section-description {
+        color: var(--ef-muted);
+        font-size: 0.78rem;
+        margin-top: 0.15rem;
+    }
+
+    /* ============================================================
+       FORM FIELDS
+    ============================================================ */
+
+    .ef-field {
+        margin-bottom: 0.25rem;
+    }
+
+    .ef-label {
+        display: block;
+        color: #343a40;
+        font-size: 0.83rem;
+        font-weight: 700;
+        margin-bottom: 0.45rem;
+    }
+
+    .ef-required {
+        color: var(--ef-danger);
+        margin-left: 0.15rem;
+    }
+
+    .kucsa-expense-form input:not([type="checkbox"]):not([type="radio"]),
+    .kucsa-expense-form select,
+    .kucsa-expense-form textarea {
+        width: 100%;
+        min-height: 45px;
+        border: 1px solid #dce2e8;
+        border-radius: 10px;
+        background: #ffffff;
+        color: #212529;
+        padding: 0.65rem 0.8rem;
+        font-size: 0.9rem;
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            background 0.2s ease;
+    }
+
+    .kucsa-expense-form textarea {
+        min-height: 125px;
+        resize: vertical;
+        line-height: 1.6;
+    }
+
+    .kucsa-expense-form input:focus,
+    .kucsa-expense-form select:focus,
+    .kucsa-expense-form textarea:focus {
+        border-color: var(--ef-primary);
+        background: #ffffff;
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.10);
+        outline: none;
+    }
+
+    .kucsa-expense-form input::placeholder,
+    .kucsa-expense-form textarea::placeholder {
+        color: #adb5bd;
+    }
+
+    /* ============================================================
+       AMOUNT FIELD
+    ============================================================ */
+
+    .ef-amount-group {
+        display: flex;
+        width: 100%;
+    }
+
+    .ef-amount-prefix {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 60px;
+        padding: 0 0.75rem;
+        border: 1px solid #dce2e8;
+        border-right: 0;
+        border-radius: 10px 0 0 10px;
+        background: var(--ef-soft);
+        color: #495057;
+        font-size: 0.82rem;
+        font-weight: 800;
+    }
+
+    .ef-amount-group input {
+        border-radius: 0 10px 10px 0 !important;
+    }
+
+    .ef-amount-preview {
+        margin-top: 0.55rem;
+        color: var(--ef-muted);
+        font-size: 0.78rem;
+    }
+
+    /* ============================================================
+       HELP TEXT
+    ============================================================ */
+
+    .ef-help {
+        display: block;
+        color: var(--ef-muted);
+        font-size: 0.76rem;
+        line-height: 1.5;
+        margin-top: 0.45rem;
+    }
+
+    /* ============================================================
+       ERROR STATES
+    ============================================================ */
+
+    .ef-error {
+        display: block;
+        color: var(--ef-danger);
+        font-size: 0.76rem;
+        font-weight: 600;
+        line-height: 1.5;
+        margin-top: 0.4rem;
+    }
+
+    .ef-field.has-error input,
+    .ef-field.has-error select,
+    .ef-field.has-error textarea {
+        border-color: var(--ef-danger);
+        background: #fffafa;
+    }
+
+    /* ============================================================
+       FORM ERROR SUMMARY
+    ============================================================ */
+
+    .ef-error-summary {
+        padding: 1rem 1.1rem;
+        border: 1px solid #f1aeb5;
+        border-radius: 12px;
+        background: #f8d7da;
+        color: #842029;
+        margin-bottom: 1.5rem;
+    }
+
+    .ef-error-summary-title {
+        font-weight: 800;
+        margin-bottom: 0.35rem;
+    }
+
+    .ef-error-summary ul {
+        margin-bottom: 0;
+        padding-left: 1.2rem;
+    }
+
+    /* ============================================================
+       FILE UPLOAD
+    ============================================================ */
+
+    .ef-file-wrapper {
+        position: relative;
+        border: 1.5px dashed #cbd3dc;
+        border-radius: 13px;
+        background: #fbfcfe;
+        padding: 1rem;
+        transition:
+            border-color 0.2s ease,
+            background 0.2s ease;
+    }
+
+    .ef-file-wrapper:hover,
+    .ef-file-wrapper.drag-active {
+        border-color: var(--ef-primary);
+        background: #f7faff;
+    }
+
+    .ef-file-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .ef-file-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--ef-primary-soft);
+        color: var(--ef-primary);
+        flex-shrink: 0;
+    }
+
+    .ef-file-name {
+        color: #343a40;
+        font-size: 0.82rem;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    .ef-file-size {
+        color: var(--ef-muted);
+        font-size: 0.73rem;
+        margin-top: 0.15rem;
+    }
+
+    .kucsa-expense-form input[type="file"] {
+        min-height: auto;
+        padding: 0.65rem;
+        background: #ffffff;
+        cursor: pointer;
+    }
+
+    .ef-existing-file {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.85rem;
+        margin-top: 0.85rem;
+        border: 1px solid var(--ef-border);
+        border-radius: 11px;
+        background: #f8fafc;
+    }
+
+    .ef-existing-file a {
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    /* ============================================================
+       CHARACTER COUNTER
+    ============================================================ */
+
+    .ef-character-counter {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 0.35rem;
+        color: var(--ef-muted);
+        font-size: 0.72rem;
+    }
+
+    /* ============================================================
+       SECURITY NOTICE
+    ============================================================ */
+
+    .ef-security-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.7rem;
+        padding: 0.9rem 1rem;
+        border: 1px solid #dbe7f5;
+        border-radius: 11px;
+        background: #f7faff;
+        color: #495057;
+        font-size: 0.76rem;
+        line-height: 1.55;
+    }
+
+    .ef-security-note i {
+        color: var(--ef-primary);
+        font-size: 1rem;
+        flex-shrink: 0;
+        margin-top: 0.1rem;
+    }
+
+    /* ============================================================
+       FORM FOOTER
+    ============================================================ */
+
+    .ef-form-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--ef-border);
+    }
+
+    .ef-footer-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+    }
+
+    .ef-action-btn {
+        min-height: 45px;
+        border-radius: 10px;
+        padding: 0.65rem 1rem;
+        font-weight: 700;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .ef-action-btn:hover {
+        transform: translateY(-1px);
+    }
+
+    .ef-action-btn:focus-visible,
+    .ef-back-btn:focus-visible,
+    .ef-section-nav a:focus-visible {
+        outline: 3px solid rgba(13, 110, 253, 0.2);
+        outline-offset: 2px;
+    }
+
+    /* ============================================================
+       UNSAVED INDICATOR
+    ============================================================ */
+
+    .ef-unsaved {
+        display: none;
+        align-items: center;
+        gap: 0.4rem;
+        color: #856404;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .ef-unsaved.visible {
+        display: inline-flex;
+    }
+
+    /* ============================================================
+       MOBILE
+    ============================================================ */
+
+    @media (max-width: 767.98px) {
+
+        .kucsa-expense-form {
+            padding-bottom: 1rem;
+        }
+
+        .ef-page-header {
+            margin-bottom: 1rem;
+        }
+
+        .ef-page-title {
+            font-size: 1.4rem;
+        }
+
+        .ef-page-subtitle {
+            font-size: 0.84rem;
+        }
+
+        .ef-back-btn {
+            width: 100%;
+        }
+
+        .ef-form-body {
+            padding: 1rem;
+        }
+
+        .ef-form-header {
+            padding: 1rem;
+        }
+
+        .ef-section-nav {
+            top: 0.5rem;
+            margin-left: -0.25rem;
+            margin-right: -0.25rem;
+        }
+
+        .ef-section {
+            margin-bottom: 1.65rem;
+        }
+
+        .ef-section-heading {
+            align-items: flex-start;
+        }
+
+        .ef-section-icon {
+            width: 35px;
+            height: 35px;
+        }
+
+        .ef-form-footer {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .ef-unsaved {
+            justify-content: center;
+        }
+
+        .ef-footer-actions {
+            width: 100%;
+        }
+
+        .ef-footer-actions .ef-action-btn {
+            flex: 1;
+        }
+
+        .ef-existing-file {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .ef-existing-file .btn {
+            width: 100%;
+        }
+    }
+
+    /* ============================================================
+       SMALL PHONES
+    ============================================================ */
+
+    @media (max-width: 380px) {
+
+        .ef-form-body {
+            padding: 0.8rem;
+        }
+
+        .ef-form-header {
+            padding: 0.85rem;
+        }
+
+        .ef-header-icon {
+            width: 42px;
+            height: 42px;
+        }
+
+        .ef-footer-actions {
+            flex-direction: column;
+        }
+
+        .ef-footer-actions .ef-action-btn {
+            width: 100%;
+        }
+
+        .ef-section-nav a {
+            font-size: 0.72rem;
+            padding-left: 0.65rem;
+            padding-right: 0.65rem;
+        }
+    }
+
+    /* ============================================================
+       REDUCED MOTION
+    ============================================================ */
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .kucsa-expense-form *,
+        .kucsa-expense-form *::before,
+        .kucsa-expense-form *::after {
+            transition: none !important;
+            animation: none !important;
+            scroll-behavior: auto !important;
+        }
+    }
+</style>
 
 
-<!-- =====================================================
-     FORM CARD
-====================================================== -->
-<div class="row justify-content-center">
+<div class="container-fluid py-3 py-md-4 kucsa-expense-form">
 
-    <div class="col-12 col-xl-9">
+    <!-- =========================================================
+         PAGE HEADER
+    ========================================================== -->
 
-        <div class="card border-0 shadow-sm">
+    <div class="ef-page-header">
 
-            <!-- CARD HEADER -->
-            <div class="card-header bg-white border-bottom py-3">
-                <div class="d-flex align-items-center">
+        <div class="d-flex flex-column flex-md-row
+                    justify-content-between
+                    align-items-md-center
+                    gap-3">
 
-                    <div class="rounded-circle bg-danger-subtle
-                                text-danger d-flex align-items-center
-                                justify-content-center me-3"
-                         style="width: 44px; height: 44px;">
+            <div>
 
-                        <i class="bi bi-wallet2 fs-5"></i>
+                <h1 class="ef-page-title">
 
-                    </div>
+                    {% if expense %}
+                        Edit Expense
+                    {% else %}
+                        Record Expense
+                    {% endif %}
 
-                    <div>
-                        <h5 class="fw-bold mb-0">
-                            {% if expense %}
-                                Expense Information
-                            {% else %}
-                                New Expense
-                            {% endif %}
-                        </h5>
+                </h1>
 
-                        <small class="text-muted">
-                            Enter accurate financial information.
-                        </small>
-                    </div>
+                <p class="ef-page-subtitle">
 
-                </div>
+                    {% if expense %}
+                        Update the expense details carefully.
+                        Changes will be recorded in the financial system.
+                    {% else %}
+                        Record a new KUCSA expense for review,
+                        approval, and payment.
+                    {% endif %}
+
+                </p>
+
             </div>
 
 
-            <!-- FORM -->
-            <div class="card-body p-4">
+            <a href="{% url 'finance:expenses' %}"
+               class="btn btn-outline-secondary ef-back-btn">
 
-                <form method="post"
-                      enctype="multipart/form-data"
-                      novalidate>
+                <i class="bi bi-arrow-left me-1"></i>
+                Back to Expenses
 
-                    {% csrf_token %}
+            </a>
+
+        </div>
+
+    </div>
 
 
-                    <!-- =================================================
-                         NON-FIELD FORM ERRORS
-                    ================================================== -->
-                    {% if form.non_field_errors %}
-                        <div class="alert alert-danger">
-                            <div class="fw-semibold mb-1">
-                                <i class="bi bi-exclamation-triangle me-1"></i>
-                                Please correct the following:
-                            </div>
+    <!-- =========================================================
+         FORM CONTAINER
+    ========================================================== -->
 
-                            {{ form.non_field_errors }}
+    <div class="row justify-content-center">
+
+        <div class="col-12 col-xl-9">
+
+            <div class="ef-form-card">
+
+
+                <!-- =================================================
+                     FORM HEADER
+                ================================================== -->
+
+                <div class="ef-form-header">
+
+                    <div class="d-flex align-items-center gap-3">
+
+                        <div class="ef-header-icon">
+
+                            <i class="bi bi-wallet2"></i>
+
                         </div>
-                    {% endif %}
 
+                        <div>
 
-                    <!-- =================================================
-                         BASIC INFORMATION
-                    ================================================== -->
-                    <div class="mb-4">
+                            <h2 class="ef-header-title">
 
-                        <h6 class="fw-bold border-bottom pb-2 mb-3">
-                            <i class="bi bi-info-circle me-1"></i>
-                            Basic Information
-                        </h6>
-
-                        <div class="row g-3">
-
-                            <!-- TITLE -->
-                            <div class="col-12">
-
-                                <label for="{{ form.title.id_for_label }}"
-                                       class="form-label fw-semibold">
-
-                                    Expense Title
-
-                                    {% if form.title.field.required %}
-                                        <span class="text-danger">*</span>
-                                    {% endif %}
-
-                                </label>
-
-                                {{ form.title }}
-
-                                {% if form.title.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {{ form.title.errors|striptags }}
-                                    </div>
+                                {% if expense %}
+                                    Expense Information
+                                {% else %}
+                                    New Expense
                                 {% endif %}
 
-                            </div>
+                            </h2>
 
-
-                            <!-- CATEGORY -->
-                            <div class="col-md-6">
-
-                                <label for="{{ form.category.id_for_label }}"
-                                       class="form-label fw-semibold">
-
-                                    Category
-
-                                    {% if form.category.field.required %}
-                                        <span class="text-danger">*</span>
-                                    {% endif %}
-
-                                </label>
-
-                                {{ form.category }}
-
-                                {% if form.category.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {{ form.category.errors|striptags }}
-                                    </div>
-                                {% endif %}
-
-                            </div>
-
-
-                            <!-- AMOUNT -->
-                            <div class="col-md-6">
-
-                                <label for="{{ form.amount.id_for_label }}"
-                                       class="form-label fw-semibold">
-
-                                    Amount (KES)
-
-                                    {% if form.amount.field.required %}
-                                        <span class="text-danger">*</span>
-                                    {% endif %}
-
-                                </label>
-
-                                <div class="input-group">
-
-                                    <span class="input-group-text">
-                                        KES
-                                    </span>
-
-                                    {{ form.amount }}
-
-                                </div>
-
-                                {% if form.amount.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {{ form.amount.errors|striptags }}
-                                    </div>
-                                {% endif %}
-
-                            </div>
-
-
-                            <!-- DESCRIPTION -->
-                            <div class="col-12">
-
-                                <label for="{{ form.description.id_for_label }}"
-                                       class="form-label fw-semibold">
-
-                                    Description
-
-                                    {% if form.description.field.required %}
-                                        <span class="text-danger">*</span>
-                                    {% endif %}
-
-                                </label>
-
-                                {{ form.description }}
-
-                                {% if form.description.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {{ form.description.errors|striptags }}
-                                    </div>
-                                {% endif %}
-
-                                <div class="form-text">
-                                    Provide a clear explanation of what
-                                    the money was or will be used for.
-                                </div>
-
+                            <div class="ef-header-description">
+                                Enter accurate and complete financial information.
                             </div>
 
                         </div>
 
                     </div>
 
+                </div>
+
+
+                <!-- =================================================
+                     FORM BODY
+                ================================================== -->
+
+                <div class="ef-form-body">
+
 
                     <!-- =================================================
-                         PAYMENT INFORMATION
+                         SECTION NAVIGATION
                     ================================================== -->
-                    <div class="mb-4">
 
-                        <h6 class="fw-bold border-bottom pb-2 mb-3">
-                            <i class="bi bi-credit-card me-1"></i>
-                            Payment Information
-                        </h6>
+                    <nav class="ef-section-nav"
+                         aria-label="Expense form sections">
 
-                        <div class="row g-3">
+                        <div class="ef-section-nav-inner">
 
-                            <!-- PAYEE -->
-                            <div class="col-md-6">
+                            <a href="#basic-information"
+                               class="active">
 
-                                <label for="{{ form.payee.id_for_label }}"
-                                       class="form-label fw-semibold">
+                                <i class="bi bi-info-circle"></i>
+                                Basic
 
-                                    Payee
+                            </a>
 
-                                    {% if form.payee.field.required %}
-                                        <span class="text-danger">*</span>
-                                    {% endif %}
+                            <a href="#payment-information">
 
-                                </label>
+                                <i class="bi bi-credit-card"></i>
+                                Payment
 
-                                {{ form.payee }}
+                            </a>
 
-                                {% if form.payee.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {{ form.payee.errors|striptags }}
-                                    </div>
-                                {% endif %}
+                            <a href="#expense-date">
 
-                                <div class="form-text">
-                                    Person, supplier, organization, or
-                                    service provider receiving the money.
-                                </div>
+                                <i class="bi bi-calendar-event"></i>
+                                Date
 
-                            </div>
+                            </a>
 
+                            <a href="#supporting-document">
 
-                            <!-- PAYMENT SOURCE -->
-                            <div class="col-md-6">
+                                <i class="bi bi-receipt"></i>
+                                Document
 
-                                <label for="{{ form.payment_source.id_for_label }}"
-                                       class="form-label fw-semibold">
+                            </a>
 
-                                    Payment Source
+                            <a href="#additional-notes">
 
-                                    {% if form.payment_source.field.required %}
-                                        <span class="text-danger">*</span>
-                                    {% endif %}
+                                <i class="bi bi-chat-left-text"></i>
+                                Notes
 
-                                </label>
-
-                                {{ form.payment_source }}
-
-                                {% if form.payment_source.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {{ form.payment_source.errors|striptags }}
-                                    </div>
-                                {% endif %}
-
-                            </div>
-
-
-                            <!-- PAYMENT REFERENCE -->
-                            <div class="col-12">
-
-                                <label for="{{ form.payment_reference.id_for_label }}"
-                                       class="form-label fw-semibold">
-
-                                    Payment Reference
-
-                                </label>
-
-                                {{ form.payment_reference }}
-
-                                {% if form.payment_reference.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {{ form.payment_reference.errors|striptags }}
-                                    </div>
-                                {% endif %}
-
-                                <div class="form-text">
-                                    Enter the M-Pesa receipt number,
-                                    bank reference, cheque number,
-                                    voucher number, or other available
-                                    payment reference.
-                                </div>
-
-                            </div>
+                            </a>
 
                         </div>
 
-                    </div>
+                    </nav>
 
 
-                    <!-- =================================================
-                         EXPENSE DATE
-                    ================================================== -->
-                    <div class="mb-4">
+                    <form method="post"
+                          enctype="multipart/form-data"
+                          novalidate
+                          id="expenseForm">
 
-                        <h6 class="fw-bold border-bottom pb-2 mb-3">
-                            <i class="bi bi-calendar-event me-1"></i>
-                            Expense Date
-                        </h6>
-
-                        <div class="row g-3">
-
-                            <div class="col-md-6">
-
-                                <label for="{{ form.expense_date.id_for_label }}"
-                                       class="form-label fw-semibold">
-
-                                    Expense Date
-
-                                    {% if form.expense_date.field.required %}
-                                        <span class="text-danger">*</span>
-                                    {% endif %}
-
-                                </label>
-
-                                {{ form.expense_date }}
-
-                                {% if form.expense_date.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {{ form.expense_date.errors|striptags }}
-                                    </div>
-                                {% endif %}
-
-                            </div>
-
-                        </div>
-
-                    </div>
+                        {% csrf_token %}
 
 
-                    <!-- =================================================
-                         RECEIPT
-                    ================================================== -->
-                    <div class="mb-4">
+                        <!-- =================================================
+                             NON-FIELD ERRORS
+                        ================================================== -->
 
-                        <h6 class="fw-bold border-bottom pb-2 mb-3">
-                            <i class="bi bi-receipt me-1"></i>
-                            Supporting Document
-                        </h6>
+                        {% if form.non_field_errors %}
 
-                        <div class="row g-3">
+                            <div class="ef-error-summary">
 
-                            <div class="col-12">
+                                <div class="ef-error-summary-title">
 
-                                <label for="{{ form.receipt.id_for_label }}"
-                                       class="form-label fw-semibold">
+                                    <i class="bi bi-exclamation-triangle me-1"></i>
 
-                                    Receipt / Supporting Document
+                                    Please correct the following:
 
-                                </label>
-
-                                {{ form.receipt }}
-
-                                {% if form.receipt.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {{ form.receipt.errors|striptags }}
-                                    </div>
-                                {% endif %}
-
-                                <div class="form-text">
-                                    Upload a receipt, invoice, payment
-                                    evidence, or other relevant document
-                                    where available.
                                 </div>
 
-                                {% if expense and expense.receipt %}
-
-                                    <div class="alert alert-light
-                                                border mt-3">
-
-                                        <i class="bi bi-paperclip me-1"></i>
-
-                                        Existing document:
-
-                                        <a href="{{ expense.receipt.url }}"
-                                           target="_blank"
-                                           class="fw-semibold text-decoration-none">
-
-                                            View current receipt
-
-                                        </a>
-
-                                    </div>
-
-                                {% endif %}
+                                {{ form.non_field_errors }}
 
                             </div>
 
-                        </div>
-
-                    </div>
-
-
-                    <!-- =================================================
-                         NOTES
-                    ================================================== -->
-                    <div class="mb-4">
-
-                        <h6 class="fw-bold border-bottom pb-2 mb-3">
-                            <i class="bi bi-chat-left-text me-1"></i>
-                            Additional Notes
-                        </h6>
-
-                        <label for="{{ form.notes.id_for_label }}"
-                               class="form-label fw-semibold">
-
-                            Notes
-
-                        </label>
-
-                        {{ form.notes }}
-
-                        {% if form.notes.errors %}
-                            <div class="text-danger small mt-1">
-                                {{ form.notes.errors|striptags }}
-                            </div>
                         {% endif %}
 
-                    </div>
 
+                        <!-- =================================================
+                             BASIC INFORMATION
+                        ================================================== -->
 
-                    <!-- =================================================
-                         FORM ACTIONS
-                    ================================================== -->
-                    <div class="border-top pt-4">
+                        <section id="basic-information"
+                                 class="ef-section">
 
-                        <div class="d-flex flex-column
-                                    flex-md-row
-                                    justify-content-between
-                                    align-items-md-center
-                                    gap-3">
+                            <div class="ef-section-heading">
 
-                            <div class="text-muted small">
+                                <div class="ef-section-icon">
 
-                                <i class="bi bi-shield-check me-1"></i>
+                                    <i class="bi bi-info-circle"></i>
 
-                                Financial records are protected and
-                                recorded in the KUCSA audit trail.
+                                </div>
+
+                                <div>
+
+                                    <h3 class="ef-section-title">
+                                        Basic Information
+                                    </h3>
+
+                                    <div class="ef-section-description">
+                                        Identify and describe the expense.
+                                    </div>
+
+                                </div>
 
                             </div>
 
 
-                            <div class="d-flex gap-2">
+                            <div class="row g-3">
+
+
+                                <!-- TITLE -->
+
+                                <div class="col-12 ef-field
+                                            {% if form.title.errors %}has-error{% endif %}">
+
+                                    <label for="{{ form.title.id_for_label }}"
+                                           class="ef-label">
+
+                                        Expense Title
+
+                                        {% if form.title.field.required %}
+                                            <span class="ef-required">*</span>
+                                        {% endif %}
+
+                                    </label>
+
+                                    {{ form.title }}
+
+                                    {% if form.title.errors %}
+
+                                        <div class="ef-error">
+                                            {{ form.title.errors|striptags }}
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <!-- CATEGORY -->
+
+                                <div class="col-12 col-md-6 ef-field
+                                            {% if form.category.errors %}has-error{% endif %}">
+
+                                    <label for="{{ form.category.id_for_label }}"
+                                           class="ef-label">
+
+                                        Category
+
+                                        {% if form.category.field.required %}
+                                            <span class="ef-required">*</span>
+                                        {% endif %}
+
+                                    </label>
+
+                                    {{ form.category }}
+
+                                    {% if form.category.errors %}
+
+                                        <div class="ef-error">
+                                            {{ form.category.errors|striptags }}
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <!-- AMOUNT -->
+
+                                <div class="col-12 col-md-6 ef-field
+                                            {% if form.amount.errors %}has-error{% endif %}">
+
+                                    <label for="{{ form.amount.id_for_label }}"
+                                           class="ef-label">
+
+                                        Amount (KES)
+
+                                        {% if form.amount.field.required %}
+                                            <span class="ef-required">*</span>
+                                        {% endif %}
+
+                                    </label>
+
+                                    <div class="ef-amount-group">
+
+                                        <span class="ef-amount-prefix">
+                                            KES
+                                        </span>
+
+                                        {{ form.amount }}
+
+                                    </div>
+
+                                    <div id="amountPreview"
+                                         class="ef-amount-preview"
+                                         aria-live="polite">
+                                    </div>
+
+                                    {% if form.amount.errors %}
+
+                                        <div class="ef-error">
+                                            {{ form.amount.errors|striptags }}
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <!-- DESCRIPTION -->
+
+                                <div class="col-12 ef-field
+                                            {% if form.description.errors %}has-error{% endif %}">
+
+                                    <label for="{{ form.description.id_for_label }}"
+                                           class="ef-label">
+
+                                        Description
+
+                                        {% if form.description.field.required %}
+                                            <span class="ef-required">*</span>
+                                        {% endif %}
+
+                                    </label>
+
+                                    {{ form.description }}
+
+                                    {% if form.description.errors %}
+
+                                        <div class="ef-error">
+                                            {{ form.description.errors|striptags }}
+                                        </div>
+
+                                    {% endif %}
+
+                                    <div class="d-flex justify-content-between gap-2">
+
+                                        <span class="ef-help">
+                                            Explain clearly what the money was
+                                            or will be used for.
+                                        </span>
+
+                                        <span id="descriptionCounter"
+                                              class="ef-character-counter">
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- =================================================
+                             PAYMENT INFORMATION
+                        ================================================== -->
+
+                        <section id="payment-information"
+                                 class="ef-section">
+
+                            <div class="ef-section-heading">
+
+                                <div class="ef-section-icon">
+
+                                    <i class="bi bi-credit-card"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <h3 class="ef-section-title">
+                                        Payment Information
+                                    </h3>
+
+                                    <div class="ef-section-description">
+                                        Specify who receives the money and how it is paid.
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="row g-3">
+
+
+                                <!-- PAYEE -->
+
+                                <div class="col-12 col-md-6 ef-field
+                                            {% if form.payee.errors %}has-error{% endif %}">
+
+                                    <label for="{{ form.payee.id_for_label }}"
+                                           class="ef-label">
+
+                                        Payee
+
+                                        {% if form.payee.field.required %}
+                                            <span class="ef-required">*</span>
+                                        {% endif %}
+
+                                    </label>
+
+                                    {{ form.payee }}
+
+                                    {% if form.payee.errors %}
+
+                                        <div class="ef-error">
+                                            {{ form.payee.errors|striptags }}
+                                        </div>
+
+                                    {% endif %}
+
+                                    <span class="ef-help">
+                                        Person, supplier, organization,
+                                        or service provider receiving the money.
+                                    </span>
+
+                                </div>
+
+
+                                <!-- PAYMENT SOURCE -->
+
+                                <div class="col-12 col-md-6 ef-field
+                                            {% if form.payment_source.errors %}has-error{% endif %}">
+
+                                    <label for="{{ form.payment_source.id_for_label }}"
+                                           class="ef-label">
+
+                                        Payment Source
+
+                                        {% if form.payment_source.field.required %}
+                                            <span class="ef-required">*</span>
+                                        {% endif %}
+
+                                    </label>
+
+                                    {{ form.payment_source }}
+
+                                    {% if form.payment_source.errors %}
+
+                                        <div class="ef-error">
+                                            {{ form.payment_source.errors|striptags }}
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <!-- PAYMENT REFERENCE -->
+
+                                <div class="col-12 ef-field
+                                            {% if form.payment_reference.errors %}has-error{% endif %}">
+
+                                    <label for="{{ form.payment_reference.id_for_label }}"
+                                           class="ef-label">
+
+                                        Payment Reference
+
+                                    </label>
+
+                                    {{ form.payment_reference }}
+
+                                    {% if form.payment_reference.errors %}
+
+                                        <div class="ef-error">
+                                            {{ form.payment_reference.errors|striptags }}
+                                        </div>
+
+                                    {% endif %}
+
+                                    <span class="ef-help">
+                                        Enter the M-Pesa receipt number,
+                                        bank reference, cheque number,
+                                        voucher number, or other available
+                                        payment reference.
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- =================================================
+                             EXPENSE DATE
+                        ================================================== -->
+
+                        <section id="expense-date"
+                                 class="ef-section">
+
+                            <div class="ef-section-heading">
+
+                                <div class="ef-section-icon">
+
+                                    <i class="bi bi-calendar-event"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <h3 class="ef-section-title">
+                                        Expense Date
+                                    </h3>
+
+                                    <div class="ef-section-description">
+                                        Record when the expense occurred.
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="row g-3">
+
+                                <div class="col-12 col-md-6 ef-field
+                                            {% if form.expense_date.errors %}has-error{% endif %}">
+
+                                    <label for="{{ form.expense_date.id_for_label }}"
+                                           class="ef-label">
+
+                                        Expense Date
+
+                                        {% if form.expense_date.field.required %}
+                                            <span class="ef-required">*</span>
+                                        {% endif %}
+
+                                    </label>
+
+                                    {{ form.expense_date }}
+
+                                    {% if form.expense_date.errors %}
+
+                                        <div class="ef-error">
+                                            {{ form.expense_date.errors|striptags }}
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- =================================================
+                             SUPPORTING DOCUMENT
+                        ================================================== -->
+
+                        <section id="supporting-document"
+                                 class="ef-section">
+
+                            <div class="ef-section-heading">
+
+                                <div class="ef-section-icon">
+
+                                    <i class="bi bi-receipt"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <h3 class="ef-section-title">
+                                        Supporting Document
+                                    </h3>
+
+                                    <div class="ef-section-description">
+                                        Attach evidence supporting this expense.
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="row g-3">
+
+                                <div class="col-12 ef-field
+                                            {% if form.receipt.errors %}has-error{% endif %}">
+
+                                    <label for="{{ form.receipt.id_for_label }}"
+                                           class="ef-label">
+
+                                        Receipt / Supporting Document
+
+                                    </label>
+
+
+                                    <div class="ef-file-wrapper"
+                                         id="fileDropZone">
+
+                                        <div class="ef-file-info">
+
+                                            <div class="ef-file-icon">
+
+                                                <i class="bi bi-cloud-arrow-up"></i>
+
+                                            </div>
+
+                                            <div>
+
+                                                <div class="ef-file-name"
+                                                     id="selectedFileName">
+
+                                                    Choose a receipt or supporting document
+
+                                                </div>
+
+                                                <div class="ef-file-size"
+                                                     id="selectedFileSize">
+
+                                                    Attach a relevant financial document where available.
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                        {{ form.receipt }}
+
+                                    </div>
+
+
+                                    {% if form.receipt.errors %}
+
+                                        <div class="ef-error">
+                                            {{ form.receipt.errors|striptags }}
+                                        </div>
+
+                                    {% endif %}
+
+
+                                    {% if expense and expense.receipt %}
+
+                                        <div class="ef-existing-file">
+
+                                            <div class="d-flex align-items-center gap-2">
+
+                                                <i class="bi bi-paperclip text-primary"></i>
+
+                                                <div>
+
+                                                    <div class="small fw-semibold">
+                                                        Existing document
+                                                    </div>
+
+                                                    <div class="small text-muted">
+                                                        A receipt is already attached to this expense.
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+
+                                            <a href="{{ expense.receipt.url }}"
+                                               target="_blank"
+                                               rel="noopener noreferrer"
+                                               class="btn btn-sm btn-outline-primary">
+
+                                                <i class="bi bi-eye me-1"></i>
+                                                View Current Receipt
+
+                                            </a>
+
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- =================================================
+                             ADDITIONAL NOTES
+                        ================================================== -->
+
+                        <section id="additional-notes"
+                                 class="ef-section">
+
+                            <div class="ef-section-heading">
+
+                                <div class="ef-section-icon">
+
+                                    <i class="bi bi-chat-left-text"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <h3 class="ef-section-title">
+                                        Additional Notes
+                                    </h3>
+
+                                    <div class="ef-section-description">
+                                        Add any useful information for reviewers.
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="ef-field
+                                        {% if form.notes.errors %}has-error{% endif %}">
+
+                                <label for="{{ form.notes.id_for_label }}"
+                                       class="ef-label">
+
+                                    Notes
+
+                                </label>
+
+                                {{ form.notes }}
+
+                                <div class="d-flex justify-content-between gap-2">
+
+                                    <span></span>
+
+                                    <span id="notesCounter"
+                                          class="ef-character-counter">
+                                    </span>
+
+                                </div>
+
+                                {% if form.notes.errors %}
+
+                                    <div class="ef-error">
+                                        {{ form.notes.errors|striptags }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- =================================================
+                             SECURITY NOTICE
+                        ================================================== -->
+
+                        <div class="ef-security-note mb-4">
+
+                            <i class="bi bi-shield-check"></i>
+
+                            <div>
+
+                                <strong>Financial record protection</strong><br>
+
+                                This information forms part of the KUCSA
+                                financial records and may be included in
+                                the system audit trail. Ensure the information
+                                provided is accurate before saving.
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =================================================
+                             FORM ACTIONS
+                        ================================================== -->
+
+                        <div class="ef-form-footer">
+
+                            <div id="unsavedIndicator"
+                                 class="ef-unsaved">
+
+                                <i class="bi bi-circle-fill"></i>
+
+                                Unsaved changes
+
+                            </div>
+
+
+                            <div class="ef-footer-actions">
 
                                 <a href="{% url 'finance:expenses' %}"
-                                   class="btn btn-outline-secondary">
+                                   class="btn btn-outline-secondary ef-action-btn">
 
                                     Cancel
 
                                 </a>
 
+
                                 <button type="submit"
-                                        class="btn btn-primary">
+                                        id="saveExpenseButton"
+                                        class="btn btn-primary ef-action-btn">
 
                                     <i class="bi bi-save me-1"></i>
 
-                                    {% if expense %}
-                                        Update Expense
-                                    {% else %}
-                                        Save Expense
-                                    {% endif %}
+                                    <span id="submitButtonText">
+
+                                        {% if expense %}
+                                            Update Expense
+                                        {% else %}
+                                            Save Expense
+                                        {% endif %}
+
+                                    </span>
 
                                 </button>
 
@@ -513,9 +1498,10 @@
 
                         </div>
 
-                    </div>
 
-                </form>
+                    </form>
+
+                </div>
 
             </div>
 
@@ -526,6 +1512,596 @@
 </div>
 
 
-</div>
+<!-- =============================================================
+     JAVASCRIPT
+============================================================== -->
+
+<script>
+(function () {
+
+    "use strict";
+
+
+    /* ============================================================
+       ELEMENTS
+    ============================================================ */
+
+    const form = document.getElementById("expenseForm");
+    const submitButton = document.getElementById("saveExpenseButton");
+    const submitText = document.getElementById("submitButtonText");
+    const unsavedIndicator = document.getElementById("unsavedIndicator");
+
+    if (!form) {
+        return;
+    }
+
+
+    /* ============================================================
+       UNSAVED CHANGES
+    ============================================================ */
+
+    let formChanged = false;
+    let formSubmitted = false;
+
+    form.addEventListener("input", function () {
+
+        formChanged = true;
+
+        if (unsavedIndicator) {
+            unsavedIndicator.classList.add("visible");
+        }
+
+    });
+
+
+    form.addEventListener("change", function () {
+
+        formChanged = true;
+
+        if (unsavedIndicator) {
+            unsavedIndicator.classList.add("visible");
+        }
+
+    });
+
+
+    window.addEventListener("beforeunload", function (event) {
+
+        if (formChanged && !formSubmitted) {
+
+            event.preventDefault();
+
+            event.returnValue = "";
+
+        }
+
+    });
+
+
+    /* ============================================================
+       AMOUNT PREVIEW
+    ============================================================ */
+
+    const amountField = document.getElementById(
+        "{{ form.amount.id_for_label }}"
+    );
+
+    const amountPreview = document.getElementById("amountPreview");
+
+    function updateAmountPreview() {
+
+        if (!amountField || !amountPreview) {
+            return;
+        }
+
+        const rawValue = amountField.value.trim();
+
+        if (!rawValue) {
+
+            amountPreview.textContent = "";
+
+            return;
+
+        }
+
+        const amount = Number(
+            rawValue.replace(/,/g, "")
+        );
+
+        if (!Number.isFinite(amount) || amount < 0) {
+
+            amountPreview.textContent = "";
+
+            return;
+
+        }
+
+        try {
+
+            amountPreview.textContent =
+                "Amount entered: KES " +
+                amount.toLocaleString(
+                    "en-KE",
+                    {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }
+                );
+
+        } catch (error) {
+
+            amountPreview.textContent =
+                "Amount entered: KES " +
+                amount.toFixed(2);
+
+        }
+
+    }
+
+
+    if (amountField) {
+
+        amountField.addEventListener(
+            "input",
+            updateAmountPreview
+        );
+
+        updateAmountPreview();
+
+    }
+
+
+    /* ============================================================
+       CHARACTER COUNTERS
+    ============================================================ */
+
+    function setupCharacterCounter(
+        fieldId,
+        counterId
+    ) {
+
+        const field = document.getElementById(fieldId);
+        const counter = document.getElementById(counterId);
+
+        if (!field || !counter) {
+            return;
+        }
+
+        function updateCounter() {
+
+            const length = field.value.length;
+
+            if (field.maxLength && field.maxLength > 0) {
+
+                counter.textContent =
+                    length + " / " +
+                    field.maxLength;
+
+            } else {
+
+                counter.textContent =
+                    length + " characters";
+
+            }
+
+        }
+
+        field.addEventListener(
+            "input",
+            updateCounter
+        );
+
+        updateCounter();
+
+    }
+
+
+    setupCharacterCounter(
+        "{{ form.description.id_for_label }}",
+        "descriptionCounter"
+    );
+
+
+    setupCharacterCounter(
+        "{{ form.notes.id_for_label }}",
+        "notesCounter"
+    );
+
+
+    /* ============================================================
+       FILE UPLOAD FEEDBACK
+    ============================================================ */
+
+    const receiptField = document.getElementById(
+        "{{ form.receipt.id_for_label }}"
+    );
+
+    const fileDropZone = document.getElementById(
+        "fileDropZone"
+    );
+
+    const selectedFileName = document.getElementById(
+        "selectedFileName"
+    );
+
+    const selectedFileSize = document.getElementById(
+        "selectedFileSize"
+    );
+
+
+    function formatFileSize(bytes) {
+
+        if (bytes < 1024) {
+            return bytes + " B";
+        }
+
+        if (bytes < 1024 * 1024) {
+            return (bytes / 1024).toFixed(1) + " KB";
+        }
+
+        return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+
+    }
+
+
+    function updateFileDisplay() {
+
+        if (!receiptField || !selectedFileName || !selectedFileSize) {
+            return;
+        }
+
+        if (!receiptField.files || !receiptField.files.length) {
+
+            selectedFileName.textContent =
+                "Choose a receipt or supporting document";
+
+            selectedFileSize.textContent =
+                "Attach a relevant financial document where available.";
+
+            return;
+
+        }
+
+        const file = receiptField.files[0];
+
+        selectedFileName.textContent = file.name;
+
+        selectedFileSize.textContent =
+            formatFileSize(file.size);
+
+    }
+
+
+    if (receiptField) {
+
+        receiptField.addEventListener(
+            "change",
+            updateFileDisplay
+        );
+
+    }
+
+
+    /* ============================================================
+       DRAG & DROP FILE UX
+    ============================================================ */
+
+    if (fileDropZone && receiptField) {
+
+        [
+            "dragenter",
+            "dragover"
+        ].forEach(function (eventName) {
+
+            fileDropZone.addEventListener(
+                eventName,
+                function (event) {
+
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    fileDropZone.classList.add(
+                        "drag-active"
+                    );
+
+                }
+            );
+
+        });
+
+
+        [
+            "dragleave",
+            "drop"
+        ].forEach(function (eventName) {
+
+            fileDropZone.addEventListener(
+                eventName,
+                function (event) {
+
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    fileDropZone.classList.remove(
+                        "drag-active"
+                    );
+
+                }
+            );
+
+        });
+
+
+        fileDropZone.addEventListener(
+            "drop",
+            function (event) {
+
+                const files = event.dataTransfer.files;
+
+                if (!files || !files.length) {
+                    return;
+                }
+
+                /*
+                 * Assign the dropped files to the actual
+                 * Django file input.
+                 */
+
+                try {
+
+                    const dataTransfer =
+                        new DataTransfer();
+
+                    dataTransfer.items.add(files[0]);
+
+                    receiptField.files =
+                        dataTransfer.files;
+
+                    updateFileDisplay();
+
+                    formChanged = true;
+
+                    if (unsavedIndicator) {
+                        unsavedIndicator.classList.add(
+                            "visible"
+                        );
+                    }
+
+                } catch (error) {
+
+                    console.warn(
+                        "File drag-and-drop is not supported by this browser.",
+                        error
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* ============================================================
+       SMOOTH SECTION NAVIGATION
+    ============================================================ */
+
+    const navigationLinks =
+        document.querySelectorAll(
+            ".ef-section-nav a"
+        );
+
+    navigationLinks.forEach(function (link) {
+
+        link.addEventListener(
+            "click",
+            function (event) {
+
+                const targetId =
+                    link.getAttribute("href");
+
+                if (!targetId || !targetId.startsWith("#")) {
+                    return;
+                }
+
+                const target =
+                    document.querySelector(targetId);
+
+                if (!target) {
+                    return;
+                }
+
+                event.preventDefault();
+
+                target.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+            }
+        );
+
+    });
+
+
+    /* ============================================================
+       ACTIVE SECTION NAVIGATION
+    ============================================================ */
+
+    const sections =
+        document.querySelectorAll(
+            ".ef-section"
+        );
+
+
+    if (
+        "IntersectionObserver" in window &&
+        sections.length
+    ) {
+
+        const observer =
+            new IntersectionObserver(
+                function (entries) {
+
+                    entries.forEach(function (entry) {
+
+                        if (!entry.isIntersecting) {
+                            return;
+                        }
+
+                        navigationLinks.forEach(
+                            function (link) {
+
+                                link.classList.remove(
+                                    "active"
+                                );
+
+                            }
+                        );
+
+                        const activeLink =
+                            document.querySelector(
+                                '.ef-section-nav a[href="#' +
+                                entry.target.id +
+                                '"]'
+                            );
+
+                        if (activeLink) {
+
+                            activeLink.classList.add(
+                                "active"
+                            );
+
+                        }
+
+                    });
+
+                },
+                {
+                    rootMargin:
+                        "-15% 0px -70% 0px"
+                }
+            );
+
+
+        sections.forEach(function (section) {
+
+            observer.observe(section);
+
+        });
+
+    }
+
+
+    /* ============================================================
+       FOCUS FIRST INVALID FIELD
+    ============================================================ */
+
+    const firstError =
+        form.querySelector(
+            ".ef-field.has-error input, " +
+            ".ef-field.has-error select, " +
+            ".ef-field.has-error textarea"
+        );
+
+
+    if (firstError) {
+
+        setTimeout(function () {
+
+            firstError.focus({
+                preventScroll: true
+            });
+
+            const section =
+                firstError.closest(
+                    ".ef-section"
+                );
+
+            if (section) {
+
+                section.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+            }
+
+        }, 250);
+
+    }
+
+
+    /* ============================================================
+       SUBMIT STATE
+    ============================================================ */
+
+    form.addEventListener(
+        "submit",
+        function () {
+
+            formSubmitted = true;
+            formChanged = false;
+
+            if (unsavedIndicator) {
+                unsavedIndicator.classList.remove(
+                    "visible"
+                );
+            }
+
+            if (!submitButton) {
+                return;
+            }
+
+            submitButton.disabled = true;
+
+            if (submitText) {
+
+                submitText.textContent =
+                    "Saving...";
+
+            }
+
+            const icon =
+                submitButton.querySelector("i");
+
+            if (icon) {
+
+                icon.className =
+                    "spinner-border spinner-border-sm me-1";
+
+            }
+
+        }
+    );
+
+
+    /* ============================================================
+       PREVENT ENTER KEY FROM ACCIDENTAL SUBMISSION
+       IN TEXT INPUTS
+    ============================================================ */
+
+    form.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key !== "Enter" ||
+                event.target.tagName === "TEXTAREA"
+            ) {
+                return;
+            }
+
+            /*
+             * Allow normal Enter behaviour in textareas.
+             * Do not interfere with Django form controls.
+             */
+
+        }
+    );
+
+
+})();
+</script>
 
 {% endblock %}

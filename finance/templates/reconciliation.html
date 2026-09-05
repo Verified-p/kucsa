@@ -1,37 +1,750 @@
-
 {% extends "base.html" %}
 
 {% block title %}Financial Reconciliation | KUCSA{% endblock %}
 
 {% block content %}
 
-<div class="container-fluid py-4">
+<style>
+    /* ============================================================
+       KUCSA FINANCIAL RECONCILIATION
+       Page-scoped styling
+       ============================================================ */
+
+    .kucsa-reconciliation-page {
+        --kucsa-primary: #0d6efd;
+        --kucsa-success: #198754;
+        --kucsa-warning: #f59f00;
+        --kucsa-danger: #dc3545;
+        --kucsa-dark: #172033;
+        --kucsa-muted: #6c757d;
+        --kucsa-border: #e9edf3;
+        --kucsa-surface: #ffffff;
+        --kucsa-soft: #f7f9fc;
+
+        min-height: 100%;
+        padding-bottom: 2rem;
+    }
+
+    /* ============================================================
+       PAGE HEADER
+       ============================================================ */
+
+    .kucsa-reconciliation-page .recon-header {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--kucsa-border);
+        border-radius: 20px;
+        background:
+            linear-gradient(
+                135deg,
+                rgba(13, 110, 253, 0.06),
+                rgba(255, 255, 255, 0.98) 55%
+            );
+        padding: 1.35rem 1.4rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .kucsa-reconciliation-page .recon-header::after {
+        content: "";
+        position: absolute;
+        width: 150px;
+        height: 150px;
+        right: -55px;
+        top: -65px;
+        border-radius: 50%;
+        background: rgba(13, 110, 253, 0.05);
+        pointer-events: none;
+    }
+
+    .kucsa-reconciliation-page .header-icon {
+        width: 52px;
+        height: 52px;
+        min-width: 52px;
+        border-radius: 15px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(13, 110, 253, 0.10);
+        color: var(--kucsa-primary);
+        font-size: 1.35rem;
+    }
+
+    .kucsa-reconciliation-page .header-title {
+        color: var(--kucsa-dark);
+        font-size: clamp(1.35rem, 2vw, 1.75rem);
+        letter-spacing: -0.02em;
+    }
+
+    .kucsa-reconciliation-page .header-subtitle {
+        max-width: 760px;
+        line-height: 1.6;
+    }
+
+    .kucsa-reconciliation-page .header-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.35rem 0.7rem;
+        border-radius: 999px;
+        background: rgba(25, 135, 84, 0.08);
+        color: var(--kucsa-success);
+        font-size: 0.76rem;
+        font-weight: 700;
+        border: 1px solid rgba(25, 135, 84, 0.12);
+    }
+
+    /* ============================================================
+       BUTTONS
+       ============================================================ */
+
+    .kucsa-reconciliation-page .btn {
+        min-height: 42px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition:
+            transform 0.18s ease,
+            box-shadow 0.18s ease,
+            background-color 0.18s ease;
+    }
+
+    .kucsa-reconciliation-page .btn-primary {
+        box-shadow: 0 6px 16px rgba(13, 110, 253, 0.14);
+    }
+
+    .kucsa-reconciliation-page .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 9px 20px rgba(13, 110, 253, 0.20);
+    }
+
+    /* ============================================================
+       SUMMARY CARDS
+       ============================================================ */
+
+    .kucsa-reconciliation-page .summary-card {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--kucsa-border);
+        border-radius: 17px;
+        background: var(--kucsa-surface);
+        box-shadow: 0 5px 18px rgba(20, 32, 50, 0.055);
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .kucsa-reconciliation-page .summary-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 28px rgba(20, 32, 50, 0.09);
+    }
+
+    .kucsa-reconciliation-page .summary-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        border-radius: 17px 0 0 17px;
+        background: var(--summary-accent, var(--kucsa-primary));
+    }
+
+    .kucsa-reconciliation-page .summary-card .card-body {
+        padding: 1.15rem 1.2rem;
+    }
+
+    .kucsa-reconciliation-page .summary-label {
+        display: block;
+        color: var(--kucsa-muted);
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.045em;
+        margin-bottom: 0.35rem;
+    }
+
+    .kucsa-reconciliation-page .summary-value {
+        color: var(--kucsa-dark);
+        font-size: 1.65rem;
+        line-height: 1.1;
+        font-weight: 800;
+    }
+
+    .kucsa-reconciliation-page .summary-icon {
+        width: 47px;
+        height: 47px;
+        min-width: 47px;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+
+    .kucsa-reconciliation-page .summary-total {
+        --summary-accent: var(--kucsa-primary);
+    }
+
+    .kucsa-reconciliation-page .summary-reconciled {
+        --summary-accent: var(--kucsa-success);
+    }
+
+    .kucsa-reconciliation-page .summary-progress {
+        --summary-accent: var(--kucsa-warning);
+    }
+
+    .kucsa-reconciliation-page .summary-discrepancy {
+        --summary-accent: var(--kucsa-danger);
+    }
+
+    .kucsa-reconciliation-page .summary-total .summary-icon {
+        background: rgba(13, 110, 253, 0.10);
+        color: var(--kucsa-primary);
+    }
+
+    .kucsa-reconciliation-page .summary-reconciled .summary-icon {
+        background: rgba(25, 135, 84, 0.10);
+        color: var(--kucsa-success);
+    }
+
+    .kucsa-reconciliation-page .summary-progress .summary-icon {
+        background: rgba(245, 159, 0, 0.11);
+        color: var(--kucsa-warning);
+    }
+
+    .kucsa-reconciliation-page .summary-discrepancy .summary-icon {
+        background: rgba(220, 53, 69, 0.10);
+        color: var(--kucsa-danger);
+    }
+
+    /* ============================================================
+       MAIN RECORD CARD
+       ============================================================ */
+
+    .kucsa-reconciliation-page .records-card {
+        overflow: hidden;
+        border: 1px solid var(--kucsa-border);
+        border-radius: 19px;
+        background: var(--kucsa-surface);
+        box-shadow: 0 6px 22px rgba(20, 32, 50, 0.055);
+    }
+
+    .kucsa-reconciliation-page .records-header {
+        padding: 1.2rem 1.35rem;
+        border-bottom: 1px solid var(--kucsa-border);
+        background: linear-gradient(
+            180deg,
+            #ffffff,
+            #fbfcfe
+        );
+    }
+
+    .kucsa-reconciliation-page .records-title {
+        color: var(--kucsa-dark);
+        font-size: 1.05rem;
+        font-weight: 800;
+        margin-bottom: 0.25rem;
+    }
+
+    .kucsa-reconciliation-page .record-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 38px;
+        padding: 0.35rem 0.65rem;
+        border-radius: 999px;
+        background: var(--kucsa-soft);
+        color: var(--kucsa-dark);
+        border: 1px solid var(--kucsa-border);
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    /* ============================================================
+       DESKTOP TABLE
+       ============================================================ */
+
+    .kucsa-reconciliation-page .desktop-reconciliation {
+        display: block;
+    }
+
+    .kucsa-reconciliation-page .reconciliation-table {
+        margin-bottom: 0;
+        min-width: 1050px;
+    }
+
+    .kucsa-reconciliation-page .reconciliation-table thead th {
+        padding: 0.95rem 0.8rem;
+        background: #f8fafc;
+        border-bottom: 1px solid var(--kucsa-border);
+        color: #5e6878;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.045em;
+        white-space: nowrap;
+        font-weight: 800;
+    }
+
+    .kucsa-reconciliation-page .reconciliation-table tbody td {
+        padding: 1rem 0.8rem;
+        border-bottom: 1px solid #eef1f5;
+        vertical-align: middle;
+    }
+
+    .kucsa-reconciliation-page .reconciliation-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .kucsa-reconciliation-page .reconciliation-table tbody tr {
+        transition:
+            background-color 0.18s ease,
+            transform 0.18s ease;
+    }
+
+    .kucsa-reconciliation-page .reconciliation-table tbody tr:hover {
+        background: #fafcff;
+    }
+
+    .kucsa-reconciliation-page .reference-number {
+        color: var(--kucsa-dark);
+        font-size: 0.9rem;
+        font-weight: 750;
+        word-break: break-word;
+    }
+
+    .kucsa-reconciliation-page .statement-reference {
+        display: block;
+        margin-top: 0.25rem;
+        color: var(--kucsa-muted);
+        font-size: 0.72rem;
+        word-break: break-word;
+    }
+
+    .kucsa-reconciliation-page .period-main {
+        color: #343b48;
+        font-size: 0.83rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .kucsa-reconciliation-page .period-end {
+        color: var(--kucsa-muted);
+        font-size: 0.72rem;
+        white-space: nowrap;
+    }
+
+    .kucsa-reconciliation-page .money-value {
+        color: #303846;
+        font-size: 0.83rem;
+        font-weight: 650;
+        white-space: nowrap;
+    }
+
+    .kucsa-reconciliation-page .difference-zero {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        color: var(--kucsa-success);
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    .kucsa-reconciliation-page .difference-alert {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        color: var(--kucsa-danger);
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    /* ============================================================
+       STATUS BADGES
+       ============================================================ */
+
+    .kucsa-reconciliation-page .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.42rem 0.65rem;
+        border-radius: 999px;
+        font-size: 0.71rem;
+        font-weight: 750;
+        white-space: nowrap;
+        border: 1px solid transparent;
+    }
+
+    .kucsa-reconciliation-page .status-reconciled {
+        color: var(--kucsa-success);
+        background: rgba(25, 135, 84, 0.08);
+        border-color: rgba(25, 135, 84, 0.13);
+    }
+
+    .kucsa-reconciliation-page .status-discrepancy {
+        color: var(--kucsa-danger);
+        background: rgba(220, 53, 69, 0.08);
+        border-color: rgba(220, 53, 69, 0.13);
+    }
+
+    .kucsa-reconciliation-page .status-progress {
+        color: #9a6700;
+        background: rgba(245, 159, 0, 0.10);
+        border-color: rgba(245, 159, 0, 0.15);
+    }
+
+    .kucsa-reconciliation-page .status-draft {
+        color: #68717d;
+        background: #f2f4f7;
+        border-color: #e4e7eb;
+    }
+
+    /* ============================================================
+       VIEW BUTTON
+       ============================================================ */
+
+    .kucsa-reconciliation-page .view-button {
+        min-width: 78px;
+        border-radius: 9px;
+    }
+
+    /* ============================================================
+       MOBILE RECORD CARDS
+       ============================================================ */
+
+    .kucsa-reconciliation-page .mobile-reconciliation {
+        display: none;
+        padding: 0.9rem;
+    }
+
+    .kucsa-reconciliation-page .mobile-record {
+        position: relative;
+        border: 1px solid var(--kucsa-border);
+        border-radius: 16px;
+        background: #fff;
+        padding: 1rem;
+        margin-bottom: 0.8rem;
+        box-shadow: 0 4px 14px rgba(20, 32, 50, 0.045);
+        transition:
+            transform 0.18s ease,
+            box-shadow 0.18s ease;
+    }
+
+    .kucsa-reconciliation-page .mobile-record:last-child {
+        margin-bottom: 0;
+    }
+
+    .kucsa-reconciliation-page .mobile-record:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 9px 20px rgba(20, 32, 50, 0.08);
+    }
+
+    .kucsa-reconciliation-page .mobile-record-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.75rem;
+        margin-bottom: 0.95rem;
+    }
+
+    .kucsa-reconciliation-page .mobile-reference {
+        color: var(--kucsa-dark);
+        font-size: 0.9rem;
+        font-weight: 800;
+        word-break: break-word;
+    }
+
+    .kucsa-reconciliation-page .mobile-statement {
+        color: var(--kucsa-muted);
+        font-size: 0.72rem;
+        margin-top: 0.25rem;
+        word-break: break-word;
+    }
+
+    .kucsa-reconciliation-page .mobile-details {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.7rem;
+        padding: 0.85rem 0;
+        border-top: 1px solid #eef1f5;
+        border-bottom: 1px solid #eef1f5;
+    }
+
+    .kucsa-reconciliation-page .mobile-detail {
+        min-width: 0;
+    }
+
+    .kucsa-reconciliation-page .mobile-detail-label {
+        display: block;
+        color: var(--kucsa-muted);
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 0.2rem;
+    }
+
+    .kucsa-reconciliation-page .mobile-detail-value {
+        color: #303846;
+        font-size: 0.8rem;
+        font-weight: 650;
+        word-break: break-word;
+    }
+
+    .kucsa-reconciliation-page .mobile-money {
+        white-space: nowrap;
+    }
+
+    .kucsa-reconciliation-page .mobile-difference {
+        font-weight: 800;
+    }
+
+    .kucsa-reconciliation-page .mobile-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 0.9rem;
+    }
+
+    /* ============================================================
+       EMPTY STATE
+       ============================================================ */
+
+    .kucsa-reconciliation-page .empty-state {
+        padding: 4.5rem 1.5rem;
+        text-align: center;
+    }
+
+    .kucsa-reconciliation-page .empty-icon {
+        width: 78px;
+        height: 78px;
+        margin: 0 auto 1.15rem;
+        border-radius: 22px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(13, 110, 253, 0.07);
+        color: var(--kucsa-primary);
+        font-size: 2rem;
+    }
+
+    .kucsa-reconciliation-page .empty-title {
+        color: var(--kucsa-dark);
+        font-size: 1.05rem;
+        font-weight: 800;
+        margin-bottom: 0.45rem;
+    }
+
+    .kucsa-reconciliation-page .empty-description {
+        max-width: 510px;
+        margin: 0 auto 1.4rem;
+        color: var(--kucsa-muted);
+        line-height: 1.65;
+        font-size: 0.88rem;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+
+    @media (max-width: 991.98px) {
+
+        .kucsa-reconciliation-page .reconciliation-table {
+            min-width: 950px;
+        }
+
+        .kucsa-reconciliation-page .summary-value {
+            font-size: 1.5rem;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+
+        .kucsa-reconciliation-page {
+            padding-bottom: 1rem;
+        }
+
+        .kucsa-reconciliation-page .recon-header {
+            padding: 1rem;
+            border-radius: 16px;
+        }
+
+        .kucsa-reconciliation-page .header-icon {
+            width: 46px;
+            height: 46px;
+            min-width: 46px;
+            border-radius: 13px;
+        }
+
+        .kucsa-reconciliation-page .header-title {
+            font-size: 1.25rem;
+        }
+
+        .kucsa-reconciliation-page .header-subtitle {
+            font-size: 0.82rem;
+        }
+
+        .kucsa-reconciliation-page .header-badge {
+            font-size: 0.7rem;
+        }
+
+        .kucsa-reconciliation-page .header-action {
+            width: 100%;
+        }
+
+        .kucsa-reconciliation-page .header-action .btn {
+            width: 100%;
+        }
+
+        .kucsa-reconciliation-page .summary-card .card-body {
+            padding: 1rem;
+        }
+
+        .kucsa-reconciliation-page .summary-value {
+            font-size: 1.4rem;
+        }
+
+        .kucsa-reconciliation-page .summary-icon {
+            width: 43px;
+            height: 43px;
+            min-width: 43px;
+        }
+
+        .kucsa-reconciliation-page .records-card {
+            border-radius: 16px;
+        }
+
+        .kucsa-reconciliation-page .records-header {
+            padding: 1rem;
+        }
+
+        .kucsa-reconciliation-page .desktop-reconciliation {
+            display: none;
+        }
+
+        .kucsa-reconciliation-page .mobile-reconciliation {
+            display: block;
+        }
+
+        .kucsa-reconciliation-page .empty-state {
+            padding: 3.5rem 1.2rem;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+
+        .kucsa-reconciliation-page .mobile-details {
+            grid-template-columns: 1fr;
+        }
+
+        .kucsa-reconciliation-page .mobile-record-top {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .kucsa-reconciliation-page .mobile-actions {
+            justify-content: stretch;
+        }
+
+        .kucsa-reconciliation-page .mobile-actions .btn {
+            width: 100%;
+        }
+
+        .kucsa-reconciliation-page .record-count {
+            font-size: 0.7rem;
+        }
+    }
+
+    /* ============================================================
+       ACCESSIBILITY / TOUCH / IOS
+       ============================================================ */
+
+    @media (max-width: 767.98px) {
+
+        .kucsa-reconciliation-page button,
+        .kucsa-reconciliation-page a {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .kucsa-reconciliation-page .btn {
+            min-height: 44px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .kucsa-reconciliation-page *,
+        .kucsa-reconciliation-page *::before,
+        .kucsa-reconciliation-page *::after {
+            scroll-behavior: auto !important;
+            transition: none !important;
+            animation: none !important;
+        }
+    }
+</style>
+
+
+<div class="container-fluid py-4 kucsa-reconciliation-page">
 
     <!-- =====================================================
          PAGE HEADER
     ====================================================== -->
-    <div class="d-flex flex-column flex-md-row
-                justify-content-between align-items-md-center
-                gap-3 mb-4">
 
-        <div>
-            <h3 class="fw-bold mb-1">
-                Financial Reconciliation
-            </h3>
+    <div class="recon-header">
 
-            <p class="text-muted mb-0">
-                Compare KUCSA financial records with external
-                statements and identify discrepancies.
-            </p>
+        <div class="d-flex flex-column flex-lg-row
+                    align-items-lg-center
+                    justify-content-between
+                    gap-4">
+
+            <div class="d-flex align-items-start gap-3">
+
+                <div class="header-icon">
+                    <i class="bi bi-journal-check"></i>
+                </div>
+
+                <div>
+
+                    <div class="d-flex flex-wrap
+                                align-items-center gap-2 mb-1">
+
+                        <h3 class="header-title fw-bold mb-0">
+                            Financial Reconciliation
+                        </h3>
+
+                        <span class="header-badge">
+                            <i class="bi bi-shield-check"></i>
+                            Financial Control
+                        </span>
+
+                    </div>
+
+                    <p class="header-subtitle text-muted mb-0">
+                        Compare KUCSA financial records with external
+                        statements and identify discrepancies before
+                        they affect financial reporting.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            {% if can_manage_reconciliation %}
+
+                <div class="header-action">
+
+                    <a href="{% url 'finance:reconciliation_create' %}"
+                       class="btn btn-primary">
+
+                        <i class="bi bi-plus-circle me-1"></i>
+                        New Reconciliation
+
+                    </a>
+
+                </div>
+
+            {% endif %}
+
         </div>
-
-        {% if can_manage_reconciliation %}
-            <a href="{% url 'finance:reconciliation_create' %}"
-               class="btn btn-primary">
-                <i class="bi bi-plus-circle me-1"></i>
-                New Reconciliation
-            </a>
-        {% endif %}
 
     </div>
 
@@ -39,142 +752,201 @@
     <!-- =====================================================
          SUMMARY CARDS
     ====================================================== -->
+
     <div class="row g-3 mb-4">
 
+        <!-- Total -->
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border-0 shadow-sm h-100">
+
+            <div class="summary-card summary-total h-100">
+
                 <div class="card-body">
 
-                    <div class="d-flex justify-content-between
-                                align-items-center">
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-center
+                                gap-3">
 
                         <div>
-                            <small class="text-muted">
-                                Total
-                            </small>
+                            <span class="summary-label">
+                                Total Records
+                            </span>
 
-                            <h4 class="fw-bold mb-0">
+                            <div class="summary-value">
                                 {{ reconciliations|length }}
-                            </h4>
+                            </div>
+
+                            <small class="text-muted">
+                                All reconciliations
+                            </small>
                         </div>
 
-                        <div class="fs-3 text-primary">
+                        <div class="summary-icon">
                             <i class="bi bi-journal-check"></i>
                         </div>
 
                     </div>
 
                 </div>
+
             </div>
+
         </div>
 
 
+        <!-- Reconciled -->
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border-0 shadow-sm h-100">
+
+            <div class="summary-card summary-reconciled h-100">
+
                 <div class="card-body">
 
-                    <div class="d-flex justify-content-between
-                                align-items-center">
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-center
+                                gap-3">
 
                         <div>
-                            <small class="text-muted">
+                            <span class="summary-label">
                                 Reconciled
-                            </small>
+                            </span>
 
-                            <h4 class="fw-bold mb-0">
+                            <div class="summary-value">
                                 {{ reconciled_count|default:"0" }}
-                            </h4>
+                            </div>
+
+                            <small class="text-muted">
+                                Fully matched records
+                            </small>
                         </div>
 
-                        <div class="fs-3 text-success">
+                        <div class="summary-icon">
                             <i class="bi bi-check-circle"></i>
                         </div>
 
                     </div>
 
                 </div>
+
             </div>
+
         </div>
 
 
+        <!-- In Progress -->
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border-0 shadow-sm h-100">
+
+            <div class="summary-card summary-progress h-100">
+
                 <div class="card-body">
 
-                    <div class="d-flex justify-content-between
-                                align-items-center">
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-center
+                                gap-3">
 
                         <div>
-                            <small class="text-muted">
+                            <span class="summary-label">
                                 In Progress
-                            </small>
+                            </span>
 
-                            <h4 class="fw-bold mb-0">
+                            <div class="summary-value">
                                 {{ in_progress_count|default:"0" }}
-                            </h4>
+                            </div>
+
+                            <small class="text-muted">
+                                Currently being reviewed
+                            </small>
                         </div>
 
-                        <div class="fs-3 text-warning">
+                        <div class="summary-icon">
                             <i class="bi bi-hourglass-split"></i>
                         </div>
 
                     </div>
 
                 </div>
+
             </div>
+
         </div>
 
 
+        <!-- Discrepancies -->
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border-0 shadow-sm h-100">
+
+            <div class="summary-card summary-discrepancy h-100">
+
                 <div class="card-body">
 
-                    <div class="d-flex justify-content-between
-                                align-items-center">
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-center
+                                gap-3">
 
                         <div>
-                            <small class="text-muted">
+                            <span class="summary-label">
                                 Discrepancies
-                            </small>
+                            </span>
 
-                            <h4 class="fw-bold mb-0">
+                            <div class="summary-value">
                                 {{ discrepancy_count|default:"0" }}
-                            </h4>
+                            </div>
+
+                            <small class="text-muted">
+                                Records requiring attention
+                            </small>
                         </div>
 
-                        <div class="fs-3 text-danger">
+                        <div class="summary-icon">
                             <i class="bi bi-exclamation-triangle"></i>
                         </div>
 
                     </div>
 
                 </div>
+
             </div>
+
         </div>
 
     </div>
 
 
     <!-- =====================================================
-         RECONCILIATION TABLE
+         RECONCILIATION RECORDS
     ====================================================== -->
-    <div class="card border-0 shadow-sm">
 
-        <div class="card-header bg-white border-0 py-3">
+    <div class="records-card">
 
-            <div class="d-flex flex-column flex-md-row
+        <div class="records-header">
+
+            <div class="d-flex flex-column
+                        flex-sm-row
                         justify-content-between
-                        align-items-md-center gap-2">
+                        align-items-sm-center
+                        gap-2">
 
                 <div>
-                    <h5 class="fw-bold mb-1">
+
+                    <h5 class="records-title">
                         Reconciliation Records
                     </h5>
 
                     <small class="text-muted">
-                        Review and monitor financial reconciliation.
+                        Review and monitor KUCSA financial
+                        reconciliation activity.
                     </small>
+
                 </div>
+
+                <span class="record-count"
+                      aria-label="Number of reconciliation records">
+
+                    {{ reconciliations|length }}
+                    record{{ reconciliations|length|pluralize }}
+
+                </span>
 
             </div>
 
@@ -185,181 +957,455 @@
 
             {% if reconciliations %}
 
-                <div class="table-responsive">
+                <!-- =================================================
+                     DESKTOP / TABLET VIEW
+                ================================================== -->
 
-                    <table class="table table-hover align-middle mb-0">
+                <div class="desktop-reconciliation">
 
-                        <thead class="table-light">
+                    <div class="table-responsive">
 
-                            <tr>
-                                <th class="ps-4">
-                                    Reference
-                                </th>
+                        <table class="table
+                                      table-hover
+                                      align-middle
+                                      reconciliation-table">
 
-                                <th>
-                                    Source
-                                </th>
-
-                                <th>
-                                    Period
-                                </th>
-
-                                <th class="text-end">
-                                    System Income
-                                </th>
-
-                                <th class="text-end">
-                                    External Income
-                                </th>
-
-                                <th class="text-end">
-                                    Difference
-                                </th>
-
-                                <th>
-                                    Status
-                                </th>
-
-                                <th class="text-end pe-4">
-                                    Action
-                                </th>
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody>
-
-                            {% for reconciliation in reconciliations %}
+                            <thead>
 
                                 <tr>
 
-                                    <!-- Reference -->
-                                    <td class="ps-4">
+                                    <th class="ps-4">
+                                        Reference
+                                    </th>
 
-                                        <div class="fw-semibold">
-                                            {{ reconciliation.reconciliation_number }}
-                                        </div>
+                                    <th>
+                                        Source
+                                    </th>
 
-                                        {% if reconciliation.statement_reference %}
-                                            <small class="text-muted">
-                                                Statement:
-                                                {{ reconciliation.statement_reference }}
-                                            </small>
-                                        {% endif %}
+                                    <th>
+                                        Period
+                                    </th>
 
-                                    </td>
+                                    <th class="text-end">
+                                        System Income
+                                    </th>
 
+                                    <th class="text-end">
+                                        External Income
+                                    </th>
 
-                                    <!-- Source -->
-                                    <td>
-                                        {{ reconciliation.get_statement_source_display }}
-                                    </td>
+                                    <th class="text-end">
+                                        Difference
+                                    </th>
 
+                                    <th>
+                                        Status
+                                    </th>
 
-                                    <!-- Period -->
-                                    <td>
-
-                                        <div>
-                                            {{ reconciliation.period_start|date:"d M Y" }}
-                                        </div>
-
-                                        <small class="text-muted">
-                                            to
-                                            {{ reconciliation.period_end|date:"d M Y" }}
-                                        </small>
-
-                                    </td>
-
-
-                                    <!-- System Income -->
-                                    <td class="text-end">
-                                        KES
-                                        {{ reconciliation.system_income|floatformat:2 }}
-                                    </td>
-
-
-                                    <!-- External Income -->
-                                    <td class="text-end">
-                                        KES
-                                        {{ reconciliation.external_income|floatformat:2 }}
-                                    </td>
-
-
-                                    <!-- Difference -->
-                                    <td class="text-end">
-
-                                        {% if reconciliation.income_difference == 0 %}
-                                            <span class="text-success fw-semibold">
-                                                KES 0.00
-                                            </span>
-                                        {% else %}
-                                            <span class="text-danger fw-semibold">
-                                                KES
-                                                {{ reconciliation.income_difference|floatformat:2 }}
-                                            </span>
-                                        {% endif %}
-
-                                    </td>
-
-
-                                    <!-- Status -->
-                                    <td>
-
-                                        {% if reconciliation.status == "RECONCILED" %}
-
-                                            <span class="badge bg-success-subtle text-success">
-                                                <i class="bi bi-check-circle me-1"></i>
-                                                Reconciled
-                                            </span>
-
-                                        {% elif reconciliation.status == "DISCREPANCY" %}
-
-                                            <span class="badge bg-danger-subtle text-danger">
-                                                <i class="bi bi-exclamation-circle me-1"></i>
-                                                Discrepancy
-                                            </span>
-
-                                        {% elif reconciliation.status == "IN_PROGRESS" %}
-
-                                            <span class="badge bg-warning-subtle text-warning">
-                                                <i class="bi bi-hourglass-split me-1"></i>
-                                                In Progress
-                                            </span>
-
-                                        {% else %}
-
-                                            <span class="badge bg-secondary-subtle text-secondary">
-                                                Draft
-                                            </span>
-
-                                        {% endif %}
-
-                                    </td>
-
-
-                                    <!-- Action -->
-                                    <td class="text-end pe-4">
-
-                                        <a href="{% url 'finance:reconciliation_detail' reconciliation.pk %}"
-                                           class="btn btn-sm btn-outline-primary">
-
-                                            <i class="bi bi-eye me-1"></i>
-                                            View
-
-                                        </a>
-
-                                    </td>
+                                    <th class="text-end pe-4">
+                                        Action
+                                    </th>
 
                                 </tr>
 
-                            {% endfor %}
+                            </thead>
 
-                        </tbody>
 
-                    </table>
+                            <tbody>
+
+                                {% for reconciliation in reconciliations %}
+
+                                    <tr>
+
+                                        <!-- Reference -->
+                                        <td class="ps-4">
+
+                                            <div class="reference-number">
+                                                {{ reconciliation.reconciliation_number }}
+                                            </div>
+
+                                            {% if reconciliation.statement_reference %}
+
+                                                <span class="statement-reference">
+
+                                                    <i class="bi bi-file-text me-1"></i>
+
+                                                    {{ reconciliation.statement_reference }}
+
+                                                </span>
+
+                                            {% endif %}
+
+                                        </td>
+
+
+                                        <!-- Source -->
+                                        <td>
+
+                                            <span class="fw-semibold"
+                                                  style="font-size:0.82rem;">
+
+                                                {{ reconciliation.get_statement_source_display }}
+
+                                            </span>
+
+                                        </td>
+
+
+                                        <!-- Period -->
+                                        <td>
+
+                                            <div class="period-main">
+
+                                                <i class="bi bi-calendar3 me-1 text-muted"></i>
+
+                                                {{ reconciliation.period_start|date:"d M Y" }}
+
+                                            </div>
+
+                                            <div class="period-end">
+
+                                                to
+                                                {{ reconciliation.period_end|date:"d M Y" }}
+
+                                            </div>
+
+                                        </td>
+
+
+                                        <!-- System Income -->
+                                        <td class="text-end">
+
+                                            <span class="money-value">
+
+                                                KES
+                                                {{ reconciliation.system_income|floatformat:2 }}
+
+                                            </span>
+
+                                        </td>
+
+
+                                        <!-- External Income -->
+                                        <td class="text-end">
+
+                                            <span class="money-value">
+
+                                                KES
+                                                {{ reconciliation.external_income|floatformat:2 }}
+
+                                            </span>
+
+                                        </td>
+
+
+                                        <!-- Difference -->
+                                        <td class="text-end">
+
+                                            {% if reconciliation.income_difference == 0 %}
+
+                                                <span class="difference-zero">
+
+                                                    <i class="bi bi-check-circle-fill"></i>
+
+                                                    KES 0.00
+
+                                                </span>
+
+                                            {% else %}
+
+                                                <span class="difference-alert">
+
+                                                    <i class="bi bi-exclamation-circle-fill"></i>
+
+                                                    KES
+                                                    {{ reconciliation.income_difference|floatformat:2 }}
+
+                                                </span>
+
+                                            {% endif %}
+
+                                        </td>
+
+
+                                        <!-- Status -->
+                                        <td>
+
+                                            {% if reconciliation.status == "RECONCILED" %}
+
+                                                <span class="status-badge status-reconciled">
+
+                                                    <i class="bi bi-check-circle-fill"></i>
+
+                                                    Reconciled
+
+                                                </span>
+
+                                            {% elif reconciliation.status == "DISCREPANCY" %}
+
+                                                <span class="status-badge status-discrepancy">
+
+                                                    <i class="bi bi-exclamation-circle-fill"></i>
+
+                                                    Discrepancy
+
+                                                </span>
+
+                                            {% elif reconciliation.status == "IN_PROGRESS" %}
+
+                                                <span class="status-badge status-progress">
+
+                                                    <i class="bi bi-hourglass-split"></i>
+
+                                                    In Progress
+
+                                                </span>
+
+                                            {% else %}
+
+                                                <span class="status-badge status-draft">
+
+                                                    <i class="bi bi-pencil-square"></i>
+
+                                                    Draft
+
+                                                </span>
+
+                                            {% endif %}
+
+                                        </td>
+
+
+                                        <!-- Action -->
+                                        <td class="text-end pe-4">
+
+                                            <a href="{% url 'finance:reconciliation_detail' reconciliation.pk %}"
+                                               class="btn btn-sm btn-outline-primary view-button"
+                                               title="View reconciliation"
+                                               aria-label="View reconciliation">
+
+                                                <i class="bi bi-eye me-1"></i>
+                                                View
+
+                                            </a>
+
+                                        </td>
+
+                                    </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
 
                 </div>
+
+
+                <!-- =================================================
+                     MOBILE VIEW
+                ================================================== -->
+
+                <div class="mobile-reconciliation">
+
+                    {% for reconciliation in reconciliations %}
+
+                        <article class="mobile-record">
+
+                            <div class="mobile-record-top">
+
+                                <div>
+
+                                    <div class="mobile-reference">
+                                        {{ reconciliation.reconciliation_number }}
+                                    </div>
+
+                                    {% if reconciliation.statement_reference %}
+
+                                        <div class="mobile-statement">
+
+                                            <i class="bi bi-file-text me-1"></i>
+
+                                            {{ reconciliation.statement_reference }}
+
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                {% if reconciliation.status == "RECONCILED" %}
+
+                                    <span class="status-badge status-reconciled">
+
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        Reconciled
+
+                                    </span>
+
+                                {% elif reconciliation.status == "DISCREPANCY" %}
+
+                                    <span class="status-badge status-discrepancy">
+
+                                        <i class="bi bi-exclamation-circle-fill"></i>
+                                        Discrepancy
+
+                                    </span>
+
+                                {% elif reconciliation.status == "IN_PROGRESS" %}
+
+                                    <span class="status-badge status-progress">
+
+                                        <i class="bi bi-hourglass-split"></i>
+                                        In Progress
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="status-badge status-draft">
+
+                                        <i class="bi bi-pencil-square"></i>
+                                        Draft
+
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="mobile-details">
+
+                                <!-- Source -->
+                                <div class="mobile-detail">
+
+                                    <span class="mobile-detail-label">
+                                        Source
+                                    </span>
+
+                                    <span class="mobile-detail-value">
+                                        {{ reconciliation.get_statement_source_display }}
+                                    </span>
+
+                                </div>
+
+
+                                <!-- Period -->
+                                <div class="mobile-detail">
+
+                                    <span class="mobile-detail-label">
+                                        Period
+                                    </span>
+
+                                    <span class="mobile-detail-value">
+
+                                        {{ reconciliation.period_start|date:"d M Y" }}
+
+                                        <span class="text-muted">
+                                            →
+                                        </span>
+
+                                        {{ reconciliation.period_end|date:"d M Y" }}
+
+                                    </span>
+
+                                </div>
+
+
+                                <!-- System Income -->
+                                <div class="mobile-detail">
+
+                                    <span class="mobile-detail-label">
+                                        System Income
+                                    </span>
+
+                                    <span class="mobile-detail-value mobile-money">
+
+                                        KES
+                                        {{ reconciliation.system_income|floatformat:2 }}
+
+                                    </span>
+
+                                </div>
+
+
+                                <!-- External Income -->
+                                <div class="mobile-detail">
+
+                                    <span class="mobile-detail-label">
+                                        External Income
+                                    </span>
+
+                                    <span class="mobile-detail-value mobile-money">
+
+                                        KES
+                                        {{ reconciliation.external_income|floatformat:2 }}
+
+                                    </span>
+
+                                </div>
+
+
+                                <!-- Difference -->
+                                <div class="mobile-detail">
+
+                                    <span class="mobile-detail-label">
+                                        Difference
+                                    </span>
+
+                                    {% if reconciliation.income_difference == 0 %}
+
+                                        <span class="mobile-detail-value
+                                                     mobile-difference
+                                                     text-success">
+
+                                            <i class="bi bi-check-circle-fill me-1"></i>
+                                            KES 0.00
+
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="mobile-detail-value
+                                                     mobile-difference
+                                                     text-danger">
+
+                                            <i class="bi bi-exclamation-circle-fill me-1"></i>
+
+                                            KES
+                                            {{ reconciliation.income_difference|floatformat:2 }}
+
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="mobile-actions">
+
+                                <a href="{% url 'finance:reconciliation_detail' reconciliation.pk %}"
+                                   class="btn btn-outline-primary">
+
+                                    <i class="bi bi-eye me-1"></i>
+                                    View Reconciliation
+
+                                </a>
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
 
             {% else %}
 
@@ -367,20 +1413,29 @@
                      EMPTY STATE
                 ================================================== -->
 
-                <div class="text-center py-5 px-3">
+                <div class="empty-state">
 
-                    <div class="mb-3">
-                        <i class="bi bi-journal-check display-4 text-muted"></i>
+                    <div class="empty-icon">
+
+                        <i class="bi bi-journal-check"></i>
+
                     </div>
 
-                    <h5 class="fw-bold">
+
+                    <h5 class="empty-title">
                         No reconciliation records
                     </h5>
 
-                    <p class="text-muted mb-4">
+
+                    <p class="empty-description">
+
                         Financial reconciliation records will appear
-                        here once they are created.
+                        here once they are created. Use reconciliation
+                        to compare system records with external
+                        financial statements and identify differences.
+
                     </p>
+
 
                     {% if can_manage_reconciliation %}
 
@@ -403,5 +1458,164 @@
     </div>
 
 </div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const page = document.querySelector(".kucsa-reconciliation-page");
+
+        if (!page) {
+            return;
+        }
+
+        /* =========================================================
+           VIEW BUTTON LOADING FEEDBACK
+           ========================================================= */
+
+        const viewLinks = page.querySelectorAll(
+            'a[href*="reconciliation"]'
+        );
+
+        viewLinks.forEach(function (link) {
+
+            link.addEventListener("click", function () {
+
+                if (link.dataset.loading === "true") {
+                    return;
+                }
+
+                link.dataset.loading = "true";
+
+                const originalHTML = link.innerHTML;
+
+                link.innerHTML =
+                    '<span class="spinner-border spinner-border-sm me-1" ' +
+                    'aria-hidden="true"></span> Opening...';
+
+                link.setAttribute("aria-busy", "true");
+
+                /*
+                 * Restore the original content if navigation is
+                 * interrupted or the browser remains on the page.
+                 */
+                setTimeout(function () {
+
+                    if (document.body.contains(link)) {
+
+                        link.innerHTML = originalHTML;
+                        link.dataset.loading = "false";
+                        link.removeAttribute("aria-busy");
+
+                    }
+
+                }, 5000);
+
+            });
+
+        });
+
+
+        /* =========================================================
+           HORIZONTAL TABLE SCROLL FEEDBACK
+           Adds a subtle shadow when the desktop/tablet table can
+           be horizontally scrolled.
+           ========================================================= */
+
+        const tableContainers = page.querySelectorAll(
+            ".desktop-reconciliation .table-responsive"
+        );
+
+        tableContainers.forEach(function (container) {
+
+            function updateScrollState() {
+
+                const canScroll =
+                    container.scrollWidth > container.clientWidth;
+
+                if (!canScroll) {
+
+                    container.style.boxShadow = "none";
+                    return;
+
+                }
+
+                const atEnd =
+                    container.scrollLeft +
+                    container.clientWidth >=
+                    container.scrollWidth - 2;
+
+                if (atEnd) {
+
+                    container.style.boxShadow =
+                        "inset 12px 0 18px -18px rgba(20,32,50,.28)";
+
+                } else {
+
+                    container.style.boxShadow =
+                        "inset 12px 0 18px -18px rgba(20,32,50,.28), " +
+                        "inset -12px 0 18px -18px rgba(20,32,50,.18)";
+
+                }
+
+            }
+
+            container.addEventListener(
+                "scroll",
+                updateScrollState,
+                { passive: true }
+            );
+
+            window.addEventListener(
+                "resize",
+                updateScrollState
+            );
+
+            updateScrollState();
+
+        });
+
+
+        /* =========================================================
+           KEYBOARD ACCESSIBILITY
+           Press "/" to focus the first useful action.
+           ========================================================= */
+
+        document.addEventListener("keydown", function (event) {
+
+            const target = event.target;
+
+            if (
+                target &&
+                (
+                    target.tagName === "INPUT" ||
+                    target.tagName === "TEXTAREA" ||
+                    target.tagName === "SELECT" ||
+                    target.isContentEditable
+                )
+            ) {
+                return;
+            }
+
+            if (event.key === "/") {
+
+                const primaryAction =
+                    page.querySelector(
+                        'a[href*="reconciliation_create"]'
+                    );
+
+                if (primaryAction) {
+
+                    event.preventDefault();
+                    primaryAction.focus();
+
+                }
+
+            }
+
+        });
+
+    });
+</script>
 
 {% endblock %}

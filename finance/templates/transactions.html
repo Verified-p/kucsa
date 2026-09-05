@@ -1,148 +1,999 @@
-
 {% extends "base.html" %}
 
 {% block title %}Financial Transactions | KUCSA{% endblock %}
 
 {% block content %}
 
-<div class="container-fluid py-4">
+<style>
+    /* ============================================================
+       KUCSA FINANCIAL TRANSACTIONS
+       Page-scoped styling only
+    ============================================================ */
 
-    <!-- =====================================================
+    .kucsa-transactions-page {
+        --kt-primary: #0d6efd;
+        --kt-success: #198754;
+        --kt-danger: #dc3545;
+        --kt-warning: #f59e0b;
+        --kt-text: #172033;
+        --kt-muted: #6b7280;
+        --kt-border: #e8ecf2;
+        --kt-surface: #ffffff;
+        --kt-soft: #f7f9fc;
+        --kt-radius: 16px;
+        --kt-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
+        --kt-shadow-hover: 0 14px 35px rgba(15, 23, 42, 0.10);
+
+        color: var(--kt-text);
+    }
+
+    /* ============================================================
+       PAGE HEADER
+    ============================================================ */
+
+    .kucsa-transactions-page .kt-page-header {
+        position: relative;
+    }
+
+    .kucsa-transactions-page .kt-title-wrap {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+    }
+
+    .kucsa-transactions-page .kt-title-icon {
+        width: 50px;
+        height: 50px;
+        flex: 0 0 50px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+        background: rgba(13, 110, 253, 0.10);
+        color: var(--kt-primary);
+        font-size: 1.35rem;
+    }
+
+    .kucsa-transactions-page .kt-page-title {
+        font-size: clamp(1.35rem, 2vw, 1.8rem);
+        letter-spacing: -0.025em;
+        color: var(--kt-text);
+    }
+
+    .kucsa-transactions-page .kt-page-subtitle {
+        max-width: 700px;
+        line-height: 1.6;
+    }
+
+    /* ============================================================
+       BUTTONS
+    ============================================================ */
+
+    .kucsa-transactions-page .kt-primary-btn,
+    .kucsa-transactions-page .kt-secondary-btn {
+        min-height: 44px;
+        border-radius: 11px;
+        font-weight: 600;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            background-color 0.2s ease;
+    }
+
+    .kucsa-transactions-page .kt-primary-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 18px rgba(13, 110, 253, 0.20);
+    }
+
+    .kucsa-transactions-page .kt-secondary-btn:hover {
+        transform: translateY(-1px);
+    }
+
+    /* ============================================================
+       SUMMARY CARDS
+    ============================================================ */
+
+    .kucsa-transactions-page .kt-stat-card {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--kt-border) !important;
+        border-radius: var(--kt-radius);
+        background: var(--kt-surface);
+        box-shadow: var(--kt-shadow);
+        transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease;
+    }
+
+    .kucsa-transactions-page .kt-stat-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: var(--kt-primary);
+        opacity: 0.9;
+    }
+
+    .kucsa-transactions-page .kt-stat-card.kt-income::before {
+        background: var(--kt-success);
+    }
+
+    .kucsa-transactions-page .kt-stat-card.kt-expense::before {
+        background: var(--kt-danger);
+    }
+
+    .kucsa-transactions-page .kt-stat-card.kt-balance::before {
+        background: var(--kt-primary);
+    }
+
+    .kucsa-transactions-page .kt-stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--kt-shadow-hover);
+    }
+
+    .kucsa-transactions-page .kt-stat-label {
+        display: block;
+        color: var(--kt-muted);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.025em;
+        text-transform: uppercase;
+    }
+
+    .kucsa-transactions-page .kt-stat-value {
+        margin-top: 5px;
+        margin-bottom: 0;
+        font-size: clamp(1.15rem, 2vw, 1.45rem);
+        letter-spacing: -0.02em;
+    }
+
+    .kucsa-transactions-page .kt-stat-icon {
+        width: 48px;
+        height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        font-size: 1.25rem;
+    }
+
+    .kucsa-transactions-page .kt-income .kt-stat-icon {
+        background: rgba(25, 135, 84, 0.10);
+        color: var(--kt-success);
+    }
+
+    .kucsa-transactions-page .kt-expense .kt-stat-icon {
+        background: rgba(220, 53, 69, 0.10);
+        color: var(--kt-danger);
+    }
+
+    .kucsa-transactions-page .kt-balance .kt-stat-icon {
+        background: rgba(13, 110, 253, 0.10);
+        color: var(--kt-primary);
+    }
+
+    /* ============================================================
+       FILTER PANEL
+    ============================================================ */
+
+    .kucsa-transactions-page .kt-filter-card {
+        border: 1px solid var(--kt-border) !important;
+        border-radius: var(--kt-radius);
+        background: var(--kt-surface);
+        box-shadow: var(--kt-shadow);
+    }
+
+    .kucsa-transactions-page .kt-filter-heading {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 18px;
+    }
+
+    .kucsa-transactions-page .kt-filter-icon {
+        width: 38px;
+        height: 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 11px;
+        background: rgba(13, 110, 253, 0.09);
+        color: var(--kt-primary);
+    }
+
+    .kucsa-transactions-page .kt-filter-title {
+        font-weight: 700;
+        margin-bottom: 2px;
+    }
+
+    .kucsa-transactions-page .kt-filter-subtitle {
+        color: var(--kt-muted);
+        font-size: 0.78rem;
+    }
+
+    .kucsa-transactions-page .kt-field-label {
+        color: #374151;
+        font-size: 0.82rem;
+        font-weight: 700;
+        margin-bottom: 7px;
+    }
+
+    .kucsa-transactions-page .kt-input-wrap {
+        position: relative;
+    }
+
+    .kucsa-transactions-page .kt-search-icon {
+        position: absolute;
+        left: 13px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    .kucsa-transactions-page .kt-search-input {
+        padding-left: 39px !important;
+    }
+
+    .kucsa-transactions-page .form-control,
+    .kucsa-transactions-page .form-select {
+        min-height: 44px;
+        border: 1px solid #dfe4ec;
+        border-radius: 11px;
+        box-shadow: none;
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .kucsa-transactions-page .form-control:focus,
+    .kucsa-transactions-page .form-select:focus {
+        border-color: rgba(13, 110, 253, 0.55);
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.09);
+    }
+
+    .kucsa-transactions-page .kt-filter-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .kucsa-transactions-page .kt-clear-btn {
+        width: 44px;
+        min-width: 44px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 11px;
+    }
+
+    .kucsa-transactions-page .kt-filter-status {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 16px;
+        padding-top: 13px;
+        border-top: 1px solid var(--kt-border);
+    }
+
+    .kucsa-transactions-page .kt-filter-count {
+        color: var(--kt-muted);
+        font-size: 0.78rem;
+    }
+
+    /* ============================================================
+       LEDGER CARD
+    ============================================================ */
+
+    .kucsa-transactions-page .kt-ledger-card {
+        overflow: hidden;
+        border: 1px solid var(--kt-border) !important;
+        border-radius: var(--kt-radius);
+        background: var(--kt-surface);
+        box-shadow: var(--kt-shadow);
+    }
+
+    .kucsa-transactions-page .kt-ledger-header {
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--kt-border);
+        background: linear-gradient(
+            180deg,
+            #ffffff 0%,
+            #fbfcfe 100%
+        );
+    }
+
+    .kucsa-transactions-page .kt-ledger-title {
+        font-size: 1rem;
+        font-weight: 750;
+        margin-bottom: 3px;
+    }
+
+    .kucsa-transactions-page .kt-record-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border: 1px solid var(--kt-border);
+        border-radius: 999px;
+        background: #f8fafc;
+        color: #475569;
+        font-size: 0.75rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    /* ============================================================
+       DESKTOP TABLE
+    ============================================================ */
+
+    .kucsa-transactions-page .kt-table-wrap {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .kucsa-transactions-page .kt-table {
+        min-width: 980px;
+        margin-bottom: 0;
+    }
+
+    .kucsa-transactions-page .kt-table thead th {
+        padding-top: 13px;
+        padding-bottom: 13px;
+        background: #f8fafc;
+        border-bottom: 1px solid var(--kt-border);
+        color: #64748b;
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.035em;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .kucsa-transactions-page .kt-table tbody td {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        border-color: #eef1f5;
+        vertical-align: middle;
+    }
+
+    .kucsa-transactions-page .kt-table tbody tr {
+        transition: background-color 0.18s ease;
+    }
+
+    .kucsa-transactions-page .kt-table tbody tr:hover {
+        background: #f8fbff;
+    }
+
+    .kucsa-transactions-page .kt-transaction-number {
+        color: #1e293b;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+
+    .kucsa-transactions-page .kt-reference {
+        display: inline-block;
+        max-width: 190px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: #64748b;
+        font-size: 0.75rem;
+    }
+
+    .kucsa-transactions-page .kt-category {
+        color: #475569;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .kucsa-transactions-page .kt-date-main {
+        color: #334155;
+        font-size: 0.84rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .kucsa-transactions-page .kt-date-time {
+        color: #94a3b8;
+        font-size: 0.74rem;
+    }
+
+    .kucsa-transactions-page .kt-source {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        color: #475569;
+        font-size: 0.82rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .kucsa-transactions-page .kt-source.kt-mpesa {
+        color: var(--kt-success);
+    }
+
+    .kucsa-transactions-page .kt-amount {
+        white-space: nowrap;
+        font-size: 0.88rem;
+    }
+
+    .kucsa-transactions-page .kt-type-badge,
+    .kucsa-transactions-page .kt-status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 9px;
+        border-radius: 8px;
+        font-size: 0.72rem;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    .kucsa-transactions-page .kt-type-income {
+        background: rgba(25, 135, 84, 0.09);
+        color: #147a4b;
+    }
+
+    .kucsa-transactions-page .kt-type-expense {
+        background: rgba(220, 53, 69, 0.09);
+        color: #bd2638;
+    }
+
+    .kucsa-transactions-page .kt-status-posted {
+        background: rgba(25, 135, 84, 0.10);
+        color: #147a4b;
+    }
+
+    .kucsa-transactions-page .kt-status-draft {
+        background: rgba(245, 158, 11, 0.14);
+        color: #9a6700;
+    }
+
+    .kucsa-transactions-page .kt-status-voided {
+        background: rgba(100, 116, 139, 0.12);
+        color: #475569;
+    }
+
+    .kucsa-transactions-page .kt-view-btn {
+        width: 38px;
+        height: 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        transition:
+            transform 0.18s ease,
+            background-color 0.18s ease;
+    }
+
+    .kucsa-transactions-page .kt-view-btn:hover {
+        transform: translateY(-1px);
+    }
+
+    /* ============================================================
+       MOBILE TRANSACTION CARDS
+    ============================================================ */
+
+    .kucsa-transactions-page .kt-mobile-list {
+        display: none;
+    }
+
+    .kucsa-transactions-page .kt-mobile-transaction {
+        padding: 16px;
+        border-bottom: 1px solid var(--kt-border);
+    }
+
+    .kucsa-transactions-page .kt-mobile-transaction:last-child {
+        border-bottom: 0;
+    }
+
+    .kucsa-transactions-page .kt-mobile-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 13px;
+    }
+
+    .kucsa-transactions-page .kt-mobile-number {
+        color: #1e293b;
+        font-size: 0.9rem;
+        font-weight: 750;
+        word-break: break-word;
+    }
+
+    .kucsa-transactions-page .kt-mobile-date {
+        margin-top: 3px;
+        color: #94a3b8;
+        font-size: 0.74rem;
+    }
+
+    .kucsa-transactions-page .kt-mobile-amount {
+        text-align: right;
+        white-space: nowrap;
+        font-size: 1rem;
+        font-weight: 800;
+    }
+
+    .kucsa-transactions-page .kt-mobile-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        padding: 13px 0;
+        border-top: 1px solid #f0f2f5;
+        border-bottom: 1px solid #f0f2f5;
+    }
+
+    .kucsa-transactions-page .kt-mobile-field {
+        min-width: 0;
+    }
+
+    .kucsa-transactions-page .kt-mobile-label {
+        display: block;
+        margin-bottom: 3px;
+        color: #94a3b8;
+        font-size: 0.68rem;
+        font-weight: 750;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+    }
+
+    .kucsa-transactions-page .kt-mobile-value {
+        display: block;
+        overflow: hidden;
+        color: #475569;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .kucsa-transactions-page .kt-mobile-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding-top: 13px;
+    }
+
+    .kucsa-transactions-page .kt-mobile-view {
+        min-height: 38px;
+        border-radius: 10px;
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+
+    /* ============================================================
+       PAGINATION
+    ============================================================ */
+
+    .kucsa-transactions-page .kt-pagination {
+        padding: 16px;
+        border-top: 1px solid var(--kt-border);
+    }
+
+    .kucsa-transactions-page .pagination {
+        gap: 6px;
+    }
+
+    .kucsa-transactions-page .page-link {
+        min-width: 42px;
+        min-height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9px !important;
+        border: 1px solid #e2e7ef;
+        color: #475569;
+        font-size: 0.82rem;
+        font-weight: 650;
+    }
+
+    .kucsa-transactions-page .page-item.active .page-link {
+        border-color: var(--kt-primary);
+    }
+
+    /* ============================================================
+       EMPTY STATE
+    ============================================================ */
+
+    .kucsa-transactions-page .kt-empty-state {
+        padding: 70px 24px;
+        text-align: center;
+    }
+
+    .kucsa-transactions-page .kt-empty-icon {
+        width: 76px;
+        height: 76px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 18px;
+        border-radius: 22px;
+        background: #f4f7fb;
+        color: #94a3b8;
+        font-size: 2rem;
+    }
+
+    .kucsa-transactions-page .kt-empty-title {
+        color: #1e293b;
+        font-size: 1.05rem;
+        font-weight: 750;
+    }
+
+    .kucsa-transactions-page .kt-empty-text {
+        max-width: 460px;
+        margin: 0 auto 20px;
+        color: #64748b;
+        line-height: 1.65;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+
+    @media (max-width: 991.98px) {
+        .kucsa-transactions-page .kt-page-header {
+            margin-bottom: 22px !important;
+        }
+
+        .kucsa-transactions-page .kt-stat-card {
+            border-radius: 14px;
+        }
+
+        .kucsa-transactions-page .kt-filter-card {
+            border-radius: 14px;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+
+        .kucsa-transactions-page {
+            font-size: 0.94rem;
+        }
+
+        .kucsa-transactions-page .container-fluid {
+            padding-left: 13px;
+            padding-right: 13px;
+        }
+
+        .kucsa-transactions-page .kt-title-wrap {
+            gap: 11px;
+        }
+
+        .kucsa-transactions-page .kt-title-icon {
+            width: 43px;
+            height: 43px;
+            flex-basis: 43px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+        }
+
+        .kucsa-transactions-page .kt-page-title {
+            font-size: 1.3rem;
+        }
+
+        .kucsa-transactions-page .kt-page-subtitle {
+            font-size: 0.82rem;
+            line-height: 1.5;
+        }
+
+        .kucsa-transactions-page .kt-header-action,
+        .kucsa-transactions-page .kt-header-action .btn {
+            width: 100%;
+        }
+
+        .kucsa-transactions-page .kt-primary-btn {
+            min-height: 46px;
+        }
+
+        .kucsa-transactions-page .kt-stat-value {
+            font-size: 1.08rem;
+        }
+
+        .kucsa-transactions-page .kt-stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+        }
+
+        .kucsa-transactions-page .kt-filter-status {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .kucsa-transactions-page .kt-filter-status a {
+            width: 100%;
+            text-align: center;
+        }
+
+        .kucsa-transactions-page .kt-table-wrap {
+            display: none;
+        }
+
+        .kucsa-transactions-page .kt-mobile-list {
+            display: block;
+        }
+
+        .kucsa-transactions-page .kt-ledger-header {
+            padding: 16px;
+        }
+
+        .kucsa-transactions-page .kt-ledger-header > div {
+            align-items: flex-start !important;
+        }
+
+        .kucsa-transactions-page .kt-record-badge {
+            font-size: 0.7rem;
+        }
+
+        .kucsa-transactions-page .kt-empty-state {
+            padding: 55px 18px;
+        }
+
+        .kucsa-transactions-page .kt-pagination {
+            padding: 14px 10px;
+            overflow-x: auto;
+        }
+
+        .kucsa-transactions-page .pagination {
+            justify-content: flex-start !important;
+            flex-wrap: nowrap;
+            min-width: max-content;
+        }
+
+        .kucsa-transactions-page .form-control,
+        .kucsa-transactions-page .form-select,
+        .kucsa-transactions-page button,
+        .kucsa-transactions-page a {
+            font-size: 16px;
+        }
+
+        .kucsa-transactions-page .kt-filter-card .btn {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 420px) {
+        .kucsa-transactions-page .kt-mobile-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .kucsa-transactions-page .kt-mobile-top {
+            flex-direction: column;
+        }
+
+        .kucsa-transactions-page .kt-mobile-amount {
+            width: 100%;
+            text-align: left;
+        }
+
+        .kucsa-transactions-page .kt-mobile-bottom {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .kucsa-transactions-page .kt-mobile-view {
+            width: 100%;
+        }
+    }
+
+    /* ============================================================
+       ACCESSIBILITY / MOTION
+    ============================================================ */
+
+    @media (prefers-reduced-motion: reduce) {
+        .kucsa-transactions-page *,
+        .kucsa-transactions-page *::before,
+        .kucsa-transactions-page *::after {
+            scroll-behavior: auto !important;
+            transition: none !important;
+            animation: none !important;
+        }
+    }
+</style>
+
+
+<div class="container-fluid py-4 kucsa-transactions-page">
+
+    <!-- ============================================================
          PAGE HEADER
-    ====================================================== -->
-    <div class="d-flex flex-column flex-md-row
+    ============================================================ -->
+
+    <div class="kt-page-header d-flex flex-column flex-md-row
                 justify-content-between align-items-md-center
                 gap-3 mb-4">
 
-        <div>
-            <h2 class="fw-bold mb-1">
-                Financial Transactions
-            </h2>
+        <div class="kt-title-wrap">
 
-            <p class="text-muted mb-0">
-                View and manage the KUCSA financial ledger.
-            </p>
+            <div class="kt-title-icon" aria-hidden="true">
+                <i class="bi bi-journal-text"></i>
+            </div>
+
+            <div>
+                <h2 class="kt-page-title fw-bold mb-1">
+                    Financial Transactions
+                </h2>
+
+                <p class="kt-page-subtitle text-muted mb-0">
+                    View and manage the KUCSA financial ledger.
+                </p>
+            </div>
+
         </div>
 
         {% if can_manage_transactions %}
-            <a href="{% url 'finance:transaction_create' %}"
-               class="btn btn-primary">
-                <i class="bi bi-plus-circle me-1"></i>
-                New Transaction
-            </a>
+            <div class="kt-header-action">
+                <a href="{% url 'finance:transaction_create' %}"
+                   class="btn btn-primary kt-primary-btn px-3">
+                    <i class="bi bi-plus-circle me-1"></i>
+                    New Transaction
+                </a>
+            </div>
         {% endif %}
 
     </div>
 
 
-    <!-- =====================================================
+    <!-- ============================================================
          SUMMARY CARDS
-    ====================================================== -->
+    ============================================================ -->
+
     <div class="row g-3 mb-4">
 
-        <!-- Income -->
-        <div class="col-12 col-md-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+        <!-- Posted Income -->
+        <div class="col-12 col-sm-6 col-lg-4">
+
+            <div class="card kt-stat-card kt-income h-100 border-0">
+
+                <div class="card-body p-3 p-md-4">
 
                     <div class="d-flex justify-content-between
-                                align-items-center">
+                                align-items-center gap-3">
 
-                        <div>
-                            <small class="text-muted">
+                        <div class="min-width-0">
+
+                            <span class="kt-stat-label">
                                 Posted Income
-                            </small>
+                            </span>
 
-                            <h4 class="fw-bold mb-0 mt-1">
+                            <h4 class="kt-stat-value fw-bold">
                                 KES {{ total_income|floatformat:2 }}
                             </h4>
+
+                            <small class="text-muted">
+                                Funds received and posted
+                            </small>
+
                         </div>
 
-                        <div class="rounded-circle bg-success-subtle
-                                    p-3">
-                            <i class="bi bi-arrow-down-left
-                                      text-success fs-4"></i>
+                        <div class="kt-stat-icon">
+                            <i class="bi bi-arrow-down-left"></i>
                         </div>
 
                     </div>
 
                 </div>
+
             </div>
+
         </div>
 
 
-        <!-- Expenses -->
-        <div class="col-12 col-md-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+        <!-- Posted Expenses -->
+        <div class="col-12 col-sm-6 col-lg-4">
+
+            <div class="card kt-stat-card kt-expense h-100 border-0">
+
+                <div class="card-body p-3 p-md-4">
 
                     <div class="d-flex justify-content-between
-                                align-items-center">
+                                align-items-center gap-3">
 
                         <div>
-                            <small class="text-muted">
-                                Posted Expenses
-                            </small>
 
-                            <h4 class="fw-bold mb-0 mt-1">
+                            <span class="kt-stat-label">
+                                Posted Expenses
+                            </span>
+
+                            <h4 class="kt-stat-value fw-bold">
                                 KES {{ total_expenses|floatformat:2 }}
                             </h4>
+
+                            <small class="text-muted">
+                                Funds spent and posted
+                            </small>
+
                         </div>
 
-                        <div class="rounded-circle bg-danger-subtle
-                                    p-3">
-                            <i class="bi bi-arrow-up-right
-                                      text-danger fs-4"></i>
+                        <div class="kt-stat-icon">
+                            <i class="bi bi-arrow-up-right"></i>
                         </div>
 
                     </div>
 
                 </div>
+
             </div>
+
         </div>
 
 
-        <!-- Balance -->
-        <div class="col-12 col-md-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+        <!-- Available Balance -->
+        <div class="col-12 col-sm-12 col-lg-4">
+
+            <div class="card kt-stat-card kt-balance h-100 border-0">
+
+                <div class="card-body p-3 p-md-4">
 
                     <div class="d-flex justify-content-between
-                                align-items-center">
+                                align-items-center gap-3">
 
                         <div>
-                            <small class="text-muted">
-                                Available Balance
-                            </small>
 
-                            <h4 class="fw-bold mb-0 mt-1">
+                            <span class="kt-stat-label">
+                                Available Balance
+                            </span>
+
+                            <h4 class="kt-stat-value fw-bold">
                                 KES {{ balance|floatformat:2 }}
                             </h4>
+
+                            <small class="text-muted">
+                                Current available funds
+                            </small>
+
                         </div>
 
-                        <div class="rounded-circle bg-primary-subtle
-                                    p-3">
-                            <i class="bi bi-wallet2
-                                      text-primary fs-4"></i>
+                        <div class="kt-stat-icon">
+                            <i class="bi bi-wallet2"></i>
                         </div>
 
                     </div>
 
                 </div>
+
             </div>
+
         </div>
 
     </div>
 
 
-    <!-- =====================================================
+    <!-- ============================================================
          FILTERS
-    ====================================================== -->
-    <div class="card border-0 shadow-sm mb-4">
+    ============================================================ -->
 
-        <div class="card-body">
+    <div class="card kt-filter-card border-0 mb-4">
 
-            <form method="get">
+        <div class="card-body p-3 p-md-4">
+
+            <div class="kt-filter-heading">
+
+                <div class="kt-filter-icon">
+                    <i class="bi bi-funnel"></i>
+                </div>
+
+                <div>
+                    <div class="kt-filter-title">
+                        Filter Transactions
+                    </div>
+
+                    <div class="kt-filter-subtitle">
+                        Narrow the ledger by type, status, or payment source.
+                    </div>
+                </div>
+
+            </div>
+
+
+            <form method="get" id="transactionFilterForm">
 
                 <div class="row g-3 align-items-end">
 
@@ -150,27 +1001,35 @@
                     <div class="col-12 col-lg-4">
 
                         <label for="search"
-                               class="form-label fw-semibold">
-                            Search
+                               class="kt-field-label">
+                            Search transactions
                         </label>
 
-                        <input
-                            type="text"
-                            name="search"
-                            id="search"
-                            class="form-control"
-                            placeholder="Transaction number, reference..."
-                            value="{{ request.GET.search|default:'' }}"
-                        >
+                        <div class="kt-input-wrap">
+
+                            <i class="bi bi-search kt-search-icon"
+                               aria-hidden="true"></i>
+
+                            <input
+                                type="text"
+                                name="search"
+                                id="search"
+                                class="form-control kt-search-input"
+                                placeholder="Transaction number, reference..."
+                                value="{{ request.GET.search|default:'' }}"
+                                autocomplete="off"
+                            >
+
+                        </div>
 
                     </div>
 
 
                     <!-- Type -->
-                    <div class="col-12 col-md-4 col-lg-2">
+                    <div class="col-12 col-sm-6 col-lg-2">
 
                         <label for="type"
-                               class="form-label fw-semibold">
+                               class="kt-field-label">
                             Type
                         </label>
 
@@ -202,10 +1061,10 @@
 
 
                     <!-- Status -->
-                    <div class="col-12 col-md-4 col-lg-2">
+                    <div class="col-12 col-sm-6 col-lg-2">
 
                         <label for="status"
-                               class="form-label fw-semibold">
+                               class="kt-field-label">
                             Status
                         </label>
 
@@ -244,10 +1103,10 @@
 
 
                     <!-- Source -->
-                    <div class="col-12 col-md-4 col-lg-2">
+                    <div class="col-12 col-sm-6 col-lg-2">
 
                         <label for="source"
-                               class="form-label fw-semibold">
+                               class="kt-field-label">
                             Source
                         </label>
 
@@ -295,22 +1154,55 @@
                     <!-- Buttons -->
                     <div class="col-12 col-lg-2">
 
-                        <div class="d-flex gap-2">
+                        <div class="kt-filter-actions">
 
                             <button type="submit"
-                                    class="btn btn-primary flex-grow-1">
-                                <i class="bi bi-search me-1"></i>
-                                Filter
+                                    class="btn btn-primary kt-primary-btn flex-grow-1"
+                                    id="filterButton">
+
+                                <i class="bi bi-search me-1"
+                                   id="filterButtonIcon"></i>
+
+                                <span id="filterButtonText">
+                                    Filter
+                                </span>
+
                             </button>
 
                             <a href="{% url 'finance:transactions' %}"
-                               class="btn btn-outline-secondary">
+                               class="btn btn-outline-secondary kt-clear-btn"
+                               title="Clear all filters"
+                               aria-label="Clear all filters">
+
                                 <i class="bi bi-arrow-counterclockwise"></i>
+
                             </a>
 
                         </div>
 
                     </div>
+
+                </div>
+
+
+                <!-- Active Filter Indicator -->
+                <div class="kt-filter-status">
+
+                    <span class="kt-filter-count"
+                          id="activeFilterCount"
+                          aria-live="polite">
+                        No filters applied
+                    </span>
+
+                    {% if request.GET.search or request.GET.type or request.GET.status or request.GET.source %}
+                        <a href="{% url 'finance:transactions' %}"
+                           class="small text-decoration-none fw-semibold">
+
+                            <i class="bi bi-x-circle me-1"></i>
+                            Clear active filters
+
+                        </a>
+                    {% endif %}
 
                 </div>
 
@@ -321,29 +1213,40 @@
     </div>
 
 
-    <!-- =====================================================
-         TRANSACTIONS TABLE
-    ====================================================== -->
-    <div class="card border-0 shadow-sm">
+    <!-- ============================================================
+         TRANSACTION LEDGER
+    ============================================================ -->
 
-        <div class="card-header bg-white border-0 py-3">
+    <div class="card kt-ledger-card border-0">
+
+        <div class="kt-ledger-header">
 
             <div class="d-flex justify-content-between
-                        align-items-center">
+                        align-items-center gap-3">
 
                 <div>
-                    <h5 class="fw-bold mb-1">
+
+                    <h5 class="kt-ledger-title">
                         Transaction Ledger
                     </h5>
 
                     <small class="text-muted">
                         {% if transactions %}
-                            {{ transactions|length }} transaction{{ transactions|length|pluralize }}
+                            Financial transactions currently displayed
                         {% else %}
                             No transactions found
                         {% endif %}
                     </small>
+
                 </div>
+
+                {% if transactions %}
+                    <span class="kt-record-badge">
+                        <i class="bi bi-receipt"></i>
+                        {{ transactions|length }}
+                        transaction{{ transactions|length|pluralize }}
+                    </span>
+                {% endif %}
 
             </div>
 
@@ -354,12 +1257,15 @@
 
             {% if transactions %}
 
-                <div class="table-responsive">
+                <!-- ====================================================
+                     DESKTOP / TABLET TABLE
+                ===================================================== -->
 
-                    <table class="table table-hover
-                                  align-middle mb-0">
+                <div class="kt-table-wrap">
 
-                        <thead class="table-light">
+                    <table class="table kt-table table-hover align-middle">
+
+                        <thead>
 
                             <tr>
 
@@ -409,15 +1315,26 @@
                                     <!-- Transaction -->
                                     <td class="px-3">
 
-                                        <div class="fw-semibold">
+                                        <div class="kt-transaction-number">
                                             {{ transaction.transaction_number }}
                                         </div>
 
                                         {% if transaction.reference %}
-                                            <small class="text-muted">
+
+                                            <small class="kt-reference"
+                                                   title="{{ transaction.reference }}">
+
                                                 Ref:
                                                 {{ transaction.reference }}
+
                                             </small>
+
+                                        {% else %}
+
+                                            <small class="text-muted">
+                                                No reference
+                                            </small>
+
                                         {% endif %}
 
                                     </td>
@@ -426,11 +1343,11 @@
                                     <!-- Date -->
                                     <td>
 
-                                        <div>
+                                        <div class="kt-date-main">
                                             {{ transaction.transaction_date|date:"d M Y" }}
                                         </div>
 
-                                        <small class="text-muted">
+                                        <small class="kt-date-time">
                                             {{ transaction.transaction_date|time:"H:i" }}
                                         </small>
 
@@ -442,19 +1359,15 @@
 
                                         {% if transaction.is_income %}
 
-                                            <span class="badge
-                                                         bg-success-subtle
-                                                         text-success">
-                                                <i class="bi bi-arrow-down-left me-1"></i>
+                                            <span class="kt-type-badge kt-type-income">
+                                                <i class="bi bi-arrow-down-left"></i>
                                                 Income
                                             </span>
 
                                         {% elif transaction.is_expense %}
 
-                                            <span class="badge
-                                                         bg-danger-subtle
-                                                         text-danger">
-                                                <i class="bi bi-arrow-up-right me-1"></i>
+                                            <span class="kt-type-badge kt-type-expense">
+                                                <i class="bi bi-arrow-up-right"></i>
                                                 Expense
                                             </span>
 
@@ -471,7 +1384,11 @@
 
                                     <!-- Category -->
                                     <td>
-                                        {{ transaction.category.name }}
+
+                                        <span class="kt-category">
+                                            {{ transaction.category.name }}
+                                        </span>
+
                                     </td>
 
 
@@ -479,25 +1396,32 @@
                                     <td>
 
                                         {% if transaction.payment_source == "MPESA" %}
-                                            <span class="text-success">
-                                                <i class="bi bi-phone me-1"></i>
+
+                                            <span class="kt-source kt-mpesa">
+                                                <i class="bi bi-phone"></i>
                                                 M-Pesa
                                             </span>
 
                                         {% elif transaction.payment_source == "BANK" %}
-                                            <span>
-                                                <i class="bi bi-bank me-1"></i>
+
+                                            <span class="kt-source">
+                                                <i class="bi bi-bank"></i>
                                                 Bank
                                             </span>
 
                                         {% elif transaction.payment_source == "CASH" %}
-                                            <span>
-                                                <i class="bi bi-cash-stack me-1"></i>
+
+                                            <span class="kt-source">
+                                                <i class="bi bi-cash-stack"></i>
                                                 Cash
                                             </span>
 
                                         {% else %}
-                                            {{ transaction.get_payment_source_display }}
+
+                                            <span class="kt-source">
+                                                {{ transaction.get_payment_source_display }}
+                                            </span>
+
                                         {% endif %}
 
                                     </td>
@@ -508,19 +1432,19 @@
 
                                         {% if transaction.is_income %}
 
-                                            <span class="fw-bold text-success">
+                                            <span class="kt-amount fw-bold text-success">
                                                 + KES {{ transaction.amount|floatformat:2 }}
                                             </span>
 
                                         {% elif transaction.is_expense %}
 
-                                            <span class="fw-bold text-danger">
+                                            <span class="kt-amount fw-bold text-danger">
                                                 - KES {{ transaction.amount|floatformat:2 }}
                                             </span>
 
                                         {% else %}
 
-                                            <span class="fw-bold">
+                                            <span class="kt-amount fw-bold">
                                                 KES {{ transaction.amount|floatformat:2 }}
                                             </span>
 
@@ -534,19 +1458,22 @@
 
                                         {% if transaction.status == "POSTED" %}
 
-                                            <span class="badge bg-success">
+                                            <span class="kt-status-badge kt-status-posted">
+                                                <i class="bi bi-check-circle"></i>
                                                 Posted
                                             </span>
 
                                         {% elif transaction.status == "DRAFT" %}
 
-                                            <span class="badge bg-warning text-dark">
+                                            <span class="kt-status-badge kt-status-draft">
+                                                <i class="bi bi-clock"></i>
                                                 Draft
                                             </span>
 
                                         {% elif transaction.status == "VOIDED" %}
 
-                                            <span class="badge bg-secondary">
+                                            <span class="kt-status-badge kt-status-voided">
+                                                <i class="bi bi-slash-circle"></i>
                                                 Voided
                                             </span>
 
@@ -565,8 +1492,9 @@
                                     <td class="text-center">
 
                                         <a href="{% url 'finance:transaction_detail' transaction.pk %}"
-                                           class="btn btn-sm btn-outline-primary"
-                                           title="View transaction">
+                                           class="btn btn-sm btn-outline-primary kt-view-btn"
+                                           title="View transaction"
+                                           aria-label="View transaction {{ transaction.transaction_number }}">
 
                                             <i class="bi bi-eye"></i>
 
@@ -585,18 +1513,212 @@
                 </div>
 
 
-                <!-- =================================================
+                <!-- ====================================================
+                     MOBILE TRANSACTION CARDS
+                ===================================================== -->
+
+                <div class="kt-mobile-list">
+
+                    {% for transaction in transactions %}
+
+                        <article class="kt-mobile-transaction">
+
+                            <div class="kt-mobile-top">
+
+                                <div>
+
+                                    <div class="kt-mobile-number">
+                                        {{ transaction.transaction_number }}
+                                    </div>
+
+                                    <div class="kt-mobile-date">
+                                        {{ transaction.transaction_date|date:"d M Y, H:i" }}
+                                    </div>
+
+                                </div>
+
+
+                                <div class="kt-mobile-amount">
+
+                                    {% if transaction.is_income %}
+
+                                        <span class="text-success">
+                                            + KES {{ transaction.amount|floatformat:2 }}
+                                        </span>
+
+                                    {% elif transaction.is_expense %}
+
+                                        <span class="text-danger">
+                                            - KES {{ transaction.amount|floatformat:2 }}
+                                        </span>
+
+                                    {% else %}
+
+                                        <span>
+                                            KES {{ transaction.amount|floatformat:2 }}
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+
+                                {% if transaction.is_income %}
+
+                                    <span class="kt-type-badge kt-type-income">
+                                        <i class="bi bi-arrow-down-left"></i>
+                                        Income
+                                    </span>
+
+                                {% elif transaction.is_expense %}
+
+                                    <span class="kt-type-badge kt-type-expense">
+                                        <i class="bi bi-arrow-up-right"></i>
+                                        Expense
+                                    </span>
+
+                                {% endif %}
+
+
+                                {% if transaction.status == "POSTED" %}
+
+                                    <span class="kt-status-badge kt-status-posted">
+                                        <i class="bi bi-check-circle"></i>
+                                        Posted
+                                    </span>
+
+                                {% elif transaction.status == "DRAFT" %}
+
+                                    <span class="kt-status-badge kt-status-draft">
+                                        <i class="bi bi-clock"></i>
+                                        Draft
+                                    </span>
+
+                                {% elif transaction.status == "VOIDED" %}
+
+                                    <span class="kt-status-badge kt-status-voided">
+                                        <i class="bi bi-slash-circle"></i>
+                                        Voided
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-light text-dark">
+                                        {{ transaction.get_status_display }}
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="kt-mobile-grid">
+
+                                <div class="kt-mobile-field">
+
+                                    <span class="kt-mobile-label">
+                                        Category
+                                    </span>
+
+                                    <span class="kt-mobile-value">
+                                        {{ transaction.category.name }}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="kt-mobile-field">
+
+                                    <span class="kt-mobile-label">
+                                        Source
+                                    </span>
+
+                                    <span class="kt-mobile-value">
+
+                                        {% if transaction.payment_source == "MPESA" %}
+                                            M-Pesa
+                                        {% elif transaction.payment_source == "BANK" %}
+                                            Bank
+                                        {% elif transaction.payment_source == "CASH" %}
+                                            Cash
+                                        {% else %}
+                                            {{ transaction.get_payment_source_display }}
+                                        {% endif %}
+
+                                    </span>
+
+                                </div>
+
+
+                                <div class="kt-mobile-field">
+
+                                    <span class="kt-mobile-label">
+                                        Reference
+                                    </span>
+
+                                    <span class="kt-mobile-value"
+                                          title="{{ transaction.reference|default:'No reference' }}">
+
+                                        {{ transaction.reference|default:"No reference" }}
+
+                                    </span>
+
+                                </div>
+
+
+                                <div class="kt-mobile-field">
+
+                                    <span class="kt-mobile-label">
+                                        Time
+                                    </span>
+
+                                    <span class="kt-mobile-value">
+                                        {{ transaction.transaction_date|date:"H:i" }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="kt-mobile-bottom">
+
+                                <span class="text-muted small">
+                                    Financial ledger record
+                                </span>
+
+                                <a href="{% url 'finance:transaction_detail' transaction.pk %}"
+                                   class="btn btn-outline-primary kt-mobile-view">
+
+                                    <i class="bi bi-eye me-1"></i>
+                                    View Transaction
+
+                                </a>
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- ====================================================
                      PAGINATION
-                ================================================== -->
+                ===================================================== -->
+
                 {% if transactions.has_other_pages %}
 
-                    <div class="card-footer bg-white border-0 py-3">
+                    <div class="kt-pagination">
 
                         <nav aria-label="Transaction pagination">
 
-                            <ul class="pagination
-                                       justify-content-center
-                                       mb-0">
+                            <ul class="pagination justify-content-center mb-0">
 
                                 {% if transactions.has_previous %}
 
@@ -605,6 +1727,7 @@
                                         <a class="page-link"
                                            href="?page={{ transactions.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search|urlencode }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.source %}&source={{ request.GET.source }}{% endif %}">
 
+                                            <i class="bi bi-chevron-left me-1"></i>
                                             Previous
 
                                         </a>
@@ -616,8 +1739,11 @@
 
                                 <li class="page-item active">
 
-                                    <span class="page-link">
+                                    <span class="page-link"
+                                          aria-current="page">
+
                                         {{ transactions.number }}
+
                                     </span>
 
                                 </li>
@@ -631,6 +1757,7 @@
                                            href="?page={{ transactions.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search|urlencode }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.source %}&source={{ request.GET.source }}{% endif %}">
 
                                             Next
+                                            <i class="bi bi-chevron-right ms-1"></i>
 
                                         </a>
 
@@ -649,31 +1776,39 @@
 
             {% else %}
 
-                <!-- =================================================
+                <!-- ====================================================
                      EMPTY STATE
-                ================================================== -->
-                <div class="text-center py-5 px-3">
+                ===================================================== -->
 
-                    <div class="mb-3">
+                <div class="kt-empty-state">
 
-                        <i class="bi bi-receipt
-                                  display-4 text-muted"></i>
-
+                    <div class="kt-empty-icon">
+                        <i class="bi bi-receipt"></i>
                     </div>
 
-                    <h5 class="fw-bold">
+                    <h5 class="kt-empty-title mb-2">
                         No transactions found
                     </h5>
 
-                    <p class="text-muted mb-4">
+                    <p class="kt-empty-text">
                         There are currently no financial transactions
-                        matching your filters.
+                        matching your selected filters.
                     </p>
 
-                    {% if can_manage_transactions %}
+                    {% if request.GET.search or request.GET.type or request.GET.status or request.GET.source %}
+
+                        <a href="{% url 'finance:transactions' %}"
+                           class="btn btn-outline-secondary">
+
+                            <i class="bi bi-arrow-counterclockwise me-1"></i>
+                            Clear Filters
+
+                        </a>
+
+                    {% elif can_manage_transactions %}
 
                         <a href="{% url 'finance:transaction_create' %}"
-                           class="btn btn-primary">
+                           class="btn btn-primary kt-primary-btn">
 
                             <i class="bi bi-plus-circle me-1"></i>
                             Create Transaction
@@ -691,5 +1826,160 @@
     </div>
 
 </div>
+
+
+<script>
+    (function () {
+        "use strict";
+
+        const form = document.getElementById("transactionFilterForm");
+        const searchInput = document.getElementById("search");
+        const typeInput = document.getElementById("type");
+        const statusInput = document.getElementById("status");
+        const sourceInput = document.getElementById("source");
+        const filterCount = document.getElementById("activeFilterCount");
+        const filterButton = document.getElementById("filterButton");
+        const filterButtonIcon = document.getElementById("filterButtonIcon");
+        const filterButtonText = document.getElementById("filterButtonText");
+
+        if (!form) {
+            return;
+        }
+
+        function updateFilterCount() {
+            let count = 0;
+
+            if (searchInput && searchInput.value.trim() !== "") {
+                count++;
+            }
+
+            if (typeInput && typeInput.value !== "") {
+                count++;
+            }
+
+            if (statusInput && statusInput.value !== "") {
+                count++;
+            }
+
+            if (sourceInput && sourceInput.value !== "") {
+                count++;
+            }
+
+            if (!filterCount) {
+                return;
+            }
+
+            if (count === 0) {
+                filterCount.innerHTML =
+                    '<i class="bi bi-funnel me-1"></i>No filters applied';
+            } else if (count === 1) {
+                filterCount.innerHTML =
+                    '<i class="bi bi-funnel-fill me-1"></i>1 active filter';
+            } else {
+                filterCount.innerHTML =
+                    '<i class="bi bi-funnel-fill me-1"></i>' +
+                    count +
+                    ' active filters';
+            }
+        }
+
+        function submitWithLoadingState() {
+            if (!filterButton) {
+                return;
+            }
+
+            filterButton.disabled = true;
+
+            if (filterButtonIcon) {
+                filterButtonIcon.className =
+                    "spinner-border spinner-border-sm me-2";
+            }
+
+            if (filterButtonText) {
+                filterButtonText.textContent = "Filtering...";
+            }
+        }
+
+        [
+            searchInput,
+            typeInput,
+            statusInput,
+            sourceInput
+        ].forEach(function (element) {
+
+            if (!element) {
+                return;
+            }
+
+            element.addEventListener("input", updateFilterCount);
+            element.addEventListener("change", updateFilterCount);
+
+        });
+
+        form.addEventListener("submit", function () {
+            submitWithLoadingState();
+        });
+
+        /*
+         * Press "/" to focus the transaction search field.
+         * Escape clears the search field when it is focused.
+         */
+        document.addEventListener("keydown", function (event) {
+
+            const activeElement = document.activeElement;
+            const isTyping =
+                activeElement &&
+                (
+                    activeElement.tagName === "INPUT" ||
+                    activeElement.tagName === "TEXTAREA" ||
+                    activeElement.tagName === "SELECT"
+                );
+
+            if (
+                event.key === "/" &&
+                !isTyping &&
+                searchInput
+            ) {
+                event.preventDefault();
+                searchInput.focus();
+            }
+
+            if (
+                event.key === "Escape" &&
+                activeElement === searchInput &&
+                searchInput.value
+            ) {
+                searchInput.value = "";
+                updateFilterCount();
+            }
+
+        });
+
+        /*
+         * Submit the filter form when Enter is pressed
+         * while using the search field.
+         */
+        if (searchInput) {
+
+            searchInput.addEventListener("keydown", function (event) {
+
+                if (event.key === "Enter") {
+                    event.preventDefault();
+
+                    if (typeof form.requestSubmit === "function") {
+                        form.requestSubmit();
+                    } else {
+                        form.submit();
+                    }
+                }
+
+            });
+
+        }
+
+        updateFilterCount();
+
+    })();
+</script>
 
 {% endblock %}

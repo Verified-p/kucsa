@@ -1,470 +1,1660 @@
-
 {% extends "base.html" %}
 
 {% block title %}Financial Categories | KUCSA{% endblock %}
 
 {% block content %}
 
-<div class="container-fluid py-4">
+<div class="container-fluid py-3 py-md-4 px-2 px-sm-3 px-lg-4">
 
     <!-- =====================================================
-         PAGE HEADER
+         INLINE PAGE STYLES
     ====================================================== -->
-    <div class="d-flex flex-column flex-md-row
-                justify-content-between align-items-md-center
-                gap-3 mb-4">
+    <style>
+        /* =====================================================
+           KUCSA FINANCE CATEGORIES
+        ====================================================== */
 
-        <div>
-            <h3 class="fw-bold mb-1">
-                Financial Categories
-            </h3>
+        .kucsa-category-page {
+            --kucsa-primary: #0d6efd;
+            --kucsa-success: #198754;
+            --kucsa-danger: #dc3545;
+            --kucsa-warning: #f59e0b;
+            --kucsa-info: #0dcaf0;
+            --kucsa-text: #1f2937;
+            --kucsa-muted: #6b7280;
+            --kucsa-border: rgba(15, 23, 42, 0.08);
+            --kucsa-card-radius: 18px;
+        }
 
-            <p class="text-muted mb-0">
-                Manage the categories used to classify KUCSA
-                income and expenses.
-            </p>
+        /* =====================================================
+           PAGE HEADER
+        ====================================================== */
+
+        .category-page-header {
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(13, 110, 253, 0.08),
+                    rgba(255, 255, 255, 0.95)
+                );
+            border: 1px solid rgba(13, 110, 253, 0.08);
+        }
+
+        .category-page-header::after {
+            content: "";
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            right: -70px;
+            top: -80px;
+            border-radius: 50%;
+            background: rgba(13, 110, 253, 0.06);
+            pointer-events: none;
+        }
+
+        .category-page-icon {
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            background: rgba(13, 110, 253, 0.1);
+            color: var(--kucsa-primary);
+            font-size: 1.3rem;
+        }
+
+        .category-page-title {
+            color: var(--kucsa-text);
+            font-size: clamp(1.25rem, 2vw, 1.65rem);
+            line-height: 1.25;
+            letter-spacing: -0.02em;
+        }
+
+        .category-page-description {
+            max-width: 720px;
+            color: var(--kucsa-muted);
+            font-size: 0.92rem;
+        }
+
+        /* =====================================================
+           SUMMARY CARDS
+        ====================================================== */
+
+        .category-stat-card {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--kucsa-border);
+            border-radius: var(--kucsa-card-radius);
+            background: #fff;
+            box-shadow: 0 6px 22px rgba(15, 23, 42, 0.055);
+            transition:
+                transform 0.22s ease,
+                box-shadow 0.22s ease,
+                border-color 0.22s ease;
+        }
+
+        .category-stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.09);
+            border-color: rgba(13, 110, 253, 0.15);
+        }
+
+        .category-stat-card::after {
+            content: "";
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            right: -35px;
+            bottom: -35px;
+            border-radius: 50%;
+            background: rgba(13, 110, 253, 0.035);
+            pointer-events: none;
+        }
+
+        .category-stat-label {
+            color: var(--kucsa-muted);
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.045em;
+        }
+
+        .category-stat-number {
+            color: var(--kucsa-text);
+            font-size: clamp(1.4rem, 3vw, 1.85rem);
+            font-weight: 750;
+            line-height: 1.1;
+        }
+
+        .category-stat-icon {
+            width: 46px;
+            height: 46px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            font-size: 1.15rem;
+        }
+
+        /* =====================================================
+           MAIN CATEGORY CARD
+        ====================================================== */
+
+        .category-main-card {
+            border: 1px solid var(--kucsa-border);
+            border-radius: var(--kucsa-card-radius);
+            background: #fff;
+            box-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
+            overflow: hidden;
+        }
+
+        .category-main-header {
+            padding: 1.15rem 1.25rem;
+            border-bottom: 1px solid var(--kucsa-border);
+            background:
+                linear-gradient(
+                    180deg,
+                    #ffffff 0%,
+                    #fbfcfe 100%
+                );
+        }
+
+        .category-main-title {
+            color: var(--kucsa-text);
+            font-size: 1rem;
+            font-weight: 750;
+            margin-bottom: 0.2rem;
+        }
+
+        .category-main-subtitle {
+            color: var(--kucsa-muted);
+            font-size: 0.82rem;
+        }
+
+        /* =====================================================
+           SEARCH
+        ====================================================== */
+
+        .category-search-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .category-search-wrapper i {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            pointer-events: none;
+        }
+
+        .category-search {
+            width: 100%;
+            min-height: 42px;
+            padding: 0.65rem 0.75rem 0.65rem 2.35rem;
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            outline: none;
+            background: #fff;
+            color: var(--kucsa-text);
+            font-size: 0.88rem;
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .category-search:focus {
+            border-color: rgba(13, 110, 253, 0.5);
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.1);
+        }
+
+        /* =====================================================
+           TABLE
+        ====================================================== */
+
+        .category-table-wrapper {
+            max-height: 620px;
+            overflow: auto;
+        }
+
+        .category-table {
+            min-width: 850px;
+            margin-bottom: 0;
+        }
+
+        .category-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            padding-top: 0.9rem;
+            padding-bottom: 0.9rem;
+            background: #f8f9fa;
+            color: #6b7280;
+            border-bottom: 1px solid var(--kucsa-border);
+            font-size: 0.72rem;
+            font-weight: 750;
+            text-transform: uppercase;
+            letter-spacing: 0.045em;
+            white-space: nowrap;
+        }
+
+        .category-table tbody tr {
+            transition:
+                background-color 0.18s ease,
+                transform 0.18s ease;
+        }
+
+        .category-table tbody tr:hover {
+            background: rgba(13, 110, 253, 0.025);
+        }
+
+        .category-table tbody td {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            border-color: rgba(15, 23, 42, 0.055);
+            vertical-align: middle;
+        }
+
+        .category-name {
+            color: var(--kucsa-text);
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .category-date {
+            color: var(--kucsa-muted);
+            font-size: 0.72rem;
+        }
+
+        .category-description {
+            max-width: 260px;
+            color: var(--kucsa-muted);
+            font-size: 0.8rem;
+            line-height: 1.45;
+        }
+
+        /* =====================================================
+           BADGES
+        ====================================================== */
+
+        .category-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.42rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .category-badge-income {
+            color: #146c43;
+            background: rgba(25, 135, 84, 0.1);
+        }
+
+        .category-badge-expense {
+            color: #b02a37;
+            background: rgba(220, 53, 69, 0.1);
+        }
+
+        .category-badge-active {
+            color: #146c43;
+            background: rgba(25, 135, 84, 0.1);
+        }
+
+        .category-badge-inactive {
+            color: #495057;
+            background: rgba(108, 117, 125, 0.1);
+        }
+
+        .category-badge-system {
+            color: #0a58ca;
+            background: rgba(13, 110, 253, 0.1);
+        }
+
+        .category-badge-custom {
+            color: #495057;
+            background: #f1f3f5;
+        }
+
+        /* =====================================================
+           ACTION BUTTONS
+        ====================================================== */
+
+        .category-action-btn {
+            width: 36px;
+            height: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px !important;
+            transition:
+                transform 0.18s ease,
+                box-shadow 0.18s ease;
+        }
+
+        .category-action-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        /* =====================================================
+           MOBILE CATEGORY CARDS
+        ====================================================== */
+
+        .mobile-category-list {
+            display: none;
+        }
+
+        .mobile-category-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--kucsa-border);
+            transition: background-color 0.18s ease;
+        }
+
+        .mobile-category-item:last-child {
+            border-bottom: 0;
+        }
+
+        .mobile-category-item:hover {
+            background: rgba(13, 110, 253, 0.025);
+        }
+
+        .mobile-category-name {
+            color: var(--kucsa-text);
+            font-size: 0.95rem;
+            font-weight: 750;
+        }
+
+        .mobile-category-meta {
+            color: var(--kucsa-muted);
+            font-size: 0.75rem;
+        }
+
+        .mobile-category-description {
+            margin-top: 0.65rem;
+            color: var(--kucsa-muted);
+            font-size: 0.8rem;
+            line-height: 1.45;
+        }
+
+        .mobile-category-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+            margin-top: 0.8rem;
+        }
+
+        /* =====================================================
+           EMPTY SEARCH STATE
+        ====================================================== */
+
+        .category-search-empty {
+            display: none;
+            padding: 2.5rem 1rem;
+            text-align: center;
+        }
+
+        .category-search-empty-icon {
+            width: 58px;
+            height: 58px;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            background: #f8f9fa;
+            color: #9ca3af;
+            font-size: 1.4rem;
+        }
+
+        /* =====================================================
+           EMPTY DATABASE STATE
+        ====================================================== */
+
+        .category-empty-state {
+            padding: 3.5rem 1rem;
+            text-align: center;
+        }
+
+        .category-empty-icon {
+            width: 76px;
+            height: 76px;
+            margin: 0 auto 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 22px;
+            background: rgba(13, 110, 253, 0.07);
+            color: var(--kucsa-primary);
+            font-size: 2rem;
+        }
+
+        /* =====================================================
+           RESPONSIVE
+        ====================================================== */
+
+        @media (max-width: 991.98px) {
+
+            .category-page-header {
+                padding: 1rem;
+            }
+
+            .category-search-wrapper {
+                max-width: none;
+            }
+
+            .category-table-wrapper {
+                max-height: none;
+            }
+        }
+
+        @media (max-width: 767.98px) {
+
+            .category-page-header {
+                border-radius: 16px;
+            }
+
+            .category-page-icon {
+                width: 42px;
+                height: 42px;
+                border-radius: 12px;
+            }
+
+            .category-main-card {
+                border-radius: 16px;
+            }
+
+            .category-main-header {
+                padding: 1rem;
+            }
+
+            .category-table-wrapper {
+                display: none;
+            }
+
+            .mobile-category-list {
+                display: block;
+            }
+
+            .category-stat-card:hover {
+                transform: none;
+            }
+
+            .category-empty-state {
+                padding: 2.5rem 1rem;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+
+            .category-page-header {
+                padding: 0.9rem;
+            }
+
+            .category-page-header .btn {
+                width: 100%;
+            }
+
+            .category-stat-card {
+                border-radius: 15px;
+            }
+
+            .category-stat-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 12px;
+            }
+
+            .category-main-header {
+                padding: 0.9rem;
+            }
+
+            .mobile-category-item {
+                padding: 0.9rem;
+            }
+
+            .category-search {
+                min-height: 44px;
+            }
+        }
+
+        /* =====================================================
+           REDUCED MOTION
+        ====================================================== */
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .category-stat-card,
+            .category-table tbody tr,
+            .category-action-btn {
+                transition: none !important;
+            }
+        }
+    </style>
+
+
+    <div class="kucsa-category-page">
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <div class="category-page-header">
+
+            <div class="d-flex flex-column flex-md-row
+                        justify-content-between
+                        align-items-start
+                        align-items-md-center
+                        gap-3">
+
+                <div class="d-flex align-items-start gap-3">
+
+                    <div class="category-page-icon">
+                        <i class="bi bi-tags"></i>
+                    </div>
+
+                    <div>
+
+                        <div class="d-flex flex-wrap
+                                    align-items-center
+                                    gap-2 mb-1">
+
+                            <h3 class="category-page-title fw-bold mb-0">
+                                Financial Categories
+                            </h3>
+
+                            <span class="badge rounded-pill
+                                         bg-primary-subtle
+                                         text-primary">
+                                KUCSA Finance
+                            </span>
+
+                        </div>
+
+                        <p class="category-page-description mb-0">
+                            Organize KUCSA income and expenses using
+                            clear and consistent financial categories.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                {% if can_manage_categories %}
+
+                    <a href="{% url 'finance:category_create' %}"
+                       class="btn btn-primary rounded-3 px-3 py-2">
+
+                        <i class="bi bi-plus-circle me-1"></i>
+
+                        Add Category
+
+                    </a>
+
+                {% endif %}
+
+            </div>
+
         </div>
 
-        {% if can_manage_categories %}
-            <a href="{% url 'finance:category_create' %}"
-               class="btn btn-primary">
 
-                <i class="bi bi-plus-circle me-1"></i>
-                Add Category
+        <!-- =====================================================
+             SUMMARY CARDS
+        ====================================================== -->
 
-            </a>
+        <div class="row g-3 mb-4">
+
+            <!-- Total -->
+
+            <div class="col-12 col-sm-6 col-xl-3">
+
+                <div class="category-stat-card h-100">
+
+                    <div class="card-body p-3 p-md-4">
+
+                        <div class="d-flex
+                                    justify-content-between
+                                    align-items-center">
+
+                            <div>
+
+                                <div class="category-stat-label mb-2">
+                                    Total Categories
+                                </div>
+
+                                <div class="category-stat-number">
+                                    {{ categories|length }}
+                                </div>
+
+                            </div>
+
+                            <div class="category-stat-icon
+                                        bg-primary-subtle
+                                        text-primary">
+
+                                <i class="bi bi-tags"></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Income -->
+
+            <div class="col-12 col-sm-6 col-xl-3">
+
+                <div class="category-stat-card h-100">
+
+                    <div class="card-body p-3 p-md-4">
+
+                        <div class="d-flex
+                                    justify-content-between
+                                    align-items-center">
+
+                            <div>
+
+                                <div class="category-stat-label mb-2">
+                                    Income Categories
+                                </div>
+
+                                <div class="category-stat-number">
+                                    {{ income_categories_count|default:"0" }}
+                                </div>
+
+                            </div>
+
+                            <div class="category-stat-icon
+                                        bg-success-subtle
+                                        text-success">
+
+                                <i class="bi bi-arrow-down-circle"></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Expense -->
+
+            <div class="col-12 col-sm-6 col-xl-3">
+
+                <div class="category-stat-card h-100">
+
+                    <div class="card-body p-3 p-md-4">
+
+                        <div class="d-flex
+                                    justify-content-between
+                                    align-items-center">
+
+                            <div>
+
+                                <div class="category-stat-label mb-2">
+                                    Expense Categories
+                                </div>
+
+                                <div class="category-stat-number">
+                                    {{ expense_categories_count|default:"0" }}
+                                </div>
+
+                            </div>
+
+                            <div class="category-stat-icon
+                                        bg-danger-subtle
+                                        text-danger">
+
+                                <i class="bi bi-arrow-up-circle"></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Active -->
+
+            <div class="col-12 col-sm-6 col-xl-3">
+
+                <div class="category-stat-card h-100">
+
+                    <div class="card-body p-3 p-md-4">
+
+                        <div class="d-flex
+                                    justify-content-between
+                                    align-items-center">
+
+                            <div>
+
+                                <div class="category-stat-label mb-2">
+                                    Active Categories
+                                </div>
+
+                                <div class="category-stat-number">
+                                    {{ active_categories_count|default:"0" }}
+                                </div>
+
+                            </div>
+
+                            <div class="category-stat-icon
+                                        bg-info-subtle
+                                        text-info">
+
+                                <i class="bi bi-check-circle"></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             CATEGORY LIST
+        ====================================================== -->
+
+        <div class="category-main-card">
+
+            <!-- HEADER -->
+
+            <div class="category-main-header">
+
+                <div class="d-flex flex-column
+                            flex-md-row
+                            justify-content-between
+                            align-items-stretch
+                            align-items-md-center
+                            gap-3">
+
+                    <div>
+
+                        <div class="d-flex align-items-center gap-2">
+
+                            <div class="text-primary">
+                                <i class="bi bi-grid-3x3-gap-fill"></i>
+                            </div>
+
+                            <h5 class="category-main-title mb-0">
+                                Categories
+                            </h5>
+
+                        </div>
+
+                        <div class="category-main-subtitle mt-1">
+                            Income and expense classifications.
+                        </div>
+
+                    </div>
+
+
+                    <!-- SEARCH -->
+
+                    <div class="category-search-wrapper">
+
+                        <i class="bi bi-search"></i>
+
+                        <input
+                            type="search"
+                            id="categorySearch"
+                            class="category-search"
+                            placeholder="Search categories..."
+                            autocomplete="off"
+                            aria-label="Search financial categories"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="card-body p-0">
+
+                {% if categories %}
+
+                    <!-- =================================================
+                         DESKTOP / TABLET TABLE
+                    ================================================== -->
+
+                    <div class="category-table-wrapper">
+
+                        <table class="table table-hover align-middle
+                                      category-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th class="ps-4">
+                                        Category
+                                    </th>
+
+                                    <th>
+                                        Type
+                                    </th>
+
+                                    <th>
+                                        Description
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                    <th>
+                                        Classification
+                                    </th>
+
+                                    {% if can_manage_categories %}
+
+                                        <th class="text-end pe-4">
+                                            Actions
+                                        </th>
+
+                                    {% endif %}
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody id="categoryTableBody">
+
+                                {% for category in categories %}
+
+                                    <tr
+                                        class="category-row"
+                                        data-search="
+                                            {{ category.name|lower }}
+                                            {{ category.description|default:''|lower }}
+                                            {{ category.category_type|lower }}
+                                            {% if category.is_active %}active{% else %}inactive{% endif %}
+                                            {% if category.is_system %}system{% else %}custom{% endif %}
+                                        "
+                                    >
+
+                                        <!-- CATEGORY -->
+
+                                        <td class="ps-4">
+
+                                            <div class="category-name">
+                                                {{ category.name }}
+                                            </div>
+
+                                            <div class="category-date mt-1">
+
+                                                <i class="bi bi-calendar3 me-1"></i>
+
+                                                Created
+                                                {{ category.created_at|date:"d M Y" }}
+
+                                            </div>
+
+                                        </td>
+
+
+                                        <!-- TYPE -->
+
+                                        <td>
+
+                                            {% if category.category_type == "INCOME" %}
+
+                                                <span class="category-badge
+                                                             category-badge-income">
+
+                                                    <i class="bi bi-arrow-down-circle"></i>
+                                                    Income
+
+                                                </span>
+
+                                            {% else %}
+
+                                                <span class="category-badge
+                                                             category-badge-expense">
+
+                                                    <i class="bi bi-arrow-up-circle"></i>
+                                                    Expense
+
+                                                </span>
+
+                                            {% endif %}
+
+                                        </td>
+
+
+                                        <!-- DESCRIPTION -->
+
+                                        <td>
+
+                                            {% if category.description %}
+
+                                                <div class="category-description"
+                                                     title="{{ category.description }}">
+
+                                                    {{ category.description|truncatechars:80 }}
+
+                                                </div>
+
+                                            {% else %}
+
+                                                <span class="text-muted small">
+                                                    No description
+                                                </span>
+
+                                            {% endif %}
+
+                                        </td>
+
+
+                                        <!-- STATUS -->
+
+                                        <td>
+
+                                            {% if category.is_active %}
+
+                                                <span class="category-badge
+                                                             category-badge-active">
+
+                                                    <i class="bi bi-check-circle"></i>
+                                                    Active
+
+                                                </span>
+
+                                            {% else %}
+
+                                                <span class="category-badge
+                                                             category-badge-inactive">
+
+                                                    <i class="bi bi-pause-circle"></i>
+                                                    Inactive
+
+                                                </span>
+
+                                            {% endif %}
+
+                                        </td>
+
+
+                                        <!-- CLASSIFICATION -->
+
+                                        <td>
+
+                                            {% if category.is_system %}
+
+                                                <span class="category-badge
+                                                             category-badge-system">
+
+                                                    <i class="bi bi-shield-check"></i>
+                                                    System
+
+                                                </span>
+
+                                            {% else %}
+
+                                                <span class="category-badge
+                                                             category-badge-custom">
+
+                                                    <i class="bi bi-sliders"></i>
+                                                    Custom
+
+                                                </span>
+
+                                            {% endif %}
+
+                                        </td>
+
+
+                                        <!-- ACTIONS -->
+
+                                        {% if can_manage_categories %}
+
+                                            <td class="text-end pe-4">
+
+                                                <div class="d-inline-flex gap-1">
+
+                                                    <a
+                                                        href="{% url 'finance:category_edit' category.pk %}"
+                                                        class="btn btn-sm btn-outline-primary category-action-btn"
+                                                        title="Edit {{ category.name }}"
+                                                        aria-label="Edit {{ category.name }}"
+                                                    >
+
+                                                        <i class="bi bi-pencil"></i>
+
+                                                    </a>
+
+
+                                                    {% if not category.is_system %}
+
+                                                        <form
+                                                            method="post"
+                                                            action="{% url 'finance:category_toggle' category.pk %}"
+                                                            class="d-inline category-toggle-form"
+                                                        >
+
+                                                            {% csrf_token %}
+
+                                                            <button
+                                                                type="submit"
+                                                                class="btn btn-sm btn-outline-warning category-action-btn"
+                                                                title="{% if category.is_active %}Deactivate{% else %}Activate{% endif %} {{ category.name }}"
+                                                                aria-label="{% if category.is_active %}Deactivate{% else %}Activate{% endif %} {{ category.name }}"
+                                                                data-category-name="{{ category.name }}"
+                                                                data-action="{% if category.is_active %}deactivate{% else %}activate{% endif %}"
+                                                            >
+
+                                                                {% if category.is_active %}
+
+                                                                    <i class="bi bi-pause-circle"></i>
+
+                                                                {% else %}
+
+                                                                    <i class="bi bi-play-circle"></i>
+
+                                                                {% endif %}
+
+                                                            </button>
+
+                                                        </form>
+
+                                                    {% endif %}
+
+                                                </div>
+
+                                            </td>
+
+                                        {% endif %}
+
+                                    </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         MOBILE CATEGORY CARDS
+                    ================================================== -->
+
+                    <div
+                        class="mobile-category-list"
+                        id="mobileCategoryList"
+                    >
+
+                        {% for category in categories %}
+
+                            <div
+                                class="mobile-category-item mobile-category-row"
+                                data-search="
+                                    {{ category.name|lower }}
+                                    {{ category.description|default:''|lower }}
+                                    {{ category.category_type|lower }}
+                                    {% if category.is_active %}active{% else %}inactive{% endif %}
+                                    {% if category.is_system %}system{% else %}custom{% endif %}
+                                "
+                            >
+
+                                <!-- TOP -->
+
+                                <div class="d-flex
+                                            justify-content-between
+                                            align-items-start
+                                            gap-3">
+
+                                    <div class="min-w-0">
+
+                                        <div class="mobile-category-name
+                                                    text-break">
+
+                                            {{ category.name }}
+
+                                        </div>
+
+                                        <div class="mobile-category-meta mt-1">
+
+                                            <i class="bi bi-calendar3 me-1"></i>
+
+                                            Created
+                                            {{ category.created_at|date:"d M Y" }}
+
+                                        </div>
+
+                                    </div>
+
+
+                                    {% if category.category_type == "INCOME" %}
+
+                                        <span class="category-badge
+                                                     category-badge-income">
+
+                                            <i class="bi bi-arrow-down-circle"></i>
+                                            Income
+
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="category-badge
+                                                     category-badge-expense">
+
+                                            <i class="bi bi-arrow-up-circle"></i>
+                                            Expense
+
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <!-- DESCRIPTION -->
+
+                                {% if category.description %}
+
+                                    <div class="mobile-category-description">
+
+                                        {{ category.description|truncatechars:120 }}
+
+                                    </div>
+
+                                {% else %}
+
+                                    <div class="mobile-category-description">
+
+                                        No description provided.
+
+                                    </div>
+
+                                {% endif %}
+
+
+                                <!-- STATUS -->
+
+                                <div class="d-flex flex-wrap gap-2 mt-3">
+
+                                    {% if category.is_active %}
+
+                                        <span class="category-badge
+                                                     category-badge-active">
+
+                                            <i class="bi bi-check-circle"></i>
+                                            Active
+
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="category-badge
+                                                     category-badge-inactive">
+
+                                            <i class="bi bi-pause-circle"></i>
+                                            Inactive
+
+                                        </span>
+
+                                    {% endif %}
+
+
+                                    {% if category.is_system %}
+
+                                        <span class="category-badge
+                                                     category-badge-system">
+
+                                            <i class="bi bi-shield-check"></i>
+                                            System
+
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="category-badge
+                                                     category-badge-custom">
+
+                                            <i class="bi bi-sliders"></i>
+                                            Custom
+
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <!-- ACTIONS -->
+
+                                {% if can_manage_categories %}
+
+                                    <div class="mobile-category-actions">
+
+                                        <a
+                                            href="{% url 'finance:category_edit' category.pk %}"
+                                            class="btn btn-sm btn-outline-primary rounded-3"
+                                        >
+
+                                            <i class="bi bi-pencil me-1"></i>
+
+                                            Edit
+
+                                        </a>
+
+
+                                        {% if not category.is_system %}
+
+                                            <form
+                                                method="post"
+                                                action="{% url 'finance:category_toggle' category.pk %}"
+                                                class="d-inline category-toggle-form"
+                                            >
+
+                                                {% csrf_token %}
+
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-sm btn-outline-warning rounded-3"
+                                                    data-category-name="{{ category.name }}"
+                                                    data-action="{% if category.is_active %}deactivate{% else %}activate{% endif %}"
+                                                >
+
+                                                    {% if category.is_active %}
+
+                                                        <i class="bi bi-pause-circle me-1"></i>
+                                                        Deactivate
+
+                                                    {% else %}
+
+                                                        <i class="bi bi-play-circle me-1"></i>
+                                                        Activate
+
+                                                    {% endif %}
+
+                                                </button>
+
+                                            </form>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <!-- =================================================
+                         SEARCH EMPTY STATE
+                    ================================================== -->
+
+                    <div
+                        id="categorySearchEmpty"
+                        class="category-search-empty"
+                    >
+
+                        <div class="category-search-empty-icon">
+
+                            <i class="bi bi-search"></i>
+
+                        </div>
+
+                        <h6 class="fw-bold mb-1">
+                            No matching categories
+                        </h6>
+
+                        <p class="text-muted small mb-0">
+                            Try searching using another category name,
+                            type, status or classification.
+                        </p>
+
+                    </div>
+
+
+                {% else %}
+
+                    <!-- =================================================
+                         EMPTY DATABASE STATE
+                    ================================================== -->
+
+                    <div class="category-empty-state">
+
+                        <div class="category-empty-icon">
+
+                            <i class="bi bi-tags"></i>
+
+                        </div>
+
+                        <h5 class="fw-bold mb-2">
+                            No financial categories
+                        </h5>
+
+                        <p class="text-muted mb-4 mx-auto"
+                           style="max-width:480px;">
+
+                            Create categories to organize KUCSA
+                            income and expenses clearly and consistently.
+
+                        </p>
+
+                        {% if can_manage_categories %}
+
+                            <a
+                                href="{% url 'finance:category_create' %}"
+                                class="btn btn-primary rounded-3 px-4"
+                            >
+
+                                <i class="bi bi-plus-circle me-1"></i>
+
+                                Add First Category
+
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             FOOTER INFORMATION
+        ====================================================== -->
+
+        {% if categories %}
+
+            <div class="d-flex flex-column
+                        flex-sm-row
+                        justify-content-between
+                        align-items-start
+                        align-items-sm-center
+                        gap-2 mt-3 px-1">
+
+                <small class="text-muted">
+
+                    <i class="bi bi-info-circle me-1"></i>
+
+                    Categories help keep KUCSA financial records
+                    organized and consistent.
+
+                </small>
+
+                {% if can_manage_categories %}
+
+                    <small class="text-muted">
+
+                        <i class="bi bi-shield-check me-1"></i>
+
+                        System categories are protected.
+
+                    </small>
+
+                {% endif %}
+
+            </div>
+
         {% endif %}
 
     </div>
 
 
     <!-- =====================================================
-         SUMMARY
+         INLINE JAVASCRIPT
     ====================================================== -->
-    <div class="row g-3 mb-4">
 
-        <!-- Total -->
-        <div class="col-12 col-sm-6 col-xl-3">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
 
-            <div class="card border-0 shadow-sm h-100">
+            /* =================================================
+               CATEGORY SEARCH
+            ================================================= */
 
-                <div class="card-body">
+            const searchInput =
+                document.getElementById("categorySearch");
 
-                    <div class="d-flex justify-content-between
-                                align-items-center">
+            const tableRows =
+                document.querySelectorAll(".category-row");
 
-                        <div>
+            const mobileRows =
+                document.querySelectorAll(".mobile-category-row");
 
-                            <small class="text-muted">
-                                Total Categories
-                            </small>
+            const emptyState =
+                document.getElementById("categorySearchEmpty");
 
-                            <h4 class="fw-bold mb-0">
-                                {{ categories|length }}
-                            </h4>
 
-                        </div>
+            function normalize(value) {
+                return (value || "")
+                    .toLowerCase()
+                    .replace(/\s+/g, " ")
+                    .trim();
+            }
 
-                        <div class="fs-3 text-primary">
-                            <i class="bi bi-tags"></i>
-                        </div>
 
-                    </div>
+            function filterCategories() {
 
-                </div>
+                const query =
+                    normalize(searchInput ? searchInput.value : "");
 
-            </div>
+                let visibleCount = 0;
 
-        </div>
 
+                /* ---------------------------------------------
+                   DESKTOP TABLE
+                --------------------------------------------- */
 
-        <!-- Income -->
-        <div class="col-12 col-sm-6 col-xl-3">
+                tableRows.forEach(function (row) {
 
-            <div class="card border-0 shadow-sm h-100">
+                    const searchable =
+                        normalize(row.dataset.search);
 
-                <div class="card-body">
+                    const matches =
+                        !query || searchable.includes(query);
 
-                    <div class="d-flex justify-content-between
-                                align-items-center">
+                    row.style.display =
+                        matches ? "" : "none";
 
-                        <div>
+                    if (matches) {
+                        visibleCount++;
+                    }
 
-                            <small class="text-muted">
-                                Income Categories
-                            </small>
+                });
 
-                            <h4 class="fw-bold mb-0">
-                                {{ income_categories_count|default:"0" }}
-                            </h4>
 
-                        </div>
+                /* ---------------------------------------------
+                   MOBILE CARDS
+                --------------------------------------------- */
 
-                        <div class="fs-3 text-success">
-                            <i class="bi bi-arrow-down-circle"></i>
-                        </div>
+                mobileRows.forEach(function (row) {
 
-                    </div>
+                    const searchable =
+                        normalize(row.dataset.search);
 
-                </div>
+                    const matches =
+                        !query || searchable.includes(query);
 
-            </div>
+                    row.style.display =
+                        matches ? "" : "none";
 
-        </div>
+                });
 
 
-        <!-- Expense -->
-        <div class="col-12 col-sm-6 col-xl-3">
+                /* ---------------------------------------------
+                   EMPTY SEARCH STATE
+                --------------------------------------------- */
 
-            <div class="card border-0 shadow-sm h-100">
+                if (emptyState) {
 
-                <div class="card-body">
+                    emptyState.style.display =
+                        query && visibleCount === 0
+                            ? "block"
+                            : "none";
 
-                    <div class="d-flex justify-content-between
-                                align-items-center">
+                }
 
-                        <div>
+            }
 
-                            <small class="text-muted">
-                                Expense Categories
-                            </small>
 
-                            <h4 class="fw-bold mb-0">
-                                {{ expense_categories_count|default:"0" }}
-                            </h4>
+            if (searchInput) {
 
-                        </div>
+                searchInput.addEventListener(
+                    "input",
+                    filterCategories
+                );
 
-                        <div class="fs-3 text-danger">
-                            <i class="bi bi-arrow-up-circle"></i>
-                        </div>
+            }
 
-                    </div>
 
-                </div>
+            /* =================================================
+               CATEGORY TOGGLE CONFIRMATION
+            ================================================= */
 
-            </div>
+            const toggleForms =
+                document.querySelectorAll(
+                    ".category-toggle-form"
+                );
 
-        </div>
 
+            toggleForms.forEach(function (form) {
 
-        <!-- Active -->
-        <div class="col-12 col-sm-6 col-xl-3">
+                form.addEventListener(
+                    "submit",
+                    function (event) {
 
-            <div class="card border-0 shadow-sm h-100">
+                        const button =
+                            form.querySelector(
+                                "button[type='submit']"
+                            );
 
-                <div class="card-body">
+                        if (!button) {
+                            return;
+                        }
 
-                    <div class="d-flex justify-content-between
-                                align-items-center">
 
-                        <div>
+                        const categoryName =
+                            button.dataset.categoryName
+                            || "this category";
 
-                            <small class="text-muted">
-                                Active Categories
-                            </small>
 
-                            <h4 class="fw-bold mb-0">
-                                {{ active_categories_count|default:"0" }}
-                            </h4>
+                        const action =
+                            button.dataset.action
+                            || "update";
 
-                        </div>
 
-                        <div class="fs-3 text-info">
-                            <i class="bi bi-check-circle"></i>
-                        </div>
+                        if (action === "deactivate") {
 
-                    </div>
+                            const confirmed =
+                                window.confirm(
+                                    "Are you sure you want to deactivate " +
+                                    categoryName +
+                                    "?"
+                                );
 
-                </div>
 
-            </div>
+                            if (!confirmed) {
 
-        </div>
+                                event.preventDefault();
 
-    </div>
+                            }
 
+                        }
 
-    <!-- =====================================================
-         CATEGORY LIST
-    ====================================================== -->
-    <div class="card border-0 shadow-sm">
+                    }
+                );
 
-        <div class="card-header bg-white border-0 py-3">
+            });
 
-            <div class="d-flex flex-column flex-md-row
-                        justify-content-between
-                        align-items-md-center gap-2">
 
-                <div>
+            /* =================================================
+               KEYBOARD SHORTCUT
+            ================================================= */
 
-                    <h5 class="fw-bold mb-1">
-                        Categories
-                    </h5>
+            document.addEventListener(
+                "keydown",
+                function (event) {
 
-                    <small class="text-muted">
-                        Income and expense classifications.
-                    </small>
+                    /*
+                     * Press "/" to focus the category search.
+                     */
 
-                </div>
+                    if (
+                        event.key === "/" &&
+                        document.activeElement.tagName !== "INPUT" &&
+                        document.activeElement.tagName !== "TEXTAREA"
+                    ) {
 
-            </div>
+                        event.preventDefault();
 
-        </div>
+                        if (searchInput) {
 
+                            searchInput.focus();
 
-        <div class="card-body p-0">
+                        }
 
-            {% if categories %}
+                    }
 
-                <div class="table-responsive">
+                    /*
+                     * Escape clears the search.
+                     */
 
-                    <table class="table table-hover align-middle mb-0">
+                    if (
+                        event.key === "Escape" &&
+                        document.activeElement === searchInput
+                    ) {
 
-                        <thead class="table-light">
+                        searchInput.value = "";
 
-                            <tr>
+                        filterCategories();
 
-                                <th class="ps-4">
-                                    Category
-                                </th>
+                        searchInput.blur();
 
-                                <th>
-                                    Type
-                                </th>
+                    }
 
-                                <th>
-                                    Description
-                                </th>
+                }
+            );
 
-                                <th>
-                                    Status
-                                </th>
-
-                                <th>
-                                    Category Type
-                                </th>
-
-                                {% if can_manage_categories %}
-                                    <th class="text-end pe-4">
-                                        Actions
-                                    </th>
-                                {% endif %}
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody>
-
-                            {% for category in categories %}
-
-                                <tr>
-
-                                    <!-- Category -->
-                                    <td class="ps-4">
-
-                                        <div class="fw-semibold">
-                                            {{ category.name }}
-                                        </div>
-
-                                        <small class="text-muted">
-                                            Created
-                                            {{ category.created_at|date:"d M Y" }}
-                                        </small>
-
-                                    </td>
-
-
-                                    <!-- Type -->
-                                    <td>
-
-                                        {% if category.category_type == "INCOME" %}
-
-                                            <span class="badge bg-success-subtle text-success">
-                                                <i class="bi bi-arrow-down-circle me-1"></i>
-                                                Income
-                                            </span>
-
-                                        {% else %}
-
-                                            <span class="badge bg-danger-subtle text-danger">
-                                                <i class="bi bi-arrow-up-circle me-1"></i>
-                                                Expense
-                                            </span>
-
-                                        {% endif %}
-
-                                    </td>
-
-
-                                    <!-- Description -->
-                                    <td>
-
-                                        {% if category.description %}
-
-                                            <span class="text-muted">
-                                                {{ category.description|truncatechars:80 }}
-                                            </span>
-
-                                        {% else %}
-
-                                            <span class="text-muted">
-                                                No description
-                                            </span>
-
-                                        {% endif %}
-
-                                    </td>
-
-
-                                    <!-- Status -->
-                                    <td>
-
-                                        {% if category.is_active %}
-
-                                            <span class="badge bg-success-subtle text-success">
-                                                Active
-                                            </span>
-
-                                        {% else %}
-
-                                            <span class="badge bg-secondary-subtle text-secondary">
-                                                Inactive
-                                            </span>
-
-                                        {% endif %}
-
-                                    </td>
-
-
-                                    <!-- System / Custom -->
-                                    <td>
-
-                                        {% if category.is_system %}
-
-                                            <span class="badge bg-primary-subtle text-primary">
-
-                                                <i class="bi bi-shield-check me-1"></i>
-                                                System
-
-                                            </span>
-
-                                        {% else %}
-
-                                            <span class="badge bg-light text-dark">
-                                                Custom
-                                            </span>
-
-                                        {% endif %}
-
-                                    </td>
-
-
-                                    <!-- Actions -->
-                                    {% if can_manage_categories %}
-
-                                        <td class="text-end pe-4">
-
-                                            <div class="btn-group"
-                                                 role="group">
-
-                                                <a href="{% url 'finance:category_edit' category.pk %}"
-                                                   class="btn btn-sm btn-outline-primary"
-                                                   title="Edit category">
-
-                                                    <i class="bi bi-pencil"></i>
-
-                                                </a>
-
-
-                                                {% if not category.is_system %}
-
-                                                    <form method="post"
-                                                          action="{% url 'finance:category_toggle' category.pk %}"
-                                                          class="d-inline">
-
-                                                        {% csrf_token %}
-
-                                                        <button type="submit"
-                                                                class="btn btn-sm btn-outline-warning"
-                                                                title="{% if category.is_active %}Deactivate{% else %}Activate{% endif %}">
-
-                                                            {% if category.is_active %}
-
-                                                                <i class="bi bi-pause-circle"></i>
-
-                                                            {% else %}
-
-                                                                <i class="bi bi-play-circle"></i>
-
-                                                            {% endif %}
-
-                                                        </button>
-
-                                                    </form>
-
-                                                {% endif %}
-
-                                            </div>
-
-                                        </td>
-
-                                    {% endif %}
-
-                                </tr>
-
-                            {% endfor %}
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            {% else %}
-
-                <!-- =================================================
-                     EMPTY STATE
-                ================================================== -->
-
-                <div class="text-center py-5 px-3">
-
-                    <div class="mb-3">
-
-                        <i class="bi bi-tags display-4 text-muted"></i>
-
-                    </div>
-
-                    <h5 class="fw-bold">
-                        No financial categories
-                    </h5>
-
-                    <p class="text-muted mb-4">
-                        Create categories to organize KUCSA
-                        income and expenses.
-                    </p>
-
-                    {% if can_manage_categories %}
-
-                        <a href="{% url 'finance:category_create' %}"
-                           class="btn btn-primary">
-
-                            <i class="bi bi-plus-circle me-1"></i>
-                            Add First Category
-
-                        </a>
-
-                    {% endif %}
-
-                </div>
-
-            {% endif %}
-
-        </div>
-
-    </div>
+        });
+    </script>
 
 </div>
 

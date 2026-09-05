@@ -4,387 +4,1188 @@
 
 {% block content %}
 
-<div class="container-fluid py-4">
+<style>
+    /* ============================================================
+       KUCSA TRANSACTION DETAIL
+       Page-scoped styling
+       ============================================================ */
+
+    .kucsa-transaction-page {
+        --kt-primary: #0d6efd;
+        --kt-success: #198754;
+        --kt-danger: #dc3545;
+        --kt-warning: #f59f00;
+        --kt-dark: #172033;
+        --kt-muted: #6c757d;
+        --kt-border: #e8edf3;
+        --kt-soft: #f7f9fc;
+        --kt-surface: #ffffff;
+
+        min-height: 100%;
+        padding-bottom: 2rem;
+    }
+
+    /* ============================================================
+       PAGE HEADER
+       ============================================================ */
+
+    .kucsa-transaction-page .transaction-header {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--kt-border);
+        border-radius: 20px;
+        padding: 1.3rem 1.4rem;
+        margin-bottom: 1.5rem;
+        background:
+            linear-gradient(
+                135deg,
+                rgba(13, 110, 253, 0.055),
+                #ffffff 62%
+            );
+        box-shadow: 0 6px 22px rgba(20, 32, 50, 0.045);
+    }
+
+    .kucsa-transaction-page .transaction-header::after {
+        content: "";
+        position: absolute;
+        width: 170px;
+        height: 170px;
+        right: -65px;
+        top: -75px;
+        border-radius: 50%;
+        background: rgba(13, 110, 253, 0.045);
+        pointer-events: none;
+    }
+
+    .kucsa-transaction-page .header-icon {
+        width: 52px;
+        height: 52px;
+        min-width: 52px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+        background: rgba(13, 110, 253, 0.10);
+        color: var(--kt-primary);
+        font-size: 1.35rem;
+    }
+
+    .kucsa-transaction-page .page-title {
+        color: var(--kt-dark);
+        font-size: clamp(1.3rem, 2vw, 1.7rem);
+        letter-spacing: -0.02em;
+    }
+
+    .kucsa-transaction-page .page-subtitle {
+        max-width: 700px;
+        line-height: 1.6;
+    }
+
+    .kucsa-transaction-page .back-button {
+        min-height: 43px;
+        border-radius: 10px;
+        font-weight: 650;
+        transition:
+            transform 0.18s ease,
+            box-shadow 0.18s ease;
+    }
+
+    .kucsa-transaction-page .back-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 7px 16px rgba(20, 32, 50, 0.08);
+    }
+
+    /* ============================================================
+       TRANSACTION HERO / AMOUNT
+       ============================================================ */
+
+    .kucsa-transaction-page .transaction-hero {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--kt-border);
+        border-radius: 20px;
+        background: var(--kt-surface);
+        box-shadow: 0 7px 24px rgba(20, 32, 50, 0.055);
+        margin-bottom: 1rem;
+    }
+
+    .kucsa-transaction-page .transaction-hero-inner {
+        padding: 1.4rem;
+    }
+
+    .kucsa-transaction-page .transaction-type-icon {
+        width: 50px;
+        height: 50px;
+        min-width: 50px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+        font-size: 1.35rem;
+    }
+
+    .kucsa-transaction-page .income-icon {
+        background: rgba(25, 135, 84, 0.10);
+        color: var(--kt-success);
+    }
+
+    .kucsa-transaction-page .expense-icon {
+        background: rgba(220, 53, 69, 0.10);
+        color: var(--kt-danger);
+    }
+
+    .kucsa-transaction-page .transaction-number-label {
+        color: var(--kt-muted);
+        font-size: 0.72rem;
+        font-weight: 750;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .kucsa-transaction-page .transaction-number {
+        color: var(--kt-dark);
+        font-size: 0.94rem;
+        font-weight: 800;
+        word-break: break-word;
+    }
+
+    .kucsa-transaction-page .amount-label {
+        color: var(--kt-muted);
+        font-size: 0.74rem;
+        font-weight: 750;
+        text-transform: uppercase;
+        letter-spacing: 0.045em;
+        margin-bottom: 0.3rem;
+    }
+
+    .kucsa-transaction-page .hero-amount {
+        font-size: clamp(1.8rem, 4vw, 2.45rem);
+        line-height: 1.05;
+        font-weight: 850;
+        letter-spacing: -0.03em;
+    }
+
+    .kucsa-transaction-page .income-amount {
+        color: var(--kt-success);
+    }
+
+    .kucsa-transaction-page .expense-amount {
+        color: var(--kt-danger);
+    }
+
+    .kucsa-transaction-page .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.42rem 0.7rem;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 750;
+        white-space: nowrap;
+        border: 1px solid transparent;
+    }
+
+    .kucsa-transaction-page .status-posted {
+        background: rgba(25, 135, 84, 0.09);
+        color: var(--kt-success);
+        border-color: rgba(25, 135, 84, 0.13);
+    }
+
+    .kucsa-transaction-page .status-draft {
+        background: rgba(245, 159, 0, 0.10);
+        color: #996600;
+        border-color: rgba(245, 159, 0, 0.15);
+    }
+
+    .kucsa-transaction-page .status-voided {
+        background: rgba(220, 53, 69, 0.09);
+        color: var(--kt-danger);
+        border-color: rgba(220, 53, 69, 0.13);
+    }
+
+    /* ============================================================
+       MAIN CARDS
+       ============================================================ */
+
+    .kucsa-transaction-page .modern-card {
+        overflow: hidden;
+        border: 1px solid var(--kt-border);
+        border-radius: 18px;
+        background: var(--kt-surface);
+        box-shadow: 0 6px 21px rgba(20, 32, 50, 0.05);
+        margin-bottom: 1rem;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .kucsa-transaction-page .modern-card:hover {
+        box-shadow: 0 10px 27px rgba(20, 32, 50, 0.075);
+    }
+
+    .kucsa-transaction-page .card-heading {
+        padding: 1.1rem 1.25rem;
+        border-bottom: 1px solid var(--kt-border);
+        background: linear-gradient(
+            180deg,
+            #ffffff,
+            #fbfcfe
+        );
+    }
+
+    .kucsa-transaction-page .card-heading-title {
+        color: var(--kt-dark);
+        font-size: 0.98rem;
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .kucsa-transaction-page .card-heading-icon {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: rgba(13, 110, 253, 0.08);
+        color: var(--kt-primary);
+    }
+
+    .kucsa-transaction-page .card-content {
+        padding: 1.2rem 1.25rem;
+    }
+
+    /* ============================================================
+       INFORMATION ROWS
+       ============================================================ */
+
+    .kucsa-transaction-page .info-row {
+        display: grid;
+        grid-template-columns: minmax(150px, 0.65fr) minmax(0, 1.35fr);
+        gap: 1rem;
+        padding: 0.9rem 0;
+        border-bottom: 1px solid #eef1f5;
+    }
+
+    .kucsa-transaction-page .info-row:first-child {
+        padding-top: 0;
+    }
+
+    .kucsa-transaction-page .info-row:last-child {
+        border-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .kucsa-transaction-page .info-label {
+        color: var(--kt-muted);
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+
+    .kucsa-transaction-page .info-value {
+        color: #303846;
+        font-size: 0.84rem;
+        font-weight: 600;
+        word-break: break-word;
+        line-height: 1.55;
+    }
+
+    .kucsa-transaction-page .reference-value {
+        display: inline-flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        font-family: ui-monospace,
+                     SFMono-Regular,
+                     Menlo,
+                     Monaco,
+                     Consolas,
+                     monospace;
+        font-size: 0.78rem;
+    }
+
+    .kucsa-transaction-page .copy-btn {
+        width: 30px;
+        height: 30px;
+        min-width: 30px;
+        padding: 0;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--kt-border);
+        background: #fff;
+        color: var(--kt-muted);
+        transition:
+            background-color 0.18s ease,
+            color 0.18s ease,
+            transform 0.18s ease;
+    }
+
+    .kucsa-transaction-page .copy-btn:hover {
+        background: var(--kt-soft);
+        color: var(--kt-primary);
+        transform: translateY(-1px);
+    }
+
+    .kucsa-transaction-page .description-box {
+        padding: 0.9rem;
+        border-radius: 11px;
+        background: var(--kt-soft);
+        border: 1px solid var(--kt-border);
+        font-weight: 500;
+    }
+
+    /* ============================================================
+       TYPE BADGES
+       ============================================================ */
+
+    .kucsa-transaction-page .type-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.43rem 0.7rem;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 750;
+    }
+
+    .kucsa-transaction-page .income-type {
+        color: var(--kt-success);
+        background: rgba(25, 135, 84, 0.09);
+    }
+
+    .kucsa-transaction-page .expense-type {
+        color: var(--kt-danger);
+        background: rgba(220, 53, 69, 0.09);
+    }
+
+    /* ============================================================
+       BALANCE EFFECT
+       ============================================================ */
+
+    .kucsa-transaction-page .balance-effect {
+        text-align: center;
+        padding: 0.5rem;
+    }
+
+    .kucsa-transaction-page .balance-icon {
+        width: 68px;
+        height: 68px;
+        margin: 0 auto 1rem;
+        border-radius: 20px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+    }
+
+    .kucsa-transaction-page .balance-positive {
+        background: rgba(25, 135, 84, 0.09);
+        color: var(--kt-success);
+    }
+
+    .kucsa-transaction-page .balance-negative {
+        background: rgba(220, 53, 69, 0.09);
+        color: var(--kt-danger);
+    }
+
+    .kucsa-transaction-page .balance-neutral {
+        background: #f1f3f6;
+        color: #737c88;
+    }
+
+    .kucsa-transaction-page .balance-amount {
+        font-size: 1.55rem;
+        line-height: 1.1;
+        font-weight: 850;
+        margin-bottom: 0.5rem;
+    }
+
+    .kucsa-transaction-page .balance-description {
+        max-width: 320px;
+        margin: 0 auto;
+        color: var(--kt-muted);
+        font-size: 0.82rem;
+        line-height: 1.6;
+    }
+
+    .kucsa-transaction-page .effect-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        margin-bottom: 1rem;
+        padding: 0.35rem 0.65rem;
+        border-radius: 999px;
+        background: var(--kt-soft);
+        border: 1px solid var(--kt-border);
+        color: var(--kt-muted);
+        font-size: 0.7rem;
+        font-weight: 750;
+    }
+
+    /* ============================================================
+       RECORD / MEMBER / PAYMENT INFORMATION
+       ============================================================ */
+
+    .kucsa-transaction-page .metadata-item {
+        padding: 0.85rem 0;
+        border-bottom: 1px solid #eef1f5;
+    }
+
+    .kucsa-transaction-page .metadata-item:first-child {
+        padding-top: 0;
+    }
+
+    .kucsa-transaction-page .metadata-item:last-child {
+        border-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .kucsa-transaction-page .metadata-label {
+        display: block;
+        color: var(--kt-muted);
+        font-size: 0.71rem;
+        font-weight: 750;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 0.3rem;
+    }
+
+    .kucsa-transaction-page .metadata-value {
+        color: #303846;
+        font-size: 0.84rem;
+        font-weight: 650;
+        word-break: break-word;
+    }
+
+    .kucsa-transaction-page .member-avatar {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        background: rgba(13, 110, 253, 0.08);
+        color: var(--kt-primary);
+        font-size: 1.2rem;
+    }
+
+    .kucsa-transaction-page .payment-icon {
+        width: 45px;
+        height: 45px;
+        min-width: 45px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 13px;
+        background: rgba(25, 135, 84, 0.08);
+        color: var(--kt-success);
+        font-size: 1.1rem;
+    }
+
+    .kucsa-transaction-page .payment-id {
+        font-family: ui-monospace,
+                     SFMono-Regular,
+                     Menlo,
+                     Monaco,
+                     Consolas,
+                     monospace;
+        font-size: 0.78rem;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+
+    @media (max-width: 991.98px) {
+
+        .kucsa-transaction-page .transaction-header {
+            padding: 1.1rem;
+        }
+
+        .kucsa-transaction-page .hero-amount {
+            font-size: 2rem;
+        }
+
+        .kucsa-transaction-page .info-row {
+            grid-template-columns: 150px minmax(0, 1fr);
+        }
+    }
+
+    @media (max-width: 767.98px) {
+
+        .kucsa-transaction-page {
+            padding-bottom: 1rem;
+        }
+
+        .kucsa-transaction-page .transaction-header {
+            border-radius: 16px;
+            padding: 1rem;
+        }
+
+        .kucsa-transaction-page .header-icon {
+            width: 46px;
+            height: 46px;
+            min-width: 46px;
+            border-radius: 13px;
+        }
+
+        .kucsa-transaction-page .page-title {
+            font-size: 1.25rem;
+        }
+
+        .kucsa-transaction-page .page-subtitle {
+            font-size: 0.82rem;
+        }
+
+        .kucsa-transaction-page .header-action {
+            width: 100%;
+        }
+
+        .kucsa-transaction-page .back-button {
+            width: 100%;
+        }
+
+        .kucsa-transaction-page .transaction-hero {
+            border-radius: 16px;
+        }
+
+        .kucsa-transaction-page .transaction-hero-inner {
+            padding: 1.05rem;
+        }
+
+        .kucsa-transaction-page .transaction-hero-top {
+            flex-wrap: wrap;
+        }
+
+        .kucsa-transaction-page .hero-amount {
+            font-size: 1.9rem;
+        }
+
+        .kucsa-transaction-page .modern-card {
+            border-radius: 16px;
+        }
+
+        .kucsa-transaction-page .card-heading,
+        .kucsa-transaction-page .card-content {
+            padding: 1rem;
+        }
+
+        .kucsa-transaction-page .info-row {
+            display: block;
+            padding: 0.85rem 0;
+        }
+
+        .kucsa-transaction-page .info-label {
+            display: block;
+            margin-bottom: 0.28rem;
+        }
+
+        .kucsa-transaction-page .info-value {
+            font-size: 0.84rem;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+
+        .kucsa-transaction-page .transaction-hero-top {
+            align-items: flex-start;
+        }
+
+        .kucsa-transaction-page .transaction-number {
+            max-width: 220px;
+        }
+
+        .kucsa-transaction-page .status-badge {
+            font-size: 0.68rem;
+            padding: 0.38rem 0.58rem;
+        }
+
+        .kucsa-transaction-page .balance-amount {
+            font-size: 1.35rem;
+        }
+    }
+
+    /* ============================================================
+       MOBILE / IOS TOUCH EXPERIENCE
+       ============================================================ */
+
+    @media (max-width: 767.98px) {
+
+        .kucsa-transaction-page a,
+        .kucsa-transaction-page button {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .kucsa-transaction-page .btn {
+            min-height: 44px;
+        }
+    }
+
+    /* ============================================================
+       REDUCED MOTION
+       ============================================================ */
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .kucsa-transaction-page *,
+        .kucsa-transaction-page *::before,
+        .kucsa-transaction-page *::after {
+            scroll-behavior: auto !important;
+            transition: none !important;
+            animation: none !important;
+        }
+    }
+
+    /* ============================================================
+       COPY FEEDBACK
+       ============================================================ */
+
+    .kucsa-transaction-page .copy-success {
+        color: var(--kt-success) !important;
+        border-color: rgba(25, 135, 84, 0.25) !important;
+        background: rgba(25, 135, 84, 0.06) !important;
+    }
+</style>
 
 
-<!-- =====================================================
-     PAGE HEADER
-====================================================== -->
-<div class="d-flex flex-column flex-md-row
-            justify-content-between align-items-md-center
-            gap-3 mb-4">
+<div class="container-fluid py-4 kucsa-transaction-page">
 
-    <div>
-        <h2 class="fw-bold mb-1">
-            Transaction Details
-        </h2>
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
 
-        <p class="text-muted mb-0">
-            View the details of this financial transaction.
-        </p>
-    </div>
+    <div class="transaction-header">
 
-    <div>
-        <a href="{% url 'finance:transactions' %}"
-           class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i>
-            Back to Transactions
-        </a>
-    </div>
+        <div class="d-flex flex-column flex-md-row
+                    justify-content-between
+                    align-items-md-center
+                    gap-3">
 
-</div>
+            <div class="d-flex align-items-start gap-3">
 
-
-<!-- =====================================================
-     TRANSACTION SUMMARY
-====================================================== -->
-<div class="row g-4">
-
-    <!-- Main Details -->
-    <div class="col-lg-8">
-
-        <div class="card border-0 shadow-sm">
-
-            <div class="card-header bg-white py-3">
-                <div class="d-flex justify-content-between
-                            align-items-center">
-
-                    <h5 class="fw-bold mb-0">
-                        Transaction Information
-                    </h5>
-
-                    {% if transaction.is_posted %}
-                        <span class="badge bg-success">
-                            Posted
-                        </span>
-                    {% elif transaction.is_draft %}
-                        <span class="badge bg-warning text-dark">
-                            Draft
-                        </span>
-                    {% elif transaction.is_voided %}
-                        <span class="badge bg-danger">
-                            Voided
-                        </span>
-                    {% endif %}
-
+                <div class="header-icon">
+                    <i class="bi bi-receipt"></i>
                 </div>
-            </div>
-
-            <div class="card-body">
-
-                <!-- Transaction Number -->
-                <div class="row mb-3">
-
-                    <div class="col-md-4 text-muted">
-                        Transaction Number
-                    </div>
-
-                    <div class="col-md-8 fw-semibold">
-                        {{ transaction.transaction_number }}
-                    </div>
-
-                </div>
-
-
-                <!-- Transaction Type -->
-                <div class="row mb-3">
-
-                    <div class="col-md-4 text-muted">
-                        Transaction Type
-                    </div>
-
-                    <div class="col-md-8">
-
-                        {% if transaction.is_income %}
-                            <span class="badge bg-success">
-                                <i class="bi bi-arrow-down-circle me-1"></i>
-                                Income
-                            </span>
-                        {% else %}
-                            <span class="badge bg-danger">
-                                <i class="bi bi-arrow-up-circle me-1"></i>
-                                Expense
-                            </span>
-                        {% endif %}
-
-                    </div>
-
-                </div>
-
-
-                <!-- Amount -->
-                <div class="row mb-3">
-
-                    <div class="col-md-4 text-muted">
-                        Amount
-                    </div>
-
-                    <div class="col-md-8">
-
-                        <span class="fs-4 fw-bold
-                            {% if transaction.is_income %}
-                                text-success
-                            {% else %}
-                                text-danger
-                            {% endif %}">
-                            KES {{ transaction.amount|floatformat:2 }}
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <!-- Category -->
-                <div class="row mb-3">
-
-                    <div class="col-md-4 text-muted">
-                        Category
-                    </div>
-
-                    <div class="col-md-8 fw-semibold">
-                        {{ transaction.category.name }}
-                    </div>
-
-                </div>
-
-
-                <!-- Description -->
-                <div class="row mb-3">
-
-                    <div class="col-md-4 text-muted">
-                        Description
-                    </div>
-
-                    <div class="col-md-8">
-                        {{ transaction.description|default:"No description provided." }}
-                    </div>
-
-                </div>
-
-
-                <!-- Reference -->
-                <div class="row mb-3">
-
-                    <div class="col-md-4 text-muted">
-                        Reference
-                    </div>
-
-                    <div class="col-md-8">
-                        {% if transaction.reference %}
-                            <span class="font-monospace">
-                                {{ transaction.reference }}
-                            </span>
-                        {% else %}
-                            <span class="text-muted">
-                                No reference
-                            </span>
-                        {% endif %}
-                    </div>
-
-                </div>
-
-
-                <!-- Payment Source -->
-                <div class="row mb-3">
-
-                    <div class="col-md-4 text-muted">
-                        Payment Source
-                    </div>
-
-                    <div class="col-md-8">
-                        {{ transaction.source_display }}
-                    </div>
-
-                </div>
-
-
-                <!-- Transaction Date -->
-                <div class="row mb-3">
-
-                    <div class="col-md-4 text-muted">
-                        Transaction Date
-                    </div>
-
-                    <div class="col-md-8">
-                        {{ transaction.transaction_date|date:"d M Y, H:i" }}
-                    </div>
-
-                </div>
-
-
-                <!-- Posted At -->
-                <div class="row mb-3">
-
-                    <div class="col-md-4 text-muted">
-                        Posted At
-                    </div>
-
-                    <div class="col-md-8">
-
-                        {% if transaction.posted_at %}
-                            {{ transaction.posted_at|date:"d M Y, H:i" }}
-                        {% else %}
-                            <span class="text-muted">
-                                Not posted
-                            </span>
-                        {% endif %}
-
-                    </div>
-
-                </div>
-
-
-                <!-- Notes -->
-                {% if transaction.notes %}
-
-                    <div class="row mb-3">
-
-                        <div class="col-md-4 text-muted">
-                            Notes
-                        </div>
-
-                        <div class="col-md-8">
-                            {{ transaction.notes|linebreaksbr }}
-                        </div>
-
-                    </div>
-
-                {% endif %}
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- =================================================
-         SIDE INFORMATION
-    ================================================== -->
-    <div class="col-lg-4">
-
-        <!-- Balance Effect -->
-        <div class="card border-0 shadow-sm mb-4">
-
-            <div class="card-header bg-white py-3">
-                <h6 class="fw-bold mb-0">
-                    Balance Effect
-                </h6>
-            </div>
-
-            <div class="card-body">
-
-                {% if transaction.affects_balance %}
-
-                    <div class="text-center">
-
-                        {% if transaction.is_income %}
-
-                            <div class="text-success mb-2">
-                                <i class="bi bi-plus-circle fs-1"></i>
-                            </div>
-
-                            <h4 class="fw-bold text-success">
-                                + KES {{ transaction.amount|floatformat:2 }}
-                            </h4>
-
-                            <p class="text-muted mb-0">
-                                This transaction increases the
-                                available balance.
-                            </p>
-
-                        {% else %}
-
-                            <div class="text-danger mb-2">
-                                <i class="bi bi-dash-circle fs-1"></i>
-                            </div>
-
-                            <h4 class="fw-bold text-danger">
-                                - KES {{ transaction.amount|floatformat:2 }}
-                            </h4>
-
-                            <p class="text-muted mb-0">
-                                This transaction reduces the
-                                available balance.
-                            </p>
-
-                        {% endif %}
-
-                    </div>
-
-                {% else %}
-
-                    <div class="text-center">
-
-                        <div class="text-muted mb-2">
-                            <i class="bi bi-dash-circle fs-1"></i>
-                        </div>
-
-                        <h5 class="fw-bold">
-                            No Balance Effect
-                        </h5>
-
-                        <p class="text-muted mb-0">
-                            This transaction is not currently
-                            affecting the available balance.
-                        </p>
-
-                    </div>
-
-                {% endif %}
-
-            </div>
-
-        </div>
-
-
-        <!-- Recorded By -->
-        <div class="card border-0 shadow-sm mb-4">
-
-            <div class="card-header bg-white py-3">
-                <h6 class="fw-bold mb-0">
-                    Record Information
-                </h6>
-            </div>
-
-            <div class="card-body">
-
-                <div class="mb-3">
-
-                    <small class="text-muted d-block">
-                        Recorded By
-                    </small>
-
-                    <span class="fw-semibold">
-                        {{ transaction.recorded_by }}
-                    </span>
-
-                </div>
-
-
-                <div class="mb-3">
-
-                    <small class="text-muted d-block">
-                        Created
-                    </small>
-
-                    <span>
-                        {{ transaction.created_at|date:"d M Y, H:i" }}
-                    </span>
-
-                </div>
-
 
                 <div>
 
-                    <small class="text-muted d-block">
-                        Last Updated
-                    </small>
+                    <h2 class="page-title fw-bold mb-1">
+                        Transaction Details
+                    </h2>
 
-                    <span>
-                        {{ transaction.updated_at|date:"d M Y, H:i" }}
-                    </span>
+                    <p class="page-subtitle text-muted mb-0">
+                        Review the complete financial record,
+                        its balance effect, and associated
+                        transaction information.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="header-action">
+
+                <a href="{% url 'finance:transactions' %}"
+                   class="btn btn-outline-secondary back-button">
+
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Back to Transactions
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         TRANSACTION HERO
+    ====================================================== -->
+
+    <div class="transaction-hero">
+
+        <div class="transaction-hero-inner">
+
+            <div class="d-flex
+                        justify-content-between
+                        align-items-start
+                        gap-3
+                        transaction-hero-top">
+
+                <div class="d-flex align-items-center gap-3">
+
+                    {% if transaction.is_income %}
+
+                        <div class="transaction-type-icon income-icon">
+
+                            <i class="bi bi-arrow-down-circle"></i>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="transaction-type-icon expense-icon">
+
+                            <i class="bi bi-arrow-up-circle"></i>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <div>
+
+                        <div class="transaction-number-label">
+                            Transaction Number
+                        </div>
+
+                        <div class="d-flex align-items-center
+                                    gap-2 mt-1">
+
+                            <span class="transaction-number"
+                                  id="transactionNumber">
+
+                                {{ transaction.transaction_number }}
+
+                            </span>
+
+                            <button type="button"
+                                    class="copy-btn"
+                                    data-copy-target="transactionNumber"
+                                    title="Copy transaction number"
+                                    aria-label="Copy transaction number">
+
+                                <i class="bi bi-copy"></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Status -->
+                <div>
+
+                    {% if transaction.is_posted %}
+
+                        <span class="status-badge status-posted">
+
+                            <i class="bi bi-check-circle-fill"></i>
+                            Posted
+
+                        </span>
+
+                    {% elif transaction.is_draft %}
+
+                        <span class="status-badge status-draft">
+
+                            <i class="bi bi-clock-fill"></i>
+                            Draft
+
+                        </span>
+
+                    {% elif transaction.is_voided %}
+
+                        <span class="status-badge status-voided">
+
+                            <i class="bi bi-x-circle-fill"></i>
+                            Voided
+
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <div class="row align-items-end mt-4 g-3">
+
+                <div class="col-12 col-md-7">
+
+                    <div class="amount-label">
+                        Transaction Amount
+                    </div>
+
+                    <div class="hero-amount
+                        {% if transaction.is_income %}
+                            income-amount
+                        {% else %}
+                            expense-amount
+                        {% endif %}">
+
+                        {% if transaction.is_income %}
+                            + KES {{ transaction.amount|floatformat:2 }}
+                        {% else %}
+                            - KES {{ transaction.amount|floatformat:2 }}
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-12 col-md-5 text-md-end">
+
+                    {% if transaction.is_income %}
+
+                        <span class="type-badge income-type">
+
+                            <i class="bi bi-arrow-down-circle-fill"></i>
+                            Income Transaction
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="type-badge expense-type">
+
+                            <i class="bi bi-arrow-up-circle-fill"></i>
+                            Expense Transaction
+
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <div class="row g-4">
+
+        <!-- =================================================
+             LEFT / MAIN INFORMATION
+        ================================================== -->
+
+        <div class="col-12 col-lg-8">
+
+            <div class="modern-card">
+
+                <div class="card-heading">
+
+                    <div class="d-flex align-items-center gap-2">
+
+                        <div class="card-heading-icon">
+
+                            <i class="bi bi-info-circle"></i>
+
+                        </div>
+
+                        <h5 class="card-heading-title">
+                            Transaction Information
+                        </h5>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-content">
+
+                    <!-- Transaction Number -->
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Transaction Number
+                        </div>
+
+                        <div class="info-value">
+
+                            <span class="reference-value">
+
+                                <span>
+                                    {{ transaction.transaction_number }}
+                                </span>
+
+                                <button type="button"
+                                        class="copy-btn"
+                                        data-copy-text="{{ transaction.transaction_number }}"
+                                        title="Copy transaction number"
+                                        aria-label="Copy transaction number">
+
+                                    <i class="bi bi-copy"></i>
+
+                                </button>
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Transaction Type -->
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Transaction Type
+                        </div>
+
+                        <div class="info-value">
+
+                            {% if transaction.is_income %}
+
+                                <span class="type-badge income-type">
+
+                                    <i class="bi bi-arrow-down-circle"></i>
+                                    Income
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="type-badge expense-type">
+
+                                    <i class="bi bi-arrow-up-circle"></i>
+                                    Expense
+
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Amount -->
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Amount
+                        </div>
+
+                        <div class="info-value">
+
+                            <span class="fw-bold
+                                {% if transaction.is_income %}
+                                    text-success
+                                {% else %}
+                                    text-danger
+                                {% endif %}"
+                                style="font-size:1.1rem;">
+
+                                {% if transaction.is_income %}
+                                    + KES {{ transaction.amount|floatformat:2 }}
+                                {% else %}
+                                    - KES {{ transaction.amount|floatformat:2 }}
+                                {% endif %}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Category -->
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Category
+                        </div>
+
+                        <div class="info-value">
+
+                            <span class="d-inline-flex
+                                         align-items-center
+                                         gap-2">
+
+                                <i class="bi bi-folder2-open text-primary"></i>
+
+                                {{ transaction.category.name }}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Description -->
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Description
+                        </div>
+
+                        <div class="info-value">
+
+                            <div class="description-box">
+
+                                {{ transaction.description|default:"No description provided." }}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Reference -->
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Reference
+                        </div>
+
+                        <div class="info-value">
+
+                            {% if transaction.reference %}
+
+                                <span class="reference-value">
+
+                                    <span id="paymentReference">
+                                        {{ transaction.reference }}
+                                    </span>
+
+                                    <button type="button"
+                                            class="copy-btn"
+                                            data-copy-target="paymentReference"
+                                            title="Copy reference"
+                                            aria-label="Copy reference">
+
+                                        <i class="bi bi-copy"></i>
+
+                                    </button>
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="text-muted">
+                                    No reference
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Payment Source -->
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Payment Source
+                        </div>
+
+                        <div class="info-value">
+
+                            <span class="d-inline-flex
+                                         align-items-center
+                                         gap-2">
+
+                                <i class="bi bi-wallet2 text-primary"></i>
+
+                                {{ transaction.source_display }}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Transaction Date -->
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Transaction Date
+                        </div>
+
+                        <div class="info-value">
+
+                            <span class="d-inline-flex
+                                         align-items-center
+                                         gap-2">
+
+                                <i class="bi bi-calendar3 text-muted"></i>
+
+                                {{ transaction.transaction_date|date:"d M Y, H:i" }}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Posted At -->
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Posted At
+                        </div>
+
+                        <div class="info-value">
+
+                            {% if transaction.posted_at %}
+
+                                <span class="d-inline-flex
+                                             align-items-center
+                                             gap-2">
+
+                                    <i class="bi bi-check2-circle text-success"></i>
+
+                                    {{ transaction.posted_at|date:"d M Y, H:i" }}
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="text-muted">
+                                    Not posted
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Notes -->
+                    {% if transaction.notes %}
+
+                        <div class="info-row">
+
+                            <div class="info-label">
+                                Notes
+                            </div>
+
+                            <div class="info-value">
+
+                                <div class="description-box">
+                                    {{ transaction.notes|linebreaksbr }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
 
                 </div>
 
@@ -393,79 +1194,609 @@
         </div>
 
 
-        <!-- Member -->
-        {% if transaction.member %}
+        <!-- =================================================
+             RIGHT / SIDE INFORMATION
+        ================================================== -->
 
-            <div class="card border-0 shadow-sm mb-4">
+        <div class="col-12 col-lg-4">
 
-                <div class="card-header bg-white py-3">
-                    <h6 class="fw-bold mb-0">
-                        Member
-                    </h6>
-                </div>
 
-                <div class="card-body">
+            <!-- =================================================
+                 BALANCE EFFECT
+            ================================================== -->
 
-                    <div class="d-flex align-items-center">
+            <div class="modern-card">
 
-                        <div class="bg-light rounded-circle
-                                    p-3 me-3">
-                            <i class="bi bi-person fs-4"></i>
+                <div class="card-heading">
+
+                    <div class="d-flex align-items-center gap-2">
+
+                        <div class="card-heading-icon">
+
+                            <i class="bi bi-bar-chart-line"></i>
+
                         </div>
 
-                        <div>
-                            <div class="fw-semibold">
-                                {{ transaction.member }}
+                        <h6 class="card-heading-title">
+                            Balance Effect
+                        </h6>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-content">
+
+                    {% if transaction.affects_balance %}
+
+                        <div class="balance-effect">
+
+                            <span class="effect-label">
+
+                                <i class="bi bi-activity"></i>
+                                Affects Available Balance
+
+                            </span>
+
+
+                            {% if transaction.is_income %}
+
+                                <div class="balance-icon balance-positive">
+
+                                    <i class="bi bi-plus-circle"></i>
+
+                                </div>
+
+
+                                <div class="balance-amount text-success">
+
+                                    + KES {{ transaction.amount|floatformat:2 }}
+
+                                </div>
+
+
+                                <p class="balance-description">
+
+                                    This income transaction increases
+                                    the available KUCSA financial balance.
+
+                                </p>
+
+                            {% else %}
+
+                                <div class="balance-icon balance-negative">
+
+                                    <i class="bi bi-dash-circle"></i>
+
+                                </div>
+
+
+                                <div class="balance-amount text-danger">
+
+                                    - KES {{ transaction.amount|floatformat:2 }}
+
+                                </div>
+
+
+                                <p class="balance-description">
+
+                                    This expense transaction reduces
+                                    the available KUCSA financial balance.
+
+                                </p>
+
+                            {% endif %}
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="balance-effect">
+
+                            <span class="effect-label">
+
+                                <i class="bi bi-slash-circle"></i>
+                                No Current Balance Effect
+
+                            </span>
+
+
+                            <div class="balance-icon balance-neutral">
+
+                                <i class="bi bi-dash-circle"></i>
+
                             </div>
 
-                            <small class="text-muted">
-                                Associated Member
-                            </small>
+
+                            <h5 class="fw-bold mb-2">
+                                No Balance Effect
+                            </h5>
+
+
+                            <p class="balance-description">
+
+                                This transaction is not currently
+                                affecting the available financial balance.
+
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 RECORD INFORMATION
+            ================================================== -->
+
+            <div class="modern-card">
+
+                <div class="card-heading">
+
+                    <div class="d-flex align-items-center gap-2">
+
+                        <div class="card-heading-icon">
+
+                            <i class="bi bi-clock-history"></i>
+
+                        </div>
+
+                        <h6 class="card-heading-title">
+                            Record Information
+                        </h6>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-content">
+
+                    <div class="metadata-item">
+
+                        <span class="metadata-label">
+                            Recorded By
+                        </span>
+
+                        <span class="metadata-value">
+                            {{ transaction.recorded_by }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="metadata-item">
+
+                        <span class="metadata-label">
+                            Created
+                        </span>
+
+                        <span class="metadata-value">
+
+                            <i class="bi bi-calendar-plus me-1 text-muted"></i>
+
+                            {{ transaction.created_at|date:"d M Y, H:i" }}
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="metadata-item">
+
+                        <span class="metadata-label">
+                            Last Updated
+                        </span>
+
+                        <span class="metadata-value">
+
+                            <i class="bi bi-arrow-repeat me-1 text-muted"></i>
+
+                            {{ transaction.updated_at|date:"d M Y, H:i" }}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 MEMBER
+            ================================================== -->
+
+            {% if transaction.member %}
+
+                <div class="modern-card">
+
+                    <div class="card-heading">
+
+                        <div class="d-flex align-items-center gap-2">
+
+                            <div class="card-heading-icon">
+
+                                <i class="bi bi-person"></i>
+
+                            </div>
+
+                            <h6 class="card-heading-title">
+                                Member
+                            </h6>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card-content">
+
+                        <div class="d-flex align-items-center gap-3">
+
+                            <div class="member-avatar">
+
+                                <i class="bi bi-person-fill"></i>
+
+                            </div>
+
+
+                            <div class="min-w-0">
+
+                                <div class="fw-bold"
+                                     style="color:#172033;">
+
+                                    {{ transaction.member }}
+
+                                </div>
+
+                                <small class="text-muted">
+                                    Associated Member
+                                </small>
+
+                            </div>
+
                         </div>
 
                     </div>
 
                 </div>
 
-            </div>
-
-        {% endif %}
+            {% endif %}
 
 
-        <!-- Payment -->
-        {% if transaction.payment %}
+            <!-- =================================================
+                 SOURCE PAYMENT
+            ================================================== -->
 
-            <div class="card border-0 shadow-sm">
+            {% if transaction.payment %}
 
-                <div class="card-header bg-white py-3">
-                    <h6 class="fw-bold mb-0">
-                        Source Payment
-                    </h6>
-                </div>
+                <div class="modern-card">
 
-                <div class="card-body">
+                    <div class="card-heading">
 
-                    <p class="text-muted small mb-2">
-                        This income transaction originated
-                        from a verified payment.
-                    </p>
+                        <div class="d-flex align-items-center gap-2">
 
-                    <div class="fw-semibold">
-                        Payment ID:
-                        {{ transaction.payment.pk }}
+                            <div class="card-heading-icon">
+
+                                <i class="bi bi-credit-card"></i>
+
+                            </div>
+
+                            <h6 class="card-heading-title">
+                                Source Payment
+                            </h6>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card-content">
+
+                        <div class="d-flex align-items-start gap-3">
+
+                            <div class="payment-icon">
+
+                                <i class="bi bi-check2-circle"></i>
+
+                            </div>
+
+
+                            <div class="min-w-0">
+
+                                <div class="fw-bold mb-1"
+                                     style="color:#172033;">
+
+                                    Verified Payment
+
+                                </div>
+
+                                <p class="text-muted small mb-2"
+                                   style="line-height:1.55;">
+
+                                    This income transaction originated
+                                    from a verified payment.
+
+                                </p>
+
+
+                                <div class="payment-id">
+
+                                    <span class="text-muted">
+                                        Payment ID:
+                                    </span>
+
+                                    <span class="fw-bold">
+                                        {{ transaction.payment.pk }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
                     </div>
 
                 </div>
 
-            </div>
+            {% endif %}
 
-        {% endif %}
+
+        </div>
 
     </div>
 
 </div>
 
 
-</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const page =
+            document.querySelector(".kucsa-transaction-page");
+
+        if (!page) {
+            return;
+        }
+
+
+        /* =========================================================
+           COPY TEXT
+        ========================================================= */
+
+        async function copyText(text, button) {
+
+            if (!text) {
+                return;
+            }
+
+            try {
+
+                await navigator.clipboard.writeText(text);
+
+                const icon =
+                    button.querySelector("i");
+
+                if (icon) {
+                    icon.className = "bi bi-check2";
+                }
+
+                button.classList.add("copy-success");
+
+                button.setAttribute(
+                    "aria-label",
+                    "Copied successfully"
+                );
+
+                setTimeout(function () {
+
+                    if (icon) {
+                        icon.className = "bi bi-copy";
+                    }
+
+                    button.classList.remove("copy-success");
+
+                    button.setAttribute(
+                        "aria-label",
+                        "Copy"
+                    );
+
+                }, 1800);
+
+            } catch (error) {
+
+                /*
+                 * Fallback for browsers where Clipboard API
+                 * is unavailable.
+                 */
+
+                const temporary =
+                    document.createElement("textarea");
+
+                temporary.value = text;
+
+                temporary.style.position = "fixed";
+                temporary.style.opacity = "0";
+
+                document.body.appendChild(temporary);
+
+                temporary.select();
+
+                try {
+                    document.execCommand("copy");
+                } catch (fallbackError) {
+                    /* Ignore unsupported fallback */
+                }
+
+                temporary.remove();
+
+            }
+
+        }
+
+
+        /* =========================================================
+           COPY BUTTONS
+        ========================================================= */
+
+        const copyButtons =
+            page.querySelectorAll(".copy-btn");
+
+        copyButtons.forEach(function (button) {
+
+            button.addEventListener("click", function () {
+
+                let text = "";
+
+                const targetId =
+                    button.getAttribute(
+                        "data-copy-target"
+                    );
+
+                const directText =
+                    button.getAttribute(
+                        "data-copy-text"
+                    );
+
+
+                if (directText) {
+
+                    text = directText;
+
+                } else if (targetId) {
+
+                    const target =
+                        document.getElementById(targetId);
+
+                    if (target) {
+                        text = target.textContent.trim();
+                    }
+
+                }
+
+
+                copyText(text, button);
+
+            });
+
+        });
+
+
+        /* =========================================================
+           BACK BUTTON LOADING FEEDBACK
+        ========================================================= */
+
+        const backButton =
+            page.querySelector(
+                'a[href*="transactions"]'
+            );
+
+        if (backButton) {
+
+            backButton.addEventListener(
+                "click",
+                function () {
+
+                    if (
+                        backButton.dataset.loading === "true"
+                    ) {
+                        return;
+                    }
+
+                    backButton.dataset.loading = "true";
+
+                    const originalHTML =
+                        backButton.innerHTML;
+
+                    backButton.innerHTML =
+                        '<span class="spinner-border ' +
+                        'spinner-border-sm me-1" ' +
+                        'aria-hidden="true"></span>' +
+                        ' Loading...';
+
+                    backButton.setAttribute(
+                        "aria-busy",
+                        "true"
+                    );
+
+
+                    setTimeout(function () {
+
+                        if (
+                            document.body.contains(
+                                backButton
+                            )
+                        ) {
+
+                            backButton.innerHTML =
+                                originalHTML;
+
+                            backButton.dataset.loading =
+                                "false";
+
+                            backButton.removeAttribute(
+                                "aria-busy"
+                            );
+
+                        }
+
+                    }, 5000);
+
+                }
+            );
+
+        }
+
+
+        /* =========================================================
+           KEYBOARD SHORTCUT
+           Alt + Left returns to transactions.
+        ========================================================= */
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                const target = event.target;
+
+                if (
+                    target &&
+                    (
+                        target.tagName === "INPUT" ||
+                        target.tagName === "TEXTAREA" ||
+                        target.tagName === "SELECT" ||
+                        target.isContentEditable
+                    )
+                ) {
+                    return;
+                }
+
+
+                if (
+                    event.altKey &&
+                    event.key === "ArrowLeft"
+                ) {
+
+                    if (backButton) {
+
+                        event.preventDefault();
+                        backButton.click();
+
+                    }
+
+                }
+
+            }
+        );
+
+    });
+</script>
 
 {% endblock %}

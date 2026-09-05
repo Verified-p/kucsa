@@ -1,3 +1,4 @@
+```html
 {% extends "base.html" %}
 
 {% block title %}Income | KUCSA Finance{% endblock %}
@@ -6,65 +7,161 @@
 
 <div class="container-fluid py-4">
 
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+    <div class="d-flex flex-column flex-md-row
+                justify-content-between align-items-md-center
+                gap-3 mb-4">
 
-<!-- =====================================================
-     PAGE HEADER
-====================================================== -->
-<div class="d-flex flex-column flex-md-row
-            justify-content-between align-items-md-center
-            gap-3 mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">
+                Income
+            </h2>
 
-    <div>
-        <h2 class="fw-bold mb-1">
-            Income
-        </h2>
+            <p class="text-muted mb-0">
+                View and manage KUCSA financial income records.
+            </p>
+        </div>
 
-        <p class="text-muted mb-0">
-            View and manage KUCSA financial income.
-        </p>
+        <div class="d-flex gap-2">
+
+            <a href="{% url 'finance:transactions' %}"
+               class="btn btn-outline-secondary">
+                <i class="bi bi-list-ul me-1"></i>
+                All Transactions
+            </a>
+
+        </div>
+
     </div>
 
-    <div class="d-flex gap-2">
 
-        <a href="{% url 'finance:transactions' %}"
-           class="btn btn-outline-secondary">
-            <i class="bi bi-list-ul me-1"></i>
-            All Transactions
-        </a>
+    <!-- =====================================================
+         INCOME SUMMARY
+    ====================================================== -->
+    <div class="row g-3 mb-4">
 
-    </div>
+        <!-- Total Income -->
+        <div class="col-md-4">
 
-</div>
+            <div class="card border-0 shadow-sm h-100">
 
+                <div class="card-body">
 
-<!-- =====================================================
-     INCOME SUMMARY
-====================================================== -->
-<div class="row g-3 mb-4">
+                    <div class="d-flex justify-content-between
+                                align-items-center">
 
-    <div class="col-md-4">
+                        <div>
 
-        <div class="card border-0 shadow-sm h-100">
+                            <small class="text-muted d-block mb-1">
+                                Total Income
+                            </small>
 
-            <div class="card-body">
+                            <h4 class="fw-bold mb-0 text-success">
+                                KES {{ total_income|default:"0.00"|floatformat:2 }}
+                            </h4>
 
-                <div class="d-flex justify-content-between
-                            align-items-center">
+                            <small class="text-muted">
+                                All recorded income
+                            </small>
 
-                    <div>
-                        <small class="text-muted">
-                            Total Income
-                        </small>
+                        </div>
 
-                        <h4 class="fw-bold mb-0 text-success">
-                            KES {{ total_income|default:"0.00"|floatformat:2 }}
-                        </h4>
+                        <div class="bg-success bg-opacity-10
+                                    rounded-circle p-3">
+
+                            <i class="bi bi-arrow-down-circle
+                                      text-success fs-4"></i>
+
+                        </div>
+
                     </div>
 
-                    <div class="bg-success bg-opacity-10
-                                rounded-circle p-3">
-                        <i class="bi bi-arrow-down-circle
-                                  text-success fs-4"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Posted Income -->
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between
+                                align-items-center">
+
+                        <div>
+
+                            <small class="text-muted d-block mb-1">
+                                Posted Income
+                            </small>
+
+                            <h4 class="fw-bold mb-0 text-primary">
+                                KES {{ posted_income|default:"0.00"|floatformat:2 }}
+                            </h4>
+
+                            <small class="text-muted">
+                                Income affecting the balance
+                            </small>
+
+                        </div>
+
+                        <div class="bg-primary bg-opacity-10
+                                    rounded-circle p-3">
+
+                            <i class="bi bi-check-circle
+                                      text-primary fs-4"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Income Records -->
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between
+                                align-items-center">
+
+                        <div>
+
+                            <small class="text-muted d-block mb-1">
+                                Income Records
+                            </small>
+
+                            <h4 class="fw-bold mb-0">
+                                {{ income_transactions|length }}
+                            </h4>
+
+                            <small class="text-muted">
+                                Records currently displayed
+                            </small>
+
+                        </div>
+
+                        <div class="bg-info bg-opacity-10
+                                    rounded-circle p-3">
+
+                            <i class="bi bi-receipt
+                                      text-info fs-4"></i>
+
+                        </div>
+
                     </div>
 
                 </div>
@@ -76,470 +173,505 @@
     </div>
 
 
-    <div class="col-md-4">
+    <!-- =====================================================
+         INFORMATION NOTICE
+    ====================================================== -->
+    {% if total_income > posted_income %}
 
-        <div class="card border-0 shadow-sm h-100">
+        <div class="alert alert-warning border-0 shadow-sm
+                    d-flex align-items-start gap-3 mb-4">
 
-            <div class="card-body">
+            <i class="bi bi-info-circle-fill fs-5"></i>
 
-                <div class="d-flex justify-content-between
-                            align-items-center">
-
-                    <div>
-                        <small class="text-muted">
-                            Posted Income
-                        </small>
-
-                        <h4 class="fw-bold mb-0">
-                            KES {{ posted_income|default:"0.00"|floatformat:2 }}
-                        </h4>
-                    </div>
-
-                    <div class="bg-primary bg-opacity-10
-                                rounded-circle p-3">
-                        <i class="bi bi-check-circle
-                                  text-primary fs-4"></i>
-                    </div>
-
+            <div>
+                <strong>Income posting status</strong>
+                <div class="small mt-1">
+                    Some recorded income has not yet been posted.
+                    Draft income does not affect the available financial balance
+                    until it is posted.
                 </div>
-
             </div>
 
         </div>
 
-    </div>
+    {% endif %}
 
 
-    <div class="col-md-4">
+    <!-- =====================================================
+         FILTERS
+    ====================================================== -->
+    <div class="card border-0 shadow-sm mb-4">
 
-        <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
 
-            <div class="card-body">
+            <form method="get">
 
-                <div class="d-flex justify-content-between
-                            align-items-center">
+                <div class="row g-3 align-items-end">
 
-                    <div>
-                        <small class="text-muted">
-                            Income Records
-                        </small>
+                    <!-- Search -->
+                    <div class="col-md-4">
 
-                        <h4 class="fw-bold mb-0">
-                            {{ income_count|default:"0" }}
-                        </h4>
+                        <label for="search"
+                               class="form-label fw-semibold">
+                            Search
+                        </label>
+
+                        <input type="text"
+                               name="search"
+                               id="search"
+                               class="form-control"
+                               value="{{ request.GET.search }}"
+                               placeholder="Transaction number, reference...">
+
                     </div>
 
-                    <div class="bg-info bg-opacity-10
-                                rounded-circle p-3">
-                        <i class="bi bi-receipt
-                                  text-info fs-4"></i>
-                    </div>
 
-                </div>
+                    <!-- Category -->
+                    <div class="col-md-3">
 
-            </div>
+                        <label for="category"
+                               class="form-label fw-semibold">
+                            Category
+                        </label>
 
-        </div>
+                        <select name="category"
+                                id="category"
+                                class="form-select">
 
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     FILTERS
-====================================================== -->
-<div class="card border-0 shadow-sm mb-4">
-
-    <div class="card-body">
-
-        <form method="get">
-
-            <div class="row g-3 align-items-end">
-
-                <div class="col-md-4">
-
-                    <label for="search"
-                           class="form-label fw-semibold">
-                        Search
-                    </label>
-
-                    <input type="text"
-                           name="search"
-                           id="search"
-                           class="form-control"
-                           value="{{ request.GET.search }}"
-                           placeholder="Transaction number, reference...">
-
-                </div>
-
-
-                <div class="col-md-3">
-
-                    <label for="category"
-                           class="form-label fw-semibold">
-                        Category
-                    </label>
-
-                    <select name="category"
-                            id="category"
-                            class="form-select">
-
-                        <option value="">
-                            All Categories
-                        </option>
-
-                        {% for category in categories %}
-
-                            <option value="{{ category.pk }}"
-                                {% if request.GET.category == category.pk|stringformat:"s" %}
-                                    selected
-                                {% endif %}>
-                                {{ category.name }}
+                            <option value="">
+                                All Categories
                             </option>
 
-                        {% endfor %}
+                            {% for category in categories %}
 
-                    </select>
+                                <option value="{{ category.pk }}"
+                                    {% if request.GET.category == category.pk|stringformat:"s" %}
+                                        selected
+                                    {% endif %}>
+                                    {{ category.name }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Payment Source -->
+                    <div class="col-md-3">
+
+                        <label for="source"
+                               class="form-label fw-semibold">
+                            Payment Source
+                        </label>
+
+                        <select name="source"
+                                id="source"
+                                class="form-select">
+
+                            <option value="">
+                                All Sources
+                            </option>
+
+                            <option value="MPESA"
+                                {% if request.GET.source == "MPESA" %}
+                                    selected
+                                {% endif %}>
+                                M-Pesa
+                            </option>
+
+                            <option value="CASH"
+                                {% if request.GET.source == "CASH" %}
+                                    selected
+                                {% endif %}>
+                                Cash
+                            </option>
+
+                            <option value="BANK"
+                                {% if request.GET.source == "BANK" %}
+                                    selected
+                                {% endif %}>
+                                Bank
+                            </option>
+
+                            <option value="OTHER"
+                                {% if request.GET.source == "OTHER" %}
+                                    selected
+                                {% endif %}>
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Filter -->
+                    <div class="col-md-2">
+
+                        <button type="submit"
+                                class="btn btn-primary w-100">
+
+                            <i class="bi bi-search me-1"></i>
+                            Filter
+
+                        </button>
+
+                    </div>
 
                 </div>
 
-
-                <div class="col-md-3">
-
-                    <label for="source"
-                           class="form-label fw-semibold">
-                        Payment Source
-                    </label>
-
-                    <select name="source"
-                            id="source"
-                            class="form-select">
-
-                        <option value="">
-                            All Sources
-                        </option>
-
-                        <option value="MPESA"
-                            {% if request.GET.source == "MPESA" %}
-                                selected
-                            {% endif %}>
-                            M-Pesa
-                        </option>
-
-                        <option value="CASH"
-                            {% if request.GET.source == "CASH" %}
-                                selected
-                            {% endif %}>
-                            Cash
-                        </option>
-
-                        <option value="BANK"
-                            {% if request.GET.source == "BANK" %}
-                                selected
-                            {% endif %}>
-                            Bank
-                        </option>
-
-                        <option value="OTHER"
-                            {% if request.GET.source == "OTHER" %}
-                                selected
-                            {% endif %}>
-                            Other
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="col-md-2">
-
-                    <button type="submit"
-                            class="btn btn-primary w-100">
-                        <i class="bi bi-search me-1"></i>
-                        Filter
-                    </button>
-
-                </div>
-
-            </div>
-
-        </form>
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     INCOME TABLE
-====================================================== -->
-<div class="card border-0 shadow-sm">
-
-    <div class="card-header bg-white py-3">
-
-        <div class="d-flex justify-content-between
-                    align-items-center">
-
-            <h5 class="fw-bold mb-0">
-                Income Records
-            </h5>
-
-            <span class="text-muted small">
-                {{ income_transactions|length }}
-                record{{ income_transactions|length|pluralize }}
-            </span>
+            </form>
 
         </div>
 
     </div>
 
 
-    <div class="card-body p-0">
+    <!-- =====================================================
+         INCOME TABLE
+    ====================================================== -->
+    <div class="card border-0 shadow-sm">
 
-        {% if income %}
+        <!-- Table Header -->
+        <div class="card-header bg-white py-3">
 
-            <div class="table-responsive">
+            <div class="d-flex flex-column flex-md-row
+                        justify-content-between
+                        align-items-md-center gap-2">
 
-                <table class="table table-hover
-                              align-middle mb-0">
+                <div>
 
-                    <thead class="table-light">
+                    <h5 class="fw-bold mb-1">
+                        Income Records
+                    </h5>
 
-                        <tr>
-                            <th class="px-3">
-                                Transaction
-                            </th>
+                    <small class="text-muted">
+                        Recorded income transactions
+                    </small>
 
-                            <th>
-                                Date
-                            </th>
+                </div>
 
-                            <th>
-                                Category
-                            </th>
+                <span class="badge bg-light text-dark border">
+                    {{ income_transactions|length }}
+                    record{{ income_transactions|length|pluralize }}
+                </span>
 
-                            <th>
-                                Source
-                            </th>
+            </div>
 
-                            <th>
-                                Reference
-                            </th>
-
-                            <th class="text-end">
-                                Amount
-                            </th>
-
-                            <th>
-                                Status
-                            </th>
-
-                            <th class="text-end px-3">
-                                Action
-                            </th>
-                        </tr>
-
-                    </thead>
+        </div>
 
 
-                    <tbody>
+        <!-- Table Body -->
+        <div class="card-body p-0">
 
-                        {% for transaction in income %}
+            {% if income_transactions %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover
+                                  align-middle mb-0">
+
+                        <thead class="table-light">
 
                             <tr>
 
-                                <!-- Transaction -->
-                                <td class="px-3">
+                                <th class="px-3">
+                                    Transaction
+                                </th>
 
-                                    <div class="fw-semibold">
-                                        {{ transaction.transaction_number }}
-                                    </div>
+                                <th>
+                                    Date
+                                </th>
 
-                                    <small class="text-muted">
-                                        {{ transaction.description|truncatechars:45 }}
-                                    </small>
+                                <th>
+                                    Category
+                                </th>
 
-                                </td>
+                                <th>
+                                    Source
+                                </th>
 
+                                <th>
+                                    Reference
+                                </th>
 
-                                <!-- Date -->
-                                <td>
+                                <th class="text-end">
+                                    Amount
+                                </th>
 
-                                    <small>
-                                        {{ transaction.transaction_date|date:"d M Y" }}
-                                    </small>
+                                <th>
+                                    Status
+                                </th>
 
-                                    <br>
-
-                                    <small class="text-muted">
-                                        {{ transaction.transaction_date|date:"H:i" }}
-                                    </small>
-
-                                </td>
-
-
-                                <!-- Category -->
-                                <td>
-                                    {{ transaction.category.name }}
-                                </td>
-
-
-                                <!-- Source -->
-                                <td>
-
-                                    {% if transaction.payment_source == "MPESA" %}
-
-                                        <span class="badge
-                                                     bg-success-subtle
-                                                     text-success">
-                                            M-Pesa
-                                        </span>
-
-                                    {% elif transaction.payment_source == "BANK" %}
-
-                                        <span class="badge
-                                                     bg-primary-subtle
-                                                     text-primary">
-                                            Bank
-                                        </span>
-
-                                    {% elif transaction.payment_source == "CASH" %}
-
-                                        <span class="badge
-                                                     bg-warning-subtle
-                                                     text-dark">
-                                            Cash
-                                        </span>
-
-                                    {% else %}
-
-                                        <span class="badge
-                                                     bg-secondary-subtle
-                                                     text-secondary">
-                                            Other
-                                        </span>
-
-                                    {% endif %}
-
-                                </td>
-
-
-                                <!-- Reference -->
-                                <td>
-
-                                    {% if transaction.reference %}
-
-                                        <span class="font-monospace small">
-                                            {{ transaction.reference }}
-                                        </span>
-
-                                    {% else %}
-
-                                        <span class="text-muted">
-                                            —
-                                        </span>
-
-                                    {% endif %}
-
-                                </td>
-
-
-                                <!-- Amount -->
-                                <td class="text-end">
-
-                                    <span class="fw-bold text-success">
-                                        + KES {{ transaction.amount|floatformat:2 }}
-                                    </span>
-
-                                </td>
-
-
-                                <!-- Status -->
-                                <td>
-
-                                    {% if transaction.is_posted %}
-
-                                        <span class="badge bg-success">
-                                            Posted
-                                        </span>
-
-                                    {% elif transaction.is_draft %}
-
-                                        <span class="badge
-                                                     bg-warning
-                                                     text-dark">
-                                            Draft
-                                        </span>
-
-                                    {% elif transaction.is_voided %}
-
-                                        <span class="badge bg-danger">
-                                            Voided
-                                        </span>
-
-                                    {% endif %}
-
-                                </td>
-
-
-                                <!-- Action -->
-                                <td class="text-end px-3">
-
-                                    <a href="{% url 'finance:transaction_detail' transaction.pk %}"
-                                       class="btn btn-sm
-                                              btn-outline-primary"
-                                       title="View transaction">
-
-                                        <i class="bi bi-eye"></i>
-
-                                    </a>
-
-                                </td>
+                                <th class="text-end px-3">
+                                    Action
+                                </th>
 
                             </tr>
 
-                        {% endfor %}
+                        </thead>
 
-                    </tbody>
 
-                </table>
+                        <tbody>
 
-            </div>
+                            {% for transaction in income_transactions %}
 
-        {% else %}
+                                <tr>
 
-            <!-- Empty State -->
+                                    <!-- Transaction -->
+                                    <td class="px-3">
 
-            <div class="text-center py-5 px-3">
+                                        <div class="fw-semibold">
+                                            {{ transaction.transaction_number }}
+                                        </div>
 
-                <div class="mb-3">
+                                        {% if transaction.description %}
 
-                    <i class="bi bi-wallet2
-                              text-muted"
-                       style="font-size: 3rem;">
-                    </i>
+                                            <small class="text-muted">
+                                                {{ transaction.description|truncatechars:45 }}
+                                            </small>
+
+                                        {% else %}
+
+                                            <small class="text-muted">
+                                                Income transaction
+                                            </small>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- Date -->
+                                    <td>
+
+                                        {% if transaction.transaction_date %}
+
+                                            <small>
+                                                {{ transaction.transaction_date|date:"d M Y" }}
+                                            </small>
+
+                                            <br>
+
+                                            <small class="text-muted">
+                                                {{ transaction.transaction_date|date:"H:i" }}
+                                            </small>
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+                                                —
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- Category -->
+                                    <td>
+
+                                        {% if transaction.category %}
+
+                                            {{ transaction.category.name }}
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+                                                —
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- Source -->
+                                    <td>
+
+                                        {% if transaction.payment_source == "MPESA" %}
+
+                                            <span class="badge
+                                                         bg-success-subtle
+                                                         text-success">
+                                                <i class="bi bi-phone me-1"></i>
+                                                M-Pesa
+                                            </span>
+
+                                        {% elif transaction.payment_source == "BANK" %}
+
+                                            <span class="badge
+                                                         bg-primary-subtle
+                                                         text-primary">
+                                                <i class="bi bi-bank me-1"></i>
+                                                Bank
+                                            </span>
+
+                                        {% elif transaction.payment_source == "CASH" %}
+
+                                            <span class="badge
+                                                         bg-warning-subtle
+                                                         text-dark">
+                                                <i class="bi bi-cash-stack me-1"></i>
+                                                Cash
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge
+                                                         bg-secondary-subtle
+                                                         text-secondary">
+                                                <i class="bi bi-wallet2 me-1"></i>
+                                                Other
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- Reference -->
+                                    <td>
+
+                                        {% if transaction.reference %}
+
+                                            <span class="font-monospace small">
+                                                {{ transaction.reference }}
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+                                                —
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- Amount -->
+                                    <td class="text-end">
+
+                                        <span class="fw-bold text-success">
+                                            + KES {{ transaction.amount|floatformat:2 }}
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- Status -->
+                                    <td>
+
+                                        {% if transaction.is_posted %}
+
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-check-circle me-1"></i>
+                                                Posted
+                                            </span>
+
+                                        {% elif transaction.is_draft %}
+
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="bi bi-clock me-1"></i>
+                                                Draft
+                                            </span>
+
+                                        {% elif transaction.is_voided %}
+
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-x-circle me-1"></i>
+                                                Voided
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+                                                {{ transaction.status|title }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- Action -->
+                                    <td class="text-end px-3">
+
+                                        <a href="{% url 'finance:transaction_detail' transaction.pk %}"
+                                           class="btn btn-sm btn-outline-primary"
+                                           title="View transaction"
+                                           aria-label="View transaction">
+
+                                            <i class="bi bi-eye"></i>
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
 
                 </div>
 
-                <h5 class="fw-bold">
-                    No Income Records
-                </h5>
+            {% else %}
 
-                <p class="text-muted mb-0">
-                    There are currently no income transactions
-                    matching your search or filters.
-                </p>
+                <!-- =================================================
+                     EMPTY STATE
+                ================================================== -->
+                <div class="text-center py-5 px-3">
 
-            </div>
+                    <div class="mb-3">
 
-        {% endif %}
+                        <div class="d-inline-flex
+                                    align-items-center
+                                    justify-content-center
+                                    bg-light rounded-circle"
+                             style="width:72px;height:72px;">
+
+                            <i class="bi bi-wallet2
+                                      text-muted fs-2">
+                            </i>
+
+                        </div>
+
+                    </div>
+
+                    <h5 class="fw-bold mb-2">
+                        No Income Records
+                    </h5>
+
+                    <p class="text-muted mb-3">
+                        There are currently no income transactions
+                        matching your search or selected filters.
+                    </p>
+
+                    {% if request.GET.search or request.GET.category or request.GET.source %}
+
+                        <a href="{% url 'finance:income' %}"
+                           class="btn btn-outline-secondary btn-sm">
+
+                            <i class="bi bi-arrow-counterclockwise me-1"></i>
+                            Clear Filters
+
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+        </div>
 
     </div>
-
-</div>
-
 
 </div>
 

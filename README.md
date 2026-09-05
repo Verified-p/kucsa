@@ -7,9 +7,9 @@ python manage.py collectstatic --noinput
 from accounts.models import User
 
 u = User.objects.create_user(
-    username="adminA",
+    username="admin",
     password="@Hublab!1",
-    first_name="Computing",
+    first_name="Kucsa",
     last_name="Association",
     email="computing@gmail.com",
     role="ADMIN",

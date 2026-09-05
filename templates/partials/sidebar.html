@@ -6,69 +6,38 @@
 
 <style>
 /* =========================================================
-   KUCSA SIDEBAR — PRODUCTION UI
-   Scoped completely to .kucsa-sidebar
+   KUCSA SIDEBAR — PRODUCTION RESPONSIVE STYLING
+   Background intentionally preserved: #212529
    ========================================================= */
 
 .kucsa-sidebar {
-    --sidebar-bg: #111827;
-    --sidebar-bg-deep: #0b1220;
-    --sidebar-surface: rgba(255, 255, 255, 0.055);
-    --sidebar-surface-hover: rgba(255, 255, 255, 0.085);
-    --sidebar-surface-active: rgba(13, 110, 253, 0.16);
-
-    --sidebar-primary: #0d6efd;
-    --sidebar-primary-light: #4f8dfd;
-    --sidebar-primary-soft: rgba(13, 110, 253, 0.15);
-
-    --sidebar-success: #20c997;
-    --sidebar-warning: #ffc107;
-    --sidebar-danger: #ff6b6b;
-    --sidebar-info: #0dcaf0;
-
-    --sidebar-text: rgba(255, 255, 255, 0.88);
-    --sidebar-text-strong: #ffffff;
-    --sidebar-text-muted: rgba(255, 255, 255, 0.54);
-    --sidebar-text-faint: rgba(255, 255, 255, 0.36);
-
-    --sidebar-border: rgba(255, 255, 255, 0.085);
-    --sidebar-border-strong: rgba(255, 255, 255, 0.13);
-
-    --sidebar-radius-sm: 9px;
-    --sidebar-radius-md: 13px;
-    --sidebar-radius-lg: 18px;
-
-    --sidebar-shadow: 0 18px 45px rgba(0, 0, 0, 0.18);
+    --kucsa-sidebar-bg: #212529;
+    --kucsa-sidebar-bg-deep: #1b1f22;
+    --kucsa-sidebar-surface: rgba(255, 255, 255, 0.055);
+    --kucsa-sidebar-surface-hover: rgba(255, 255, 255, 0.09);
+    --kucsa-sidebar-surface-active: rgba(255, 255, 255, 0.15);
+    --kucsa-sidebar-border: rgba(255, 255, 255, 0.10);
+    --kucsa-sidebar-text: rgba(255, 255, 255, 0.88);
+    --kucsa-sidebar-muted: rgba(255, 255, 255, 0.52);
+    --kucsa-sidebar-subtle: rgba(255, 255, 255, 0.38);
+    --kucsa-sidebar-primary: #0d6efd;
+    --kucsa-sidebar-success: #198754;
+    --kucsa-sidebar-danger: #dc3545;
+    --kucsa-sidebar-warning: #ffc107;
+    --kucsa-sidebar-info: #0dcaf0;
 
     position: relative;
-    display: flex;
-    flex-direction: column;
-
     width: 100%;
-    min-width: 0;
-    height: 100%;
     min-height: 100%;
-
-    background:
-        radial-gradient(
-            circle at 15% 0%,
-            rgba(13, 110, 253, 0.12),
-            transparent 32%
-        ),
-        linear-gradient(
-            180deg,
-            var(--sidebar-bg) 0%,
-            var(--sidebar-bg-deep) 100%
-        );
-
-    color: var(--sidebar-text);
-
-    overflow: hidden;
-
+    background: #212529;
+    color: #fff;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.20) transparent;
     isolation: isolate;
-
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
 }
 
 .kucsa-sidebar *,
@@ -79,33 +48,78 @@
 
 
 /* =========================================================
-   SUBTLE TOP ACCENT
+   SIDEBAR SCROLLBAR
    ========================================================= */
 
-.kucsa-sidebar::before {
-    content: "";
+.kucsa-sidebar::-webkit-scrollbar {
+    width: 7px;
+}
+
+.kucsa-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.kucsa-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+}
+
+.kucsa-sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.30);
+}
+
+
+/* =========================================================
+   MOBILE CLOSE BUTTON
+   Added automatically by JavaScript
+   ========================================================= */
+
+.kucsa-sidebar .kucsa-mobile-close {
+    display: none;
     position: absolute;
+    top: max(0.85rem, env(safe-area-inset-top));
+    right: 0.85rem;
+    z-index: 20;
 
-    top: 0;
-    left: 0;
-    right: 0;
+    width: 42px;
+    height: 42px;
 
-    height: 2px;
+    align-items: center;
+    justify-content: center;
 
-    background:
-        linear-gradient(
-            90deg,
-            transparent 0%,
-            var(--sidebar-primary) 20%,
-            #6ea8fe 50%,
-            var(--sidebar-primary) 80%,
-            transparent 100%
-        );
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 12px;
 
-    opacity: 0.9;
+    background: rgba(255, 255, 255, 0.07);
+    color: rgba(255, 255, 255, 0.92);
 
-    pointer-events: none;
-    z-index: 5;
+    font-size: 1rem;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        color 0.2s ease;
+}
+
+.kucsa-sidebar .kucsa-mobile-close:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.24);
+    color: #fff;
+    transform: rotate(3deg);
+}
+
+.kucsa-sidebar .kucsa-mobile-close:active {
+    transform: scale(0.94);
+}
+
+.kucsa-sidebar .kucsa-mobile-close:focus-visible {
+    outline: 2px solid rgba(13, 110, 253, 0.9);
+    outline-offset: 3px;
 }
 
 
@@ -116,58 +130,38 @@
 .kucsa-sidebar .sidebar-header {
     position: relative;
 
-    flex: 0 0 auto;
-
-    padding: 1.65rem 1rem 1.35rem;
+    padding: 1.5rem 1rem 1.35rem;
 
     text-align: center;
 
-    border-bottom: 1px solid var(--sidebar-border);
-
     background:
-        linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0.025),
-            transparent
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(255, 255, 255, 0.075),
+            transparent 55%
         );
+
+    border-bottom: 1px solid var(--kucsa-sidebar-border);
 }
-
-
-/* =========================================================
-   PROFILE IMAGE
-   ========================================================= */
-
-.kucsa-sidebar .sidebar-profile-picture,
-.kucsa-sidebar .sidebar-default-avatar {
-    position: relative;
-    z-index: 1;
-}
-
-
-/* Image */
 
 .kucsa-sidebar .sidebar-profile-picture {
     display: block;
 
-    width: 84px;
-    height: 84px;
+    width: 82px;
+    height: 82px;
 
     margin: 0 auto;
 
     object-fit: cover;
-    object-position: center;
 
     border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.24);
 
-    border: 3px solid rgba(255, 255, 255, 0.16);
-
-    outline: 4px solid rgba(13, 110, 253, 0.08);
-
-    background: rgba(255, 255, 255, 0.06);
+    background: #343a40;
 
     box-shadow:
-        0 10px 25px rgba(0, 0, 0, 0.25),
-        0 0 0 1px rgba(255, 255, 255, 0.035);
+        0 0 0 5px rgba(255, 255, 255, 0.035),
+        0 12px 30px rgba(0, 0, 0, 0.22);
 
     transition:
         transform 0.25s ease,
@@ -176,145 +170,99 @@
 }
 
 .kucsa-sidebar .sidebar-profile-picture:hover {
-    transform: translateY(-2px) scale(1.025);
-
-    border-color: rgba(13, 110, 253, 0.65);
+    transform: scale(1.035);
+    border-color: rgba(255, 255, 255, 0.38);
 
     box-shadow:
-        0 14px 30px rgba(0, 0, 0, 0.3),
-        0 0 0 5px rgba(13, 110, 253, 0.08);
+        0 0 0 6px rgba(255, 255, 255, 0.045),
+        0 15px 34px rgba(0, 0, 0, 0.28);
 }
-
-
-/* Default avatar */
 
 .kucsa-sidebar .sidebar-default-avatar {
     display: flex;
-    align-items: center;
-    justify-content: center;
 
-    width: 84px;
-    height: 84px;
+    width: 82px;
+    height: 82px;
 
     margin: 0 auto;
 
-    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
 
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(255, 255, 255, 0.88);
 
-    background:
-        linear-gradient(
-            145deg,
-            rgba(13, 110, 253, 0.26),
-            rgba(255, 255, 255, 0.055)
-        );
-
-    border: 1px solid rgba(255, 255, 255, 0.12);
-
-    box-shadow:
-        0 12px 28px rgba(0, 0, 0, 0.24),
-        inset 0 1px 0 rgba(255, 255, 255, 0.07);
-
-    font-size: 3.65rem;
+    font-size: 4.5rem;
     line-height: 1;
+
+    filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.18));
 }
 
-
-/* =========================================================
-   USER INFORMATION
-   ========================================================= */
-
 .kucsa-sidebar .sidebar-user-name {
-    margin-top: 0.9rem;
-    margin-bottom: 0.25rem;
+    max-width: 100%;
 
-    color: var(--sidebar-text-strong);
+    margin-top: 0.85rem;
+    margin-bottom: 0.2rem;
 
-    font-size: 0.98rem;
+    color: #fff;
+
+    font-size: 1rem;
+    font-weight: 700;
     line-height: 1.35;
 
-    font-weight: 700;
-
-    letter-spacing: -0.01em;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    overflow-wrap: anywhere;
 }
 
 .kucsa-sidebar .sidebar-user-role {
-    color: var(--sidebar-text-muted);
+    color: rgba(255, 255, 255, 0.64);
 
-    font-size: 0.75rem;
-    line-height: 1.35;
-
+    font-size: 0.79rem;
     font-weight: 500;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    line-height: 1.4;
 }
 
 .kucsa-sidebar .sidebar-membership-number {
-    margin-top: 0.38rem;
+    margin-top: 0.35rem;
 
-    color: var(--sidebar-text-faint);
+    color: rgba(255, 255, 255, 0.42);
 
     font-size: 0.67rem;
-    line-height: 1.3;
-
     font-weight: 500;
-
-    letter-spacing: 0.02em;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    letter-spacing: 0.01em;
 }
 
 
 /* =========================================================
-   STATUS BADGE
+   STATUS BADGES
    ========================================================= */
 
 .kucsa-sidebar .sidebar-status {
     display: flex;
-    align-items: center;
+
+    margin-top: 0.8rem;
+
     justify-content: center;
-
-    margin-top: 0.85rem;
-
-    min-height: 25px;
+    flex-wrap: wrap;
+    gap: 0.4rem;
 }
 
 .kucsa-sidebar .sidebar-status .badge {
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    max-width: 100%;
 
     min-height: 28px;
 
+    align-items: center;
+    justify-content: center;
+
     padding: 0.42rem 0.7rem;
 
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 999px;
 
     font-size: 0.67rem;
-    font-weight: 700;
+    font-weight: 600;
+    line-height: 1;
 
-    letter-spacing: 0.01em;
-
-    border: 1px solid rgba(255, 255, 255, 0.08);
-
-    box-shadow:
-        0 4px 12px rgba(0, 0, 0, 0.12);
-
-    white-space: nowrap;
-}
-
-.kucsa-sidebar .sidebar-status .badge i {
-    font-size: 0.76rem;
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.10);
 }
 
 
@@ -323,55 +271,19 @@
    ========================================================= */
 
 .kucsa-sidebar .sidebar-nav {
-    flex: 1 1 auto;
-
     width: 100%;
+
+    padding:
+        0.75rem 0
+        max(0.35rem, env(safe-area-inset-bottom));
 
     margin: 0;
 
-    padding: 0.7rem 0 1rem;
-
-    overflow-x: hidden;
-    overflow-y: auto;
-
-    scrollbar-width: thin;
-    scrollbar-color:
-        rgba(255, 255, 255, 0.16)
-        transparent;
-
-    overscroll-behavior: contain;
-
-    -webkit-overflow-scrolling: touch;
+    list-style: none;
 }
-
-
-/* WebKit scrollbar */
-
-.kucsa-sidebar .sidebar-nav::-webkit-scrollbar {
-    width: 5px;
-}
-
-.kucsa-sidebar .sidebar-nav::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.kucsa-sidebar .sidebar-nav::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.13);
-    border-radius: 999px;
-}
-
-.kucsa-sidebar .sidebar-nav::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.23);
-}
-
-
-/* =========================================================
-   NAV ITEMS
-   ========================================================= */
 
 .kucsa-sidebar .nav-item {
     list-style: none;
-    width: 100%;
 }
 
 
@@ -383,175 +295,128 @@
     position: relative;
 
     display: flex;
-    align-items: center;
 
-    width: calc(100% - 20px);
     min-height: 46px;
 
-    margin: 3px 10px;
-    padding: 0.7rem 0.78rem;
+    margin: 3px 8px;
+    padding: 0.68rem 0.85rem;
+
+    align-items: center;
 
     border: 1px solid transparent;
-    border-radius: var(--sidebar-radius-sm);
+    border-radius: 9px;
 
-    color: var(--sidebar-text) !important;
-
-    background: transparent;
+    color: var(--kucsa-sidebar-text) !important;
 
     text-decoration: none;
 
-    font-size: 0.82rem;
+    font-size: 0.86rem;
+    font-weight: 450;
     line-height: 1.3;
 
-    font-weight: 500;
+    overflow: hidden;
 
     transition:
-        background-color 0.2s ease,
-        border-color 0.2s ease,
-        color 0.2s ease,
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
+        background-color 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease,
+        transform 0.18s ease,
+        box-shadow 0.18s ease;
 }
-
-
-/* Left active indicator */
 
 .kucsa-sidebar .nav-link::before {
     content: "";
 
     position: absolute;
 
-    left: -1px;
-    top: 50%;
+    top: 8px;
+    bottom: 8px;
+    left: 0;
 
     width: 3px;
-    height: 0;
 
-    border-radius: 0 999px 999px 0;
+    border-radius: 0 5px 5px 0;
 
-    background: var(--sidebar-primary);
+    background: transparent;
 
-    opacity: 0;
-
-    transform: translateY(-50%);
+    transform: scaleY(0);
 
     transition:
-        height 0.2s ease,
-        opacity 0.2s ease;
+        transform 0.18s ease,
+        background-color 0.18s ease;
 }
-
-
-/* =========================================================
-   NAV ICON
-   ========================================================= */
 
 .kucsa-sidebar .nav-link i {
     flex: 0 0 22px;
 
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
     width: 22px;
     min-width: 22px;
 
-    margin-right: 0.72rem;
+    margin-right: 0.7rem;
 
-    color: rgba(255, 255, 255, 0.62);
+    color: rgba(255, 255, 255, 0.72);
 
-    font-size: 0.98rem;
+    font-size: 1rem;
+    line-height: 1;
 
     text-align: center;
 
     transition:
-        color 0.2s ease,
-        transform 0.2s ease;
+        color 0.18s ease,
+        transform 0.18s ease;
 }
-
-
-/* Text */
 
 .kucsa-sidebar .nav-link span {
     min-width: 0;
 
-    overflow: hidden;
-
     white-space: nowrap;
+    overflow: hidden;
     text-overflow: ellipsis;
 }
 
-
-/* =========================================================
-   HOVER
-   ========================================================= */
-
 .kucsa-sidebar .nav-link:hover {
+    background: var(--kucsa-sidebar-surface-hover);
+
+    border-color: rgba(255, 255, 255, 0.06);
+
     color: #fff !important;
 
-    background:
-        linear-gradient(
-            90deg,
-            rgba(255, 255, 255, 0.075),
-            rgba(255, 255, 255, 0.035)
-        );
-
-    border-color: rgba(255, 255, 255, 0.055);
-
     transform: translateX(2px);
-
-    box-shadow:
-        0 5px 14px rgba(0, 0, 0, 0.08);
 }
 
 .kucsa-sidebar .nav-link:hover i {
     color: #fff;
-
-    transform: translateX(1px);
+    transform: scale(1.05);
 }
 
+.kucsa-sidebar .nav-link:focus-visible {
+    outline: 2px solid rgba(13, 110, 253, 0.75);
+    outline-offset: 2px;
 
-/* =========================================================
-   ACTIVE
-   ========================================================= */
+    background: rgba(13, 110, 253, 0.08);
+}
 
 .kucsa-sidebar .nav-link.active {
+    background: var(--kucsa-sidebar-surface-active);
+
+    border-color: rgba(255, 255, 255, 0.075);
+
     color: #fff !important;
-
-    background:
-        linear-gradient(
-            90deg,
-            rgba(13, 110, 253, 0.2),
-            rgba(13, 110, 253, 0.085)
-        );
-
-    border-color: rgba(13, 110, 253, 0.19);
 
     font-weight: 650;
 
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.035),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.015),
         0 5px 15px rgba(0, 0, 0, 0.08);
 }
 
 .kucsa-sidebar .nav-link.active::before {
-    height: 22px;
-    opacity: 1;
+    background: #0d6efd;
+    transform: scaleY(1);
 }
 
 .kucsa-sidebar .nav-link.active i {
-    color: #72a9ff;
-}
-
-
-/* =========================================================
-   FOCUS ACCESSIBILITY
-   ========================================================= */
-
-.kucsa-sidebar .nav-link:focus-visible {
-    outline: 2px solid rgba(110, 168, 254, 0.95);
-    outline-offset: 2px;
-
-    background: rgba(13, 110, 253, 0.13);
+    color: #fff;
 }
 
 
@@ -560,35 +425,28 @@
    ========================================================= */
 
 .kucsa-sidebar .sidebar-section {
-    display: flex;
-    align-items: center;
-
-    margin: 1.15rem 0 0.35rem;
+    margin-top: 1.05rem;
+    margin-bottom: 0.3rem;
     padding: 0 1rem;
 }
 
 .kucsa-sidebar .sidebar-section-title {
-    position: relative;
-
     display: flex;
+
     align-items: center;
 
-    width: 100%;
+    min-height: 20px;
 
-    color: var(--sidebar-text-faint) !important;
+    color: var(--kucsa-sidebar-subtle) !important;
 
-    font-size: 0.61rem;
+    font-size: 0.64rem;
+    font-weight: 750;
+
+    letter-spacing: 0.095em;
     line-height: 1.2;
-
-    font-weight: 800;
-
-    letter-spacing: 0.105em;
 
     text-transform: uppercase;
 }
-
-
-/* Section title line */
 
 .kucsa-sidebar .sidebar-section-title::after {
     content: "";
@@ -597,21 +455,9 @@
 
     height: 1px;
 
-    margin-left: 0.65rem;
+    margin-left: 0.55rem;
 
-    background:
-        linear-gradient(
-            90deg,
-            rgba(255, 255, 255, 0.09),
-            transparent
-        );
-}
-
-
-/* First section slightly tighter */
-
-.kucsa-sidebar .sidebar-header + .sidebar-nav .sidebar-section:first-child {
-    margin-top: 0.45rem;
+    background: rgba(255, 255, 255, 0.055);
 }
 
 
@@ -625,14 +471,7 @@
     margin: 0.85rem 1rem;
 
     border: 0;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.12),
-            transparent
-        );
+    border-top: 1px solid rgba(255, 255, 255, 0.095);
 
     opacity: 1;
 }
@@ -646,22 +485,19 @@
 .kucsa-sidebar .payment-pending-box {
     position: relative;
 
-    margin: 0.7rem 10px;
+    margin: 0.7rem 0.75rem;
 
-    padding: 0.78rem 0.78rem 0.78rem 0.82rem;
+    padding: 0.85rem 0.85rem 0.85rem 0.9rem;
 
-    border-radius: var(--sidebar-radius-md);
+    border-radius: 10px;
 
-    font-size: 0.7rem;
+    font-size: 0.74rem;
     line-height: 1.55;
 
-    color: rgba(255, 255, 255, 0.72);
+    color: rgba(255, 255, 255, 0.82);
 
     overflow: hidden;
 }
-
-
-/* Accent strip */
 
 .kucsa-sidebar .payment-required-box::before,
 .kucsa-sidebar .payment-pending-box::before {
@@ -669,121 +505,92 @@
 
     position: absolute;
 
+    top: 0;
+    bottom: 0;
     left: 0;
-    top: 10px;
-    bottom: 10px;
 
     width: 3px;
 
-    border-radius: 0 999px 999px 0;
+    border-radius: 10px 0 0 10px;
 }
 
-
-/* Required */
-
 .kucsa-sidebar .payment-required-box {
-    background:
-        linear-gradient(
-            135deg,
-            rgba(255, 193, 7, 0.12),
-            rgba(255, 193, 7, 0.045)
-        );
+    background: rgba(255, 193, 7, 0.085);
 
-    border: 1px solid rgba(255, 193, 7, 0.17);
+    border: 1px solid rgba(255, 193, 7, 0.22);
 }
 
 .kucsa-sidebar .payment-required-box::before {
-    background: var(--sidebar-warning);
+    background: #ffc107;
 }
 
 .kucsa-sidebar .payment-required-box strong {
-    display: flex;
-    align-items: center;
+    display: block;
 
-    margin-bottom: 0.32rem;
+    margin-bottom: 0.3rem;
 
-    color: #ffd45a;
+    color: #ffc107;
 
-    font-size: 0.7rem;
+    font-size: 0.73rem;
     font-weight: 700;
 }
 
-.kucsa-sidebar .payment-required-box strong i {
-    font-size: 0.82rem;
-}
-
-
-/* Pending */
-
 .kucsa-sidebar .payment-pending-box {
-    background:
-        linear-gradient(
-            135deg,
-            rgba(13, 202, 240, 0.1),
-            rgba(13, 202, 240, 0.035)
-        );
+    background: rgba(13, 202, 240, 0.07);
 
-    border: 1px solid rgba(13, 202, 240, 0.16);
+    border: 1px solid rgba(13, 202, 240, 0.20);
 }
 
 .kucsa-sidebar .payment-pending-box::before {
-    background: var(--sidebar-info);
+    background: #0dcaf0;
 }
 
 .kucsa-sidebar .payment-pending-box strong {
-    display: flex;
-    align-items: center;
+    display: block;
 
-    margin-bottom: 0.32rem;
+    margin-bottom: 0.3rem;
 
-    color: #54d8f4;
+    color: #0dcaf0;
 
-    font-size: 0.7rem;
+    font-size: 0.73rem;
     font-weight: 700;
-}
-
-.kucsa-sidebar .payment-pending-box strong i {
-    font-size: 0.82rem;
 }
 
 
 /* =========================================================
-   ACCOUNT STATE
+   ACCOUNT STATUS
    ========================================================= */
 
 .kucsa-sidebar .account-state-box {
-    margin: 0.7rem 10px;
+    margin: 0.75rem;
 
-    padding: 0.72rem 0.78rem;
+    padding: 0.75rem 0.8rem;
 
-    background:
-        linear-gradient(
-            135deg,
-            rgba(255, 255, 255, 0.045),
-            rgba(255, 255, 255, 0.018)
-        );
+    background: rgba(255, 255, 255, 0.035);
 
-    border: 1px solid var(--sidebar-border);
+    border: 1px solid rgba(255, 255, 255, 0.075);
+    border-radius: 9px;
 
-    border-radius: var(--sidebar-radius-md);
-
-    font-size: 0.7rem;
+    font-size: 0.71rem;
+    line-height: 1.45;
 }
 
 .kucsa-sidebar .account-state-label {
     display: block;
 
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.15rem;
 
-    color: var(--sidebar-text-faint);
+    color: rgba(255, 255, 255, 0.42);
 
-    font-size: 0.64rem;
-
+    font-size: 0.66rem;
     font-weight: 600;
+
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
 .kucsa-sidebar .account-state-value {
-    color: rgba(255, 255, 255, 0.84);
+    color: rgba(255, 255, 255, 0.86);
 
     font-weight: 600;
 }
@@ -794,107 +601,127 @@
    ========================================================= */
 
 .kucsa-sidebar .logout-link {
-    color: #ff8585 !important;
+    color: #ff7676 !important;
 }
 
 .kucsa-sidebar .logout-link i {
-    color: #ff8585 !important;
+    color: #ff7676 !important;
 }
 
 .kucsa-sidebar .logout-link:hover {
-    color: #ff9b9b !important;
+    background: rgba(220, 53, 69, 0.13);
 
-    background:
-        linear-gradient(
-            90deg,
-            rgba(220, 53, 69, 0.16),
-            rgba(220, 53, 69, 0.055)
-        );
+    border-color: rgba(220, 53, 69, 0.10);
 
-    border-color: rgba(220, 53, 69, 0.14);
-
-    box-shadow:
-        0 5px 15px rgba(220, 53, 69, 0.08);
+    color: #ff8585 !important;
 }
 
 .kucsa-sidebar .logout-link:hover i {
-    color: #ff9b9b !important;
+    color: #ff8585 !important;
 }
 
 
 /* =========================================================
-   LOADING / NAVIGATION STATE
+   BOOTSTRAP OFFCANVAS — MOBILE
+   The JS adds .offcanvas and .offcanvas-start below 992px.
    ========================================================= */
-
-.kucsa-sidebar .nav-link.kucsa-sidebar-navigating {
-    pointer-events: none;
-
-    opacity: 0.68;
-}
-
-.kucsa-sidebar .nav-link.kucsa-sidebar-navigating i {
-    animation: kucsaSidebarSpin 0.8s linear infinite;
-}
-
-@keyframes kucsaSidebarSpin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-
-/* =========================================================
-   MOBILE / OFFCANVAS SUPPORT
-   ========================================================= */
-
-/*
-   Bootstrap's .offcanvas-lg should control the actual
-   off-canvas behavior when the sidebar is wrapped with:
-
-   #kucsaSidebarOffcanvas
-
-   This CSS only styles the sidebar itself.
-*/
 
 @media (max-width: 991.98px) {
 
-    .kucsa-sidebar {
-        min-height: 100dvh;
-        height: 100dvh;
+    .kucsa-sidebar.offcanvas {
+        --bs-offcanvas-width: min(88vw, 365px);
+
+        position: fixed !important;
+
+        top: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
+
+        width: var(--bs-offcanvas-width) !important;
+        max-width: 92vw !important;
+
+        height: 100dvh !important;
+        min-height: 100dvh !important;
+
+        margin: 0 !important;
+
+        z-index: 1055 !important;
+
+        display: block;
+
+        background: #212529 !important;
+
+        border: 0 !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.10) !important;
+
+        border-radius: 0 !important;
+
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+
+        overscroll-behavior: contain;
+
+        -webkit-overflow-scrolling: touch;
+
+        box-shadow:
+            18px 0 55px rgba(0, 0, 0, 0.32);
+
+        transform: translateX(-105%);
+
+        visibility: hidden;
+
+        transition:
+            transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+            visibility 0.28s linear;
+
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
     }
 
-    .kucsa-sidebar .sidebar-header {
-        padding-top:
-            max(
-                1.35rem,
-                calc(1.35rem + env(safe-area-inset-top))
-            );
+    .kucsa-sidebar.offcanvas.show {
+        visibility: visible !important;
+        transform: translateX(0) !important;
     }
 
-    .kucsa-sidebar .sidebar-nav {
-        padding-bottom:
-            max(
-                1.25rem,
-                calc(1.25rem + env(safe-area-inset-bottom))
-            );
+    .kucsa-sidebar.offcanvas .sidebar-header {
+        padding-top: 4.7rem;
+    }
+
+    .kucsa-sidebar .kucsa-mobile-close {
+        display: inline-flex;
     }
 
     .kucsa-sidebar .nav-link {
         min-height: 48px;
 
-        margin-top: 3px;
-        margin-bottom: 3px;
+        margin-left: 7px;
+        margin-right: 7px;
 
         padding-top: 0.72rem;
         padding-bottom: 0.72rem;
+
+        border-radius: 10px;
+
+        font-size: 0.88rem;
     }
 
     .kucsa-sidebar .nav-link i {
-        font-size: 1rem;
+        font-size: 1.03rem;
     }
 
-    .kucsa-sidebar .sidebar-section {
-        margin-top: 1rem;
+    .kucsa-sidebar .sidebar-profile-picture,
+    .kucsa-sidebar .sidebar-default-avatar {
+        width: 72px;
+        height: 72px;
+    }
+
+    .kucsa-sidebar .sidebar-default-avatar {
+        font-size: 3.95rem;
+    }
+
+    .kucsa-sidebar .sidebar-header {
+        padding-left: 0.85rem;
+        padding-right: 0.85rem;
     }
 }
 
@@ -903,46 +730,65 @@
    TABLETS
    ========================================================= */
 
-@media (max-width: 767.98px) {
+@media (min-width: 768px) and (max-width: 991.98px) {
+
+    .kucsa-sidebar.offcanvas {
+        --bs-offcanvas-width: min(390px, 82vw);
+    }
 
     .kucsa-sidebar .sidebar-header {
-        padding:
-            1.25rem 0.8rem 1.1rem;
+        padding-left: 1.1rem;
+        padding-right: 1.1rem;
     }
 
-    .kucsa-sidebar .sidebar-profile-picture,
-    .kucsa-sidebar .sidebar-default-avatar {
-        width: 74px;
-        height: 74px;
+    .kucsa-sidebar .nav-link {
+        margin-left: 9px;
+        margin-right: 9px;
+    }
+}
+
+
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 575.98px) {
+
+    .kucsa-sidebar.offcanvas {
+        --bs-offcanvas-width: min(91vw, 350px);
     }
 
-    .kucsa-sidebar .sidebar-default-avatar {
-        font-size: 3.2rem;
+    .kucsa-sidebar .sidebar-header {
+        padding-left: 0.7rem;
+        padding-right: 0.7rem;
     }
 
     .kucsa-sidebar .sidebar-user-name {
-        font-size: 0.92rem;
+        font-size: 0.96rem;
     }
 
     .kucsa-sidebar .sidebar-user-role {
-        font-size: 0.73rem;
+        font-size: 0.76rem;
     }
 
     .kucsa-sidebar .sidebar-membership-number {
         font-size: 0.65rem;
     }
 
-    .kucsa-sidebar .sidebar-nav {
-        padding-top: 0.55rem;
+    .kucsa-sidebar .nav-link {
+        min-height: 49px;
+
+        margin-left: 5px;
+        margin-right: 5px;
+
+        padding-left: 0.78rem;
+        padding-right: 0.78rem;
     }
 
-    .kucsa-sidebar .nav-link {
-        width: calc(100% - 14px);
-
-        margin-left: 7px;
-        margin-right: 7px;
-
-        border-radius: 10px;
+    .kucsa-sidebar .payment-required-box,
+    .kucsa-sidebar .payment-pending-box {
+        margin-left: 0.65rem;
+        margin-right: 0.65rem;
     }
 
     .kucsa-sidebar .sidebar-section {
@@ -958,112 +804,46 @@
 
 
 /* =========================================================
-   SMALL PHONES
-   ========================================================= */
-
-@media (max-width: 575.98px) {
-
-    .kucsa-sidebar .sidebar-header {
-        padding:
-            1.05rem 0.7rem 0.95rem;
-    }
-
-    .kucsa-sidebar .sidebar-profile-picture,
-    .kucsa-sidebar .sidebar-default-avatar {
-        width: 68px;
-        height: 68px;
-    }
-
-    .kucsa-sidebar .sidebar-default-avatar {
-        font-size: 2.95rem;
-    }
-
-    .kucsa-sidebar .sidebar-user-name {
-        margin-top: 0.7rem;
-
-        font-size: 0.88rem;
-    }
-
-    .kucsa-sidebar .sidebar-status {
-        margin-top: 0.68rem;
-    }
-
-    .kucsa-sidebar .sidebar-status .badge {
-        min-height: 26px;
-
-        padding:
-            0.35rem 0.6rem;
-
-        font-size: 0.64rem;
-    }
-
-    .kucsa-sidebar .nav-link {
-        min-height: 50px;
-
-        padding:
-            0.76rem 0.72rem;
-
-        font-size: 0.81rem;
-    }
-
-    .kucsa-sidebar .nav-link i {
-        flex-basis: 23px;
-        min-width: 23px;
-
-        margin-right: 0.7rem;
-
-        font-size: 1rem;
-    }
-
-    .kucsa-sidebar .sidebar-section {
-        margin-top: 0.9rem;
-        margin-bottom: 0.25rem;
-    }
-
-    .kucsa-sidebar .sidebar-section-title {
-        font-size: 0.59rem;
-    }
-
-    .kucsa-sidebar .payment-required-box,
-    .kucsa-sidebar .payment-pending-box {
-        margin-left: 7px;
-        margin-right: 7px;
-
-        padding:
-            0.75rem;
-    }
-}
-
-
-/* =========================================================
    VERY SMALL PHONES
    ========================================================= */
 
 @media (max-width: 359.98px) {
 
+    .kucsa-sidebar.offcanvas {
+        --bs-offcanvas-width: 94vw;
+    }
+
+    .kucsa-sidebar .sidebar-header {
+        padding-top: 4.45rem;
+    }
+
     .kucsa-sidebar .sidebar-profile-picture,
     .kucsa-sidebar .sidebar-default-avatar {
-        width: 62px;
-        height: 62px;
+        width: 64px;
+        height: 64px;
     }
 
     .kucsa-sidebar .sidebar-default-avatar {
-        font-size: 2.65rem;
+        font-size: 3.55rem;
     }
 
     .kucsa-sidebar .nav-link {
-        min-height: 48px;
-
-        font-size: 0.78rem;
+        font-size: 0.82rem;
     }
 
     .kucsa-sidebar .nav-link i {
-        margin-right: 0.6rem;
+        flex-basis: 20px;
+        width: 20px;
+        min-width: 20px;
+
+        margin-right: 0.58rem;
     }
 
-    .kucsa-sidebar .sidebar-section {
-        padding-left: 0.7rem;
-        padding-right: 0.7rem;
+    .kucsa-sidebar .kucsa-mobile-close {
+        width: 40px;
+        height: 40px;
+
+        right: 0.7rem;
     }
 }
 
@@ -1078,9 +858,31 @@
     .kucsa-sidebar *::before,
     .kucsa-sidebar *::after {
         scroll-behavior: auto !important;
+
         transition-duration: 0.01ms !important;
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
+    }
+}
+
+
+/* =========================================================
+   TOUCH DEVICES
+   ========================================================= */
+
+@media (hover: none) and (pointer: coarse) {
+
+    .kucsa-sidebar .nav-link:hover {
+        transform: none;
+    }
+
+    .kucsa-sidebar .nav-link:active {
+        background: rgba(255, 255, 255, 0.13);
+        transform: scale(0.99);
+    }
+
+    .kucsa-sidebar .sidebar-profile-picture:hover {
+        transform: none;
     }
 }
 </style>
@@ -2901,14 +2703,25 @@
 </div>
 
 <script>
-/* =========================================================
-   KUCSA SIDEBAR — PRODUCTION JAVASCRIPT
-   ========================================================= */
-
 (function () {
     "use strict";
 
-    function initializeKucsaSidebar() {
+    /*
+     * =========================================================
+     * KUCSA SIDEBAR — RESPONSIVE OFFCANVAS CONTROLLER
+     * =========================================================
+     *
+     * Desktop:
+     *   >= 992px → normal/static sidebar
+     *
+     * Mobile/tablet:
+     *   < 992px → Bootstrap offcanvas sidebar
+     *
+     * No Django logic or sidebar links are changed.
+     * =========================================================
+     */
+
+    function initKucsaSidebar() {
 
         const sidebar = document.querySelector(".kucsa-sidebar");
 
@@ -2916,334 +2729,502 @@
             return;
         }
 
-        /* -----------------------------------------------------
-           ELEMENTS
-           ----------------------------------------------------- */
-
-        const links = sidebar.querySelectorAll(
-            "a.nav-link[href]"
-        );
-
-        const sidebarContainer =
-            document.getElementById(
-                "kucsaSidebarOffcanvas"
-            );
-
-
-        /* -----------------------------------------------------
-           REDUCED MOTION
-           ----------------------------------------------------- */
-
-        const prefersReducedMotion =
-            window.matchMedia &&
-            window.matchMedia(
-                "(prefers-reduced-motion: reduce)"
-            ).matches;
-
-
-        /* -----------------------------------------------------
-           ACTIVE LINK ACCESSIBILITY
-           ----------------------------------------------------- */
-
-        links.forEach(function (link) {
-
-            if (
-                link.classList.contains("active")
-            ) {
-
-                link.setAttribute(
-                    "aria-current",
-                    "page"
-                );
-
-            } else {
-
-                link.removeAttribute(
-                    "aria-current"
-                );
-
-            }
-
-        });
-
-
-        /* -----------------------------------------------------
-           MOBILE SIDEBAR CLOSE
-           ----------------------------------------------------- */
-
-        function closeMobileSidebar() {
-
-            if (
-                !sidebarContainer ||
-                !window.bootstrap ||
-                window.innerWidth >= 992
-            ) {
-                return;
-            }
-
-            try {
-
-                const offcanvas =
-                    bootstrap.Offcanvas
-                        .getInstance(
-                            sidebarContainer
-                        ) ||
-                    bootstrap.Offcanvas
-                        .getOrCreateInstance(
-                            sidebarContainer
-                        );
-
-                if (offcanvas) {
-                    offcanvas.hide();
-                }
-
-            } catch (error) {
-
-                console.warn(
-                    "KUCSA sidebar could not close automatically.",
-                    error
-                );
-
-            }
-
-        }
-
-
-        /* -----------------------------------------------------
-           NAVIGATION LOADING STATE
-           ----------------------------------------------------- */
-
-        links.forEach(function (link) {
-
-            link.addEventListener(
-                "click",
-                function (event) {
-
-                    /*
-                     * Allow normal browser behavior for:
-                     * - modifier clicks
-                     * - middle clicks
-                     * - new-tab requests
-                     */
-
-                    if (
-                        event.ctrlKey ||
-                        event.metaKey ||
-                        event.shiftKey ||
-                        event.altKey ||
-                        event.button !== 0
-                    ) {
-                        return;
-                    }
-
-
-                    const href =
-                        link.getAttribute("href");
-
-
-                    if (
-                        !href ||
-                        href === "#" ||
-                        href.startsWith("javascript:")
-                    ) {
-                        return;
-                    }
-
-
-                    /*
-                     * Don't show navigation loading state
-                     * for the currently active page.
-                     */
-
-                    if (
-                        link.classList.contains("active")
-                    ) {
-
-                        closeMobileSidebar();
-
-                        return;
-                    }
-
-
-                    link.classList.add(
-                        "kucsa-sidebar-navigating"
-                    );
-
-
-                    /*
-                     * Prevent accidental repeated taps.
-                     */
-
-                    link.setAttribute(
-                        "aria-disabled",
-                        "true"
-                    );
-
-
-                    /*
-                     * Close mobile sidebar immediately
-                     * so the page transition feels faster.
-                     */
-
-                    closeMobileSidebar();
-
-                }
-            );
-
-        });
-
-
-        /* -----------------------------------------------------
-           OFFCANVAS EVENTS
-           ----------------------------------------------------- */
-
-        if (sidebarContainer) {
-
-            sidebarContainer.addEventListener(
-                "shown.bs.offcanvas",
-                function () {
-
-                    document.body.classList.add(
-                        "kucsa-sidebar-open"
-                    );
-
-                    /*
-                     * Focus first useful navigation
-                     * element on mobile.
-                     */
-
-                    if (
-                        window.innerWidth < 992
-                    ) {
-
-                        const firstLink =
-                            sidebar.querySelector(
-                                "a.nav-link[href]"
-                            );
-
-                        if (
-                            firstLink &&
-                            !prefersReducedMotion
-                        ) {
-
-                            window.setTimeout(
-                                function () {
-
-                                    try {
-                                        firstLink.focus({
-                                            preventScroll: true
-                                        });
-                                    } catch (error) {
-                                        /* Ignore focus errors */
-                                    }
-
-                                },
-                                120
-                            );
-
-                        }
-
-                    }
-
-                }
-            );
-
-
-            sidebarContainer.addEventListener(
-                "hidden.bs.offcanvas",
-                function () {
-
-                    document.body.classList.remove(
-                        "kucsa-sidebar-open"
-                    );
-
-                }
-            );
-
-        }
-
-
-        /* -----------------------------------------------------
-           ESCAPE KEY
-           ----------------------------------------------------- */
-
-        document.addEventListener(
-            "keydown",
-            function (event) {
-
-                if (
-                    event.key !== "Escape" ||
-                    !sidebarContainer ||
-                    window.innerWidth >= 992 ||
-                    !window.bootstrap
-                ) {
-                    return;
-                }
-
-
-                try {
-
-                    const offcanvas =
-                        bootstrap.Offcanvas
-                            .getInstance(
-                                sidebarContainer
-                            );
-
-                    if (offcanvas) {
-                        offcanvas.hide();
-                    }
-
-                } catch (error) {
-                    /* Ignore Bootstrap errors */
-                }
-
-            }
+        const MOBILE_BREAKPOINT = 992;
+
+        /*
+         * -----------------------------------------------------
+         * Give the existing sidebar the exact ID expected by
+         * the navbar hamburger:
+         *
+         * data-bs-target="#kucsaSidebarOffcanvas"
+         * -----------------------------------------------------
+         */
+        sidebar.id = "kucsaSidebarOffcanvas";
+
+        sidebar.setAttribute(
+            "aria-label",
+            "KUCSA navigation"
         );
 
 
-        /* -----------------------------------------------------
-           RESET NAVIGATION STATE
-           ----------------------------------------------------- */
+        /*
+         * -----------------------------------------------------
+         * Add mobile close button dynamically.
+         *
+         * This avoids changing your existing sidebar HTML.
+         * -----------------------------------------------------
+         */
 
-        function resetNavigationState() {
+        let closeButton = sidebar.querySelector(
+            ".kucsa-mobile-close"
+        );
 
-            sidebar
-                .querySelectorAll(
-                    ".kucsa-sidebar-navigating"
-                )
-                .forEach(function (link) {
+        if (!closeButton) {
 
-                    link.classList.remove(
-                        "kucsa-sidebar-navigating"
-                    );
+            closeButton = document.createElement("button");
 
-                    link.removeAttribute(
-                        "aria-disabled"
-                    );
+            closeButton.type = "button";
 
-                });
+            closeButton.className =
+                "kucsa-mobile-close";
 
+            closeButton.setAttribute(
+                "aria-label",
+                "Close navigation menu"
+            );
+
+            closeButton.setAttribute(
+                "title",
+                "Close menu"
+            );
+
+            closeButton.setAttribute(
+                "data-bs-dismiss",
+                "offcanvas"
+            );
+
+            closeButton.innerHTML =
+                '<i class="bi bi-x-lg" aria-hidden="true"></i>';
+
+            sidebar.insertBefore(
+                closeButton,
+                sidebar.firstChild
+            );
         }
 
 
         /*
-         * Useful when navigating backward/forward
-         * through browser history.
+         * -----------------------------------------------------
+         * Mark active navigation items for accessibility.
+         * -----------------------------------------------------
          */
 
-        window.addEventListener(
-            "pageshow",
-            function () {
+        function updateActiveLinks() {
 
-                resetNavigationState();
+            const links = sidebar.querySelectorAll(
+                "a.nav-link"
+            );
+
+            links.forEach(function (link) {
+
+                if (link.classList.contains("active")) {
+
+                    link.setAttribute(
+                        "aria-current",
+                        "page"
+                    );
+
+                } else {
+
+                    link.removeAttribute(
+                        "aria-current"
+                    );
+                }
+            });
+        }
+
+
+        /*
+         * -----------------------------------------------------
+         * Bootstrap availability
+         * -----------------------------------------------------
+         */
+
+        function bootstrapAvailable() {
+
+            return (
+                typeof window.bootstrap !== "undefined" &&
+                typeof window.bootstrap.Offcanvas !== "undefined"
+            );
+        }
+
+
+        /*
+         * -----------------------------------------------------
+         * Get Bootstrap Offcanvas instance.
+         * -----------------------------------------------------
+         */
+
+        function getOffcanvasInstance() {
+
+            if (!bootstrapAvailable()) {
+                return null;
+            }
+
+            return (
+                bootstrap.Offcanvas.getInstance(sidebar) ||
+                bootstrap.Offcanvas.getOrCreateInstance(
+                    sidebar,
+                    {
+                        backdrop: true,
+                        keyboard: true,
+                        scroll: false
+                    }
+                )
+            );
+        }
+
+
+        /*
+         * -----------------------------------------------------
+         * Apply mobile mode.
+         * -----------------------------------------------------
+         */
+
+        function enableMobileMode() {
+
+            sidebar.classList.add(
+                "offcanvas",
+                "offcanvas-start"
+            );
+
+            sidebar.setAttribute(
+                "tabindex",
+                "-1"
+            );
+
+            sidebar.setAttribute(
+                "role",
+                "dialog"
+            );
+
+            sidebar.setAttribute(
+                "aria-modal",
+                "true"
+            );
+
+            sidebar.setAttribute(
+                "aria-label",
+                "KUCSA navigation"
+            );
+
+
+            /*
+             * Bootstrap will handle:
+             *
+             * - backdrop
+             * - body scroll lock
+             * - Escape
+             * - focus handling
+             * - opening/closing
+             */
+            if (bootstrapAvailable()) {
+
+                getOffcanvasInstance();
 
             }
+        }
+
+
+        /*
+         * -----------------------------------------------------
+         * Apply desktop mode.
+         * -----------------------------------------------------
+         */
+
+        function enableDesktopMode() {
+
+            if (bootstrapAvailable()) {
+
+                const instance =
+                    bootstrap.Offcanvas.getInstance(sidebar);
+
+                if (instance) {
+
+                    try {
+                        instance.hide();
+                    } catch (error) {
+                        /*
+                         * Ignore harmless transition errors.
+                         */
+                    }
+
+                    /*
+                     * Dispose after the current transition.
+                     */
+                    window.setTimeout(function () {
+
+                        const currentInstance =
+                            bootstrap.Offcanvas.getInstance(sidebar);
+
+                        if (currentInstance) {
+
+                            try {
+                                currentInstance.dispose();
+                            } catch (error) {
+                                /*
+                                 * Safe cleanup.
+                                 */
+                            }
+                        }
+
+                    }, 350);
+                }
+            }
+
+
+            /*
+             * Remove mobile/offcanvas state.
+             */
+            sidebar.classList.remove(
+                "offcanvas",
+                "offcanvas-start",
+                "show"
+            );
+
+            sidebar.removeAttribute(
+                "tabindex"
+            );
+
+            sidebar.removeAttribute(
+                "role"
+            );
+
+            sidebar.removeAttribute(
+                "aria-modal"
+            );
+
+            /*
+             * Keep the ID because the navbar may use it
+             * whenever the viewport changes again.
+             */
+            sidebar.id = "kucsaSidebarOffcanvas";
+        }
+
+
+        /*
+         * -----------------------------------------------------
+         * Detect current viewport.
+         * -----------------------------------------------------
+         */
+
+        function updateSidebarMode() {
+
+            const isMobile =
+                window.innerWidth < MOBILE_BREAKPOINT;
+
+            if (isMobile) {
+
+                enableMobileMode();
+
+            } else {
+
+                enableDesktopMode();
+            }
+        }
+
+
+        /*
+         * -----------------------------------------------------
+         * Close mobile sidebar.
+         * -----------------------------------------------------
+         */
+
+        function closeSidebar() {
+
+            if (!bootstrapAvailable()) {
+                return;
+            }
+
+            const instance =
+                bootstrap.Offcanvas.getInstance(sidebar);
+
+            if (instance) {
+
+                try {
+                    instance.hide();
+                } catch (error) {
+                    /*
+                     * Ignore Bootstrap transition errors.
+                     */
+                }
+            }
+        }
+
+
+        /*
+         * -----------------------------------------------------
+         * Close sidebar when a navigation link is clicked.
+         *
+         * This means:
+         *
+         * Tap Dashboard
+         *       ↓
+         * Sidebar closes
+         *       ↓
+         * Page navigates
+         *
+         * Same for all sidebar links.
+         * -----------------------------------------------------
+         */
+
+        sidebar.addEventListener(
+            "click",
+            function (event) {
+
+                const link =
+                    event.target.closest(
+                        "a.nav-link[href]"
+                    );
+
+                if (!link) {
+                    return;
+                }
+
+                /*
+                 * Do not interfere with modifier-key clicks.
+                 *
+                 * This allows:
+                 * Ctrl + click
+                 * Cmd + click
+                 * Middle click
+                 */
+                if (
+                    event.ctrlKey ||
+                    event.metaKey ||
+                    event.shiftKey ||
+                    event.altKey ||
+                    event.button !== 0
+                ) {
+                    return;
+                }
+
+                if (
+                    window.innerWidth <
+                    MOBILE_BREAKPOINT
+                ) {
+
+                    /*
+                     * Let Bootstrap animate the drawer closed
+                     * before the browser follows the link.
+                     */
+                    closeSidebar();
+                }
+            },
+            false
         );
 
 
-        /* -----------------------------------------------------
-           RESIZE HANDLING
-           ----------------------------------------------------- */
+        /*
+         * -----------------------------------------------------
+         * Mobile close button.
+         * -----------------------------------------------------
+         */
+
+        closeButton.addEventListener(
+            "click",
+            function () {
+
+                closeSidebar();
+
+            },
+            false
+        );
+
+
+        /*
+         * -----------------------------------------------------
+         * Close sidebar after Bootstrap finishes hiding.
+         *
+         * This prevents stale "show" state.
+         * -----------------------------------------------------
+         */
+
+        if (bootstrapAvailable()) {
+
+            sidebar.addEventListener(
+                "hidden.bs.offcanvas",
+                function () {
+
+                    sidebar.classList.remove("show");
+
+                },
+                false
+            );
+
+
+            /*
+             * When opened, ensure focus is inside sidebar.
+             */
+            sidebar.addEventListener(
+                "shown.bs.offcanvas",
+                function () {
+
+                    const firstFocusable =
+                        sidebar.querySelector(
+                            ".kucsa-mobile-close, a.nav-link"
+                        );
+
+                    if (firstFocusable) {
+
+                        window.setTimeout(
+                            function () {
+
+                                try {
+                                    firstFocusable.focus();
+                                } catch (error) {
+                                    /*
+                                     * Ignore focus errors.
+                                     */
+                                }
+
+                            },
+                            50
+                        );
+                    }
+
+                },
+                false
+            );
+        }
+
+
+        /*
+         * -----------------------------------------------------
+         * Make sure backdrop belongs to sidebar.
+         *
+         * This also lets us give the backdrop a polished
+         * appearance without affecting other Bootstrap modals.
+         * -----------------------------------------------------
+         */
+
+        document.addEventListener(
+            "shown.bs.offcanvas",
+            function (event) {
+
+                if (event.target !== sidebar) {
+                    return;
+                }
+
+                const backdrop =
+                    document.querySelector(
+                        ".offcanvas-backdrop"
+                    );
+
+                if (backdrop) {
+
+                    backdrop.classList.add(
+                        "kucsa-sidebar-backdrop"
+                    );
+                }
+
+            },
+            false
+        );
+
+
+        /*
+         * -----------------------------------------------------
+         * Resize/orientation handling.
+         *
+         * Handles:
+         *
+         * - phone rotation
+         * - tablet rotation
+         * - desktop resizing
+         * - browser responsive developer tools
+         * -----------------------------------------------------
+         */
 
         let resizeTimer = null;
 
@@ -3251,29 +3232,38 @@
             "resize",
             function () {
 
-                clearTimeout(resizeTimer);
+                window.clearTimeout(resizeTimer);
 
-                resizeTimer = setTimeout(
-                    function () {
+                resizeTimer =
+                    window.setTimeout(
+                        function () {
 
-                        /*
-                         * If desktop mode is restored,
-                         * make sure body does not retain
-                         * mobile sidebar state.
-                         */
+                            updateSidebarMode();
 
-                        if (
-                            window.innerWidth >= 992
-                        ) {
+                        },
+                        120
+                    );
 
-                            document.body.classList.remove(
-                                "kucsa-sidebar-open"
-                            );
+            },
+            {
+                passive: true
+            }
+        );
 
-                        }
 
-                    },
-                    120
+        /*
+         * -----------------------------------------------------
+         * Orientation change.
+         * -----------------------------------------------------
+         */
+
+        window.addEventListener(
+            "orientationchange",
+            function () {
+
+                window.setTimeout(
+                    updateSidebarMode,
+                    180
                 );
 
             },
@@ -3283,124 +3273,131 @@
         );
 
 
-        /* -----------------------------------------------------
-           TOUCH FEEDBACK
-           ----------------------------------------------------- */
+        /*
+         * -----------------------------------------------------
+         * Before page navigation:
+         * close drawer so navigation feels clean.
+         * -----------------------------------------------------
+         */
 
-        if (!prefersReducedMotion) {
+        document.addEventListener(
+            "click",
+            function (event) {
 
-            links.forEach(function (link) {
-
-                link.addEventListener(
-                    "touchstart",
-                    function () {
-
-                        link.classList.add(
-                            "kucsa-sidebar-touching"
-                        );
-
-                    },
-                    {
-                        passive: true
-                    }
-                );
-
-
-                link.addEventListener(
-                    "touchend",
-                    function () {
-
-                        link.classList.remove(
-                            "kucsa-sidebar-touching"
-                        );
-
-                    },
-                    {
-                        passive: true
-                    }
-                );
-
-
-                link.addEventListener(
-                    "touchcancel",
-                    function () {
-
-                        link.classList.remove(
-                            "kucsa-sidebar-touching"
-                        );
-
-                    },
-                    {
-                        passive: true
-                    }
-                );
-
-            });
-
-        }
-
-
-        /* -----------------------------------------------------
-           ACTIVE LINK KEYBOARD SUPPORT
-           ----------------------------------------------------- */
-
-        links.forEach(function (link) {
-
-            link.addEventListener(
-                "keydown",
-                function (event) {
-
-                    if (
-                        event.key === "Enter" ||
-                        event.key === " "
-                    ) {
-
-                        link.classList.add(
-                            "kucsa-sidebar-keyboard-active"
-                        );
-
-                    }
-
-                }
-            );
-
-
-            link.addEventListener(
-                "keyup",
-                function () {
-
-                    link.classList.remove(
-                        "kucsa-sidebar-keyboard-active"
+                const link =
+                    event.target.closest(
+                        "#kucsaSidebarOffcanvas a.nav-link[href]"
                     );
 
+                if (!link) {
+                    return;
                 }
-            );
 
-        });
+                if (
+                    window.innerWidth <
+                    MOBILE_BREAKPOINT
+                ) {
 
-
-        /* -----------------------------------------------------
-           CLEANUP
-           ----------------------------------------------------- */
-
-        window.addEventListener(
-            "pagehide",
-            function () {
-
-                clearTimeout(resizeTimer);
+                    /*
+                     * Bootstrap handles the actual close.
+                     * This simply ensures the correct state.
+                     */
+                    sidebar.classList.add(
+                        "kucsa-navigating"
+                    );
+                }
 
             },
-            {
-                once: true
-            }
+            false
         );
+
+
+        /*
+         * -----------------------------------------------------
+         * pageshow:
+         * restore normal state after browser back/forward.
+         * -----------------------------------------------------
+         */
+
+        window.addEventListener(
+            "pageshow",
+            function () {
+
+                sidebar.classList.remove(
+                    "kucsa-navigating"
+                );
+
+                updateSidebarMode();
+                updateActiveLinks();
+
+            },
+            false
+        );
+
+
+        /*
+         * -----------------------------------------------------
+         * Initial setup.
+         * -----------------------------------------------------
+         */
+
+        updateActiveLinks();
+        updateSidebarMode();
+
+
+        /*
+         * -----------------------------------------------------
+         * Safety check:
+         *
+         * If Bootstrap is loaded after this script,
+         * initialise the offcanvas once Bootstrap becomes
+         * available.
+         * -----------------------------------------------------
+         */
+
+        if (!bootstrapAvailable()) {
+
+            let bootstrapAttempts = 0;
+
+            const bootstrapWatcher =
+                window.setInterval(
+                    function () {
+
+                        bootstrapAttempts++;
+
+                        if (bootstrapAvailable()) {
+
+                            window.clearInterval(
+                                bootstrapWatcher
+                            );
+
+                            updateSidebarMode();
+
+                        }
+
+                        /*
+                         * Do not keep checking forever.
+                         */
+                        if (bootstrapAttempts >= 40) {
+
+                            window.clearInterval(
+                                bootstrapWatcher
+                            );
+                        }
+
+                    },
+                    100
+                );
+        }
 
     }
 
 
-    /* =========================================================
-       INITIALIZE
-       ========================================================= */
+    /*
+     * =========================================================
+     * START
+     * =========================================================
+     */
 
     if (
         document.readyState === "loading"
@@ -3408,7 +3405,7 @@
 
         document.addEventListener(
             "DOMContentLoaded",
-            initializeKucsaSidebar,
+            initKucsaSidebar,
             {
                 once: true
             }
@@ -3416,8 +3413,7 @@
 
     } else {
 
-        initializeKucsaSidebar();
-
+        initKucsaSidebar();
     }
 
 })();

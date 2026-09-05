@@ -54,20 +54,17 @@ The Payments application remains responsible for:
 Finance does not verify M-Pesa payments.
 
 Only completed payments may become financial income.
-"""
 
+Only POSTED financial transactions affect the
+accounting balance.
+"""
 
 from decimal import Decimal
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ValidationError
-from django.db.models import Sum
-from django.shortcuts import (
-    get_object_or_404,
-    redirect,
-    render,
-)
+from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import (
     ExpenseForm,
@@ -104,9 +101,15 @@ from .services import (
     create_expense,
     deactivate_category,
     get_audit_logs,
+    get_audit_log_totals,
+    get_category_totals,
+    get_expense_totals,
+    get_finance_dashboard_stats,
     get_financial_totals,
+    get_income_totals,
     post_transaction,
     reject_expense,
+    reconcile_finance,
     submit_expense,
     update_category,
     update_expense,
@@ -114,6 +117,13 @@ from .services import (
     void_transaction,
     pay_expense,
 )
+
+
+# =============================================================================
+# CONSTANTS
+# =============================================================================
+
+ZERO = Decimal("0.00")
 
 
 # =============================================================================
@@ -125,6 +135,7 @@ def _require_permission(user, permission):
     Raise HTTP 403 when the current user does not have
     the required finance permission.
     """
+
     if not permission(user):
         raise PermissionDenied(
             "You do not have permission to access this finance area."
@@ -135,6 +146,7 @@ def _redirect_to_expense_detail(expense):
     """
     Redirect to an expense detail page.
     """
+
     return redirect(
         "finance:expense_detail",
         pk=expense.pk,
@@ -145,6 +157,7 @@ def _redirect_to_transaction_detail(financial_transaction):
     """
     Redirect to a transaction detail page.
     """
+
     return redirect(
         "finance:transaction_detail",
         pk=financial_transaction.pk,
@@ -155,6 +168,7 @@ def _redirect_to_reconciliation_detail(reconciliation_record):
     """
     Redirect to a reconciliation detail page.
     """
+
     return redirect(
         "finance:reconciliation_detail",
         pk=reconciliation_record.pk,
@@ -165,17 +179,8 @@ def _handle_validation_error(request, error):
     """
     Convert service/model ValidationError exceptions into
     readable Django messages.
-
-    Supports both:
-
-        ValidationError("message")
-
-    and:
-
-        ValidationError({
-            "field": "message"
-        })
     """
+
     if hasattr(error, "message_dict"):
         for field, errors in error.message_dict.items():
             for message in errors:
@@ -207,6 +212,7 @@ def _get_selected_filter(request, name):
 
     Empty values are treated as None.
     """
+
     value = request.GET.get(name, "").strip()
 
     return value or None
@@ -219,82 +225,220 @@ def _get_selected_filter(request, name):
 @login_required
 def dashboard(request):
     """
-    Display the main finance dashboard.
+    Display the main Finance dashboard.
 
-    Financial totals are obtained from the service layer.
+    IMPORTANT
+    ---------
+
+    All financial statistics come from the centralized
+    finance.services reporting layer.
+
+    Accounting rules:
+
+        POSTED income
+            -
+        POSTED expenses
+            =
+        Available balance
+
+    Draft, submitted and approved expenses do not reduce
+    the available balance.
     """
+
     _require_permission(
         request.user,
         can_access_finance_dashboard,
     )
 
-    totals = get_financial_totals()
+    # -------------------------------------------------------------------------
+    # CENTRALIZED FINANCE STATISTICS
+    # -------------------------------------------------------------------------
+
+    dashboard_stats = get_finance_dashboard_stats()
+
+    financial_totals = get_financial_totals()
+
+    posted_income = financial_totals.get(
+        "income",
+        ZERO,
+    )
+
+    posted_expenses = financial_totals.get(
+        "expenses",
+        ZERO,
+    )
+
+    balance = financial_totals.get(
+        "balance",
+        posted_income - posted_expenses,
+    )
+
+    # -------------------------------------------------------------------------
+    # TRANSACTION STATISTICS
+    # -------------------------------------------------------------------------
+
+    transaction_queryset = FinancialTransaction.objects.all()
+
+    posted_transaction_queryset = (
+        transaction_queryset.filter(
+            status=FinancialTransaction.Status.POSTED,
+        )
+    )
+
+    posted_income_queryset = (
+        posted_transaction_queryset.filter(
+            transaction_type=(
+                FinancialTransaction.TransactionType.INCOME
+            ),
+        )
+    )
+
+    posted_expense_queryset = (
+        posted_transaction_queryset.filter(
+            transaction_type=(
+                FinancialTransaction.TransactionType.EXPENSE
+            ),
+        )
+    )
+
+    # -------------------------------------------------------------------------
+    # EXPENSE STATISTICS
+    # -------------------------------------------------------------------------
+
+    expense_queryset = Expense.objects.all()
+
+    # -------------------------------------------------------------------------
+    # CATEGORY STATISTICS
+    # -------------------------------------------------------------------------
+
+    category_stats = get_category_totals()
+
+    # -------------------------------------------------------------------------
+    # RECENT POSTED TRANSACTIONS
+    # -------------------------------------------------------------------------
+
+    recent_transactions = (
+        FinancialTransaction.objects
+        .filter(
+            status=FinancialTransaction.Status.POSTED,
+        )
+        .select_related(
+            "category",
+            "member",
+            "recorded_by",
+            "payment",
+        )
+        .order_by(
+            "-transaction_date",
+            "-created_at",
+        )[:10]
+    )
+
+    # -------------------------------------------------------------------------
+    # RECENT EXPENSES
+    # -------------------------------------------------------------------------
+
+    recent_expenses = (
+        Expense.objects
+        .select_related(
+            "category",
+            "recorded_by",
+            "submitted_by",
+            "approved_by",
+            "paid_by",
+        )
+        .order_by(
+            "-expense_date",
+            "-created_at",
+        )[:10]
+    )
 
     context = {
-        "posted_income": totals.get(
-            "income",
-            Decimal("0.00"),
-        ),
-        "posted_expenses": totals.get(
-            "expenses",
-            Decimal("0.00"),
-        ),
-        "balance": totals.get(
-            "balance",
-            Decimal("0.00"),
+        # ---------------------------------------------------------------------
+        # ACCOUNTING
+        # ---------------------------------------------------------------------
+
+        "available_balance": balance,
+        "balance": balance,
+
+        "posted_income": posted_income,
+
+        "posted_expenses": posted_expenses,
+
+        # ---------------------------------------------------------------------
+        # EXPENSE WORKFLOW
+        # ---------------------------------------------------------------------
+
+        "pending_expenses": dashboard_stats.get(
+            "pending_expenses",
+            0,
         ),
 
-        "transaction_count": (
-            FinancialTransaction.objects.count()
+        "paid_expenses": dashboard_stats.get(
+            "paid_expenses",
+            0,
         ),
 
-        "expense_count": (
-            Expense.objects.count()
+        "rejected_expenses": dashboard_stats.get(
+            "rejected_expenses",
+            0,
         ),
 
-        "pending_expenses": (
-            Expense.objects.filter(
-                status__in=[
-                    Expense.Status.SUBMITTED,
-                    Expense.Status.APPROVED,
-                ]
-            ).count()
+        # ---------------------------------------------------------------------
+        # TRANSACTION STATISTICS
+        # ---------------------------------------------------------------------
+
+        "transaction_count": transaction_queryset.count(),
+
+        "posted_transaction_count": (
+            posted_transaction_queryset.count()
         ),
 
-        "category_count": (
-            FinancialCategory.objects.filter(
-                is_active=True,
-            ).count()
+        "posted_income_count": (
+            posted_income_queryset.count()
         ),
 
-        "recent_transactions": (
-            FinancialTransaction.objects
-            .select_related(
-                "category",
-                "member",
-                "recorded_by",
-                "payment",
-            )
-            .order_by(
-                "-transaction_date",
-                "-created_at",
-            )[:10]
+        "posted_expense_count": (
+            posted_expense_queryset.count()
         ),
 
-        "recent_expenses": (
-            Expense.objects
-            .select_related(
-                "category",
-                "recorded_by",
-                "submitted_by",
-                "approved_by",
-                "paid_by",
-            )
-            .order_by(
-                "-expense_date",
-                "-created_at",
-            )[:10]
+        # ---------------------------------------------------------------------
+        # EXPENSE RECORD STATISTICS
+        # ---------------------------------------------------------------------
+
+        "expense_count": expense_queryset.count(),
+
+        # ---------------------------------------------------------------------
+        # CATEGORY STATISTICS
+        # ---------------------------------------------------------------------
+
+        "category_count": category_stats.get(
+            "total_categories",
+            0,
         ),
+
+        "active_category_count": category_stats.get(
+            "active_categories",
+            0,
+        ),
+
+        "income_category_count": category_stats.get(
+            "income_categories",
+            0,
+        ),
+
+        "expense_category_count": category_stats.get(
+            "expense_categories",
+            0,
+        ),
+
+        # ---------------------------------------------------------------------
+        # RECENT RECORDS
+        # ---------------------------------------------------------------------
+
+        "recent_transactions": recent_transactions,
+
+        "recent_expenses": recent_expenses,
     }
 
     return render(
@@ -313,6 +457,7 @@ def transactions(request):
     """
     Display financial transactions with optional filters.
     """
+
     _require_permission(
         request.user,
         can_view_financial_transactions,
@@ -362,6 +507,34 @@ def transactions(request):
             payment_source=source,
         )
 
+    # -------------------------------------------------------------------------
+    # TRANSACTION STATISTICS
+    # -------------------------------------------------------------------------
+
+    posted_queryset = queryset.filter(
+        status=FinancialTransaction.Status.POSTED,
+    )
+
+    income_queryset = queryset.filter(
+        transaction_type=(
+            FinancialTransaction.TransactionType.INCOME
+        ),
+    )
+
+    expense_queryset = queryset.filter(
+        transaction_type=(
+            FinancialTransaction.TransactionType.EXPENSE
+        ),
+    )
+
+    posted_income_queryset = income_queryset.filter(
+        status=FinancialTransaction.Status.POSTED,
+    )
+
+    posted_expense_queryset = expense_queryset.filter(
+        status=FinancialTransaction.Status.POSTED,
+    )
+
     context = {
         "transactions": queryset,
 
@@ -378,9 +551,63 @@ def transactions(request):
         ),
 
         "selected_type": transaction_type,
+
         "selected_status": status,
+
         "selected_source": source,
+
+        "transaction_count": queryset.count(),
+
+        "posted_transaction_count": (
+            posted_queryset.count()
+        ),
+
+        "income_count": income_queryset.count(),
+
+        "expense_count": expense_queryset.count(),
+
+        "posted_income": (
+            posted_income_queryset
+            .aggregate_total()
+            if hasattr(
+                posted_income_queryset,
+                "aggregate_total",
+            )
+            else (
+                posted_income_queryset
+                .values("amount")
+            )
+        ),
+
+        "posted_expenses": (
+            posted_expense_queryset
+            .values("amount")
+        ),
     }
+
+    # -------------------------------------------------------------------------
+    # Keep statistics as proper monetary Decimal values.
+    #
+    # We deliberately calculate these two filtered-page totals here because
+    # they depend on the user's active filters. These are NOT used for the
+    # global Finance accounting balance.
+    # -------------------------------------------------------------------------
+
+    from django.db.models import Sum
+
+    context["posted_income"] = (
+        posted_income_queryset.aggregate(
+            total=Sum("amount"),
+        ).get("total")
+        or ZERO
+    )
+
+    context["posted_expenses"] = (
+        posted_expense_queryset.aggregate(
+            total=Sum("amount"),
+        ).get("total")
+        or ZERO
+    )
 
     return render(
         request,
@@ -389,12 +616,17 @@ def transactions(request):
     )
 
 
+# =============================================================================
+# TRANSACTION DETAIL
+# =============================================================================
+
 @login_required
 def transaction_detail(request, pk):
     """
     Display one financial transaction together with
     its audit history.
     """
+
     _require_permission(
         request.user,
         can_view_financial_transactions,
@@ -435,10 +667,11 @@ def transaction_create(request):
     """
     Create a financial transaction.
 
-    The transaction is initially created as a DRAFT.
+    Transactions are created as DRAFT.
 
     Posting is handled separately through the service layer.
     """
+
     _require_permission(
         request.user,
         can_manage_finance,
@@ -450,18 +683,21 @@ def transaction_create(request):
         )
 
         if form.is_valid():
-            transaction = form.save(
+            financial_transaction = form.save(
                 commit=False,
             )
 
-            transaction.recorded_by = request.user
-            transaction.status = (
+            financial_transaction.recorded_by = (
+                request.user
+            )
+
+            financial_transaction.status = (
                 FinancialTransaction.Status.DRAFT
             )
 
             try:
-                transaction.full_clean()
-                transaction.save()
+                financial_transaction.full_clean()
+                financial_transaction.save()
 
                 messages.success(
                     request,
@@ -469,7 +705,7 @@ def transaction_create(request):
                 )
 
                 return _redirect_to_transaction_detail(
-                    transaction,
+                    financial_transaction,
                 )
 
             except ValidationError as error:
@@ -503,6 +739,7 @@ def transaction_post(request, pk):
 
     Only POST requests are accepted.
     """
+
     _require_permission(
         request.user,
         can_manage_finance,
@@ -550,9 +787,9 @@ def transaction_void(request, pk):
     """
     Void a financial transaction.
 
-    Voiding preserves the financial history rather than
-    deleting the transaction.
+    Voiding preserves financial history.
     """
+
     _require_permission(
         request.user,
         can_manage_finance,
@@ -598,11 +835,12 @@ def transaction_void(request, pk):
 @login_required
 def income(request):
     """
-    Display income transactions.
+    Display all Finance income transactions.
 
-    Only POSTED income contributes to the displayed
-    financial total.
+    Only POSTED income is included in the accounting
+    income total.
     """
+
     _require_permission(
         request.user,
         can_view_financial_transactions,
@@ -613,7 +851,7 @@ def income(request):
         .filter(
             transaction_type=(
                 FinancialTransaction.TransactionType.INCOME
-            )
+            ),
         )
         .select_related(
             "category",
@@ -627,25 +865,71 @@ def income(request):
         )
     )
 
-    total_income = (
-        income_transactions
-        .filter(
+    # -------------------------------------------------------------------------
+    # CENTRALIZED INCOME STATISTICS
+    # -------------------------------------------------------------------------
+
+    income_stats = get_income_totals()
+
+    total_income = income_stats.get(
+        "total_income",
+        ZERO,
+    )
+
+    posted_income = income_stats.get(
+        "posted_income",
+        ZERO,
+    )
+
+    income_records = income_stats.get(
+        "income_records",
+        income_transactions.count(),
+    )
+
+    posted_income_transactions = (
+        income_transactions.filter(
             status=FinancialTransaction.Status.POSTED,
         )
-        .aggregate(
-            total=Sum("amount"),
-        )
-        .get("total")
-        or Decimal("0.00")
     )
+
+    pending_income_count = (
+        income_transactions
+        .exclude(
+            status=FinancialTransaction.Status.POSTED,
+        )
+        .count()
+    )
+
+    context = {
+        "income_transactions": income_transactions,
+
+        # ---------------------------------------------------------------------
+        # Main cards
+        # ---------------------------------------------------------------------
+
+        "total_income": total_income,
+
+        "posted_income": posted_income,
+
+        "income_records": income_records,
+
+        # ---------------------------------------------------------------------
+        # Compatibility names
+        # ---------------------------------------------------------------------
+
+        "income_count": income_records,
+
+        "posted_income_count": (
+            posted_income_transactions.count()
+        ),
+
+        "pending_income_count": pending_income_count,
+    }
 
     return render(
         request,
         "income.html",
-        {
-            "income_transactions": income_transactions,
-            "total_income": total_income,
-        },
+        context,
     )
 
 
@@ -656,8 +940,29 @@ def income(request):
 @login_required
 def expenses(request):
     """
-    Display expenses with an optional status filter.
+    Display expenses with optional filters.
+
+    Expense accounting rules:
+
+        DRAFT
+        SUBMITTED
+        APPROVED
+
+            = pending workflow
+
+        REJECTED
+
+            = rejected and does not affect balance
+
+        VOIDED
+
+            = voided and does not affect balance
+
+        PAID + POSTED TRANSACTION
+
+            = affects balance
     """
+
     _require_permission(
         request.user,
         can_view_expenses,
@@ -671,9 +976,7 @@ def expenses(request):
             "recorded_by",
             "submitted_by",
             "approved_by",
-            "rejected_by",
             "paid_by",
-            "voided_by",
         )
         .order_by(
             "-expense_date",
@@ -686,23 +989,136 @@ def expenses(request):
         "status",
     )
 
+    category_id = _get_selected_filter(
+        request,
+        "category",
+    )
+
     if status:
         queryset = queryset.filter(
             status=status,
         )
 
+    if category_id:
+        queryset = queryset.filter(
+            category_id=category_id,
+        )
+
+    # -------------------------------------------------------------------------
+    # CENTRALIZED EXPENSE STATISTICS
+    # -------------------------------------------------------------------------
+
+    expense_stats = get_expense_totals()
+
+    # -------------------------------------------------------------------------
+    # FILTER OPTIONS
+    # -------------------------------------------------------------------------
+
+    expense_categories = (
+        FinancialCategory.objects
+        .filter(
+            category_type=(
+                FinancialCategory.CategoryType.EXPENSE
+            ),
+            is_active=True,
+        )
+        .order_by("name")
+    )
+
+    # -------------------------------------------------------------------------
+    # POSTED EXPENSE TRANSACTIONS
+    #
+    # This is intentionally separate from Expense request statistics.
+    # -------------------------------------------------------------------------
+
+    posted_expense_transactions = (
+        FinancialTransaction.objects
+        .filter(
+            transaction_type=(
+                FinancialTransaction.TransactionType.EXPENSE
+            ),
+            status=FinancialTransaction.Status.POSTED,
+        )
+    )
+
+    context = {
+        "expenses": queryset,
+
+        "expense_statuses": (
+            Expense.Status.choices
+        ),
+
+        "selected_status": status,
+
+        "selected_category": category_id,
+
+        "expense_categories": expense_categories,
+
+        # ---------------------------------------------------------------------
+        # RECORD COUNTS
+        # ---------------------------------------------------------------------
+
+        "expense_count": Expense.objects.count(),
+
+        "paid_expenses": expense_stats.get(
+            "paid_count",
+            0,
+        ),
+
+        "pending_expenses": expense_stats.get(
+            "pending_expenses",
+            0,
+        ),
+
+        "rejected_expenses": expense_stats.get(
+            "rejected_expenses",
+            0,
+        ),
+
+        # ---------------------------------------------------------------------
+        # EXPENSE AMOUNTS
+        # ---------------------------------------------------------------------
+
+        "total_expenses": expense_stats.get(
+            "total_expenses",
+            ZERO,
+        ),
+
+        "paid_expense_amount": expense_stats.get(
+            "paid_expenses",
+            ZERO,
+        ),
+
+        "posted_expenses": expense_stats.get(
+            "posted_expenses",
+            ZERO,
+        ),
+
+        # ---------------------------------------------------------------------
+        # Additional workflow amounts
+        # ---------------------------------------------------------------------
+
+        "pending_expense_amount": (
+            expense_stats.get(
+                "pending_expenses",
+                0,
+            )
+        ),
+
+        # ---------------------------------------------------------------------
+        # Compatibility values
+        # ---------------------------------------------------------------------
+
+        "paid_expense_count": expense_stats.get(
+            "paid_count",
+            0,
+        ),
+    }
+
     return render(
         request,
         "expenses.html",
-        {
-            "expenses": queryset,
-
-            "expense_statuses": (
-                Expense.Status.choices
-            ),
-
-            "selected_status": status,
-        },
+        context,
     )
 
 
@@ -715,6 +1131,7 @@ def expense_detail(request, pk):
     """
     Display one expense and its complete audit history.
     """
+
     _require_permission(
         request.user,
         can_view_expenses,
@@ -727,9 +1144,7 @@ def expense_detail(request, pk):
             "recorded_by",
             "submitted_by",
             "approved_by",
-            "rejected_by",
             "paid_by",
-            "voided_by",
         ),
         pk=pk,
     )
@@ -757,10 +1172,11 @@ def expense_detail(request, pk):
 @login_required
 def expense_create(request):
     """
-    Create a new draft expense.
+    Create a new expense in DRAFT status.
 
-    The expense workflow is handled by services.py.
+    The service layer performs all financial validation.
     """
+
     _require_permission(
         request.user,
         can_manage_expenses,
@@ -778,23 +1194,37 @@ def expense_create(request):
             try:
                 expense = create_expense(
                     user=request.user,
+
                     category=cleaned["category"],
+
                     amount=cleaned["amount"],
+
                     title=cleaned["title"],
+
                     description=cleaned["description"],
+
                     payee=cleaned.get(
                         "payee",
                         "",
                     ),
+
                     payment_source=cleaned.get(
                         "payment_source",
                     ),
+
+                    payment_reference=cleaned.get(
+                        "payment_reference",
+                        "",
+                    ),
+
                     expense_date=cleaned.get(
                         "expense_date",
                     ),
+
                     receipt=cleaned.get(
                         "receipt",
                     ),
+
                     notes=cleaned.get(
                         "notes",
                         "",
@@ -838,17 +1268,8 @@ def expense_create(request):
 def expense_edit(request, pk):
     """
     Edit an expense while it remains in DRAFT status.
-
-    IMPORTANT:
-
-    The correct model enum is:
-
-        Expense.Status.DRAFT
-
-    not:
-
-        Expense.ExpenseStatus.DRAFT
     """
+
     _require_permission(
         request.user,
         can_manage_expenses,
@@ -882,31 +1303,45 @@ def expense_edit(request, pk):
             try:
                 expense = update_expense(
                     user=request.user,
+
                     expense=expense,
+
                     category=cleaned.get(
                         "category",
                     ),
+
                     amount=cleaned.get(
                         "amount",
                     ),
+
                     title=cleaned.get(
                         "title",
                     ),
+
                     description=cleaned.get(
                         "description",
                     ),
+
                     payee=cleaned.get(
                         "payee",
                     ),
+
                     payment_source=cleaned.get(
                         "payment_source",
                     ),
+
+                    payment_reference=cleaned.get(
+                        "payment_reference",
+                    ),
+
                     expense_date=cleaned.get(
                         "expense_date",
                     ),
+
                     receipt=cleaned.get(
                         "receipt",
                     ),
+
                     notes=cleaned.get(
                         "notes",
                     ),
@@ -952,6 +1387,7 @@ def expense_submit(request, pk):
     """
     Submit a DRAFT expense for approval.
     """
+
     _require_permission(
         request.user,
         can_manage_expenses,
@@ -999,6 +1435,7 @@ def expense_approve(request, pk):
     """
     Approve a submitted expense.
     """
+
     _require_permission(
         request.user,
         can_manage_finance,
@@ -1045,10 +1482,8 @@ def expense_approve(request, pk):
 def expense_reject(request, pk):
     """
     Reject a submitted expense.
-
-    Rejection reason is collected through
-    ExpenseRejectionForm.
     """
+
     _require_permission(
         request.user,
         can_manage_finance,
@@ -1124,17 +1559,17 @@ def expense_pay(request, pk):
     """
     Pay an approved expense.
 
-    The service layer is responsible for:
+    The service layer performs:
 
-        1. Validating the expense.
-        2. Recording the payer.
-        3. Recording the payment reference.
-        4. Marking the expense as PAID.
-        5. Creating the ledger transaction.
-        6. Posting the ledger transaction.
-        7. Linking the transaction to the expense.
-        8. Creating the audit record.
+        1. Validation.
+        2. Payment reference validation.
+        3. PAID status transition.
+        4. Expense ledger creation.
+        5. Ledger POST.
+        6. Expense/transaction linking.
+        7. Audit logging.
     """
+
     _require_permission(
         request.user,
         can_manage_finance,
@@ -1176,6 +1611,12 @@ def expense_pay(request, pk):
             expense,
         )
 
+    # -------------------------------------------------------------------------
+    # Keep the reference on the in-memory Expense object.
+    #
+    # pay_expense() validates this value before changing the workflow.
+    # -------------------------------------------------------------------------
+
     expense.payment_reference = payment_reference
 
     try:
@@ -1211,11 +1652,8 @@ def expense_pay(request, pk):
 def expense_void(request, pk):
     """
     Void an expense.
-
-    The service layer is responsible for maintaining
-    consistency between the expense and its ledger
-    transaction.
     """
+
     _require_permission(
         request.user,
         can_manage_finance,
@@ -1279,8 +1717,9 @@ def expense_void(request, pk):
 @login_required
 def categories(request):
     """
-    Display all financial categories.
+    Display all financial categories and centralized statistics.
     """
+
     _require_permission(
         request.user,
         can_manage_categories,
@@ -1294,20 +1733,72 @@ def categories(request):
         )
     )
 
+    # -------------------------------------------------------------------------
+    # CENTRALIZED CATEGORY STATISTICS
+    # -------------------------------------------------------------------------
+
+    category_stats = get_category_totals()
+
     return render(
         request,
         "categories.html",
         {
             "categories": category_queryset,
+
+            "total_categories": category_stats.get(
+                "total_categories",
+                0,
+            ),
+
+            "income_categories": category_stats.get(
+                "income_categories",
+                0,
+            ),
+
+            "expense_categories": category_stats.get(
+                "expense_categories",
+                0,
+            ),
+
+            "active_categories": category_stats.get(
+                "active_categories",
+                0,
+            ),
+
+            "inactive_categories": category_stats.get(
+                "inactive_categories",
+                0,
+            ),
+
+            "system_categories": (
+                category_queryset
+                .filter(
+                    is_system=True,
+                )
+                .count()
+            ),
+
+            "custom_categories": (
+                category_queryset
+                .filter(
+                    is_system=False,
+                )
+                .count()
+            ),
         },
     )
 
+
+# =============================================================================
+# CATEGORY LIST ALIAS
+# =============================================================================
 
 @login_required
 def category_list(request):
     """
     Backwards-compatible alias for categories().
     """
+
     return categories(request)
 
 
@@ -1319,11 +1810,8 @@ def category_list(request):
 def category_create(request):
     """
     Create a financial category.
-
-    System-category creation is controlled by the
-    service layer rather than being exposed through
-    the normal form.
     """
+
     _require_permission(
         request.user,
         can_manage_categories,
@@ -1340,14 +1828,18 @@ def category_create(request):
             try:
                 category = create_category(
                     user=request.user,
+
                     name=cleaned["name"],
+
                     category_type=cleaned[
                         "category_type"
                     ],
+
                     description=cleaned.get(
                         "description",
                         "",
                     ),
+
                     is_active=cleaned.get(
                         "is_active",
                         True,
@@ -1393,10 +1885,8 @@ def category_create(request):
 def category_update(request, pk):
     """
     Update an existing financial category.
-
-    The service layer determines whether the category
-    is allowed to be modified.
     """
+
     _require_permission(
         request.user,
         can_manage_categories,
@@ -1419,13 +1909,17 @@ def category_update(request, pk):
             try:
                 category = update_category(
                     user=request.user,
+
                     category=category,
+
                     name=cleaned.get(
                         "name",
                     ),
+
                     description=cleaned.get(
                         "description",
                     ),
+
                     is_active=cleaned.get(
                         "is_active",
                     ),
@@ -1473,11 +1967,8 @@ def category_update(request, pk):
 def category_toggle(request, pk):
     """
     Deactivate an active financial category.
-
-    Category activation is deliberately not implemented
-    here because the current service layer only exposes
-    deactivate_category().
     """
+
     _require_permission(
         request.user,
         can_manage_categories,
@@ -1537,6 +2028,7 @@ def reconciliation(request):
     """
     Display financial reconciliations.
     """
+
     _require_permission(
         request.user,
         can_view_reconciliation,
@@ -1554,11 +2046,39 @@ def reconciliation(request):
         )
     )
 
+    total_reconciliations = reconciliations.count()
+
+    reconciled_count = reconciliations.filter(
+        status=FinancialReconciliation.Status.RECONCILED,
+    ).count()
+
+    in_progress_count = reconciliations.filter(
+        status=FinancialReconciliation.Status.IN_PROGRESS,
+    ).count()
+
+    discrepancy_count = reconciliations.filter(
+        status=FinancialReconciliation.Status.DISCREPANCY,
+    ).count()
+
+    draft_count = reconciliations.filter(
+        status=FinancialReconciliation.Status.DRAFT,
+    ).count()
+
     return render(
         request,
         "reconciliation.html",
         {
             "reconciliations": reconciliations,
+
+            "total_reconciliations": total_reconciliations,
+
+            "reconciled_count": reconciled_count,
+
+            "in_progress_count": in_progress_count,
+
+            "discrepancy_count": discrepancy_count,
+
+            "draft_count": draft_count,
         },
     )
 
@@ -1572,6 +2092,7 @@ def reconciliation_detail(request, pk):
     """
     Display one reconciliation and its audit history.
     """
+
     _require_permission(
         request.user,
         can_view_reconciliation,
@@ -1609,10 +2130,8 @@ def reconciliation_detail(request, pk):
 def reconciliation_create(request):
     """
     Create a financial reconciliation record.
-
-    The current model stores the user who prepared
-    the reconciliation in prepared_by.
     """
+
     _require_permission(
         request.user,
         can_view_reconciliation,
@@ -1678,10 +2197,8 @@ def reconciliation_create(request):
 def reconciliation_update(request, pk):
     """
     Update a draft or in-progress reconciliation.
-
-    Final reconciliation authorization remains
-    controlled by the service layer.
     """
+
     _require_permission(
         request.user,
         can_view_reconciliation,
@@ -1692,9 +2209,9 @@ def reconciliation_update(request, pk):
         pk=pk,
     )
 
-    if reconciliation_record.status in [
-        FinancialReconciliation.Status.RECONCILED,
-    ]:
+    if reconciliation_record.status == (
+        FinancialReconciliation.Status.RECONCILED
+    ):
         messages.error(
             request,
             "A completed reconciliation cannot be edited.",
@@ -1768,15 +2285,16 @@ def reconciliation_complete(request, pk):
     """
     Complete a financial reconciliation.
 
-    NOTE:
+    The reconciliation service determines whether the
+    reconciliation becomes:
 
-    Final authorization and reconciliation state
-    transitions should be implemented in services.py.
+        RECONCILED
 
-    This view therefore validates the completion form
-    and delegates the actual state change to the service
-    layer when that service is available.
+    or:
+
+        DISCREPANCY
     """
+
     _require_permission(
         request.user,
         can_manage_finance,
@@ -1805,24 +2323,40 @@ def reconciliation_complete(request, pk):
         )
 
         if form.is_valid():
-            notes = form.cleaned_data.get(
-                "notes",
-                "",
-            )
+            try:
+                reconciliation_record = reconcile_finance(
+                    user=request.user,
+                    reconciliation=reconciliation_record,
+                )
 
-            # The current services import list does not
-            # expose a reconciliation completion service.
-            #
-            # Therefore we deliberately do not mutate the
-            # reconciliation here. This prevents the view
-            # from bypassing the service architecture.
-            messages.error(
-                request,
-                (
-                    "Reconciliation completion is not yet "
-                    "implemented in the finance service layer."
-                ),
-            )
+                if reconciliation_record.status == (
+                    FinancialReconciliation.Status.RECONCILED
+                ):
+                    messages.success(
+                        request,
+                        (
+                            "Financial reconciliation completed "
+                            "successfully."
+                        ),
+                    )
+                else:
+                    messages.warning(
+                        request,
+                        (
+                            "Reconciliation completed with a "
+                            "discrepancy. Please review the figures."
+                        ),
+                    )
+
+                return _redirect_to_reconciliation_detail(
+                    reconciliation_record,
+                )
+
+            except ValidationError as error:
+                _handle_validation_error(
+                    request,
+                    error,
+                )
 
     else:
         form = ReconciliationCompleteForm()
@@ -1845,10 +2379,20 @@ def reconciliation_complete(request, pk):
 @login_required
 def audit_logs(request):
     """
-    Display the financial audit trail.
+    Display the complete financial audit trail.
 
     Audit logs are read-only.
+
+    IMPORTANT
+    ---------
+
+    The audit page must not automatically restrict logs to
+    request.user because the Finance audit trail is a record
+    of actions performed by ALL authorized Finance users.
+
+    Filtering by user can be added separately when needed.
     """
+
     _require_permission(
         request.user,
         can_view_audit_logs,
@@ -1859,13 +2403,76 @@ def audit_logs(request):
         "action",
     )
 
-    logs = get_audit_logs(
-        user=request.user,
-    )
+    # -------------------------------------------------------------------------
+    # IMPORTANT:
+    #
+    # Do NOT use:
+    #
+    #     get_audit_logs(user=request.user)
+    #
+    # because that only returns logs created by the current user.
+    #
+    # Finance audit history should show the complete authorized
+    # audit trail.
+    # -------------------------------------------------------------------------
+
+    logs = get_audit_logs()
 
     if action:
         logs = logs.filter(
             action=action,
+        )
+
+    # -------------------------------------------------------------------------
+    # CENTRALIZED AUDIT STATISTICS
+    # -------------------------------------------------------------------------
+
+    audit_stats = get_audit_log_totals()
+
+    # When a filter is selected, statistics should describe
+    # the currently displayed result set.
+    if action:
+        total_logs = logs.count()
+
+        created_logs = logs.filter(
+            action=FinancialAuditLog.Action.CREATED,
+        ).count()
+
+        updated_logs = logs.filter(
+            action=FinancialAuditLog.Action.UPDATED,
+        ).count()
+
+        workflow_actions = logs.filter(
+            action__in=[
+                FinancialAuditLog.Action.SUBMITTED,
+                FinancialAuditLog.Action.APPROVED,
+                FinancialAuditLog.Action.REJECTED,
+                FinancialAuditLog.Action.PAID,
+                FinancialAuditLog.Action.POSTED,
+                FinancialAuditLog.Action.VOIDED,
+                FinancialAuditLog.Action.RECONCILED,
+            ],
+        ).count()
+
+    else:
+        total_logs = audit_stats.get(
+            "total_logs",
+            0,
+        )
+
+        created_logs = audit_stats.get(
+            "created_logs",
+            0,
+        )
+
+        updated_logs = audit_stats.get(
+            "updated_logs",
+            0,
+        )
+
+        workflow_actions = audit_stats.get(
+            "workflow_actions",
+            0,
         )
 
     return render(
@@ -1873,9 +2480,19 @@ def audit_logs(request):
         "audit_log.html",
         {
             "audit_logs": logs,
+
             "actions": (
                 FinancialAuditLog.Action.choices
             ),
+
             "selected_action": action,
+
+            "total_logs": total_logs,
+
+            "created_logs": created_logs,
+
+            "updated_logs": updated_logs,
+
+            "workflow_actions": workflow_actions,
         },
     )

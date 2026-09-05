@@ -1,53 +1,41 @@
-
-# finance/services.py
-
 """
-KUCSA Finance Services
+KUCSA FINANCE SERVICES
 ======================
 
 Centralized business logic for the KUCSA Finance application.
 
-Architecture
+ARCHITECTURE
 ------------
 
-    URL
-      ↓
-    VIEW
-      ↓
-    PERMISSION
-      ↓
-    SERVICE
-      ↓
-    MODEL
+Payments
+    └── Handles M-Pesa/STK/payment processing
 
-Finance is responsible for:
+Finance
+    └── Handles accounting records and financial reporting
 
-- Financial categories
-- Financial transactions
-- Income
-- Expenses
-- Expense approval workflow
-- Payment → Finance integration
-- Reconciliation
-- Financial balance
-- Financial audit logging
+IMPORTANT ACCOUNTING RULES
+--------------------------
 
-IMPORTANT
----------
+1. Only COMPLETED payments are eligible for Finance.
+2. One completed Payment creates one FinancialTransaction.
+3. Only POSTED FinancialTransactions affect the accounting balance.
+4. DRAFT and VOIDED transactions do not affect the balance.
+5. Expenses follow:
 
-The Payments application remains responsible for:
+       DRAFT
+          ↓
+       SUBMITTED
+          ↓
+       APPROVED
+          ↓
+        PAID
+          ↓
+    POSTED EXPENSE TRANSACTION
 
-- M-Pesa STK Push
-- Safaricom authentication
-- M-Pesa callbacks
-- Payment verification
-- Payment status
-- M-Pesa receipt information
-
-Finance DOES NOT verify M-Pesa payments.
-
-Finance only records a payment as income after the
-Payments application has already marked it COMPLETED.
+6. Membership/support payments are both recorded as income.
+7. Support payments never activate or renew membership.
+8. Finance is the accounting source of truth.
+9. Financial audit logs are immutable.
 """
 
 from decimal import Decimal, InvalidOperation
@@ -55,7 +43,6 @@ from decimal import Decimal, InvalidOperation
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Sum
-from django.utils import timezone
 
 from .models import (
     Expense,
@@ -65,16 +52,6 @@ from .models import (
     FinancialTransaction,
 )
 
-from .permissions import (
-    can_manage_categories,
-    can_manage_expenses,
-    can_manage_income,
-    can_manage_reconciliation,
-    can_manage_transactions,
-    can_view_audit_logs,
-    require_permission,
-)
-
 
 # =============================================================================
 # CONSTANTS
@@ -82,63 +59,45 @@ from .permissions import (
 
 ZERO = Decimal("0.00")
 MONEY_PRECISION = Decimal("0.01")
+
 COMPLETED_PAYMENT_VALUE = "COMPLETED"
 
 
 # =============================================================================
-# INTERNAL HELPERS
+# INTERNAL ENUM HELPERS
 # =============================================================================
 
 def _enum_value(value):
     """
-    Return the underlying value of a Django TextChoices member.
+    Return the underlying value of a Django TextChoices/enum value.
 
-    This allows the service to safely compare:
-
-        PaymentStatus.COMPLETED
-
-    with:
-
-        "COMPLETED"
+    Works with both enum members and ordinary strings.
     """
 
     return getattr(value, "value", value)
 
 
-def _get_choice_constant(owner, *names):
+def _get_choice_constant(choice_class, name):
     """
-    Safely retrieve the first available constant from a class.
+    Safely retrieve a choice constant.
 
-    This is useful for compatibility with slightly different
-    enum naming conventions across the project.
+    Example:
+
+        _get_choice_constant(
+            FinancialTransaction.Status,
+            "POSTED"
+        )
     """
 
-    if owner is None:
-        return None
-
-    for name in names:
-        value = getattr(owner, name, None)
-
-        if value is not None:
-            return value
-
-    return None
+    return getattr(choice_class, name, None)
 
 
 def _is_completed_payment(payment):
     """
-    Return True only when the Payments application has marked
-    the payment as COMPLETED.
+    Determine whether a Payment is completed.
 
-    The current Payments model uses:
-
-        PaymentStatus.COMPLETED
-
-    as a top-level TextChoices enum.
-
-    We intentionally do not require Finance to import the
-    Payments enum directly. This keeps the Finance service
-    loosely coupled to the Payments implementation.
+    PaymentStatus is defined at module level in payments.models,
+    so this helper intentionally avoids depending on Payment.Status.
     """
 
     if payment is None:
@@ -146,72 +105,184 @@ def _is_completed_payment(payment):
 
     status = getattr(payment, "status", None)
 
-    if status is None:
-        return False
-
-    # Current project representation.
-    if _enum_value(status) == COMPLETED_PAYMENT_VALUE:
-        return True
-
-    # Compatibility with a nested Status enum, should another
-    # payment implementation use one.
-    status_class = getattr(
-        payment.__class__,
-        "Status",
-        None,
-    )
-
-    completed = _get_choice_constant(
-        status_class,
-        "COMPLETED",
-    )
-
-    if completed is not None:
-        return _enum_value(status) == _enum_value(completed)
-
-    # Compatibility with Payment.PaymentStatus.
-    payment_status_class = getattr(
-        payment.__class__,
-        "PaymentStatus",
-        None,
-    )
-
-    completed = _get_choice_constant(
-        payment_status_class,
-        "COMPLETED",
-    )
-
-    if completed is not None:
-        return _enum_value(status) == _enum_value(completed)
-
-    return False
+    return _enum_value(status) == COMPLETED_PAYMENT_VALUE
 
 
 def _get_payment_finance_transaction(payment):
     """
-    Find the Finance transaction belonging to a Payment.
+    Return the Finance transaction linked to a payment.
 
-    We query FinancialTransaction directly rather than relying on
-    a reverse relation such as:
-
-        payment.finance_transaction
-
-    because the current Payments model intentionally does not
-    define a Finance reverse relation.
-
-    The Finance transaction owns the relationship.
+    Payment has a OneToOne relationship with
+    FinancialTransaction using related_name='finance_transaction'.
     """
 
     if payment is None:
         return None
 
-    return (
-        FinancialTransaction.objects
-        .filter(payment=payment)
-        .order_by("pk")
-        .first()
-    )
+    try:
+        return payment.finance_transaction
+    except FinancialTransaction.DoesNotExist:
+        return None
+    except AttributeError:
+        return None
 
+
+# =============================================================================
+# GENERAL VALIDATION HELPERS
+# =============================================================================
+
+def _ensure_positive_amount(amount, field_name="amount"):
+    """
+    Ensure an amount is a positive monetary value.
+    """
+
+    try:
+        value = Decimal(str(amount))
+    except (InvalidOperation, TypeError, ValueError):
+        raise ValidationError(
+            {field_name: "Enter a valid monetary amount."}
+        )
+
+    if value <= ZERO:
+        raise ValidationError(
+            {field_name: "Amount must be greater than zero."}
+        )
+
+    return value.quantize(MONEY_PRECISION)
+
+
+def _ensure_non_negative_amount(amount, field_name="amount"):
+    """
+    Ensure an amount is zero or greater.
+    """
+
+    try:
+        value = Decimal(str(amount))
+    except (InvalidOperation, TypeError, ValueError):
+        raise ValidationError(
+            {field_name: "Enter a valid monetary amount."}
+        )
+
+    if value < ZERO:
+        raise ValidationError(
+            {field_name: "Amount cannot be negative."}
+        )
+
+    return value.quantize(MONEY_PRECISION)
+
+
+def _validate_financial_category(category, transaction_type=None):
+    """
+    Validate that a financial category exists, is active and,
+    when transaction_type is supplied, belongs to the correct type.
+    """
+
+    if category is None:
+        raise ValidationError(
+            {"category": "A financial category is required."}
+        )
+
+    if not category.is_active:
+        raise ValidationError(
+            {
+                "category": (
+                    "The selected financial category is inactive."
+                )
+            }
+        )
+
+    if transaction_type is not None:
+        expected_type = _enum_value(transaction_type)
+        actual_type = _enum_value(category.category_type)
+
+        if actual_type != expected_type:
+            raise ValidationError(
+                {
+                    "category": (
+                        "The selected category does not belong "
+                        "to the selected transaction type."
+                    )
+                }
+            )
+
+    return category
+
+
+def _validate_transaction_type(transaction_type):
+    """
+    Validate FinancialTransaction transaction type.
+    """
+
+    valid_values = {
+        _enum_value(choice.value)
+        for choice in FinancialTransaction.TransactionType
+    }
+
+    value = _enum_value(transaction_type)
+
+    if value not in valid_values:
+        raise ValidationError(
+            {
+                "transaction_type": (
+                    "Invalid financial transaction type."
+                )
+            }
+        )
+
+    return value
+
+
+def _validate_transaction_status(status):
+    """
+    Validate FinancialTransaction status.
+    """
+
+    valid_values = {
+        _enum_value(choice.value)
+        for choice in FinancialTransaction.Status
+    }
+
+    value = _enum_value(status)
+
+    if value not in valid_values:
+        raise ValidationError(
+            {
+                "status": (
+                    "Invalid financial transaction status."
+                )
+            }
+        )
+
+    return value
+
+
+def _validate_expense_status(status):
+    """
+    Validate Expense status.
+    """
+
+    valid_values = {
+        _enum_value(choice.value)
+        for choice in Expense.Status
+    }
+
+    value = _enum_value(status)
+
+    if value not in valid_values:
+        raise ValidationError(
+            {
+                "status": (
+                    "Invalid expense status."
+                )
+            }
+        )
+
+    return value
+
+
+# =============================================================================
+# AUDIT LOGGING
+# =============================================================================
 
 def _audit(
     *,
@@ -226,13 +297,10 @@ def _audit(
     new_values=None,
 ):
     """
-    Create a centralized financial audit log.
-    """
+    Create an immutable financial audit log.
 
-    if user is None:
-        raise ValidationError(
-            "A user is required for financial audit logging."
-        )
+    Audit logs should always be created through this helper.
+    """
 
     return FinancialAuditLog.objects.create(
         user=user,
@@ -242,151 +310,13 @@ def _audit(
         expense=expense,
         reconciliation=reconciliation,
         category=category,
-        old_values=old_values or {},
-        new_values=new_values or {},
+        old_values=old_values,
+        new_values=new_values,
     )
-
-
-def _ensure_positive_amount(amount, *, field_name="amount"):
-    """
-    Validate and normalize a monetary amount.
-
-    Returns:
-        Decimal rounded to two decimal places.
-    """
-
-    if amount is None:
-        raise ValidationError(
-            f"{field_name.capitalize()} is required."
-        )
-
-    try:
-        amount = Decimal(str(amount))
-    except (InvalidOperation, TypeError, ValueError) as exc:
-        raise ValidationError(
-            f"Invalid {field_name}."
-        ) from exc
-
-    if amount <= ZERO:
-        raise ValidationError(
-            f"{field_name.capitalize()} must be greater than zero."
-        )
-
-    return amount.quantize(MONEY_PRECISION)
-
-
-def _ensure_non_negative_amount(
-    amount,
-    *,
-    field_name,
-):
-    """
-    Validate an amount that may be zero but cannot be negative.
-    """
-
-    if amount in (None, ""):
-        amount = ZERO
-
-    try:
-        amount = Decimal(str(amount))
-    except (InvalidOperation, TypeError, ValueError) as exc:
-        raise ValidationError(
-            f"Invalid {field_name} amount."
-        ) from exc
-
-    if amount < ZERO:
-        raise ValidationError(
-            f"{field_name.capitalize()} cannot be negative."
-        )
-
-    return amount.quantize(MONEY_PRECISION)
-
-
-def _validate_financial_category(
-    *,
-    category,
-    expected_type,
-):
-    """
-    Validate that a category:
-
-    - exists
-    - is active
-    - belongs to the expected category type
-    """
-
-    if category is None:
-        raise ValidationError(
-            "A financial category is required."
-        )
-
-    if not getattr(category, "is_active", False):
-        raise ValidationError(
-            "The selected financial category is inactive."
-        )
-
-    if category.category_type != expected_type:
-
-        if expected_type == (
-            FinancialCategory.CategoryType.INCOME
-        ):
-            raise ValidationError(
-                "The selected category must be an income category."
-            )
-
-        raise ValidationError(
-            "The selected category must be an expense category."
-        )
-
-    return category
-
-
-def _validate_transaction_type(transaction_type):
-    """
-    Validate a financial transaction type.
-    """
-
-    valid_types = dict(
-        FinancialTransaction.TransactionType.choices
-    )
-
-    if transaction_type not in valid_types:
-        raise ValidationError(
-            "Invalid financial transaction type."
-        )
-
-
-def _validate_transaction_status(status):
-    """
-    Validate a financial transaction status.
-    """
-
-    valid_statuses = dict(
-        FinancialTransaction.Status.choices
-    )
-
-    if status not in valid_statuses:
-        raise ValidationError(
-            "Invalid financial transaction status."
-        )
-
-
-def _validate_expense_status(expense, expected_status):
-    """
-    Validate that an expense is currently in the expected state.
-    """
-
-    if expense.status != expected_status:
-        raise ValidationError(
-            (
-                f"Expense {expense.expense_number} must be "
-                f"in {expected_status} status."
-            )
-        )
 
 
 # =============================================================================
-# CATEGORY SERVICES
+# FINANCIAL CATEGORY SERVICES
 # =============================================================================
 
 @transaction.atomic
@@ -403,37 +333,49 @@ def create_category(
     Create a financial category.
     """
 
-    require_permission(
-        user,
-        can_manage_categories,
-    )
-
-    name = (name or "").strip()
-
-    if not name:
+    if not name or not name.strip():
         raise ValidationError(
-            "Category name is required."
+            {"name": "Category name is required."}
         )
 
-    valid_types = dict(
-        FinancialCategory.CategoryType.choices
-    )
+    name = name.strip()
+
+    valid_types = {
+        _enum_value(choice.value)
+        for choice in FinancialCategory.CategoryType
+    }
+
+    category_type = _enum_value(category_type)
 
     if category_type not in valid_types:
         raise ValidationError(
-            "Invalid financial category type."
+            {
+                "category_type": (
+                    "Invalid financial category type."
+                )
+            }
         )
 
-    category = FinancialCategory(
+    if FinancialCategory.objects.filter(
+        name__iexact=name,
+        category_type=category_type,
+    ).exists():
+        raise ValidationError(
+            {
+                "name": (
+                    "A category with this name already exists "
+                    "for this category type."
+                )
+            }
+        )
+
+    category = FinancialCategory.objects.create(
         name=name,
         category_type=category_type,
         description=description or "",
-        is_active=bool(is_active),
-        is_system=bool(is_system),
+        is_active=is_active,
+        is_system=is_system,
     )
-
-    category.full_clean()
-    category.save()
 
     _audit(
         user=user,
@@ -467,23 +409,11 @@ def update_category(
     """
     Update a financial category.
 
-    System categories cannot be modified.
+    Category type and system status are intentionally not changed here.
     """
 
-    require_permission(
-        user,
-        can_manage_categories,
-    )
-
     if category is None:
-        raise ValidationError(
-            "A financial category is required."
-        )
-
-    if category.is_system:
-        raise ValidationError(
-            "System categories cannot be modified."
-        )
+        raise ValidationError("Financial category is required.")
 
     old_values = {
         "name": category.name,
@@ -492,12 +422,31 @@ def update_category(
     }
 
     if name is not None:
-
         name = name.strip()
 
         if not name:
             raise ValidationError(
-                "Category name cannot be empty."
+                {"name": "Category name is required."}
+            )
+
+        duplicate = (
+            FinancialCategory.objects
+            .filter(
+                name__iexact=name,
+                category_type=category.category_type,
+            )
+            .exclude(pk=category.pk)
+            .exists()
+        )
+
+        if duplicate:
+            raise ValidationError(
+                {
+                    "name": (
+                        "A category with this name already "
+                        "exists for this category type."
+                    )
+                }
             )
 
         category.name = name
@@ -506,10 +455,15 @@ def update_category(
         category.description = description
 
     if is_active is not None:
-        category.is_active = bool(is_active)
+        category.is_active = is_active
 
-    category.full_clean()
     category.save()
+
+    new_values = {
+        "name": category.name,
+        "description": category.description,
+        "is_active": category.is_active,
+    }
 
     _audit(
         user=user,
@@ -520,41 +474,24 @@ def update_category(
             f"was updated."
         ),
         old_values=old_values,
-        new_values={
-            "name": category.name,
-            "description": category.description,
-            "is_active": category.is_active,
-        },
+        new_values=new_values,
     )
 
     return category
 
 
 @transaction.atomic
-def deactivate_category(
-    *,
-    user,
-    category,
-):
+def deactivate_category(*, user, category):
     """
     Deactivate a financial category.
-
-    Existing transactions remain preserved.
     """
 
-    require_permission(
-        user,
-        can_manage_categories,
-    )
-
     if category is None:
-        raise ValidationError(
-            "A financial category is required."
-        )
+        raise ValidationError("Financial category is required.")
 
     if category.is_system:
         raise ValidationError(
-            "System categories cannot be deactivated."
+            "System financial categories cannot be deactivated."
         )
 
     if not category.is_active:
@@ -565,13 +502,7 @@ def deactivate_category(
     }
 
     category.is_active = False
-
-    category.save(
-        update_fields=[
-            "is_active",
-            "updated_at",
-        ]
-    )
+    category.save(update_fields=["is_active", "updated_at"])
 
     _audit(
         user=user,
@@ -591,24 +522,13 @@ def deactivate_category(
 
 
 @transaction.atomic
-def activate_category(
-    *,
-    user,
-    category,
-):
+def activate_category(*, user, category):
     """
-    Activate an inactive financial category.
+    Activate a financial category.
     """
-
-    require_permission(
-        user,
-        can_manage_categories,
-    )
 
     if category is None:
-        raise ValidationError(
-            "A financial category is required."
-        )
+        raise ValidationError("Financial category is required.")
 
     if category.is_active:
         return category
@@ -618,13 +538,7 @@ def activate_category(
     }
 
     category.is_active = True
-
-    category.save(
-        update_fields=[
-            "is_active",
-            "updated_at",
-        ]
-    )
+    category.save(update_fields=["is_active", "updated_at"])
 
     _audit(
         user=user,
@@ -644,70 +558,30 @@ def activate_category(
 
 
 @transaction.atomic
-def toggle_category(
-    *,
-    user,
-    category,
-):
+def toggle_category(*, user, category):
     """
-    Toggle a financial category between active and inactive.
-
-    System categories cannot be deactivated.
+    Toggle a financial category's active state.
     """
 
-    require_permission(
-        user,
-        can_manage_categories,
-    )
-
-    if category is None:
+    if category.is_system:
         raise ValidationError(
-            "A financial category is required."
+            "System financial categories cannot be toggled."
         )
 
-    if category.is_system and category.is_active:
-        raise ValidationError(
-            "System categories cannot be deactivated."
+    if category.is_active:
+        return deactivate_category(
+            user=user,
+            category=category,
         )
 
-    old_status = category.is_active
-
-    category.is_active = not category.is_active
-
-    category.save(
-        update_fields=[
-            "is_active",
-            "updated_at",
-        ]
-    )
-
-    action_description = (
-        "activated"
-        if category.is_active
-        else "deactivated"
-    )
-
-    _audit(
+    return activate_category(
         user=user,
-        action=FinancialAuditLog.Action.UPDATED,
         category=category,
-        description=(
-            f"Financial category '{category.name}' "
-            f"was {action_description}."
-        ),
-        old_values={
-            "is_active": old_status,
-        },
-        new_values={
-            "is_active": category.is_active,
-        },
     )
-
-    return category
 
 
 # =============================================================================
-# TRANSACTION SERVICES
+# FINANCIAL TRANSACTION SERVICES
 # =============================================================================
 
 @transaction.atomic
@@ -719,119 +593,118 @@ def create_transaction(
     amount,
     description,
     payment_source,
-    member=None,
+    status=None,
     reference="",
+    member=None,
     payment=None,
     transaction_date=None,
     notes="",
-    status=FinancialTransaction.Status.DRAFT,
 ):
     """
-    Create a financial transaction.
+    Create a FinancialTransaction.
 
-    Supported transaction types:
+    If status is POSTED, the transaction immediately affects
+    the accounting balance.
 
-        INCOME
-        EXPENSE
-
-    Payment-originated income is accepted only when the
-    Payments application has already marked the payment
-    COMPLETED.
+    If status is DRAFT, it does not affect the balance.
     """
 
-    require_permission(
-        user,
-        can_manage_transactions,
+    transaction_type = _validate_transaction_type(
+        transaction_type
     )
 
-    _validate_transaction_type(transaction_type)
+    if status is None:
+        status = FinancialTransaction.Status.DRAFT
 
-    _validate_transaction_status(status)
+    status = _validate_transaction_status(status)
 
     amount = _ensure_positive_amount(amount)
 
-    if transaction_type == (
-        FinancialTransaction.TransactionType.INCOME
-    ):
-
-        _validate_financial_category(
-            category=category,
-            expected_type=(
-                FinancialCategory.CategoryType.INCOME
-            ),
-        )
-
-    else:
-
-        _validate_financial_category(
-            category=category,
-            expected_type=(
-                FinancialCategory.CategoryType.EXPENSE
-            ),
-        )
-
-    # -----------------------------------------------------------------
-    # PAYMENT VALIDATION
-    # -----------------------------------------------------------------
+    category = _validate_financial_category(
+        category,
+        transaction_type,
+    )
 
     if payment is not None:
-
         if transaction_type != (
-            FinancialTransaction.TransactionType.INCOME
+            _enum_value(
+                FinancialTransaction.TransactionType.INCOME
+            )
         ):
             raise ValidationError(
-                "A Payment can only create an income transaction."
+                "Payments can only be linked to income transactions."
+            )
+
+        if _enum_value(payment.method) != _enum_value(
+            FinancialTransaction.PaymentSource.MPESA
+        ):
+            raise ValidationError(
+                "Linked payment must use M-Pesa."
             )
 
         if not _is_completed_payment(payment):
             raise ValidationError(
-                "Only COMPLETED payments can become "
-                "financial income."
+                "Only completed payments can be recorded in Finance."
             )
 
-        existing_transaction = (
-            _get_payment_finance_transaction(payment)
+        existing_transaction = _get_payment_finance_transaction(
+            payment
         )
 
         if existing_transaction is not None:
             raise ValidationError(
-                "This payment already has a financial transaction."
+                (
+                    "This payment already has a Finance transaction: "
+                    f"{existing_transaction.transaction_number}."
+                )
             )
 
-    # -----------------------------------------------------------------
-    # CREATE TRANSACTION
-    # -----------------------------------------------------------------
-
-    financial_transaction = FinancialTransaction(
+    financial_transaction = FinancialTransaction.objects.create(
         transaction_type=transaction_type,
-        status=status,
         category=category,
         amount=amount,
-        description=(description or "").strip(),
-        reference=(reference or "").strip(),
+        description=description or "",
         payment_source=payment_source,
-        payment=payment,
+        status=status,
+        reference=reference or "",
         member=member,
-        recorded_by=user,
-        transaction_date=(
-            transaction_date
-            or timezone.now()
-        ),
+        payment=payment,
+        transaction_date=transaction_date,
         notes=notes or "",
+        recorded_by=user,
     )
 
-    financial_transaction.full_clean()
-    financial_transaction.save()
+    # -----------------------------------------------------------------
+    # AUDIT
+    # -----------------------------------------------------------------
 
-    _audit(
-        user=user,
-        action=FinancialAuditLog.Action.CREATED,
-        transaction=financial_transaction,
-        description=(
+    audit_action = (
+        FinancialAuditLog.Action.POSTED
+        if financial_transaction.status
+        == FinancialTransaction.Status.POSTED
+        else FinancialAuditLog.Action.CREATED
+    )
+
+    audit_description = (
+        (
+            f"Financial transaction "
+            f"{financial_transaction.transaction_number} "
+            f"was created and posted."
+        )
+        if financial_transaction.status
+        == FinancialTransaction.Status.POSTED
+        else (
             f"Financial transaction "
             f"{financial_transaction.transaction_number} "
             f"was created."
-        ),
+        )
+    )
+
+    _audit(
+        user=user,
+        action=audit_action,
+        transaction=financial_transaction,
+        description=audit_description,
         new_values={
             "transaction_type": (
                 financial_transaction.transaction_type
@@ -872,33 +745,20 @@ def create_income(
     category,
     amount,
     description,
-    payment_source=FinancialTransaction.PaymentSource.MPESA,
+    payment_source,
     member=None,
     reference="",
     payment=None,
     transaction_date=None,
     notes="",
-    post=False,
+    post=True,
 ):
     """
     Create an income transaction.
 
-    When payment is supplied, it must already be COMPLETED.
-
-    Finance never verifies the payment itself.
+    By default income is POSTED because completed financial
+    income is immediately recognized in the accounting ledger.
     """
-
-    require_permission(
-        user,
-        can_manage_income,
-    )
-
-    _validate_financial_category(
-        category=category,
-        expected_type=(
-            FinancialCategory.CategoryType.INCOME
-        ),
-    )
 
     status = (
         FinancialTransaction.Status.POSTED
@@ -915,12 +775,12 @@ def create_income(
         amount=amount,
         description=description,
         payment_source=payment_source,
-        member=member,
+        status=status,
         reference=reference,
+        member=member,
         payment=payment,
         transaction_date=transaction_date,
         notes=notes,
-        status=status,
     )
 
 
@@ -931,31 +791,20 @@ def create_expense_transaction(
     category,
     amount,
     description,
-    payment_source=FinancialTransaction.PaymentSource.MPESA,
-    member=None,
+    payment_source,
     reference="",
+    member=None,
     transaction_date=None,
     notes="",
     post=False,
+    expense=None,
 ):
     """
     Create an expense ledger transaction.
 
-    Normally called internally when an approved expense
-    is actually paid.
+    Expense transactions should normally only be created when
+    an Expense reaches PAID status.
     """
-
-    require_permission(
-        user,
-        can_manage_transactions,
-    )
-
-    _validate_financial_category(
-        category=category,
-        expected_type=(
-            FinancialCategory.CategoryType.EXPENSE
-        ),
-    )
 
     status = (
         FinancialTransaction.Status.POSTED
@@ -963,7 +812,7 @@ def create_expense_transaction(
         else FinancialTransaction.Status.DRAFT
     )
 
-    return create_transaction(
+    financial_transaction = create_transaction(
         user=user,
         transaction_type=(
             FinancialTransaction.TransactionType.EXPENSE
@@ -972,60 +821,54 @@ def create_expense_transaction(
         amount=amount,
         description=description,
         payment_source=payment_source,
-        member=member,
+        status=status,
         reference=reference,
+        member=member,
         transaction_date=transaction_date,
         notes=notes,
-        status=status,
     )
+
+    if expense is not None:
+        expense.transaction = financial_transaction
+        expense.save(
+            update_fields=[
+                "transaction",
+                "updated_at",
+            ]
+        )
+
+    return financial_transaction
 
 
 @transaction.atomic
-def post_transaction(
-    *,
-    user,
-    financial_transaction,
-):
+def post_transaction(*, user, financial_transaction):
     """
     Post a draft financial transaction.
-
-    Only POSTED transactions affect the balance.
     """
-
-    require_permission(
-        user,
-        can_manage_transactions,
-    )
 
     if financial_transaction is None:
         raise ValidationError(
-            "A financial transaction is required."
+            "Financial transaction is required."
         )
 
-    if financial_transaction.status != (
-        FinancialTransaction.Status.DRAFT
+    if financial_transaction.status == (
+        FinancialTransaction.Status.VOIDED
     ):
         raise ValidationError(
-            "Only draft transactions can be posted."
+            "A voided transaction cannot be posted."
         )
+
+    if financial_transaction.status == (
+        FinancialTransaction.Status.POSTED
+    ):
+        return financial_transaction
 
     old_status = financial_transaction.status
 
     financial_transaction.status = (
         FinancialTransaction.Status.POSTED
     )
-
-    financial_transaction.posted_at = timezone.now()
-
-    financial_transaction.full_clean()
-
-    financial_transaction.save(
-        update_fields=[
-            "status",
-            "posted_at",
-            "updated_at",
-        ]
-    )
+    financial_transaction.save()
 
     _audit(
         user=user,
@@ -1041,9 +884,6 @@ def post_transaction(
         },
         new_values={
             "status": financial_transaction.status,
-            "posted_at": (
-                financial_transaction.posted_at.isoformat()
-            ),
         },
     )
 
@@ -1051,49 +891,30 @@ def post_transaction(
 
 
 @transaction.atomic
-def void_transaction(
-    *,
-    user,
-    financial_transaction,
-):
+def void_transaction(*, user, financial_transaction):
     """
     Void a financial transaction.
 
-    Transactions are never physically deleted.
-    Financial history is preserved.
+    A posted transaction may be voided, but after voiding it
+    no longer affects the accounting balance.
     """
-
-    require_permission(
-        user,
-        can_manage_transactions,
-    )
 
     if financial_transaction is None:
         raise ValidationError(
-            "A financial transaction is required."
+            "Financial transaction is required."
         )
 
     if financial_transaction.status == (
         FinancialTransaction.Status.VOIDED
     ):
-        raise ValidationError(
-            "Transaction is already voided."
-        )
+        return financial_transaction
 
     old_status = financial_transaction.status
 
     financial_transaction.status = (
         FinancialTransaction.Status.VOIDED
     )
-
-    financial_transaction.full_clean()
-
-    financial_transaction.save(
-        update_fields=[
-            "status",
-            "updated_at",
-        ]
-    )
+    financial_transaction.save()
 
     _audit(
         user=user,
@@ -1127,61 +948,50 @@ def create_expense(
     amount,
     title,
     description,
-    payee="",
-    payment_source=FinancialTransaction.PaymentSource.MPESA,
+    payee,
+    payment_source,
+    payment_reference="",
     expense_date=None,
     receipt=None,
     notes="",
 ):
     """
-    Create an expense in DRAFT status.
+    Create a new expense request in DRAFT status.
 
-    Draft expenses do not affect the financial balance.
+    Creating an expense does NOT affect the accounting balance.
     """
 
-    require_permission(
-        user,
-        can_manage_expenses,
-    )
+    amount = _ensure_positive_amount(amount)
 
-    amount = _ensure_positive_amount(
-        amount,
-        field_name="expense amount",
-    )
-
-    _validate_financial_category(
-        category=category,
-        expected_type=(
-            FinancialCategory.CategoryType.EXPENSE
-        ),
-    )
-
-    title = (title or "").strip()
-
-    if not title:
+    if not title or not title.strip():
         raise ValidationError(
-            "Expense title is required."
+            {"title": "Expense title is required."}
         )
 
-    expense = Expense(
-        category=category,
-        amount=amount,
-        title=title,
-        description=(description or "").strip(),
-        payee=(payee or "").strip(),
-        payment_source=payment_source,
-        status=Expense.Status.DRAFT,
-        expense_date=(
-            expense_date
-            or timezone.now()
-        ),
-        recorded_by=user,
-        receipt=receipt,
-        notes=notes or "",
+    if not description or not description.strip():
+        raise ValidationError(
+            {"description": "Expense description is required."}
+        )
+
+    category = _validate_financial_category(
+        category,
+        FinancialCategory.CategoryType.EXPENSE,
     )
 
-    expense.full_clean()
-    expense.save()
+    expense = Expense.objects.create(
+        category=category,
+        amount=amount,
+        title=title.strip(),
+        description=description.strip(),
+        payee=payee or "",
+        payment_source=payment_source,
+        payment_reference=payment_reference or "",
+        expense_date=expense_date,
+        receipt=receipt,
+        notes=notes or "",
+        status=Expense.Status.DRAFT,
+        created_by=user,
+    )
 
     _audit(
         user=user,
@@ -1192,9 +1002,11 @@ def create_expense(
             f"was created."
         ),
         new_values={
-            "title": expense.title,
             "amount": str(expense.amount),
+            "title": expense.title,
             "category": category.name,
+            "payee": expense.payee,
+            "payment_source": expense.payment_source,
             "status": expense.status,
         },
     )
@@ -1213,83 +1025,76 @@ def update_expense(
     description=None,
     payee=None,
     payment_source=None,
+    payment_reference=None,
     expense_date=None,
     receipt=None,
     notes=None,
 ):
     """
-    Update an expense only while it is DRAFT.
+    Update an expense.
+
+    Only expenses that have not reached PAID or VOIDED status
+    may be edited.
     """
 
-    require_permission(
-        user,
-        can_manage_expenses,
-    )
-
     if expense is None:
-        raise ValidationError(
-            "An expense is required."
-        )
+        raise ValidationError("Expense is required.")
 
-    if expense.status != Expense.Status.DRAFT:
+    if expense.status in {
+        Expense.Status.PAID,
+        Expense.Status.VOIDED,
+    }:
         raise ValidationError(
-            "Only draft expenses can be edited."
+            "Paid or voided expenses cannot be edited."
         )
 
     old_values = {
-        "category": (
-            expense.category.name
-            if expense.category
-            else None
-        ),
+        "category": expense.category.name,
         "amount": str(expense.amount),
         "title": expense.title,
         "description": expense.description,
         "payee": expense.payee,
         "payment_source": expense.payment_source,
+        "payment_reference": expense.payment_reference,
         "expense_date": (
-            expense.expense_date.isoformat()
+            str(expense.expense_date)
             if expense.expense_date
             else None
         ),
+        "notes": expense.notes,
     }
 
     if category is not None:
-
-        _validate_financial_category(
-            category=category,
-            expected_type=(
-                FinancialCategory.CategoryType.EXPENSE
-            ),
+        expense.category = _validate_financial_category(
+            category,
+            FinancialCategory.CategoryType.EXPENSE,
         )
-
-        expense.category = category
 
     if amount is not None:
-        expense.amount = _ensure_positive_amount(
-            amount,
-            field_name="expense amount",
-        )
+        expense.amount = _ensure_positive_amount(amount)
 
     if title is not None:
-
-        title = title.strip()
-
-        if not title:
+        if not title.strip():
             raise ValidationError(
-                "Expense title cannot be empty."
+                {"title": "Expense title is required."}
             )
-
-        expense.title = title
+        expense.title = title.strip()
 
     if description is not None:
-        expense.description = description
+        if not description.strip():
+            raise ValidationError(
+                {"description": "Expense description is required."}
+            )
+        expense.description = description.strip()
 
     if payee is not None:
-        expense.payee = payee.strip()
+        expense.payee = payee
 
     if payment_source is not None:
         expense.payment_source = payment_source
+
+    if payment_reference is not None:
+        expense.payment_reference = payment_reference
 
     if expense_date is not None:
         expense.expense_date = expense_date
@@ -1300,8 +1105,23 @@ def update_expense(
     if notes is not None:
         expense.notes = notes
 
-    expense.full_clean()
     expense.save()
+
+    new_values = {
+        "category": expense.category.name,
+        "amount": str(expense.amount),
+        "title": expense.title,
+        "description": expense.description,
+        "payee": expense.payee,
+        "payment_source": expense.payment_source,
+        "payment_reference": expense.payment_reference,
+        "expense_date": (
+            str(expense.expense_date)
+            if expense.expense_date
+            else None
+        ),
+        "notes": expense.notes,
+    }
 
     _audit(
         user=user,
@@ -1312,67 +1132,39 @@ def update_expense(
             f"was updated."
         ),
         old_values=old_values,
-        new_values={
-            "category": (
-                expense.category.name
-                if expense.category
-                else None
-            ),
-            "amount": str(expense.amount),
-            "title": expense.title,
-            "description": expense.description,
-            "payee": expense.payee,
-            "payment_source": expense.payment_source,
-            "expense_date": (
-                expense.expense_date.isoformat()
-                if expense.expense_date
-                else None
-            ),
-        },
+        new_values=new_values,
     )
 
     return expense
 
 
 @transaction.atomic
-def submit_expense(
-    *,
-    user,
-    expense,
-):
+def submit_expense(*, user, expense):
     """
-    Submit a DRAFT expense for approval.
+    Submit a draft expense for approval.
     """
-
-    require_permission(
-        user,
-        can_manage_expenses,
-    )
 
     if expense is None:
+        raise ValidationError("Expense is required.")
+
+    if expense.status != Expense.Status.DRAFT:
         raise ValidationError(
-            "An expense is required."
+            "Only draft expenses can be submitted."
         )
 
-    _validate_expense_status(
-        expense,
-        Expense.Status.DRAFT,
-    )
+    old_status = expense.status
 
     expense.status = Expense.Status.SUBMITTED
-    expense.submitted_by = user
-    expense.submitted_at = timezone.now()
 
-    expense.full_clean()
+    if hasattr(expense, "submitted_by_id"):
+        expense.submitted_by = user
 
-    expense.save(
-        update_fields=[
-            "status",
-            "submitted_by",
-            "submitted_at",
-            "updated_at",
-        ]
-    )
+    if hasattr(expense, "submitted_at"):
+        from django.utils import timezone
+
+        expense.submitted_at = timezone.now()
+
+    expense.save()
 
     _audit(
         user=user,
@@ -1382,12 +1174,11 @@ def submit_expense(
             f"Expense {expense.expense_number} "
             f"was submitted for approval."
         ),
+        old_values={
+            "status": old_status,
+        },
         new_values={
             "status": expense.status,
-            "submitted_by": user.pk,
-            "submitted_at": (
-                expense.submitted_at.isoformat()
-            ),
         },
     )
 
@@ -1395,49 +1186,34 @@ def submit_expense(
 
 
 @transaction.atomic
-def approve_expense(
-    *,
-    user,
-    expense,
-):
+def approve_expense(*, user, expense):
     """
     Approve a submitted expense.
 
-    Approval does NOT affect the balance.
-
-    Only payment of the expense creates the posted
-    expense ledger transaction.
+    Approval does not yet affect the accounting balance.
     """
 
-    require_permission(
-        user,
-        can_manage_expenses,
-    )
-
     if expense is None:
+        raise ValidationError("Expense is required.")
+
+    if expense.status != Expense.Status.SUBMITTED:
         raise ValidationError(
-            "An expense is required."
+            "Only submitted expenses can be approved."
         )
 
-    _validate_expense_status(
-        expense,
-        Expense.Status.SUBMITTED,
-    )
+    old_status = expense.status
 
     expense.status = Expense.Status.APPROVED
-    expense.approved_by = user
-    expense.approved_at = timezone.now()
 
-    expense.full_clean()
+    if hasattr(expense, "approved_by_id"):
+        expense.approved_by = user
 
-    expense.save(
-        update_fields=[
-            "status",
-            "approved_by",
-            "approved_at",
-            "updated_at",
-        ]
-    )
+    if hasattr(expense, "approved_at"):
+        from django.utils import timezone
+
+        expense.approved_at = timezone.now()
+
+    expense.save()
 
     _audit(
         user=user,
@@ -1447,12 +1223,11 @@ def approve_expense(
             f"Expense {expense.expense_number} "
             f"was approved."
         ),
+        old_values={
+            "status": old_status,
+        },
         new_values={
             "status": expense.status,
-            "approved_by": user.pk,
-            "approved_at": (
-                expense.approved_at.isoformat()
-            ),
         },
     )
 
@@ -1464,52 +1239,46 @@ def reject_expense(
     *,
     user,
     expense,
-    reason,
+    reason="",
 ):
     """
-    Reject a submitted expense.
+    Reject an expense.
 
-    A meaningful rejection reason is mandatory.
+    Rejected expenses do not affect the accounting balance.
     """
 
-    require_permission(
-        user,
-        can_manage_expenses,
-    )
-
     if expense is None:
-        raise ValidationError(
-            "An expense is required."
-        )
+        raise ValidationError("Expense is required.")
 
-    _validate_expense_status(
-        expense,
+    if expense.status not in {
         Expense.Status.SUBMITTED,
-    )
-
-    reason = (reason or "").strip()
-
-    if not reason:
+        Expense.Status.APPROVED,
+    }:
         raise ValidationError(
-            "A rejection reason is required."
+            "Only submitted or approved expenses can be rejected."
         )
+
+    if not reason or not reason.strip():
+        raise ValidationError(
+            {"reason": "A rejection reason is required."}
+        )
+
+    old_status = expense.status
 
     expense.status = Expense.Status.REJECTED
-    expense.rejected_by = user
-    expense.rejected_at = timezone.now()
-    expense.rejection_reason = reason
 
-    expense.full_clean()
+    if hasattr(expense, "rejected_by_id"):
+        expense.rejected_by = user
 
-    expense.save(
-        update_fields=[
-            "status",
-            "rejected_by",
-            "rejected_at",
-            "rejection_reason",
-            "updated_at",
-        ]
-    )
+    if hasattr(expense, "rejected_at"):
+        from django.utils import timezone
+
+        expense.rejected_at = timezone.now()
+
+    if hasattr(expense, "rejection_reason"):
+        expense.rejection_reason = reason.strip()
+
+    expense.save()
 
     _audit(
         user=user,
@@ -1519,13 +1288,12 @@ def reject_expense(
             f"Expense {expense.expense_number} "
             f"was rejected."
         ),
+        old_values={
+            "status": old_status,
+        },
         new_values={
             "status": expense.status,
-            "rejected_by": user.pk,
-            "rejected_at": (
-                expense.rejected_at.isoformat()
-            ),
-            "rejection_reason": reason,
+            "reason": reason.strip(),
         },
     )
 
@@ -1537,136 +1305,82 @@ def pay_expense(
     *,
     user,
     expense,
-    payment_reference=None,
 ):
     """
-    Pay an APPROVED expense.
+    Mark an approved expense as PAID and create its
+    corresponding POSTED expense transaction.
 
-    Workflow:
-
-        DRAFT
-          ↓
-        SUBMITTED
-          ↓
-        APPROVED
-          ↓
-        PAID
-          ↓
-        POSTED EXPENSE TRANSACTION
-
-    Only the POSTED transaction affects the balance.
+    This is the point where the expense affects the balance.
     """
 
-    require_permission(
-        user,
-        can_manage_expenses,
-    )
-
     if expense is None:
+        raise ValidationError("Expense is required.")
+
+    if expense.status != Expense.Status.APPROVED:
         raise ValidationError(
-            "An expense is required."
+            "Only approved expenses can be paid."
         )
 
-    _validate_expense_status(
-        expense,
-        Expense.Status.APPROVED,
-    )
+    if not expense.payment_reference:
+        raise ValidationError(
+            {
+                "payment_reference": (
+                    "Payment reference is required before "
+                    "an expense can be paid."
+                )
+            }
+        )
 
-    # Prevent duplicate payment/ledger creation.
     if expense.transaction_id:
         raise ValidationError(
             "This expense already has a financial transaction."
         )
 
-    if payment_reference is not None:
-
-        payment_reference = (
-            str(payment_reference).strip()
-        )
-
-        if payment_reference:
-            expense.payment_reference = payment_reference
-
-    current_reference = (
-        getattr(
-            expense,
-            "payment_reference",
-            "",
-        )
-        or ""
-    ).strip()
-
-    if not current_reference:
-        raise ValidationError(
-            "A payment reference is required for a paid expense."
-        )
-
-    # -----------------------------------------------------------------
-    # Mark expense paid first inside the same atomic transaction.
-    # If ledger creation fails, the expense update is rolled back.
-    # -----------------------------------------------------------------
+    old_status = expense.status
 
     expense.status = Expense.Status.PAID
-    expense.paid_by = user
-    expense.paid_at = timezone.now()
 
-    expense.full_clean()
+    if hasattr(expense, "paid_by_id"):
+        expense.paid_by = user
 
-    expense.save(
-        update_fields=[
-            "status",
-            "paid_by",
-            "paid_at",
-            "payment_reference",
-            "updated_at",
-        ]
-    )
+    if hasattr(expense, "paid_at"):
+        from django.utils import timezone
 
-    # -----------------------------------------------------------------
-    # CREATE POSTED EXPENSE TRANSACTION
-    # -----------------------------------------------------------------
+        expense.paid_at = timezone.now()
 
-    ledger_transaction = create_expense_transaction(
+    expense.save()
+
+    financial_transaction = create_expense_transaction(
         user=user,
         category=expense.category,
         amount=expense.amount,
         description=(
-            f"Payment of expense "
-            f"{expense.expense_number}: "
-            f"{expense.title}"
+            f"Expense payment: {expense.title}"
         ),
         payment_source=expense.payment_source,
-        reference=current_reference,
-        transaction_date=expense.paid_at,
+        reference=expense.payment_reference,
+        transaction_date=expense.expense_date,
         notes=expense.notes,
         post=True,
-    )
-
-    expense.transaction = ledger_transaction
-
-    expense.save(
-        update_fields=[
-            "transaction",
-            "updated_at",
-        ]
+        expense=expense,
     )
 
     _audit(
         user=user,
         action=FinancialAuditLog.Action.PAID,
         expense=expense,
-        transaction=ledger_transaction,
+        transaction=financial_transaction,
         description=(
             f"Expense {expense.expense_number} "
-            f"was paid and posted to the financial ledger."
+            f"was paid and posted to Finance."
         ),
+        old_values={
+            "status": old_status,
+        },
         new_values={
             "status": expense.status,
-            "paid_by": user.pk,
-            "paid_at": expense.paid_at.isoformat(),
-            "payment_reference": current_reference,
             "transaction": (
-                ledger_transaction.transaction_number
+                financial_transaction.transaction_number
             ),
         },
     )
@@ -1679,71 +1393,59 @@ def void_expense(
     *,
     user,
     expense,
-    reason,
+    reason="",
 ):
     """
     Void an expense.
 
-    Financial history is preserved.
-
-    If a financial transaction exists, it is also voided.
+    If the expense already has a financial transaction,
+    that transaction is also voided so it no longer affects
+    the accounting balance.
     """
 
-    require_permission(
-        user,
-        can_manage_expenses,
-    )
-
     if expense is None:
-        raise ValidationError(
-            "An expense is required."
-        )
-
-    reason = (reason or "").strip()
-
-    if not reason:
-        raise ValidationError(
-            "A void reason is required."
-        )
+        raise ValidationError("Expense is required.")
 
     if expense.status == Expense.Status.VOIDED:
+        return expense
+
+    if not reason or not reason.strip():
         raise ValidationError(
-            "This expense is already voided."
+            {"reason": "A reason is required to void an expense."}
         )
 
     old_status = expense.status
 
     expense.status = Expense.Status.VOIDED
-    expense.voided_by = user
-    expense.voided_at = timezone.now()
-    expense.void_reason = reason
 
-    expense.full_clean()
+    if hasattr(expense, "voided_by_id"):
+        expense.voided_by = user
 
-    expense.save(
-        update_fields=[
-            "status",
-            "voided_by",
-            "voided_at",
-            "void_reason",
-            "updated_at",
-        ]
-    )
+    if hasattr(expense, "voided_at"):
+        from django.utils import timezone
 
-    linked_transaction = expense.transaction
+        expense.voided_at = timezone.now()
 
-    if linked_transaction is not None:
+    if hasattr(expense, "void_reason"):
+        expense.void_reason = reason.strip()
 
-        void_transaction(
-            user=user,
-            financial_transaction=linked_transaction,
-        )
+    expense.save()
+
+    if expense.transaction_id:
+        financial_transaction = expense.transaction
+
+        if financial_transaction.status != (
+            FinancialTransaction.Status.VOIDED
+        ):
+            void_transaction(
+                user=user,
+                financial_transaction=financial_transaction,
+            )
 
     _audit(
         user=user,
         action=FinancialAuditLog.Action.VOIDED,
         expense=expense,
-        transaction=linked_transaction,
         description=(
             f"Expense {expense.expense_number} "
             f"was voided."
@@ -1753,12 +1455,7 @@ def void_expense(
         },
         new_values={
             "status": expense.status,
-            "void_reason": reason,
-            "transaction": (
-                linked_transaction.transaction_number
-                if linked_transaction
-                else None
-            ),
+            "reason": reason.strip(),
         },
     )
 
@@ -1766,7 +1463,7 @@ def void_expense(
 
 
 # =============================================================================
-# PAYMENT → FINANCE
+# PAYMENT → FINANCE INTEGRATION
 # =============================================================================
 
 @transaction.atomic
@@ -1776,146 +1473,72 @@ def record_completed_payment(
     payment,
     category,
     description=None,
-    member=None,
-    reference=None,
+    transaction_date=None,
     notes="",
 ):
     """
-    Record a COMPLETED payment as financial income.
+    Record one completed Payment as one Finance income transaction.
 
-    Finance does not verify M-Pesa.
+    IMPORTANT
+    ---------
 
-    The Payments application must first mark the payment
-    as COMPLETED.
+    This function is idempotent.
+
+    If the payment already has a Finance transaction,
+    the existing transaction is returned instead of creating
+    a duplicate financial record.
     """
 
-    require_permission(
-        user,
-        can_manage_income,
-    )
-
     if payment is None:
-        raise ValidationError(
-            "A payment is required."
-        )
+        raise ValidationError("Payment is required.")
 
     if not _is_completed_payment(payment):
         raise ValidationError(
-            "Only COMPLETED payments can be recorded "
-            "as financial income."
+            "Only completed payments can be recorded in Finance."
         )
 
-    # -----------------------------------------------------------------
-    # DUPLICATE PROTECTION
-    # -----------------------------------------------------------------
-
-    existing_transaction = (
-        _get_payment_finance_transaction(payment)
+    existing_transaction = _get_payment_finance_transaction(
+        payment
     )
 
     if existing_transaction is not None:
         return existing_transaction
 
-    # -----------------------------------------------------------------
-    # PAYMENT AMOUNT
-    # -----------------------------------------------------------------
-
-    amount = getattr(
-        payment,
-        "amount",
-        None,
+    category = _validate_financial_category(
+        category,
+        FinancialCategory.CategoryType.INCOME,
     )
 
-    if amount is None:
-        raise ValidationError(
-            "The payment does not contain an amount."
-        )
+    amount = _ensure_positive_amount(
+        payment.amount
+    )
 
-    # -----------------------------------------------------------------
-    # MEMBER
-    # -----------------------------------------------------------------
+    member = getattr(payment, "member", None)
 
-    if member is None:
-        member = getattr(
-            payment,
-            "member",
-            None,
-        )
-
-    # -----------------------------------------------------------------
-    # M-PESA RECEIPT
-    # -----------------------------------------------------------------
-
-    if reference is None:
-
-        reference = getattr(
-            payment,
-            "mpesa_receipt_number",
-            "",
-        )
+    reference = getattr(
+        payment,
+        "mpesa_receipt_number",
+        "",
+    )
 
     if not reference:
-
-        reference = getattr(
-            payment,
-            "reference",
-            "",
-        )
-
-    if not reference:
-
         reference = getattr(
             payment,
             "checkout_request_id",
             "",
         )
 
-    if not reference:
-
-        reference = getattr(
+    if description is None:
+        payment_type = getattr(
             payment,
-            "merchant_request_id",
+            "payment_type",
             "",
         )
 
-    # -----------------------------------------------------------------
-    # DESCRIPTION
-    # -----------------------------------------------------------------
-
-    if not description:
-
-        if member is not None:
-            description = (
-                f"Completed payment from {member}."
-            )
-        else:
-            description = (
-                "Income received from completed payment."
-            )
-
-    # -----------------------------------------------------------------
-    # PAYMENT COMPLETION TIME
-    # -----------------------------------------------------------------
-
-    completed_at = getattr(
-        payment,
-        "completed_at",
-        None,
-    )
-
-    transaction_date = (
-        completed_at
-        or getattr(
-            payment,
-            "transaction_date",
-            None,
+        description = (
+            f"Income received from "
+            f"{_enum_value(payment_type) or 'payment'}."
         )
-        or timezone.now()
-    )
-
-    # -----------------------------------------------------------------
-    # CREATE POSTED FINANCIAL INCOME
-    # -----------------------------------------------------------------
 
     financial_transaction = create_income(
         user=user,
@@ -1933,226 +1556,39 @@ def record_completed_payment(
         post=True,
     )
 
-    _audit(
-        user=user,
-        action=FinancialAuditLog.Action.POSTED,
-        transaction=financial_transaction,
-        description=(
-            f"Completed payment was recorded as "
-            f"financial income under transaction "
-            f"{financial_transaction.transaction_number}."
-        ),
-        new_values={
-            "payment_id": payment.pk,
-            "transaction": (
-                financial_transaction.transaction_number
-            ),
-            "amount": str(
-                financial_transaction.amount
-            ),
-            "reference": reference or "",
-            "completed_at": (
-                completed_at.isoformat()
-                if completed_at
-                else None
-            ),
-        },
-    )
-
     return financial_transaction
 
-
-# =============================================================================
-# PAYMENT → FINANCE AUTOMATIC SYNCHRONIZATION
-# =============================================================================
 
 @transaction.atomic
 def sync_completed_payment_to_finance(
     *,
+    user,
     payment,
     category,
-    user=None,
     description=None,
-    member=None,
-    reference=None,
+    transaction_date=None,
     notes="",
 ):
     """
-    Synchronize a COMPLETED payment into Finance.
+    Synchronize a completed payment into Finance.
 
-    Intended usage:
-
-        Payments application
-              ↓
-        Payment becomes COMPLETED
-              ↓
-        Payment service/callback
-              ↓
-        sync_completed_payment_to_finance()
-              ↓
-        Finance income transaction
-              ↓
-        POSTED
-              ↓
-        Financial balance updated
-
-    IMPORTANT
-    ---------
-
-    This function does NOT:
-
-    - perform M-Pesa verification
-    - call Safaricom
-    - perform STK Push
-    - modify Payment status
-    - activate membership
-
-    It only consumes an already-COMPLETED payment.
-
-    Idempotency
-    -----------
-
-    If the payment already has a Finance transaction,
-    that transaction is returned instead of creating a duplicate.
+    This wrapper is intentionally idempotent and safe to call
+    from payment completion/callback logic.
     """
 
-    if payment is None:
-        raise ValidationError(
-            "A payment is required."
-        )
-
-    # -----------------------------------------------------------------
-    # PAYMENT STATUS
-    # -----------------------------------------------------------------
-
-    if not _is_completed_payment(payment):
-        raise ValidationError(
-            "Only COMPLETED payments can be synchronized "
-            "to Finance."
-        )
-
-    # -----------------------------------------------------------------
-    # IDEMPOTENCY
-    # -----------------------------------------------------------------
-
-    existing_transaction = (
-        _get_payment_finance_transaction(payment)
+    existing_transaction = _get_payment_finance_transaction(
+        payment
     )
 
     if existing_transaction is not None:
         return existing_transaction
-
-    # -----------------------------------------------------------------
-    # USER
-    # -----------------------------------------------------------------
-
-    if user is None:
-
-        # A payment may have an explicitly recorded creator
-        # depending on the current Payment implementation.
-        user = getattr(
-            payment,
-            "recorded_by",
-            None,
-        )
-
-    if user is None:
-
-        user = getattr(
-            payment,
-            "created_by",
-            None,
-        )
-
-    if user is None:
-
-        # verified_by is supported only when the Payment model
-        # actually provides it.
-        user = getattr(
-            payment,
-            "verified_by",
-            None,
-        )
-
-    if user is None:
-        raise ValidationError(
-            "A Finance user is required to synchronize "
-            "the completed payment."
-        )
-
-    # -----------------------------------------------------------------
-    # MEMBER
-    # -----------------------------------------------------------------
-
-    if member is None:
-        member = getattr(
-            payment,
-            "member",
-            None,
-        )
-
-    # -----------------------------------------------------------------
-    # REFERENCE
-    # -----------------------------------------------------------------
-
-    if reference is None:
-
-        reference = getattr(
-            payment,
-            "mpesa_receipt_number",
-            "",
-        )
-
-    if not reference:
-
-        reference = getattr(
-            payment,
-            "reference",
-            "",
-        )
-
-    if not reference:
-
-        reference = getattr(
-            payment,
-            "checkout_request_id",
-            "",
-        )
-
-    if not reference:
-
-        reference = getattr(
-            payment,
-            "merchant_request_id",
-            "",
-        )
-
-    # -----------------------------------------------------------------
-    # DESCRIPTION
-    # -----------------------------------------------------------------
-
-    if not description:
-
-        if member is not None:
-            description = (
-                f"Completed payment from {member}."
-            )
-        else:
-            description = (
-                "Completed payment synchronized to Finance."
-            )
-
-    # -----------------------------------------------------------------
-    # RECORD PAYMENT
-    # -----------------------------------------------------------------
 
     return record_completed_payment(
         user=user,
         payment=payment,
         category=category,
         description=description,
-        member=member,
-        reference=reference,
+        transaction_date=transaction_date,
         notes=notes,
     )
 
@@ -2166,151 +1602,79 @@ def create_reconciliation(
     *,
     user,
     source,
+    statement_reference,
     period_start,
     period_end,
-    statement_reference="",
+    system_income=ZERO,
+    system_expenses=ZERO,
     external_income=ZERO,
     external_expenses=ZERO,
+    file=None,
     notes="",
-    statement_file=None,
 ):
     """
     Create a financial reconciliation record.
-
-    System totals are calculated exclusively from POSTED
-    Finance transactions within the selected period.
     """
 
-    require_permission(
-        user,
-        can_manage_reconciliation,
+    system_income = _ensure_non_negative_amount(
+        system_income,
+        "system_income",
     )
 
-    if period_start is None or period_end is None:
-        raise ValidationError(
-            "Both period start and period end are required."
-        )
-
-    if period_end < period_start:
-        raise ValidationError(
-            "Period end cannot be earlier than period start."
-        )
-
-    valid_sources = dict(
-        FinancialReconciliation.Source.choices
+    system_expenses = _ensure_non_negative_amount(
+        system_expenses,
+        "system_expenses",
     )
-
-    if source not in valid_sources:
-        raise ValidationError(
-            "Invalid reconciliation source."
-        )
 
     external_income = _ensure_non_negative_amount(
         external_income,
-        field_name="external income",
+        "external_income",
     )
 
     external_expenses = _ensure_non_negative_amount(
         external_expenses,
-        field_name="external expenses",
+        "external_expenses",
     )
 
-    # -----------------------------------------------------------------
-    # SYSTEM INCOME
-    # -----------------------------------------------------------------
-
-    system_income = (
-        FinancialTransaction.objects
-        .filter(
-            transaction_type=(
-                FinancialTransaction.TransactionType.INCOME
-            ),
-            status=(
-                FinancialTransaction.Status.POSTED
-            ),
-            transaction_date__date__gte=period_start,
-            transaction_date__date__lte=period_end,
+    if period_start > period_end:
+        raise ValidationError(
+            "Reconciliation start date cannot be after end date."
         )
-        .aggregate(
-            total=Sum("amount")
-        )
-        .get("total")
-        or ZERO
-    )
 
-    # -----------------------------------------------------------------
-    # SYSTEM EXPENSES
-    # -----------------------------------------------------------------
-
-    system_expenses = (
-        FinancialTransaction.objects
-        .filter(
-            transaction_type=(
-                FinancialTransaction.TransactionType.EXPENSE
-            ),
-            status=(
-                FinancialTransaction.Status.POSTED
-            ),
-            transaction_date__date__gte=period_start,
-            transaction_date__date__lte=period_end,
-        )
-        .aggregate(
-            total=Sum("amount")
-        )
-        .get("total")
-        or ZERO
-    )
-
-    system_income = Decimal(
-        str(system_income)
-    ).quantize(MONEY_PRECISION)
-
-    system_expenses = Decimal(
-        str(system_expenses)
-    ).quantize(MONEY_PRECISION)
-
-    reconciliation = FinancialReconciliation(
+    reconciliation = FinancialReconciliation.objects.create(
         source=source,
-        statement_reference=(
-            statement_reference or ""
-        ).strip(),
+        statement_reference=statement_reference or "",
         period_start=period_start,
         period_end=period_end,
         system_income=system_income,
         system_expenses=system_expenses,
         external_income=external_income,
         external_expenses=external_expenses,
-        status=(
-            FinancialReconciliation.Status.DRAFT
-        ),
         prepared_by=user,
+        file=file,
         notes=notes or "",
-        statement_file=statement_file,
+        status=FinancialReconciliation.Status.DRAFT,
     )
-
-    reconciliation.full_clean()
-    reconciliation.save()
 
     _audit(
         user=user,
         action=FinancialAuditLog.Action.CREATED,
         reconciliation=reconciliation,
         description=(
-            f"Financial reconciliation "
-            f"{reconciliation.reconciliation_number} "
-            f"was created."
+            "Financial reconciliation "
+            f"{reconciliation.pk} was created."
         ),
         new_values={
-            "source": source,
+            "source": reconciliation.source,
             "statement_reference": (
-                statement_reference or ""
+                reconciliation.statement_reference
             ),
-            "period_start": str(period_start),
-            "period_end": str(period_end),
-            "system_income": str(system_income),
-            "system_expenses": str(system_expenses),
-            "external_income": str(external_income),
-            "external_expenses": str(external_expenses),
+            "period_start": str(
+                reconciliation.period_start
+            ),
+            "period_end": str(
+                reconciliation.period_end
+            ),
         },
     )
 
@@ -2324,83 +1688,55 @@ def reconcile_finance(
     reconciliation,
 ):
     """
-    Complete a financial reconciliation.
+    Reconcile a financial reconciliation record.
 
-    A reconciliation becomes RECONCILED only when:
-
-        system income == external income
-
-    and:
-
-        system expenses == external expenses
+    A reconciliation is marked RECONCILED only when the system
+    and external figures match.
     """
-
-    require_permission(
-        user,
-        can_manage_reconciliation,
-    )
 
     if reconciliation is None:
         raise ValidationError(
-            "A reconciliation is required."
+            "Reconciliation is required."
         )
 
-    if reconciliation.status == (
-        FinancialReconciliation.Status.RECONCILED
-    ):
-        raise ValidationError(
-            "This reconciliation is already completed."
+    system_net = (
+        reconciliation.system_income
+        - reconciliation.system_expenses
+    )
+
+    external_net = (
+        reconciliation.external_income
+        - reconciliation.external_expenses
+    )
+
+    system_net = system_net.quantize(
+        MONEY_PRECISION
+    )
+
+    external_net = external_net.quantize(
+        MONEY_PRECISION
+    )
+
+    old_status = reconciliation.status
+
+    if system_net == external_net:
+        reconciliation.status = (
+            FinancialReconciliation.Status.RECONCILED
         )
-
-    if not reconciliation.is_balanced:
-
+    else:
         reconciliation.status = (
             FinancialReconciliation.Status.DISCREPANCY
         )
 
-        reconciliation.save(
-            update_fields=[
-                "status",
-                "updated_at",
-            ]
-        )
+    if hasattr(reconciliation, "reconciled_by_id"):
+        reconciliation.reconciled_by = user
 
-        _audit(
-            user=user,
-            action=FinancialAuditLog.Action.UPDATED,
-            reconciliation=reconciliation,
-            description=(
-                f"Financial reconciliation "
-                f"{reconciliation.reconciliation_number} "
-                f"has discrepancies."
-            ),
-            new_values={
-                "status": reconciliation.status,
-            },
-        )
+    if hasattr(reconciliation, "reconciled_at"):
+        from django.utils import timezone
 
-        raise ValidationError(
-            "The reconciliation has discrepancies and "
-            "cannot be marked as reconciled."
-        )
+        reconciliation.reconciled_at = timezone.now()
 
-    reconciliation.status = (
-        FinancialReconciliation.Status.RECONCILED
-    )
-
-    reconciliation.reconciled_by = user
-    reconciliation.reconciled_at = timezone.now()
-
-    reconciliation.full_clean()
-
-    reconciliation.save(
-        update_fields=[
-            "status",
-            "reconciled_by",
-            "reconciled_at",
-            "updated_at",
-        ]
-    )
+    reconciliation.save()
 
     _audit(
         user=user,
@@ -2408,15 +1744,17 @@ def reconcile_finance(
         reconciliation=reconciliation,
         description=(
             f"Financial reconciliation "
-            f"{reconciliation.reconciliation_number} "
-            f"was completed."
+            f"{reconciliation.pk} was processed."
         ),
+        old_values={
+            "status": old_status,
+            "system_net": str(system_net),
+            "external_net": str(external_net),
+        },
         new_values={
             "status": reconciliation.status,
-            "reconciled_by": user.pk,
-            "reconciled_at": (
-                reconciliation.reconciled_at.isoformat()
-            ),
+            "system_net": str(system_net),
+            "external_net": str(external_net),
         },
     )
 
@@ -2424,17 +1762,35 @@ def reconcile_finance(
 
 
 # =============================================================================
-# FINANCIAL TOTALS
+# FINANCIAL TOTALS & REPORTING
 # =============================================================================
 
 def get_financial_totals():
     """
-    Return current Finance totals.
+    Return the authoritative current Finance totals.
 
-    Only POSTED transactions are included.
+    ACCOUNTING RULE
+    ---------------
 
-    Returns:
+    Only FinancialTransaction records with:
 
+        status = POSTED
+
+    affect the accounting balance.
+
+    Therefore:
+
+        Posted Income
+            -
+        Posted Expenses
+            =
+        Available Balance
+
+    DRAFT and VOIDED transactions are excluded.
+
+    Returns
+    -------
+    dict
         {
             "income": Decimal,
             "expenses": Decimal,
@@ -2442,26 +1798,28 @@ def get_financial_totals():
         }
     """
 
-    totals = (
+    posted_transactions = (
         FinancialTransaction.objects
         .filter(
-            status=FinancialTransaction.Status.POSTED
+            status=FinancialTransaction.Status.POSTED,
         )
-        .values(
-            "transaction_type"
-        )
+        .values("transaction_type")
         .annotate(
-            total=Sum("amount")
+            total=Sum("amount"),
         )
     )
 
     income = ZERO
     expenses = ZERO
 
-    for row in totals:
-
+    for row in posted_transactions:
         amount = (
-            Decimal(str(row["total"] or ZERO))
+            Decimal(
+                str(
+                    row["total"]
+                    or ZERO
+                )
+            )
             .quantize(MONEY_PRECISION)
         )
 
@@ -2491,37 +1849,322 @@ def get_financial_totals():
 
 def get_financial_balance():
     """
-    Calculate the current financial balance.
+    Return the current available Finance balance.
 
-        POSTED INCOME
-              -
-        POSTED EXPENSES
-              =
-        AVAILABLE BALANCE
+    Formula:
+
+        POSTED INCOME - POSTED EXPENSES
     """
 
     return get_financial_totals()["balance"]
 
 
+def get_income_totals():
+    """
+    Return authoritative income statistics.
+
+    Only POSTED income transactions are counted
+    as posted income.
+    """
+
+    queryset = FinancialTransaction.objects.filter(
+        transaction_type=(
+            FinancialTransaction.TransactionType.INCOME
+        ),
+    )
+
+    total_income = (
+        queryset
+        .aggregate(
+            total=Sum("amount")
+        )
+        .get("total")
+        or ZERO
+    )
+
+    posted_income = (
+        queryset
+        .filter(
+            status=FinancialTransaction.Status.POSTED,
+        )
+        .aggregate(
+            total=Sum("amount")
+        )
+        .get("total")
+        or ZERO
+    )
+
+    income_records = queryset.count()
+
+    return {
+        "total_income": Decimal(
+            str(total_income)
+        ).quantize(MONEY_PRECISION),
+
+        "posted_income": Decimal(
+            str(posted_income)
+        ).quantize(MONEY_PRECISION),
+
+        "income_records": income_records,
+    }
+
+
+def get_expense_totals():
+    """
+    Return authoritative expense statistics.
+
+    Expense requests and posted ledger expenses are kept
+    conceptually separate.
+
+    total_expenses:
+        Sum of all Expense records that are not VOIDED.
+
+    paid_expenses:
+        Sum of PAID Expense records.
+
+    posted_expenses:
+        Sum of POSTED expense ledger transactions.
+
+    pending_expenses:
+        Expenses currently awaiting completion of the
+        workflow:
+
+            DRAFT
+            SUBMITTED
+            APPROVED
+    """
+
+    expense_queryset = Expense.objects.exclude(
+        status=Expense.Status.VOIDED,
+    )
+
+    total_expenses = (
+        expense_queryset
+        .aggregate(
+            total=Sum("amount")
+        )
+        .get("total")
+        or ZERO
+    )
+
+    paid_expenses = (
+        expense_queryset
+        .filter(
+            status=Expense.Status.PAID,
+        )
+        .aggregate(
+            total=Sum("amount")
+        )
+        .get("total")
+        or ZERO
+    )
+
+    posted_expenses = (
+        FinancialTransaction.objects
+        .filter(
+            transaction_type=(
+                FinancialTransaction.TransactionType.EXPENSE
+            ),
+            status=FinancialTransaction.Status.POSTED,
+        )
+        .aggregate(
+            total=Sum("amount")
+        )
+        .get("total")
+        or ZERO
+    )
+
+    pending_expenses = expense_queryset.filter(
+        status__in=[
+            Expense.Status.DRAFT,
+            Expense.Status.SUBMITTED,
+            Expense.Status.APPROVED,
+        ],
+    ).count()
+
+    rejected_expenses = expense_queryset.filter(
+        status=Expense.Status.REJECTED,
+    ).count()
+
+    paid_count = expense_queryset.filter(
+        status=Expense.Status.PAID,
+    ).count()
+
+    return {
+        "total_expenses": Decimal(
+            str(total_expenses)
+        ).quantize(MONEY_PRECISION),
+
+        "paid_expenses": Decimal(
+            str(paid_expenses)
+        ).quantize(MONEY_PRECISION),
+
+        "posted_expenses": Decimal(
+            str(posted_expenses)
+        ).quantize(MONEY_PRECISION),
+
+        "pending_expenses": pending_expenses,
+
+        "rejected_expenses": rejected_expenses,
+
+        "paid_count": paid_count,
+    }
+
+
+def get_category_totals():
+    """
+    Return authoritative financial-category statistics.
+
+    All counts are calculated directly from
+    FinancialCategory using the actual model enum values.
+    """
+
+    queryset = FinancialCategory.objects.all()
+
+    total_categories = queryset.count()
+
+    income_categories = queryset.filter(
+        category_type=(
+            FinancialCategory.CategoryType.INCOME
+        ),
+    ).count()
+
+    expense_categories = queryset.filter(
+        category_type=(
+            FinancialCategory.CategoryType.EXPENSE
+        ),
+    ).count()
+
+    active_categories = queryset.filter(
+        is_active=True,
+    ).count()
+
+    inactive_categories = queryset.filter(
+        is_active=False,
+    ).count()
+
+    return {
+        "total_categories": total_categories,
+        "income_categories": income_categories,
+        "expense_categories": expense_categories,
+        "active_categories": active_categories,
+        "inactive_categories": inactive_categories,
+    }
+
+
+def get_audit_log_totals():
+    """
+    Return authoritative financial audit-log statistics.
+
+    CREATED and UPDATED are general record-management
+    actions.
+
+    Workflow actions are:
+
+        SUBMITTED
+        APPROVED
+        REJECTED
+        PAID
+        POSTED
+        VOIDED
+        RECONCILED
+    """
+
+    queryset = FinancialAuditLog.objects.all()
+
+    total_logs = queryset.count()
+
+    created_logs = queryset.filter(
+        action=FinancialAuditLog.Action.CREATED,
+    ).count()
+
+    updated_logs = queryset.filter(
+        action=FinancialAuditLog.Action.UPDATED,
+    ).count()
+
+    workflow_actions = queryset.filter(
+        action__in=[
+            FinancialAuditLog.Action.SUBMITTED,
+            FinancialAuditLog.Action.APPROVED,
+            FinancialAuditLog.Action.REJECTED,
+            FinancialAuditLog.Action.PAID,
+            FinancialAuditLog.Action.POSTED,
+            FinancialAuditLog.Action.VOIDED,
+            FinancialAuditLog.Action.RECONCILED,
+        ],
+    ).count()
+
+    return {
+        "total_logs": total_logs,
+        "created_logs": created_logs,
+        "updated_logs": updated_logs,
+        "workflow_actions": workflow_actions,
+    }
+
+
+def get_finance_dashboard_stats():
+    """
+    Return all authoritative statistics required by
+    the Finance dashboard.
+
+    This should be the single source used by the
+    dashboard view.
+    """
+
+    financial_totals = get_financial_totals()
+    expense_totals = get_expense_totals()
+
+    return {
+        # -----------------------------------------------------------------
+        # ACCOUNTING
+        # -----------------------------------------------------------------
+
+        "available_balance": financial_totals["balance"],
+
+        "posted_income": financial_totals["income"],
+
+        "posted_expenses": financial_totals["expenses"],
+
+        # -----------------------------------------------------------------
+        # EXPENSE WORKFLOW
+        # -----------------------------------------------------------------
+
+        "pending_expenses": (
+            expense_totals["pending_expenses"]
+        ),
+
+        # -----------------------------------------------------------------
+        # SUPPORTING VALUES
+        # -----------------------------------------------------------------
+
+        "paid_expenses": (
+            expense_totals["paid_expenses"]
+        ),
+
+        "rejected_expenses": (
+            expense_totals["rejected_expenses"]
+        ),
+    }
+
+
 # =============================================================================
-# AUDIT LOG ACCESS
+# AUDIT ACCESS
 # =============================================================================
 
 def get_audit_logs(
     *,
-    user,
-    limit=None,
+    transaction=None,
+    expense=None,
+    reconciliation=None,
+    category=None,
+    user=None,
+    action=None,
 ):
     """
-    Return financial audit logs for authorized users.
+    Retrieve financial audit logs using optional filters.
 
-    Audit logs are read-only.
+    This function is read-only.
     """
-
-    require_permission(
-        user,
-        can_view_audit_logs,
-    )
 
     queryset = (
         FinancialAuditLog.objects
@@ -2532,21 +2175,37 @@ def get_audit_logs(
             "reconciliation",
             "category",
         )
-        .order_by("-created_at")
+        .all()
     )
 
-    if limit is not None:
+    if transaction is not None:
+        queryset = queryset.filter(
+            transaction=transaction
+        )
 
-        try:
-            limit = int(limit)
-        except (TypeError, ValueError) as exc:
-            raise ValidationError(
-                "Audit log limit must be a valid integer."
-            ) from exc
+    if expense is not None:
+        queryset = queryset.filter(
+            expense=expense
+        )
 
-        if limit <= 0:
-            return queryset.none()
+    if reconciliation is not None:
+        queryset = queryset.filter(
+            reconciliation=reconciliation
+        )
 
-        queryset = queryset[:limit]
+    if category is not None:
+        queryset = queryset.filter(
+            category=category
+        )
 
-    return queryset
+    if user is not None:
+        queryset = queryset.filter(
+            user=user
+        )
+
+    if action is not None:
+        queryset = queryset.filter(
+            action=action
+        )
+
+    return queryset.order_by("-timestamp")

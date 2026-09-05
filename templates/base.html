@@ -6,13 +6,10 @@
 
 <head>
 
-```
+
 <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>
     {% block title %}
@@ -46,61 +43,49 @@
 
 {% block extra_css %}
 {% endblock %}
-```
+
 
 </head>
 
 <body>
 
-```
-<!-- ============================================================
-     NAVIGATION
-     ============================================================ -->
 
+<!-- Navigation -->
 {% include "partials/navbar.html" %}
 
 
-<!-- ============================================================
-     MAIN APPLICATION LAYOUT
-     ============================================================ -->
+<div class="container-fluid">
 
-<div class="container-fluid px-0">
+    <div class="row">
 
-    <div class="row g-0">
+        <!-- =====================================================
+             DESKTOP SIDEBAR
+             =====================================================
 
+             The sidebar remains exactly where it is on desktop.
 
-        <!-- ====================================================
-             SIDEBAR
-             Desktop:
-             - Visible as a normal Bootstrap column
+             On mobile/tablet it is removed from the normal page
+             layout so that the navbar can control the sidebar
+             through Bootstrap Offcanvas.
 
-             Mobile / Tablet:
-             - Sidebar itself will be controlled by
-               sidebar.html and remain hidden until opened
-             ==================================================== -->
+             ===================================================== -->
 
         {% if user.is_authenticated %}
 
-            <aside
-                id="kucsaSidebarWrapper"
-                class="col-lg-2 col-md-3"
-            >
+            <div class="col-lg-2 col-md-3 p-0 d-none d-md-block">
 
                 {% include "partials/sidebar.html" %}
 
-            </aside>
+            </div>
 
         {% endif %}
 
 
-        <!-- ====================================================
+        <!-- =====================================================
              MAIN CONTENT
-             ==================================================== -->
+             ===================================================== -->
 
-        <main
-            id="kucsaMainContent"
-            class="{% if user.is_authenticated %}col-lg-10 col-md-9{% else %}col-12{% endif %} py-4"
-        >
+        <main class="{% if user.is_authenticated %}col-lg-10 col-md-9{% else %}col-12{% endif %} py-4">
 
             {% include "partials/messages.html" %}
 
@@ -111,45 +96,36 @@
 
         </main>
 
-
     </div>
 
 </div>
 
 
-<!-- ============================================================
-     FOOTER
-     ============================================================ -->
+<!-- Footer -->
 
 {% include "partials/footer.html" %}
 
 
-<!-- ============================================================
-     REUSABLE MODAL
-     ============================================================ -->
+<!-- Reusable Modal -->
 
 {% include "partials/modal.html" %}
 
 
-<!-- ============================================================
-     BOOTSTRAP JS
-     ============================================================ -->
+<!-- Bootstrap JS -->
 
 <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js">
 </script>
 
 
-<!-- ============================================================
-     PROJECT JS
-     ============================================================ -->
+<!-- Project JS -->
 
 <script src="{% static 'js/app.js' %}"></script>
 
 
 {% block extra_js %}
 {% endblock %}
-```
+
 
 </body>
 

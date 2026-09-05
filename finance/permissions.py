@@ -16,6 +16,33 @@ Main finance roles:
     TREASURER
     EXECUTIVE
 
+IMPORTANT
+---------
+
+The User model does not contain a single:
+
+    Role.EXECUTIVE
+
+choice.
+
+Instead, KUCSA executive positions are defined individually:
+
+    CHAIRPERSON
+    VICE_CHAIRPERSON
+    SECRETARY
+    SECRETARY_GENERAL
+    TREASURER
+    ORGANIZING_SECRETARY
+    PUBLICITY_SECRETARY
+
+The User model exposes these through:
+
+    User.EXECUTIVE_ROLES
+
+Therefore, this permission module must use
+User.EXECUTIVE_ROLES when determining whether
+a user is an executive.
+
 Role access:
 
     ADMIN
@@ -87,7 +114,11 @@ def is_authenticated(user):
 
     return bool(
         user
-        and getattr(user, "is_authenticated", False)
+        and getattr(
+            user,
+            "is_authenticated",
+            False,
+        )
     )
 
 
@@ -192,6 +223,32 @@ def _has_role(user, role_name):
     )
 
 
+def _has_executive_role(user):
+    """
+    Check whether the user holds any KUCSA executive role.
+
+    The User model defines executive roles centrally through:
+
+        User.EXECUTIVE_ROLES
+
+    This avoids assuming that there is a single
+    User.Role.EXECUTIVE choice.
+    """
+
+    if not is_authenticated(user):
+        return False
+
+    role = _get_role(user)
+
+    executive_roles = getattr(
+        user.__class__,
+        "EXECUTIVE_ROLES",
+        frozenset(),
+    )
+
+    return role in executive_roles
+
+
 # =============================================================================
 # MAIN ROLES
 # =============================================================================
@@ -222,6 +279,14 @@ def is_admin(user):
 def is_treasurer(user):
     """
     Check whether the user is the Treasurer.
+
+    IMPORTANT
+    ---------
+
+    Treasurer is an explicit KUCSA organizational role.
+
+    Being an executive does not automatically make a user
+    a Treasurer.
     """
 
     return _has_role(
@@ -232,13 +297,33 @@ def is_treasurer(user):
 
 def is_executive(user):
     """
-    Check whether the user is an Executive.
+    Check whether the user holds any KUCSA executive role.
+
+    Executive roles are defined centrally by the User model
+    through User.EXECUTIVE_ROLES.
+
+    Current executive roles include:
+
+        CHAIRPERSON
+        VICE_CHAIRPERSON
+        SECRETARY
+        SECRETARY_GENERAL
+        TREASURER
+        ORGANIZING_SECRETARY
+        PUBLICITY_SECRETARY
+
+    IMPORTANT
+    ---------
+
+    There is intentionally no requirement for:
+
+        User.Role.EXECUTIVE
+
+    because the User model defines executive positions
+    individually.
     """
 
-    return _has_role(
-        user,
-        "EXECUTIVE",
-    )
+    return _has_executive_role(user)
 
 
 # =============================================================================
@@ -256,6 +341,18 @@ def can_manage_finance(user):
 
     This permission MUST NOT be used for simple
     read-only finance pages.
+
+    Executive positions such as:
+
+        CHAIRPERSON
+        VICE_CHAIRPERSON
+        SECRETARY
+        SECRETARY_GENERAL
+        ORGANIZING_SECRETARY
+        PUBLICITY_SECRETARY
+
+    do not receive finance management access merely
+    because they are executives.
     """
 
     return (
@@ -279,6 +376,9 @@ def can_view_finance(user):
         EXECUTIVE
 
     This is the basic read-only finance permission.
+
+    Executives may view financial records but may not
+    perform finance management actions.
     """
 
     return (
@@ -379,7 +479,9 @@ def can_view_income(user):
         EXECUTIVE
 
     EXECUTIVE users have read-only access.
-    They cannot create, edit, or otherwise manage income.
+
+    They cannot create, edit, post, void, or otherwise
+    manage income.
     """
 
     return can_view_finance(user)

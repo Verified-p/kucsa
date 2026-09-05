@@ -1,1192 +1,711 @@
+
 {% extends "base.html" %}
 
 {% block title %}Finance Dashboard | KUCSA{% endblock %}
 
 {% block content %}
 
-<style>
-    /* ============================================================
-       KUCSA FINANCE DASHBOARD
-       Inline component styling
-       ============================================================ */
-
-    .kucsa-finance {
-        --finance-primary: #0d6efd;
-        --finance-success: #198754;
-        --finance-danger: #dc3545;
-        --finance-warning: #f59f00;
-        --finance-info: #0dcaf0;
-        --finance-dark: #172033;
-        --finance-muted: #6c757d;
-        --finance-border: rgba(15, 23, 42, 0.08);
-        --finance-soft: #f8fafc;
-        --finance-card-radius: 18px;
-    }
-
-    /* ------------------------------------------------------------
-       Page wrapper
-       ------------------------------------------------------------ */
-
-    .finance-page {
-        max-width: 1600px;
-        margin: 0 auto;
-    }
-
-    /* ------------------------------------------------------------
-       Header
-       ------------------------------------------------------------ */
-
-    .finance-header {
-        background:
-            linear-gradient(
-                135deg,
-                rgba(13, 110, 253, 0.08),
-                rgba(25, 135, 84, 0.04)
-            );
-        border: 1px solid rgba(13, 110, 253, 0.08);
-        border-radius: 22px;
-        padding: 24px;
-        margin-bottom: 24px;
-    }
-
-    .finance-title {
-        color: var(--finance-dark);
-        letter-spacing: -0.5px;
-    }
-
-    .finance-subtitle {
-        max-width: 720px;
-        line-height: 1.6;
-    }
-
-    .finance-header-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-
-    /* ------------------------------------------------------------
-       Buttons
-       ------------------------------------------------------------ */
-
-    .finance-btn {
-        min-height: 44px;
-        border-radius: 11px;
-        font-weight: 600;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        transition:
-            transform 0.2s ease,
-            box-shadow 0.2s ease,
-            background-color 0.2s ease;
-    }
-
-    .finance-btn:hover {
-        transform: translateY(-1px);
-    }
-
-    .finance-btn:active {
-        transform: translateY(0);
-    }
-
-    /* ------------------------------------------------------------
-       Financial cards
-       ------------------------------------------------------------ */
-
-    .finance-stat-card {
-        position: relative;
-        overflow: hidden;
-        border: 1px solid var(--finance-border);
-        border-radius: var(--finance-card-radius);
-        background: #ffffff;
-        box-shadow: 0 8px 25px rgba(15, 23, 42, 0.055);
-        transition:
-            transform 0.25s ease,
-            box-shadow 0.25s ease;
-    }
-
-    .finance-stat-card::after {
-        content: "";
-        position: absolute;
-        width: 110px;
-        height: 110px;
-        border-radius: 50%;
-        right: -45px;
-        top: -45px;
-        background: rgba(13, 110, 253, 0.035);
-        pointer-events: none;
-    }
-
-    .finance-stat-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.09);
-    }
-
-    .finance-stat-label {
-        font-size: 0.78rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.45px;
-        color: var(--finance-muted);
-    }
-
-    .finance-stat-value {
-        font-size: clamp(1.35rem, 2.5vw, 1.85rem);
-        font-weight: 800;
-        letter-spacing: -0.6px;
-        color: var(--finance-dark);
-        word-break: break-word;
-    }
-
-    .finance-stat-description {
-        font-size: 0.78rem;
-        color: var(--finance-muted);
-        line-height: 1.45;
-    }
-
-    .finance-stat-icon {
-        width: 50px;
-        height: 50px;
-        min-width: 50px;
-        border-radius: 15px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.25rem;
-    }
-
-    /* ------------------------------------------------------------
-       Main cards
-       ------------------------------------------------------------ */
-
-    .finance-panel {
-        border: 1px solid var(--finance-border);
-        border-radius: var(--finance-card-radius);
-        background: #ffffff;
-        box-shadow: 0 8px 25px rgba(15, 23, 42, 0.055);
-        overflow: hidden;
-    }
-
-    .finance-panel-header {
-        padding: 20px 22px;
-        border-bottom: 1px solid var(--finance-border);
-        background: rgba(248, 250, 252, 0.7);
-    }
-
-    .finance-panel-title {
-        color: var(--finance-dark);
-        font-size: 1rem;
-        font-weight: 750;
-        margin-bottom: 4px;
-    }
-
-    .finance-panel-description {
-        color: var(--finance-muted);
-        font-size: 0.8rem;
-        margin: 0;
-    }
-
-    /* ------------------------------------------------------------
-       Transactions
-       ------------------------------------------------------------ */
-
-    .finance-table-wrapper {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .finance-table {
-        min-width: 720px;
-        margin-bottom: 0;
-    }
-
-    .finance-table thead th {
-        border-bottom: 0;
-        background: #f8fafc;
-        color: #64748b;
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        letter-spacing: 0.45px;
-        white-space: nowrap;
-        padding: 13px 15px;
-    }
-
-    .finance-table tbody td {
-        padding: 15px;
-        border-color: rgba(15, 23, 42, 0.055);
-        vertical-align: middle;
-    }
-
-    .finance-table tbody tr {
-        transition: background-color 0.18s ease;
-    }
-
-    .finance-table tbody tr:hover {
-        background-color: rgba(13, 110, 253, 0.025);
-    }
-
-    .transaction-number {
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: var(--finance-primary);
-    }
-
-    .transaction-number:hover {
-        text-decoration: underline !important;
-    }
-
-    .transaction-reference {
-        font-size: 0.72rem;
-        color: var(--finance-muted);
-        margin-top: 3px;
-    }
-
-    .transaction-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        border-radius: 8px;
-        padding: 6px 9px;
-        font-size: 0.7rem;
-        font-weight: 700;
-        white-space: nowrap;
-    }
-
-    /* ------------------------------------------------------------
-       Expense workflow
-       ------------------------------------------------------------ */
-
-    .workflow-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 15px;
-        padding: 14px 0;
-        border-bottom: 1px solid rgba(15, 23, 42, 0.065);
-    }
-
-    .workflow-item:last-child {
-        border-bottom: 0;
-    }
-
-    .workflow-label {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 0.86rem;
-        font-weight: 600;
-        color: #334155;
-    }
-
-    .workflow-icon {
-        width: 34px;
-        height: 34px;
-        border-radius: 10px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .workflow-count {
-        min-width: 32px;
-        text-align: center;
-        border-radius: 8px;
-        padding: 5px 8px;
-        font-size: 0.72rem;
-        font-weight: 700;
-    }
-
-    /* ------------------------------------------------------------
-       Quick actions
-       ------------------------------------------------------------ */
-
-    .quick-action {
-        position: relative;
-        display: block;
-        height: 100%;
-        padding: 18px;
-        border-radius: 15px;
-        border: 1px solid rgba(15, 23, 42, 0.08);
-        background: #ffffff;
-        color: inherit;
-        text-decoration: none;
-        transition:
-            transform 0.2s ease,
-            box-shadow 0.2s ease,
-            border-color 0.2s ease;
-    }
-
-    .quick-action:hover {
-        color: inherit;
-        text-decoration: none;
-        transform: translateY(-3px);
-        border-color: rgba(13, 110, 253, 0.22);
-        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
-    }
-
-    .quick-action-icon {
-        width: 42px;
-        height: 42px;
-        border-radius: 12px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 13px;
-        font-size: 1.1rem;
-    }
-
-    .quick-action-title {
-        font-size: 0.88rem;
-        font-weight: 750;
-        color: var(--finance-dark);
-    }
-
-    .quick-action-description {
-        font-size: 0.73rem;
-        color: var(--finance-muted);
-        line-height: 1.5;
-        margin-top: 5px;
-    }
-
-    .quick-action-arrow {
-        position: absolute;
-        right: 15px;
-        top: 15px;
-        opacity: 0;
-        transform: translateX(-4px);
-        transition: all 0.2s ease;
-    }
-
-    .quick-action:hover .quick-action-arrow {
-        opacity: 1;
-        transform: translateX(0);
-    }
-
-    /* ------------------------------------------------------------
-       Alerts
-       ------------------------------------------------------------ */
-
-    .finance-alert {
-        border: 0;
-        border-radius: 15px;
-        box-shadow: 0 8px 22px rgba(220, 53, 69, 0.08);
-    }
-
-    /* ------------------------------------------------------------
-       Empty state
-       ------------------------------------------------------------ */
-
-    .finance-empty-icon {
-        width: 74px;
-        height: 74px;
-        margin: 0 auto;
-        border-radius: 22px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #f8fafc;
-        color: #94a3b8;
-        font-size: 1.8rem;
-    }
-
-    /* ------------------------------------------------------------
-       Access indicator
-       ------------------------------------------------------------ */
-
-    .finance-access-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        border-radius: 999px;
-        padding: 6px 10px;
-        font-size: 0.68rem;
-        font-weight: 700;
-    }
-
-    /* ------------------------------------------------------------
-       Audit button
-       ------------------------------------------------------------ */
-
-    .audit-button {
-        border-radius: 10px;
-        min-height: 40px;
-        font-weight: 600;
-    }
-
-    /* ------------------------------------------------------------
-       Mobile responsiveness
-       ------------------------------------------------------------ */
-
-    @media (max-width: 767.98px) {
-
-        .finance-page {
-            padding-left: 2px;
-            padding-right: 2px;
-        }
-
-        .finance-header {
-            padding: 18px;
-            border-radius: 17px;
-        }
-
-        .finance-header-actions {
-            width: 100%;
-        }
-
-        .finance-header-actions .finance-btn {
-            flex: 1 1 100%;
-            width: 100%;
-        }
-
-        .finance-stat-card {
-            border-radius: 15px;
-        }
-
-        .finance-stat-value {
-            font-size: 1.35rem;
-        }
-
-        .finance-stat-icon {
-            width: 44px;
-            height: 44px;
-            min-width: 44px;
-            border-radius: 12px;
-        }
-
-        .finance-panel {
-            border-radius: 15px;
-        }
-
-        .finance-panel-header {
-            padding: 17px;
-        }
-
-        .finance-panel-body {
-            padding: 0 !important;
-        }
-
-        .quick-action {
-            min-height: 125px;
-            padding: 16px;
-        }
-
-        .quick-action-arrow {
-            opacity: 1;
-            transform: none;
-        }
-
-        .finance-access-badge {
-            margin-top: 8px;
-        }
-    }
-
-    /* ------------------------------------------------------------
-       Very small devices
-       ------------------------------------------------------------ */
-
-    @media (max-width: 390px) {
-
-        .finance-header {
-            padding: 15px;
-        }
-
-        .finance-title {
-            font-size: 1.3rem;
-        }
-
-        .finance-subtitle {
-            font-size: 0.78rem;
-        }
-
-        .finance-stat-value {
-            font-size: 1.2rem;
-        }
-
-        .finance-stat-description {
-            font-size: 0.7rem;
-        }
-
-        .workflow-label {
-            font-size: 0.78rem;
-        }
-    }
-
-    /* ------------------------------------------------------------
-       Reduced motion accessibility
-       ------------------------------------------------------------ */
-
-    @media (prefers-reduced-motion: reduce) {
-
-        .finance-stat-card,
-        .finance-btn,
-        .quick-action,
-        .quick-action-arrow,
-        .finance-table tbody tr {
-            transition: none !important;
-        }
-    }
-</style>
-
-<div class="kucsa-finance finance-page container-fluid py-3 py-md-4">
-
-```
-<!-- =========================================================
-     PAGE HEADER
-     ========================================================= -->
-
-<div class="finance-header">
-
-    <div class="d-flex flex-column flex-lg-row
-                justify-content-between
-                align-items-lg-center
-                gap-4">
-
-        <div class="flex-grow-1">
-
-            <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
-
-                <h2 class="finance-title fw-bold mb-0">
+<div class="container-fluid py-4">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+    <div class="d-flex flex-column flex-md-row
+                justify-content-between align-items-md-center
+                gap-3 mb-4">
+
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <h2 class="fw-bold mb-0">
                     Finance Dashboard
                 </h2>
 
                 <span class="badge bg-primary-subtle text-primary">
                     KUCSA Finance
                 </span>
-
             </div>
 
-            <p class="finance-subtitle text-muted mb-0">
-                Monitor KUCSA income, expenses, available balance,
-                and financial activity from one central dashboard.
+            <p class="text-muted mb-0">
+                Monitor KUCSA income, expenses, balance and financial activity.
             </p>
-
-            {% if user.is_kucsa_admin or user.is_treasurer %}
-                <div class="mt-3">
-
-                    <span class="finance-access-badge
-                                 bg-success-subtle
-                                 text-success">
-
-                        <i class="bi bi-shield-check"></i>
-
-                        Finance Management Access
-
-                    </span>
-
-                </div>
-
-            {% else %}
-
-                <div class="mt-3">
-
-                    <span class="finance-access-badge
-                                 bg-primary-subtle
-                                 text-primary">
-
-                        <i class="bi bi-eye"></i>
-
-                        Read-Only Finance Access
-
-                    </span>
-
-                </div>
-
-            {% endif %}
-
         </div>
 
-
-        <!-- Header actions -->
-
-        <div class="finance-header-actions">
+        <div class="d-flex flex-wrap gap-2">
 
             <a href="{% url 'finance:transactions' %}"
-               class="btn btn-outline-primary finance-btn">
-
-                <i class="bi bi-journal-text"></i>
-
-                <span>Transactions</span>
-
+               class="btn btn-outline-primary">
+                <i class="bi bi-journal-text me-1"></i>
+                Transactions
             </a>
 
-
-            {% if user.is_kucsa_admin or user.is_treasurer %}
-
-                <a href="{% url 'finance:expense_create' %}"
-                   class="btn btn-primary finance-btn">
-
-                    <i class="bi bi-plus-circle"></i>
-
-                    <span>Record Expense</span>
-
-                </a>
-
-            {% endif %}
+            <a href="{% url 'finance:expense_create' %}"
+               class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i>
+                Record Expense
+            </a>
 
         </div>
 
     </div>
-
-</div>
-
-
-<!-- =========================================================
-     FINANCIAL SUMMARY
-     ========================================================= -->
-
-<div class="row g-3 g-xl-4 mb-4">
-
-    <!-- Available Balance -->
-
-    <div class="col-12 col-sm-6 col-xl-3">
-
-        <div class="finance-stat-card h-100">
-
-            <div class="card-body p-3 p-md-4">
-
-                <div class="d-flex
-                            justify-content-between
-                            align-items-start
-                            gap-3">
-
-                    <div class="min-w-0">
-
-                        <div class="finance-stat-label mb-2">
-                            Available Balance
-                        </div>
-
-                        <div class="finance-stat-value mb-1">
-
-                            KES
-                            {{ available_balance|default:"0.00"|floatformat:2 }}
-
-                        </div>
-
-                        <div class="finance-stat-description">
-                            Posted income less posted expenses
-                        </div>
-
-                    </div>
-
-                    <div class="finance-stat-icon
-                                bg-success-subtle
-                                text-success">
-
-                        <i class="bi bi-wallet2"></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- Posted Income -->
-
-    <div class="col-12 col-sm-6 col-xl-3">
-
-        <div class="finance-stat-card h-100">
-
-            <div class="card-body p-3 p-md-4">
-
-                <div class="d-flex
-                            justify-content-between
-                            align-items-start
-                            gap-3">
-
-                    <div class="min-w-0">
-
-                        <div class="finance-stat-label mb-2">
-                            Posted Income
-                        </div>
-
-                        <div class="finance-stat-value
-                                    text-success
-                                    mb-1">
-
-                            KES
-                            {{ posted_income|default:total_income|default:"0.00"|floatformat:2 }}
-
-                        </div>
-
-                        <div class="finance-stat-description">
-                            Income affecting the balance
-                        </div>
-
-                    </div>
-
-                    <div class="finance-stat-icon
-                                bg-success-subtle
-                                text-success">
-
-                        <i class="bi bi-arrow-down-left"></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- Posted Expenses -->
-
-    <div class="col-12 col-sm-6 col-xl-3">
-
-        <div class="finance-stat-card h-100">
-
-            <div class="card-body p-3 p-md-4">
-
-                <div class="d-flex
-                            justify-content-between
-                            align-items-start
-                            gap-3">
-
-                    <div class="min-w-0">
-
-                        <div class="finance-stat-label mb-2">
-                            Posted Expenses
-                        </div>
-
-                        <div class="finance-stat-value
-                                    text-danger
-                                    mb-1">
-
-                            KES
-                            {{ posted_expenses|default:total_expenses|default:"0.00"|floatformat:2 }}
-
-                        </div>
-
-                        <div class="finance-stat-description">
-                            Expenses affecting the balance
-                        </div>
-
-                    </div>
-
-                    <div class="finance-stat-icon
-                                bg-danger-subtle
-                                text-danger">
-
-                        <i class="bi bi-arrow-up-right"></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- Pending Expenses -->
-
-    <div class="col-12 col-sm-6 col-xl-3">
-
-        <div class="finance-stat-card h-100">
-
-            <div class="card-body p-3 p-md-4">
-
-                <div class="d-flex
-                            justify-content-between
-                            align-items-start
-                            gap-3">
-
-                    <div class="min-w-0">
-
-                        <div class="finance-stat-label mb-2">
-                            Pending Expenses
-                        </div>
-
-                        <div class="finance-stat-value mb-1">
-
-                            {{ pending_expenses|default:"0" }}
-
-                        </div>
-
-                        <div class="finance-stat-description">
-                            Expenses awaiting processing
-                        </div>
-
-                    </div>
-
-                    <div class="finance-stat-icon
-                                bg-warning-subtle
-                                text-warning">
-
-                        <i class="bi bi-hourglass-split"></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- =========================================================
-     NEGATIVE BALANCE NOTICE
-     ========================================================= -->
-
-{% if available_balance is not None %}
-
-    {% if available_balance < 0 %}
-
-        <div class="alert alert-danger
-                    finance-alert
-                    d-flex
-                    align-items-start
-                    gap-3
-                    mb-4
-                    p-3 p-md-4">
-
-            <div class="rounded-circle
-                        bg-danger-subtle
-                        text-danger
-                        d-flex
-                        align-items-center
-                        justify-content-center
-                        flex-shrink-0"
-                 style="width:42px;height:42px;">
-
-                <i class="bi bi-exclamation-triangle-fill"></i>
-
-            </div>
-
-            <div>
-
-                <strong class="d-block mb-1">
-                    Negative available balance
-                </strong>
-
-                <div class="small">
-                    Posted expenses currently exceed posted income.
-                    Review the financial transactions and reconciliation
-                    records.
-                </div>
-
-            </div>
-
-        </div>
-
-    {% endif %}
-
-{% endif %}
-
-
-<!-- =========================================================
-     MAIN DASHBOARD CONTENT
-     ========================================================= -->
-
-<div class="row g-3 g-xl-4">
 
 
     <!-- =====================================================
-         RECENT TRANSACTIONS
-         ===================================================== -->
+         FINANCIAL SUMMARY
+    ====================================================== -->
+    <div class="row g-4 mb-4">
 
-    <div class="col-12 col-xl-8">
+        <!-- AVAILABLE BALANCE -->
+        <div class="col-12 col-md-6 col-xl-3">
 
-        <div class="finance-panel h-100">
+            <div class="card border-0 shadow-sm h-100">
 
-            <div class="finance-panel-header">
+                <div class="card-body">
 
-                <div class="d-flex
-                            flex-column
-                            flex-sm-row
-                            justify-content-between
-                            align-items-sm-center
-                            gap-3">
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-start">
 
-                    <div>
+                        <div>
 
-                        <div class="finance-panel-title">
-                            Recent Transactions
+                            <p class="text-muted small mb-1">
+                                Available Balance
+                            </p>
+
+                            <h3 class="fw-bold mb-1">
+                                KES
+                                {{ available_balance|default:"0.00"|floatformat:2 }}
+                            </h3>
+
+                            <small class="text-muted">
+                                Posted income less posted expenses
+                            </small>
+
                         </div>
 
-                        <p class="finance-panel-description">
-                            Latest posted financial activity.
-                        </p>
+                        <div class="rounded-circle
+                                    bg-success-subtle
+                                    p-3">
+
+                            <i class="bi bi-wallet2
+                                      text-success fs-4"></i>
+
+                        </div>
 
                     </div>
-
-                    <a href="{% url 'finance:transactions' %}"
-                       class="btn btn-sm btn-outline-primary finance-btn">
-
-                        <span>View All</span>
-
-                        <i class="bi bi-arrow-right"></i>
-
-                    </a>
 
                 </div>
 
             </div>
 
+        </div>
 
-            <div class="finance-panel-body">
 
-                {% if recent_transactions %}
+        <!-- POSTED INCOME -->
+        <div class="col-12 col-md-6 col-xl-3">
 
-                    <div class="finance-table-wrapper">
+            <div class="card border-0 shadow-sm h-100">
 
-                        <table class="table finance-table
-                                      table-hover
-                                      align-middle">
+                <div class="card-body">
 
-                            <thead>
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-start">
 
-                                <tr>
+                        <div>
 
-                                    <th>
-                                        Reference
-                                    </th>
+                            <p class="text-muted small mb-1">
+                                Posted Income
+                            </p>
 
-                                    <th>
-                                        Type
-                                    </th>
+                            <h3 class="fw-bold mb-1 text-success">
+                                KES
+                                {{ total_income|default:"0.00"|floatformat:2 }}
+                            </h3>
 
-                                    <th>
-                                        Category
-                                    </th>
-
-                                    <th class="text-end">
-                                        Amount
-                                    </th>
-
-                                    <th>
-                                        Date
-                                    </th>
-
-                                </tr>
-
-                            </thead>
-
-
-                            <tbody>
-
-                                {% for transaction in recent_transactions %}
-
-                                    <tr>
-
-                                        <!-- Reference -->
-
-                                        <td>
-
-                                            <a href="{% url 'finance:transaction_detail' transaction.pk %}"
-                                               class="transaction-number text-decoration-none">
-
-                                                {{ transaction.transaction_number }}
-
-                                            </a>
-
-                                            {% if transaction.reference %}
-
-                                                <div class="transaction-reference">
-
-                                                    {{ transaction.reference }}
-
-                                                </div>
-
-                                            {% endif %}
-
-                                        </td>
-
-
-                                        <!-- Type -->
-
-                                        <td>
-
-                                            {% if transaction.is_income %}
-
-                                                <span class="transaction-badge
-                                                             bg-success-subtle
-                                                             text-success">
-
-                                                    <i class="bi bi-arrow-down-left"></i>
-
-                                                    Income
-
-                                                </span>
-
-                                            {% elif transaction.is_expense %}
-
-                                                <span class="transaction-badge
-                                                             bg-danger-subtle
-                                                             text-danger">
-
-                                                    <i class="bi bi-arrow-up-right"></i>
-
-                                                    Expense
-
-                                                </span>
-
-                                            {% else %}
-
-                                                <span class="transaction-badge
-                                                             bg-secondary-subtle
-                                                             text-secondary">
-
-                                                    {{ transaction.transaction_type|title }}
-
-                                                </span>
-
-                                            {% endif %}
-
-                                        </td>
-
-
-                                        <!-- Category -->
-
-                                        <td>
-
-                                            {% if transaction.category %}
-
-                                                <span class="small fw-semibold">
-
-                                                    {{ transaction.category.name }}
-
-                                                </span>
-
-                                            {% else %}
-
-                                                <span class="text-muted">
-                                                    —
-                                                </span>
-
-                                            {% endif %}
-
-                                        </td>
-
-
-                                        <!-- Amount -->
-
-                                        <td class="text-end">
-
-                                            {% if transaction.is_income %}
-
-                                                <span class="fw-bold text-success
-                                                             text-nowrap">
-
-                                                    + KES
-                                                    {{ transaction.amount|floatformat:2 }}
-
-                                                </span>
-
-                                            {% elif transaction.is_expense %}
-
-                                                <span class="fw-bold text-danger
-                                                             text-nowrap">
-
-                                                    − KES
-                                                    {{ transaction.amount|floatformat:2 }}
-
-                                                </span>
-
-                                            {% else %}
-
-                                                <span class="fw-semibold text-nowrap">
-
-                                                    KES
-                                                    {{ transaction.amount|floatformat:2 }}
-
-                                                </span>
-
-                                            {% endif %}
-
-                                        </td>
-
-
-                                        <!-- Date -->
-
-                                        <td>
-
-                                            {% if transaction.transaction_date %}
-
-                                                <span class="small text-muted text-nowrap">
-
-                                                    {{ transaction.transaction_date|date:"d M Y" }}
-
-                                                </span>
-
-                                                <div class="small text-muted">
-
-                                                    {{ transaction.transaction_date|date:"H:i" }}
-
-                                                </div>
-
-                                            {% else %}
-
-                                                <span class="text-muted">
-                                                    —
-                                                </span>
-
-                                            {% endif %}
-
-                                        </td>
-
-                                    </tr>
-
-                                {% endfor %}
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-                {% else %}
-
-                    <div class="text-center py-5 px-4">
-
-                        <div class="finance-empty-icon mb-3">
-
-                            <i class="bi bi-journal-x"></i>
+                            <small class="text-muted">
+                                Income affecting the balance
+                            </small>
 
                         </div>
 
-                        <h6 class="fw-bold mb-2">
-                            No Posted Transactions
-                        </h6>
+                        <div class="rounded-circle
+                                    bg-success-subtle
+                                    p-3">
 
-                        <p class="text-muted small
-                                  mx-auto
-                                  mb-3"
-                           style="max-width:460px;">
+                            <i class="bi bi-arrow-down-left
+                                      text-success fs-4"></i>
 
-                            Posted financial transactions will appear
-                            here once income or expenses have been
-                            officially posted.
+                        </div>
 
-                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- POSTED EXPENSES -->
+        <div class="col-12 col-md-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-start">
+
+                        <div>
+
+                            <p class="text-muted small mb-1">
+                                Posted Expenses
+                            </p>
+
+                            <h3 class="fw-bold mb-1 text-danger">
+                                KES
+                                {{ total_expenses|default:"0.00"|floatformat:2 }}
+                            </h3>
+
+                            <small class="text-muted">
+                                Expenses affecting the balance
+                            </small>
+
+                        </div>
+
+                        <div class="rounded-circle
+                                    bg-danger-subtle
+                                    p-3">
+
+                            <i class="bi bi-arrow-up-right
+                                      text-danger fs-4"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PENDING EXPENSES -->
+        <div class="col-12 col-md-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-start">
+
+                        <div>
+
+                            <p class="text-muted small mb-1">
+                                Pending Expenses
+                            </p>
+
+                            <h3 class="fw-bold mb-1">
+                                {{ pending_expenses|default:"0" }}
+                            </h3>
+
+                            <small class="text-muted">
+                                Awaiting processing
+                            </small>
+
+                        </div>
+
+                        <div class="rounded-circle
+                                    bg-warning-subtle
+                                    p-3">
+
+                            <i class="bi bi-hourglass-split
+                                      text-warning fs-4"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FINANCE STATUS NOTICE
+    ====================================================== -->
+    {% if available_balance is not None %}
+
+        {% if available_balance < 0 %}
+
+            <div class="alert alert-danger border-0 shadow-sm
+                        d-flex align-items-start gap-3 mb-4">
+
+                <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+
+                <div>
+                    <strong>Negative available balance</strong>
+
+                    <div class="small mt-1">
+                        Posted expenses currently exceed posted income.
+                        Review the financial transactions and reconciliation records.
+                    </div>
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+    <div class="row g-4">
+
+        <!-- =================================================
+             RECENT TRANSACTIONS
+        ================================================== -->
+        <div class="col-12 col-xl-8">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-header bg-transparent
+                            border-0 pt-4 px-4">
+
+                    <div class="d-flex flex-column
+                                flex-sm-row
+                                justify-content-between
+                                align-items-sm-center
+                                gap-2">
+
+                        <div>
+
+                            <h5 class="fw-bold mb-1">
+                                Recent Transactions
+                            </h5>
+
+                            <p class="text-muted small mb-0">
+                                Latest posted financial activity.
+                            </p>
+
+                        </div>
 
                         <a href="{% url 'finance:transactions' %}"
-                           class="btn btn-sm btn-outline-primary finance-btn">
+                           class="btn btn-sm btn-outline-primary">
 
-                            <i class="bi bi-journal-text"></i>
-
-                            View Transactions
+                            View All
+                            <i class="bi bi-arrow-right ms-1"></i>
 
                         </a>
 
                     </div>
 
-                {% endif %}
+                </div>
+
+
+                <div class="card-body px-4">
+
+                    {% if recent_transactions %}
+
+                        <div class="table-responsive">
+
+                            <table class="table align-middle
+                                          table-hover mb-0">
+
+                                <thead class="table-light">
+
+                                    <tr>
+
+                                        <th>
+                                            Reference
+                                        </th>
+
+                                        <th>
+                                            Type
+                                        </th>
+
+                                        <th>
+                                            Category
+                                        </th>
+
+                                        <th class="text-end">
+                                            Amount
+                                        </th>
+
+                                        <th>
+                                            Date
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+                                    {% for transaction in recent_transactions %}
+
+                                        <tr>
+
+                                            <!-- Reference -->
+                                            <td>
+
+                                                <a href="{% url 'finance:transaction_detail' transaction.pk %}"
+                                                   class="fw-semibold
+                                                          text-decoration-none">
+
+                                                    {{ transaction.transaction_number }}
+
+                                                </a>
+
+                                                {% if transaction.reference %}
+
+                                                    <div>
+                                                        <small class="text-muted">
+                                                            {{ transaction.reference }}
+                                                        </small>
+                                                    </div>
+
+                                                {% endif %}
+
+                                            </td>
+
+
+                                            <!-- Type -->
+                                            <td>
+
+                                                {% if transaction.is_income %}
+
+                                                    <span class="badge
+                                                                 bg-success-subtle
+                                                                 text-success">
+
+                                                        <i class="bi bi-arrow-down-left me-1"></i>
+                                                        Income
+
+                                                    </span>
+
+                                                {% elif transaction.is_expense %}
+
+                                                    <span class="badge
+                                                                 bg-danger-subtle
+                                                                 text-danger">
+
+                                                        <i class="bi bi-arrow-up-right me-1"></i>
+                                                        Expense
+
+                                                    </span>
+
+                                                {% else %}
+
+                                                    <span class="badge
+                                                                 bg-secondary-subtle
+                                                                 text-secondary">
+
+                                                        {{ transaction.transaction_type|title }}
+
+                                                    </span>
+
+                                                {% endif %}
+
+                                            </td>
+
+
+                                            <!-- Category -->
+                                            <td>
+
+                                                {% if transaction.category %}
+
+                                                    {{ transaction.category.name }}
+
+                                                {% else %}
+
+                                                    <span class="text-muted">
+                                                        —
+                                                    </span>
+
+                                                {% endif %}
+
+                                            </td>
+
+
+                                            <!-- Amount -->
+                                            <td class="text-end">
+
+                                                {% if transaction.is_income %}
+
+                                                    <span class="fw-bold text-success">
+                                                        + KES
+                                                        {{ transaction.amount|floatformat:2 }}
+                                                    </span>
+
+                                                {% elif transaction.is_expense %}
+
+                                                    <span class="fw-bold text-danger">
+                                                        − KES
+                                                        {{ transaction.amount|floatformat:2 }}
+                                                    </span>
+
+                                                {% else %}
+
+                                                    <span class="fw-semibold">
+                                                        KES
+                                                        {{ transaction.amount|floatformat:2 }}
+                                                    </span>
+
+                                                {% endif %}
+
+                                            </td>
+
+
+                                            <!-- Date -->
+                                            <td>
+
+                                                {% if transaction.transaction_date %}
+
+                                                    <span class="text-muted">
+                                                        {{ transaction.transaction_date|date:"d M Y" }}
+                                                    </span>
+
+                                                    <br>
+
+                                                    <small class="text-muted">
+                                                        {{ transaction.transaction_date|date:"H:i" }}
+                                                    </small>
+
+                                                {% else %}
+
+                                                    <span class="text-muted">
+                                                        —
+                                                    </span>
+
+                                                {% endif %}
+
+                                            </td>
+
+                                        </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="text-center py-5">
+
+                            <div class="mb-3">
+
+                                <div class="d-inline-flex
+                                            align-items-center
+                                            justify-content-center
+                                            rounded-circle
+                                            bg-light"
+                                     style="width:72px;height:72px;">
+
+                                    <i class="bi bi-journal-x
+                                              fs-2 text-muted"></i>
+
+                                </div>
+
+                            </div>
+
+                            <h6 class="fw-semibold mt-3">
+                                No Posted Transactions
+                            </h6>
+
+                            <p class="text-muted mb-3">
+                                Posted financial transactions will appear here
+                                once income or expenses have been officially posted.
+                            </p>
+
+                            <a href="{% url 'finance:transactions' %}"
+                               class="btn btn-sm btn-outline-primary">
+
+                                <i class="bi bi-journal-text me-1"></i>
+                                View Transactions
+
+                            </a>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             EXPENSE WORKFLOW
+        ================================================== -->
+        <div class="col-12 col-xl-4">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-header bg-transparent
+                            border-0 pt-4 px-4">
+
+                    <h5 class="fw-bold mb-1">
+                        Expense Workflow
+                    </h5>
+
+                    <p class="text-muted small mb-0">
+                        Current expense processing activity.
+                    </p>
+
+                </div>
+
+
+                <div class="card-body px-4">
+
+                    <!-- Draft -->
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-center
+                                border-bottom
+                                py-3">
+
+                        <div class="d-flex align-items-center gap-2">
+
+                            <i class="bi bi-pencil-square text-secondary"></i>
+
+                            <span>
+                                Draft
+                            </span>
+
+                        </div>
+
+                        <span class="badge bg-secondary">
+                            {{ draft_expenses|default:"0" }}
+                        </span>
+
+                    </div>
+
+
+                    <!-- Submitted -->
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-center
+                                border-bottom
+                                py-3">
+
+                        <div class="d-flex align-items-center gap-2">
+
+                            <i class="bi bi-send text-info"></i>
+
+                            <span>
+                                Submitted
+                            </span>
+
+                        </div>
+
+                        <span class="badge bg-info">
+                            {{ submitted_expenses|default:"0" }}
+                        </span>
+
+                    </div>
+
+
+                    <!-- Approved -->
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-center
+                                border-bottom
+                                py-3">
+
+                        <div class="d-flex align-items-center gap-2">
+
+                            <i class="bi bi-check2-circle text-primary"></i>
+
+                            <span>
+                                Approved
+                            </span>
+
+                        </div>
+
+                        <span class="badge bg-primary">
+                            {{ approved_expenses|default:"0" }}
+                        </span>
+
+                    </div>
+
+
+                    <!-- Paid -->
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-center
+                                border-bottom
+                                py-3">
+
+                        <div class="d-flex align-items-center gap-2">
+
+                            <i class="bi bi-check-circle-fill text-success"></i>
+
+                            <span>
+                                Paid
+                            </span>
+
+                        </div>
+
+                        <span class="badge bg-success">
+                            {{ paid_expenses|default:"0" }}
+                        </span>
+
+                    </div>
+
+
+                    <!-- Rejected / Voided -->
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-center
+                                py-3">
+
+                        <div class="d-flex align-items-center gap-2">
+
+                            <i class="bi bi-x-circle text-danger"></i>
+
+                            <span>
+                                Rejected / Voided
+                            </span>
+
+                        </div>
+
+                        <span class="badge bg-danger">
+                            {{ rejected_voided_expenses|default:"0" }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="mt-3">
+
+                        <a href="{% url 'finance:expenses' %}"
+                           class="btn btn-outline-primary w-100">
+
+                            <i class="bi bi-receipt me-1"></i>
+                            Manage Expenses
+
+                        </a>
+
+                    </div>
+
+                </div>
 
             </div>
 
@@ -1196,382 +715,143 @@
 
 
     <!-- =====================================================
-         EXPENSE WORKFLOW
-         ===================================================== -->
+         QUICK ACTIONS
+    ====================================================== -->
+    <div class="card border-0 shadow-sm mt-4">
 
-    <div class="col-12 col-xl-4">
+        <div class="card-body p-4">
 
-        <div class="finance-panel h-100">
+            <div class="mb-3">
 
-            <div class="finance-panel-header">
+                <h5 class="fw-bold mb-1">
+                    Finance Management
+                </h5>
 
-                <div class="finance-panel-title">
-                    Expense Workflow
-                </div>
-
-                <p class="finance-panel-description">
-                    Current expense processing activity.
+                <p class="text-muted small mb-0">
+                    Access KUCSA financial management tools.
                 </p>
 
             </div>
 
 
-            <div class="card-body px-3 px-md-4">
+            <div class="row g-3">
 
+                <!-- Income -->
+                <div class="col-12 col-md-6 col-lg-3">
 
-                <!-- Draft -->
+                    <a href="{% url 'finance:income' %}"
+                       class="btn btn-light border
+                              w-100 text-start p-3 h-100">
 
-                <div class="workflow-item">
+                        <div class="d-flex align-items-start gap-2">
 
-                    <div class="workflow-label">
+                            <i class="bi bi-cash-stack
+                                      text-success fs-5"></i>
 
-                        <span class="workflow-icon
-                                     bg-secondary-subtle
-                                     text-secondary">
+                            <div>
 
-                            <i class="bi bi-pencil-square"></i>
+                                <strong>
+                                    Income
+                                </strong>
 
-                        </span>
+                                <div class="small text-muted mt-1">
+                                    View and manage income records
+                                </div>
 
-                        Draft
+                            </div>
 
-                    </div>
+                        </div>
 
-                    <span class="workflow-count
-                                 bg-secondary-subtle
-                                 text-secondary">
-
-                        {{ draft_expenses|default:"0" }}
-
-                    </span>
-
-                </div>
-
-
-                <!-- Submitted -->
-
-                <div class="workflow-item">
-
-                    <div class="workflow-label">
-
-                        <span class="workflow-icon
-                                     bg-info-subtle
-                                     text-info">
-
-                            <i class="bi bi-send"></i>
-
-                        </span>
-
-                        Submitted
-
-                    </div>
-
-                    <span class="workflow-count
-                                 bg-info-subtle
-                                 text-info">
-
-                        {{ submitted_expenses|default:"0" }}
-
-                    </span>
+                    </a>
 
                 </div>
 
 
-                <!-- Approved -->
-
-                <div class="workflow-item">
-
-                    <div class="workflow-label">
-
-                        <span class="workflow-icon
-                                     bg-primary-subtle
-                                     text-primary">
-
-                            <i class="bi bi-check2-circle"></i>
-
-                        </span>
-
-                        Approved
-
-                    </div>
-
-                    <span class="workflow-count
-                                 bg-primary-subtle
-                                 text-primary">
-
-                        {{ approved_expenses|default:"0" }}
-
-                    </span>
-
-                </div>
-
-
-                <!-- Paid -->
-
-                <div class="workflow-item">
-
-                    <div class="workflow-label">
-
-                        <span class="workflow-icon
-                                     bg-success-subtle
-                                     text-success">
-
-                            <i class="bi bi-check-circle-fill"></i>
-
-                        </span>
-
-                        Paid
-
-                    </div>
-
-                    <span class="workflow-count
-                                 bg-success-subtle
-                                 text-success">
-
-                        {{ paid_expenses|default:"0" }}
-
-                    </span>
-
-                </div>
-
-
-                <!-- Rejected / Voided -->
-
-                <div class="workflow-item">
-
-                    <div class="workflow-label">
-
-                        <span class="workflow-icon
-                                     bg-danger-subtle
-                                     text-danger">
-
-                            <i class="bi bi-x-circle"></i>
-
-                        </span>
-
-                        Rejected / Voided
-
-                    </div>
-
-                    <span class="workflow-count
-                                 bg-danger-subtle
-                                 text-danger">
-
-                        {{ rejected_voided_expenses|default:"0" }}
-
-                    </span>
-
-                </div>
-
-
-                <div class="pt-3">
+                <!-- Expenses -->
+                <div class="col-12 col-md-6 col-lg-3">
 
                     <a href="{% url 'finance:expenses' %}"
-                       class="btn btn-outline-primary w-100 finance-btn">
+                       class="btn btn-light border
+                              w-100 text-start p-3 h-100">
 
-                        <i class="bi bi-receipt"></i>
+                        <div class="d-flex align-items-start gap-2">
 
-                        {% if user.is_kucsa_admin or user.is_treasurer %}
-                            Manage Expenses
-                        {% else %}
-                            View Expenses
-                        {% endif %}
+                            <i class="bi bi-receipt
+                                      text-danger fs-5"></i>
+
+                            <div>
+
+                                <strong>
+                                    Expenses
+                                </strong>
+
+                                <div class="small text-muted mt-1">
+                                    Manage expense records
+                                </div>
+
+                            </div>
+
+                        </div>
 
                     </a>
 
                 </div>
 
-            </div>
 
-        </div>
+                <!-- Reconciliation -->
+                <div class="col-12 col-md-6 col-lg-3">
 
-    </div>
+                    <a href="{% url 'finance:reconciliation' %}"
+                       class="btn btn-light border
+                              w-100 text-start p-3 h-100">
 
-</div>
+                        <div class="d-flex align-items-start gap-2">
 
+                            <i class="bi bi-arrow-left-right
+                                      text-primary fs-5"></i>
 
-<!-- =========================================================
-     QUICK ACTIONS
-     ========================================================= -->
+                            <div>
 
-<div class="finance-panel mt-4">
+                                <strong>
+                                    Reconciliation
+                                </strong>
 
-    <div class="finance-panel-header">
+                                <div class="small text-muted mt-1">
+                                    Compare financial records
+                                </div>
 
-        <div class="finance-panel-title">
-            Finance Management
-        </div>
+                            </div>
 
-        <p class="finance-panel-description">
-            Access the financial tools available to your account.
-        </p>
+                        </div>
 
-    </div>
+                    </a>
 
-
-    <div class="card-body p-3 p-md-4">
-
-        <div class="row g-3">
-
-
-            <!-- Income -->
-
-            <div class="col-12 col-sm-6 col-lg-4
-                        {% if user.is_kucsa_admin or user.is_treasurer %}
-                            col-xl-3
-                        {% else %}
-                            col-xl-4
-                        {% endif %}">
-
-                <a href="{% url 'finance:income' %}"
-                   class="quick-action">
-
-                    <span class="quick-action-arrow text-primary">
-                        <i class="bi bi-arrow-up-right"></i>
-                    </span>
-
-                    <div class="quick-action-icon
-                                bg-success-subtle
-                                text-success">
-
-                        <i class="bi bi-cash-stack"></i>
-
-                    </div>
-
-                    <div class="quick-action-title">
-                        Income
-                    </div>
-
-                    <div class="quick-action-description">
-
-                        View KUCSA income records and
-                        posted financial income.
-
-                    </div>
-
-                </a>
-
-            </div>
+                </div>
 
 
-            <!-- Expenses -->
-
-            <div class="col-12 col-sm-6 col-lg-4
-                        {% if user.is_kucsa_admin or user.is_treasurer %}
-                            col-xl-3
-                        {% else %}
-                            col-xl-4
-                        {% endif %}">
-
-                <a href="{% url 'finance:expenses' %}"
-                   class="quick-action">
-
-                    <span class="quick-action-arrow text-primary">
-                        <i class="bi bi-arrow-up-right"></i>
-                    </span>
-
-                    <div class="quick-action-icon
-                                bg-danger-subtle
-                                text-danger">
-
-                        <i class="bi bi-receipt"></i>
-
-                    </div>
-
-                    <div class="quick-action-title">
-
-                        {% if user.is_kucsa_admin or user.is_treasurer %}
-                            Expenses
-                        {% else %}
-                            Expense Records
-                        {% endif %}
-
-                    </div>
-
-                    <div class="quick-action-description">
-
-                        {% if user.is_kucsa_admin or user.is_treasurer %}
-                            Manage and process KUCSA expense records.
-                        {% else %}
-                            View KUCSA expense records and activity.
-                        {% endif %}
-
-                    </div>
-
-                </a>
-
-            </div>
-
-
-            <!-- Reconciliation -->
-
-            <div class="col-12 col-sm-6 col-lg-4
-                        {% if user.is_kucsa_admin or user.is_treasurer %}
-                            col-xl-3
-                        {% else %}
-                            col-xl-4
-                        {% endif %}">
-
-                <a href="{% url 'finance:reconciliation' %}"
-                   class="quick-action">
-
-                    <span class="quick-action-arrow text-primary">
-                        <i class="bi bi-arrow-up-right"></i>
-                    </span>
-
-                    <div class="quick-action-icon
-                                bg-primary-subtle
-                                text-primary">
-
-                        <i class="bi bi-arrow-left-right"></i>
-
-                    </div>
-
-                    <div class="quick-action-title">
-                        Reconciliation
-                    </div>
-
-                    <div class="quick-action-description">
-
-                        Review and compare KUCSA financial
-                        records and reconciliation activity.
-
-                    </div>
-
-                </a>
-
-            </div>
-
-
-            <!-- Categories -->
-
-            {% if user.is_kucsa_admin or user.is_treasurer %}
-
-                <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                <!-- Categories -->
+                <div class="col-12 col-md-6 col-lg-3">
 
                     <a href="{% url 'finance:categories' %}"
-                       class="quick-action">
+                       class="btn btn-light border
+                              w-100 text-start p-3 h-100">
 
-                        <span class="quick-action-arrow text-primary">
-                            <i class="bi bi-arrow-up-right"></i>
-                        </span>
+                        <div class="d-flex align-items-start gap-2">
 
-                        <div class="quick-action-icon
-                                    bg-warning-subtle
-                                    text-warning">
+                            <i class="bi bi-tags
+                                      text-warning fs-5"></i>
 
-                            <i class="bi bi-tags"></i>
+                            <div>
 
-                        </div>
+                                <strong>
+                                    Categories
+                                </strong>
 
-                        <div class="quick-action-title">
-                            Categories
-                        </div>
+                                <div class="small text-muted mt-1">
+                                    Manage finance categories
+                                </div>
 
-                        <div class="quick-action-description">
-
-                            Manage financial income and
-                            expense categories.
+                            </div>
 
                         </div>
 
@@ -1579,149 +859,33 @@
 
                 </div>
 
-            {% endif %}
+            </div>
 
         </div>
 
     </div>
 
-</div>
 
+    <!-- =====================================================
+         AUDIT ACCESS
+    ====================================================== -->
+    {% if can_view_audit_logs %}
 
-<!-- =========================================================
-     AUDIT LOG ACCESS
-     ========================================================= -->
+        <div class="mt-4 d-flex justify-content-end">
 
-{% if user.is_kucsa_admin or user.is_treasurer %}
+            <a href="{% url 'finance:audit_logs' %}"
+               class="btn btn-sm btn-outline-secondary">
 
-    <div class="mt-4
-                d-flex
-                justify-content-center
-                justify-content-md-end">
+                <i class="bi bi-shield-check me-1"></i>
+                Financial Audit Logs
 
-        <a href="{% url 'finance:audit_logs' %}"
-           class="btn btn-outline-secondary
-                  btn-sm
-                  audit-button
-                  px-3">
+            </a>
 
-            <i class="bi bi-shield-check me-1"></i>
+        </div>
 
-            Financial Audit Logs
+    {% endif %}
 
-        </a>
-
-    </div>
-
-{% endif %}
-```
 
 </div>
-
-<!-- =============================================================
-     INLINE JAVASCRIPT
-     ============================================================= -->
-
-<script>
-(function () {
-
-    "use strict";
-
-    /*
-     * KUCSA Finance Dashboard interactions.
-     *
-     * Lightweight JavaScript only.
-     * No external dependency required.
-     */
-
-    document.addEventListener("DOMContentLoaded", function () {
-
-        /* ---------------------------------------------------------
-           Prevent accidental double-clicks on action buttons
-           --------------------------------------------------------- */
-
-        const actionLinks = document.querySelectorAll(
-            ".finance-btn"
-        );
-
-        actionLinks.forEach(function (link) {
-
-            link.addEventListener("click", function () {
-
-                if (
-                    link.getAttribute("aria-disabled") === "true"
-                ) {
-                    return;
-                }
-
-                link.style.pointerEvents = "none";
-
-                window.setTimeout(function () {
-                    link.style.pointerEvents = "";
-                }, 900);
-
-            });
-
-        });
-
-
-        /* ---------------------------------------------------------
-           Responsive transaction table hint
-           --------------------------------------------------------- */
-
-        const tableWrappers = document.querySelectorAll(
-            ".finance-table-wrapper"
-        );
-
-        tableWrappers.forEach(function (wrapper) {
-
-            if (
-                wrapper.scrollWidth > wrapper.clientWidth
-            ) {
-
-                wrapper.setAttribute(
-                    "title",
-                    "Swipe or scroll horizontally to view more transaction details."
-                );
-
-            }
-
-        });
-
-
-        /* ---------------------------------------------------------
-           Keyboard accessibility
-           --------------------------------------------------------- */
-
-        const quickActions = document.querySelectorAll(
-            ".quick-action"
-        );
-
-        quickActions.forEach(function (action) {
-
-            action.addEventListener(
-                "keydown",
-                function (event) {
-
-                    if (
-                        event.key === "Enter"
-                        || event.key === " "
-                    ) {
-
-                        event.preventDefault();
-
-                        action.click();
-
-                    }
-
-                }
-            );
-
-        });
-
-    });
-
-})();
-</script>
 
 {% endblock %}

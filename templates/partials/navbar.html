@@ -1,7 +1,10 @@
 <style>
     /* ============================================================
        KUCSA NAVBAR — MODERN PRODUCTION UI
-       Scoped to .kucsa-navbar-wrapper / .kucsa-navbar
+       Sidebar integration:
+       - Desktop: sidebar remains visible
+       - Mobile/tablet: sidebar opens from left hamburger
+       - Breakpoint: 992px, matching navbar-expand-lg
        ============================================================ */
 
     .kucsa-navbar-wrapper {
@@ -23,16 +26,19 @@
         z-index: 1030;
     }
 
+
     /* ============================================================
        MAIN NAVBAR
        ============================================================ */
 
     .kucsa-navbar-wrapper .kucsa-navbar {
         min-height: 70px;
+
         padding-top: 0.5rem;
         padding-bottom: 0.5rem;
 
         background: var(--kucsa-nav-surface);
+
         border-bottom: 1px solid var(--kucsa-nav-border);
 
         box-shadow:
@@ -47,11 +53,13 @@
             background var(--kucsa-nav-transition);
     }
 
+
     .kucsa-navbar-wrapper .kucsa-navbar.is-scrolled {
         box-shadow:
             0 1px 2px rgba(0, 0, 0, 0.03),
             0 10px 30px rgba(20, 35, 55, 0.08);
     }
+
 
     /* ============================================================
        NAVBAR CONTAINER
@@ -60,6 +68,7 @@
     .kucsa-navbar-wrapper .kucsa-navbar > .container-fluid {
         min-height: 58px;
     }
+
 
     /* ============================================================
        BRAND
@@ -71,13 +80,16 @@
         justify-content: center;
 
         min-width: 0;
+
         padding: 0.25rem 0;
 
         color: var(--kucsa-nav-dark);
+
         text-decoration: none;
 
         font-size: 1.22rem;
         font-weight: 850;
+
         line-height: 1;
 
         letter-spacing: -0.025em;
@@ -88,14 +100,17 @@
             opacity var(--kucsa-nav-transition);
     }
 
+
     .kucsa-navbar-wrapper .navbar-brand:hover {
         color: var(--kucsa-nav-primary);
         transform: translateY(-1px);
     }
 
+
     .kucsa-navbar-wrapper .navbar-brand > span {
         white-space: nowrap;
     }
+
 
     .kucsa-navbar-wrapper .navbar-brand small {
         display: block;
@@ -106,38 +121,55 @@
 
         font-size: 0.58rem;
         font-weight: 700;
+
         line-height: 1;
 
         letter-spacing: 0.095em;
+
         text-transform: uppercase;
 
         white-space: nowrap;
     }
 
+
     /* ============================================================
-       LEFT MOBILE SIDEBAR BUTTON
-       This is intentionally on the LEFT side.
+       MOBILE SIDEBAR TOGGLE
+       
+       IMPORTANT:
+       This button controls:
+       
+       #kucsaSidebarOffcanvas
+       
+       from base.html.
+       
+       It is visible only below 992px.
        ============================================================ */
 
     .kucsa-navbar-wrapper .kucsa-sidebar-toggle {
         width: 42px;
         height: 42px;
 
-        display: inline-flex;
+        display: none;
+
         align-items: center;
         justify-content: center;
 
-        flex-shrink: 0;
+        flex: 0 0 42px;
 
         padding: 0;
 
         border: 1px solid var(--kucsa-nav-border);
+
         border-radius: 11px;
 
         background: var(--kucsa-nav-soft);
+
         color: var(--kucsa-nav-dark);
 
-        box-shadow: 0 2px 8px rgba(20, 35, 55, 0.035);
+        box-shadow:
+            0 2px 8px rgba(20, 35, 55, 0.035);
+
+        cursor: pointer;
 
         transition:
             background var(--kucsa-nav-transition),
@@ -147,30 +179,62 @@
             box-shadow var(--kucsa-nav-transition);
     }
 
+
     .kucsa-navbar-wrapper .kucsa-sidebar-toggle:hover {
         background: rgba(var(--kucsa-nav-primary-rgb), 0.08);
-        border-color: rgba(var(--kucsa-nav-primary-rgb), 0.2);
+
+        border-color:
+            rgba(var(--kucsa-nav-primary-rgb), 0.2);
+
         color: var(--kucsa-nav-primary);
+
         transform: translateY(-1px);
-        box-shadow: 0 5px 14px rgba(var(--kucsa-nav-primary-rgb), 0.1);
+
+        box-shadow:
+            0 5px 14px
+            rgba(var(--kucsa-nav-primary-rgb), 0.1);
     }
+
 
     .kucsa-navbar-wrapper .kucsa-sidebar-toggle:active {
         transform: scale(0.96);
     }
 
+
     .kucsa-navbar-wrapper .kucsa-sidebar-toggle:focus-visible {
         outline: none;
+
         border-color: var(--kucsa-nav-primary);
+
         box-shadow:
-            0 0 0 3px rgba(var(--kucsa-nav-primary-rgb), 0.14),
-            0 5px 14px rgba(var(--kucsa-nav-primary-rgb), 0.1);
+            0 0 0 3px
+            rgba(var(--kucsa-nav-primary-rgb), 0.14),
+
+            0 5px 14px
+            rgba(var(--kucsa-nav-primary-rgb), 0.1);
     }
+
 
     .kucsa-navbar-wrapper .kucsa-sidebar-toggle i {
         font-size: 1.25rem;
+
         line-height: 1;
+
+        transition:
+            transform 180ms ease;
     }
+
+
+    /*
+     * When the sidebar is open, the icon becomes an X.
+     */
+
+    .kucsa-navbar-wrapper
+    .kucsa-sidebar-toggle.is-open
+    i {
+        transform: rotate(90deg);
+    }
+
 
     /* ============================================================
        RIGHT NAVBAR MENU TOGGLE
@@ -181,15 +245,20 @@
         height: 42px;
 
         display: inline-flex;
+
         align-items: center;
         justify-content: center;
+
+        flex: 0 0 42px;
 
         padding: 0;
 
         border: 1px solid var(--kucsa-nav-border);
+
         border-radius: 11px;
 
         background: #fff;
+
         color: var(--kucsa-nav-text);
 
         transition:
@@ -199,17 +268,34 @@
             transform var(--kucsa-nav-transition);
     }
 
+
     .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle:hover {
         background: var(--kucsa-nav-soft);
-        border-color: rgba(var(--kucsa-nav-primary-rgb), 0.2);
+
+        border-color:
+            rgba(var(--kucsa-nav-primary-rgb), 0.2);
+
         color: var(--kucsa-nav-primary);
+
+        transform: translateY(-1px);
     }
+
+
+    .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle:active {
+        transform: scale(0.96);
+    }
+
 
     .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle:focus-visible {
         outline: none;
+
         border-color: var(--kucsa-nav-primary);
-        box-shadow: 0 0 0 3px rgba(var(--kucsa-nav-primary-rgb), 0.14);
+
+        box-shadow:
+            0 0 0 3px
+            rgba(var(--kucsa-nav-primary-rgb), 0.14);
     }
+
 
     /* ============================================================
        DESKTOP NAVIGATION
@@ -219,8 +305,10 @@
         gap: 0.18rem;
     }
 
+
     .kucsa-navbar-wrapper .nav-link {
         display: inline-flex;
+
         align-items: center;
         justify-content: center;
 
@@ -234,6 +322,7 @@
 
         font-size: 0.86rem;
         font-weight: 550;
+
         line-height: 1.2;
 
         text-decoration: none;
@@ -244,31 +333,48 @@
             transform var(--kucsa-nav-transition);
     }
 
+
     .kucsa-navbar-wrapper .nav-link i {
         font-size: 0.95rem;
-        transition: transform var(--kucsa-nav-transition);
+
+        transition:
+            transform var(--kucsa-nav-transition);
     }
 
+
     .kucsa-navbar-wrapper .nav-link:hover {
-        background: rgba(var(--kucsa-nav-primary-rgb), 0.065);
+        background:
+            rgba(var(--kucsa-nav-primary-rgb), 0.065);
+
         color: var(--kucsa-nav-primary);
+
         transform: translateY(-1px);
     }
+
 
     .kucsa-navbar-wrapper .nav-link:hover i {
         transform: translateY(-1px);
     }
 
+
     .kucsa-navbar-wrapper .nav-link.active {
-        background: rgba(var(--kucsa-nav-primary-rgb), 0.1);
+        background:
+            rgba(var(--kucsa-nav-primary-rgb), 0.1);
+
         color: var(--kucsa-nav-primary);
+
         font-weight: 650;
     }
 
+
     .kucsa-navbar-wrapper .nav-link:focus-visible {
         outline: none;
-        box-shadow: 0 0 0 3px rgba(var(--kucsa-nav-primary-rgb), 0.13);
+
+        box-shadow:
+            0 0 0 3px
+            rgba(var(--kucsa-nav-primary-rgb), 0.13);
     }
+
 
     /* ============================================================
        PAYMENT STATUS ALERT
@@ -276,8 +382,10 @@
 
     .kucsa-navbar-wrapper .payment-alert {
         display: inline-flex;
+
         align-items: center;
         justify-content: center;
+
         gap: 0.45rem;
 
         min-height: 38px;
@@ -285,13 +393,16 @@
         padding: 0.48rem 0.78rem;
 
         border: 1px solid rgba(255, 193, 7, 0.25);
+
         border-radius: 9px;
 
         background: rgba(255, 193, 7, 0.1);
+
         color: #765900;
 
         font-size: 0.73rem;
         font-weight: 700;
+
         line-height: 1.2;
 
         text-decoration: none;
@@ -306,17 +417,26 @@
             box-shadow var(--kucsa-nav-transition);
     }
 
+
     .kucsa-navbar-wrapper .payment-alert i {
         font-size: 0.9rem;
     }
 
+
     .kucsa-navbar-wrapper .payment-alert:hover {
         background: rgba(255, 193, 7, 0.17);
+
         border-color: rgba(255, 193, 7, 0.38);
+
         color: #5b4500;
+
         transform: translateY(-1px);
-        box-shadow: 0 5px 14px rgba(255, 193, 7, 0.12);
+
+        box-shadow:
+            0 5px 14px
+            rgba(255, 193, 7, 0.12);
     }
+
 
     /* ============================================================
        USER MENU
@@ -326,11 +446,17 @@
         min-height: 44px;
 
         display: inline-flex;
+
         align-items: center;
 
-        padding: 0.18rem 0.28rem 0.18rem 0.2rem;
+        padding:
+            0.18rem
+            0.28rem
+            0.18rem
+            0.2rem;
 
         border: 1px solid transparent;
+
         border-radius: 24px;
 
         background: transparent;
@@ -341,22 +467,34 @@
             box-shadow var(--kucsa-nav-transition);
     }
 
+
     .kucsa-navbar-wrapper .navbar-user-trigger:hover {
         background: var(--kucsa-nav-soft);
+
         border-color: var(--kucsa-nav-border);
     }
 
+
     .kucsa-navbar-wrapper .navbar-user-trigger:focus-visible {
         outline: none;
-        border-color: rgba(var(--kucsa-nav-primary-rgb), 0.3);
-        box-shadow: 0 0 0 3px rgba(var(--kucsa-nav-primary-rgb), 0.1);
+
+        border-color:
+            rgba(var(--kucsa-nav-primary-rgb), 0.3);
+
+        box-shadow:
+            0 0 0 3px
+            rgba(var(--kucsa-nav-primary-rgb), 0.1);
     }
+
 
     .kucsa-navbar-wrapper .navbar-user {
         display: inline-flex;
+
         align-items: center;
+
         gap: 0.62rem;
     }
+
 
     .kucsa-navbar-wrapper .navbar-avatar,
     .kucsa-navbar-wrapper .navbar-default-avatar {
@@ -368,6 +506,7 @@
         border-radius: 50%;
     }
 
+
     .kucsa-navbar-wrapper .navbar-avatar {
         object-fit: cover;
 
@@ -376,20 +515,27 @@
         background: #f1f3f5;
 
         box-shadow:
-            0 2px 7px rgba(20, 35, 55, 0.12),
-            0 0 0 1px rgba(20, 35, 55, 0.06);
+            0 2px 7px
+            rgba(20, 35, 55, 0.12),
+
+            0 0 0 1px
+            rgba(20, 35, 55, 0.06);
     }
+
 
     .kucsa-navbar-wrapper .navbar-default-avatar {
         display: inline-flex;
+
         align-items: center;
         justify-content: center;
 
         background: #edf0f4;
+
         color: #697586;
 
         font-size: 1.65rem;
     }
+
 
     .kucsa-navbar-wrapper .navbar-user-name {
         display: block;
@@ -397,15 +543,19 @@
         max-width: 170px;
 
         overflow: hidden;
+
         text-overflow: ellipsis;
+
         white-space: nowrap;
 
         color: var(--kucsa-nav-dark);
 
         font-size: 0.82rem;
         font-weight: 700;
+
         line-height: 1.25;
     }
+
 
     .kucsa-navbar-wrapper .navbar-user-role {
         display: block;
@@ -416,8 +566,10 @@
 
         font-size: 0.66rem;
         font-weight: 550;
+
         line-height: 1.15;
     }
+
 
     /* ============================================================
        DROPDOWN
@@ -427,31 +579,47 @@
         min-width: 255px;
 
         margin-top: 0.65rem !important;
+
         padding: 0.45rem;
 
         border: 1px solid var(--kucsa-nav-border);
+
         border-radius: 14px;
 
         background: rgba(255, 255, 255, 0.98);
 
         box-shadow:
-            0 18px 50px rgba(20, 35, 55, 0.13),
-            0 3px 10px rgba(20, 35, 55, 0.05);
+            0 18px 50px
+            rgba(20, 35, 55, 0.13),
 
-        animation: kucsaNavbarDropdown 180ms ease-out both;
+            0 3px 10px
+            rgba(20, 35, 55, 0.05);
+
+        animation:
+            kucsaNavbarDropdown
+            180ms ease-out both;
     }
 
+
     @keyframes kucsaNavbarDropdown {
+
         from {
             opacity: 0;
-            transform: translateY(7px) scale(0.985);
+
+            transform:
+                translateY(7px)
+                scale(0.985);
         }
 
         to {
             opacity: 1;
-            transform: translateY(0) scale(1);
+
+            transform:
+                translateY(0)
+                scale(1);
         }
     }
+
 
     .kucsa-navbar-wrapper .dropdown-header {
         padding: 0.82rem 0.85rem;
@@ -463,21 +631,29 @@
         background: var(--kucsa-nav-soft);
     }
 
+
     .kucsa-navbar-wrapper .dropdown-header strong {
         color: var(--kucsa-nav-dark);
+
         font-size: 0.86rem;
     }
 
-    .kucsa-navbar-wrapper .dropdown-header .text-muted {
+
+    .kucsa-navbar-wrapper
+    .dropdown-header
+    .text-muted {
         color: var(--kucsa-nav-muted) !important;
     }
+
 
     .kucsa-navbar-wrapper .dropdown-divider {
         opacity: 0.65;
     }
 
+
     .kucsa-navbar-wrapper .dropdown-item {
         display: flex;
+
         align-items: center;
 
         min-height: 40px;
@@ -497,6 +673,7 @@
             transform var(--kucsa-nav-transition);
     }
 
+
     .kucsa-navbar-wrapper .dropdown-item i {
         width: 23px;
 
@@ -511,35 +688,57 @@
             transform var(--kucsa-nav-transition);
     }
 
-    .kucsa-navbar-wrapper .dropdown-item:hover,
-    .kucsa-navbar-wrapper .dropdown-item:focus {
-        background: rgba(var(--kucsa-nav-primary-rgb), 0.075);
+
+    .kucsa-navbar-wrapper
+    .dropdown-item:hover,
+    .kucsa-navbar-wrapper
+    .dropdown-item:focus {
+        background:
+            rgba(var(--kucsa-nav-primary-rgb), 0.075);
+
         color: var(--kucsa-nav-primary);
     }
 
-    .kucsa-navbar-wrapper .dropdown-item:hover i,
-    .kucsa-navbar-wrapper .dropdown-item:focus i {
+
+    .kucsa-navbar-wrapper
+    .dropdown-item:hover i,
+    .kucsa-navbar-wrapper
+    .dropdown-item:focus i {
         color: var(--kucsa-nav-primary);
+
         transform: translateX(1px);
     }
 
-    .kucsa-navbar-wrapper .dropdown-item:focus-visible {
+
+    .kucsa-navbar-wrapper
+    .dropdown-item:focus-visible {
         outline: none;
-        box-shadow: inset 0 0 0 2px rgba(var(--kucsa-nav-primary-rgb), 0.15);
+
+        box-shadow:
+            inset 0 0 0 2px
+            rgba(var(--kucsa-nav-primary-rgb), 0.15);
     }
 
-    .kucsa-navbar-wrapper .dropdown-item.logout-item {
+
+    .kucsa-navbar-wrapper
+    .dropdown-item.logout-item {
         color: var(--kucsa-nav-danger);
     }
 
-    .kucsa-navbar-wrapper .dropdown-item.logout-item i {
+
+    .kucsa-navbar-wrapper
+    .dropdown-item.logout-item i {
         color: var(--kucsa-nav-danger);
     }
 
-    .kucsa-navbar-wrapper .dropdown-item.logout-item:hover {
+
+    .kucsa-navbar-wrapper
+    .dropdown-item.logout-item:hover {
         background: rgba(220, 53, 69, 0.07);
+
         color: #b02a37;
     }
+
 
     /* ============================================================
        LOGGED-OUT NAVIGATION
@@ -549,10 +748,12 @@
         min-height: 40px;
     }
 
+
     .kucsa-navbar-wrapper .kucsa-register-button {
         min-height: 40px;
 
         display: inline-flex;
+
         align-items: center;
         justify-content: center;
 
@@ -564,72 +765,134 @@
         font-size: 0.82rem;
         font-weight: 650;
 
-        box-shadow: 0 4px 12px rgba(var(--kucsa-nav-primary-rgb), 0.15);
+        box-shadow:
+            0 4px 12px
+            rgba(var(--kucsa-nav-primary-rgb), 0.15);
 
         transition:
             transform var(--kucsa-nav-transition),
             box-shadow var(--kucsa-nav-transition);
     }
 
-    .kucsa-navbar-wrapper .kucsa-register-button:hover {
+
+    .kucsa-navbar-wrapper
+    .kucsa-register-button:hover {
         transform: translateY(-1px);
-        box-shadow: 0 7px 18px rgba(var(--kucsa-nav-primary-rgb), 0.2);
+
+        box-shadow:
+            0 7px 18px
+            rgba(var(--kucsa-nav-primary-rgb), 0.2);
     }
 
+
     /* ============================================================
-       MOBILE / TABLET NAVIGATION
+       MOBILE / TABLET
+       
+       IMPORTANT BREAKPOINT:
+       991.98px
+       
+       This matches:
+       - navbar-expand-lg
+       - offcanvas-lg
+       - base.html sidebar behavior
        ============================================================ */
 
     @media (max-width: 991.98px) {
 
         .kucsa-navbar-wrapper .kucsa-navbar {
+
             min-height: 64px;
+
             padding-top: 0.4rem;
+
             padding-bottom: 0.4rem;
         }
 
-        .kucsa-navbar-wrapper .kucsa-navbar > .container-fluid {
+
+        .kucsa-navbar-wrapper
+        .kucsa-navbar
+        > .container-fluid {
+
             min-height: 54px;
         }
 
+
         /*
-         * Navbar collapse becomes a clean mobile panel.
+         * The sidebar hamburger is ALWAYS visible below
+         * the desktop breakpoint.
          */
 
-        .kucsa-navbar-wrapper .navbar-collapse {
+        .kucsa-navbar-wrapper
+        .kucsa-sidebar-toggle {
+
+            display: inline-flex;
+        }
+
+
+        /*
+         * Mobile navbar menu.
+         */
+
+        .kucsa-navbar-wrapper
+        .navbar-collapse {
+
             margin-top: 0.65rem;
+
             padding: 0.7rem;
 
-            border: 1px solid var(--kucsa-nav-border);
+            border:
+                1px solid
+                var(--kucsa-nav-border);
+
             border-radius: 14px;
 
             background: rgba(255, 255, 255, 0.99);
 
             box-shadow:
-                0 15px 40px rgba(20, 35, 55, 0.09);
+                0 15px 40px
+                rgba(20, 35, 55, 0.09);
 
-            max-height: calc(100vh - 82px);
+            max-height:
+                calc(100vh - 82px);
+
             overflow-y: auto;
+
             -webkit-overflow-scrolling: touch;
         }
 
-        .kucsa-navbar-wrapper .navbar-collapse .navbar-nav {
+
+        .kucsa-navbar-wrapper
+        .navbar-collapse
+        .navbar-nav {
+
             gap: 0.2rem;
         }
 
-        .kucsa-navbar-wrapper .navbar-collapse .nav-link {
+
+        .kucsa-navbar-wrapper
+        .navbar-collapse
+        .nav-link {
+
             width: 100%;
+
             justify-content: flex-start;
 
             min-height: 44px;
 
-            padding: 0.68rem 0.75rem;
+            padding:
+                0.68rem
+                0.75rem;
 
             border-radius: 10px;
         }
 
-        .kucsa-navbar-wrapper .navbar-collapse .payment-alert {
+
+        .kucsa-navbar-wrapper
+        .navbar-collapse
+        .payment-alert {
+
             width: 100%;
+
             justify-content: flex-start;
 
             min-height: 44px;
@@ -637,30 +900,50 @@
             margin-top: 0.45rem;
         }
 
-        .kucsa-navbar-wrapper .navbar-collapse > .dropdown {
+
+        .kucsa-navbar-wrapper
+        .navbar-collapse
+        > .dropdown {
+
             margin-top: 0.55rem;
+
             padding-top: 0.65rem;
 
-            border-top: 1px solid var(--kucsa-nav-border);
+            border-top:
+                1px solid
+                var(--kucsa-nav-border);
         }
 
-        .kucsa-navbar-wrapper .navbar-user-trigger {
+
+        .kucsa-navbar-wrapper
+        .navbar-user-trigger {
+
             width: 100%;
+
             justify-content: flex-start;
 
             padding: 0.35rem;
         }
 
-        .kucsa-navbar-wrapper .navbar-user-name,
-        .kucsa-navbar-wrapper .navbar-user-role {
+
+        .kucsa-navbar-wrapper
+        .navbar-user-name,
+        .kucsa-navbar-wrapper
+        .navbar-user-role {
+
             display: block !important;
         }
 
-        .kucsa-navbar-wrapper .dropdown-menu {
+
+        .kucsa-navbar-wrapper
+        .dropdown-menu {
+
             width: 100%;
+
             margin-top: 0.45rem !important;
         }
     }
+
 
     /* ============================================================
        MOBILE PHONES
@@ -668,37 +951,39 @@
 
     @media (max-width: 767.98px) {
 
-        .kucsa-navbar-wrapper .kucsa-navbar > .container-fluid {
+        .kucsa-navbar-wrapper
+        .kucsa-navbar
+        > .container-fluid {
+
             padding-left: 0.75rem !important;
+
             padding-right: 0.75rem !important;
         }
 
-        /*
-         * Keep the left sidebar hamburger visible.
-         * This is the primary mobile navigation trigger.
-         */
-
-        .kucsa-navbar-wrapper .kucsa-sidebar-toggle {
-            display: inline-flex !important;
-        }
 
         .kucsa-navbar-wrapper .navbar-brand {
+
             font-size: 1.08rem;
         }
 
-        .kucsa-navbar-wrapper .navbar-brand small {
+
+        .kucsa-navbar-wrapper
+        .navbar-brand
+        small {
+
             font-size: 0.5rem;
+
             letter-spacing: 0.075em;
         }
 
-        .kucsa-navbar-wrapper .navbar-menu-toggle {
+
+        .kucsa-navbar-wrapper
+        .kucsa-navbar-menu-toggle {
+
             margin-left: auto;
         }
-
-        .kucsa-navbar-wrapper .navbar-collapse {
-            max-height: calc(100vh - 76px);
-        }
     }
+
 
     /* ============================================================
        SMALL PHONES
@@ -707,45 +992,77 @@
     @media (max-width: 575.98px) {
 
         .kucsa-navbar-wrapper .kucsa-navbar {
+
             min-height: 60px;
         }
 
-        .kucsa-navbar-wrapper .kucsa-navbar > .container-fluid {
+
+        .kucsa-navbar-wrapper
+        .kucsa-navbar
+        > .container-fluid {
+
             min-height: 50px;
         }
 
-        .kucsa-navbar-wrapper .kucsa-sidebar-toggle,
-        .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle {
+
+        .kucsa-navbar-wrapper
+        .kucsa-sidebar-toggle,
+        .kucsa-navbar-wrapper
+        .kucsa-navbar-menu-toggle {
+
             width: 39px;
+
             height: 39px;
+
+            flex-basis: 39px;
 
             border-radius: 10px;
         }
 
-        .kucsa-navbar-wrapper .kucsa-sidebar-toggle i,
-        .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle i {
+
+        .kucsa-navbar-wrapper
+        .kucsa-sidebar-toggle i,
+        .kucsa-navbar-wrapper
+        .kucsa-navbar-menu-toggle i {
+
             font-size: 1.12rem;
         }
 
+
         .kucsa-navbar-wrapper .navbar-brand {
+
             font-size: 1rem;
         }
 
-        .kucsa-navbar-wrapper .navbar-brand small {
+
+        .kucsa-navbar-wrapper
+        .navbar-brand
+        small {
+
             margin-top: 0.25rem;
+
             font-size: 0.46rem;
         }
 
-        .kucsa-navbar-wrapper .navbar-collapse {
+
+        .kucsa-navbar-wrapper
+        .navbar-collapse {
+
             margin-top: 0.5rem;
+
             padding: 0.55rem;
+
             border-radius: 12px;
         }
 
-        .kucsa-navbar-wrapper .dropdown-menu {
+
+        .kucsa-navbar-wrapper
+        .dropdown-menu {
+
             min-width: 0;
         }
     }
+
 
     /* ============================================================
        VERY SMALL PHONES
@@ -753,20 +1070,62 @@
 
     @media (max-width: 359.98px) {
 
-        .kucsa-navbar-wrapper .kucsa-sidebar-toggle,
-        .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle {
+        .kucsa-navbar-wrapper
+        .kucsa-sidebar-toggle,
+        .kucsa-navbar-wrapper
+        .kucsa-navbar-menu-toggle {
+
             width: 36px;
+
             height: 36px;
+
+            flex-basis: 36px;
         }
 
+
         .kucsa-navbar-wrapper .navbar-brand {
+
             font-size: 0.94rem;
         }
 
-        .kucsa-navbar-wrapper .navbar-brand small {
+
+        .kucsa-navbar-wrapper
+        .navbar-brand
+        small {
+
             display: none;
         }
     }
+
+
+    /* ============================================================
+       DESKTOP
+       ============================================================ */
+
+    @media (min-width: 992px) {
+
+        /*
+         * Sidebar toggle is completely removed from desktop.
+         */
+
+        .kucsa-navbar-wrapper
+        .kucsa-sidebar-toggle {
+
+            display: none !important;
+        }
+
+
+        /*
+         * The mobile navbar menu toggle is not needed on desktop.
+         */
+
+        .kucsa-navbar-wrapper
+        .kucsa-navbar-menu-toggle {
+
+            display: none !important;
+        }
+    }
+
 
     /* ============================================================
        ACCESSIBILITY
@@ -777,35 +1136,17 @@
         .kucsa-navbar-wrapper *,
         .kucsa-navbar-wrapper *::before,
         .kucsa-navbar-wrapper *::after {
+
             scroll-behavior: auto !important;
-            animation-duration: 0.01ms !important;
-            animation-iteration-count: 1 !important;
-            transition-duration: 0.01ms !important;
-        }
-    }
 
-    /* ============================================================
-       DESKTOP SIDEBAR COMPATIBILITY
-       ============================================================ */
+            animation-duration:
+                0.01ms !important;
 
-    @media (min-width: 992px) {
+            animation-iteration-count:
+                1 !important;
 
-        /*
-         * The sidebar hamburger belongs to mobile navigation.
-         * On desktop the sidebar itself should remain visible.
-         */
-
-        .kucsa-navbar-wrapper .kucsa-sidebar-toggle {
-            display: none !important;
-        }
-
-        /*
-         * The three-dots navbar menu remains available for
-         * account actions/navigation on smaller layouts.
-         */
-
-        .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle {
-            display: none !important;
+            transition-duration:
+                0.01ms !important;
         }
     }
 </style>
@@ -825,23 +1166,38 @@
 
         <div class="container-fluid px-3 px-lg-4">
 
+
             <!-- =====================================================
                  MOBILE SIDEBAR TOGGLE
+                 
                  IMPORTANT:
-                 This stays on the LEFT side of the navbar.
-                 It opens the sidebar offcanvas.
+                 This is the LEFT hamburger.
+                 
+                 It opens the sidebar defined in base.html:
+                 
+                 #kucsaSidebarOffcanvas
+                 
+                 Visible below 992px only.
             ====================================================== -->
 
             <button
-                class="kucsa-sidebar-toggle d-md-none me-2"
+                class="kucsa-sidebar-toggle me-2"
                 type="button"
                 data-bs-toggle="offcanvas"
                 data-bs-target="#kucsaSidebarOffcanvas"
                 aria-controls="kucsaSidebarOffcanvas"
-                aria-label="Open navigation menu"
-                title="Open navigation menu"
+                aria-expanded="false"
+                aria-label="Open sidebar navigation"
+                title="Open sidebar navigation"
+                id="kucsaSidebarToggle"
             >
-                <i class="bi bi-list" aria-hidden="true"></i>
+
+                <i
+                    class="bi bi-list"
+                    id="kucsaSidebarToggleIcon"
+                    aria-hidden="true"
+                ></i>
+
             </button>
 
 
@@ -854,13 +1210,20 @@
                 href="{% if user.is_authenticated %}{% if user.is_kucsa_admin %}{% url 'admin:index' %}{% elif user.is_executive %}{% url 'executives:dashboard' %}{% elif user.has_platform_access %}{% url 'dashboard:student_dashboard' %}{% else %}{% url 'payments:payment_create' %}{% endif %}{% else %}{% url 'core:home' %}{% endif %}"
                 aria-label="KUCSA home"
             >
-                <span>KUCSA</span>
-                <small>Computing Association</small>
+
+                <span>
+                    KUCSA
+                </span>
+
+                <small>
+                    Computing Association
+                </small>
+
             </a>
 
 
             <!-- =====================================================
-                 MOBILE NAVBAR ACTION TOGGLE
+                 RIGHT MOBILE NAVBAR TOGGLE
             ====================================================== -->
 
             <button
@@ -871,11 +1234,14 @@
                 aria-controls="kucsaNavbarContent"
                 aria-expanded="false"
                 aria-label="Open account and navigation options"
+                id="kucsaNavbarMenuToggle"
             >
+
                 <i
                     class="bi bi-three-dots-vertical"
                     aria-hidden="true"
                 ></i>
+
             </button>
 
 
@@ -890,11 +1256,13 @@
 
                 {% if user.is_authenticated %}
 
+
                     <!-- =================================================
                          PRIMARY NAVIGATION
                     ================================================== -->
 
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+
 
                         {% if user.is_kucsa_admin %}
 
@@ -1068,6 +1436,7 @@
 
                             <span class="navbar-user">
 
+
                                 {% if user.profile_picture %}
 
                                     <img
@@ -1083,7 +1452,9 @@
                                         aria-hidden="true"
                                     >
 
-                                        <i class="bi bi-person-circle"></i>
+                                        <i
+                                            class="bi bi-person-circle"
+                                        ></i>
 
                                     </span>
 
@@ -1093,11 +1464,15 @@
                                 <span class="text-start d-none d-lg-block">
 
                                     <span class="navbar-user-name">
+
                                         {{ user.full_name|default:user.username }}
+
                                     </span>
 
                                     <span class="navbar-user-role">
+
                                         {{ user.get_role_display|default:user.role }}
+
                                     </span>
 
                                 </span>
@@ -1112,6 +1487,7 @@
                         ================================================== -->
 
                         <ul class="dropdown-menu dropdown-menu-end">
+
 
                             <li>
 
@@ -1130,7 +1506,9 @@
                                             class="text-muted small text-truncate"
                                             style="max-width: 210px;"
                                         >
+
                                             {{ user.email }}
+
                                         </div>
 
                                     {% endif %}
@@ -1141,7 +1519,10 @@
                                         <div
                                             class="text-muted small mt-1 font-monospace"
                                         >
-                                            ID: {{ user.membership_number }}
+
+                                            ID:
+                                            {{ user.membership_number }}
+
                                         </div>
 
                                     {% endif %}
@@ -1152,7 +1533,11 @@
 
 
                             <li>
-                                <hr class="dropdown-divider my-1">
+
+                                <hr
+                                    class="dropdown-divider my-1"
+                                >
+
                             </li>
 
 
@@ -1228,8 +1613,13 @@
                             {% if user.is_kucsa_admin %}
 
                                 <li>
-                                    <hr class="dropdown-divider my-1">
+
+                                    <hr
+                                        class="dropdown-divider my-1"
+                                    >
+
                                 </li>
+
 
                                 <li>
 
@@ -1253,7 +1643,11 @@
 
 
                             <li>
-                                <hr class="dropdown-divider my-1">
+
+                                <hr
+                                    class="dropdown-divider my-1"
+                                >
+
                             </li>
 
 
@@ -1284,11 +1678,13 @@
 
                 {% else %}
 
+
                     <!-- =================================================
-                         LOGGED OUT NAVIGATION
+                         LOGGED-OUT NAVIGATION
                     ================================================== -->
 
                     <ul class="navbar-nav ms-auto align-items-lg-center">
+
 
                         <li class="nav-item">
 
@@ -1341,23 +1737,44 @@
 
 
 <!-- ================================================================
-     NAVBAR JAVASCRIPT
+     KUCSA NAVBAR JAVASCRIPT
 ================================================================= -->
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
+    /* =========================================================
+       ELEMENT REFERENCES
+       ========================================================= */
+
     const navbar =
-        document.getElementById("kucsaMainNavbar");
+        document.getElementById(
+            "kucsaMainNavbar"
+        );
+
+    const sidebar =
+        document.getElementById(
+            "kucsaSidebarOffcanvas"
+        );
 
     const sidebarToggle =
-        document.querySelector(
-            '.kucsa-sidebar-toggle'
+        document.getElementById(
+            "kucsaSidebarToggle"
+        );
+
+    const sidebarToggleIcon =
+        document.getElementById(
+            "kucsaSidebarToggleIcon"
         );
 
     const navbarCollapse =
         document.getElementById(
             "kucsaNavbarContent"
+        );
+
+    const navbarMenuToggle =
+        document.getElementById(
+            "kucsaNavbarMenuToggle"
         );
 
 
@@ -1370,6 +1787,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!navbar) {
             return;
         }
+
 
         if (window.scrollY > 8) {
 
@@ -1390,6 +1808,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     updateNavbarState();
 
+
     window.addEventListener(
         "scroll",
         updateNavbarState,
@@ -1400,7 +1819,287 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================================================
-       CLOSE MOBILE NAVBAR AFTER NAVIGATION
+       CLOSE MOBILE NAVBAR COLLAPSE
+       ========================================================= */
+
+    function closeNavbarCollapse() {
+
+        if (
+            !navbarCollapse ||
+            !window.bootstrap
+        ) {
+            return;
+        }
+
+
+        if (
+            navbarCollapse.classList.contains(
+                "show"
+            )
+        ) {
+
+            const collapse =
+                bootstrap.Collapse
+                .getInstance(
+                    navbarCollapse
+                );
+
+
+            if (collapse) {
+
+                collapse.hide();
+
+            } else {
+
+                const newCollapse =
+                    bootstrap.Collapse
+                    .getOrCreateInstance(
+                        navbarCollapse
+                    );
+
+                newCollapse.hide();
+            }
+
+        }
+
+    }
+
+
+    /* =========================================================
+       MOBILE SIDEBAR STATE
+       ========================================================= */
+
+    function setSidebarButtonState(
+        isOpen
+    ) {
+
+        if (!sidebarToggle) {
+            return;
+        }
+
+
+        sidebarToggle.setAttribute(
+            "aria-expanded",
+            isOpen ? "true" : "false"
+        );
+
+
+        if (isOpen) {
+
+            sidebarToggle.setAttribute(
+                "aria-label",
+                "Close sidebar navigation"
+            );
+
+            sidebarToggle.setAttribute(
+                "title",
+                "Close sidebar navigation"
+            );
+
+
+            sidebarToggle.classList.add(
+                "is-open"
+            );
+
+
+            if (sidebarToggleIcon) {
+
+                sidebarToggleIcon.className =
+                    "bi bi-x-lg";
+
+            }
+
+        } else {
+
+            sidebarToggle.setAttribute(
+                "aria-label",
+                "Open sidebar navigation"
+            );
+
+            sidebarToggle.setAttribute(
+                "title",
+                "Open sidebar navigation"
+            );
+
+
+            sidebarToggle.classList.remove(
+                "is-open"
+            );
+
+
+            if (sidebarToggleIcon) {
+
+                sidebarToggleIcon.className =
+                    "bi bi-list";
+
+            }
+
+        }
+
+    }
+
+
+    /* =========================================================
+       SIDEBAR OPEN EVENT
+       
+       Bootstrap handles the actual opening.
+       We only synchronize the navbar.
+       ========================================================= */
+
+    if (sidebar) {
+
+        sidebar.addEventListener(
+            "show.bs.offcanvas",
+            function () {
+
+                /*
+                 * Do not allow both mobile navigation panels
+                 * to be open at the same time.
+                 */
+
+                closeNavbarCollapse();
+
+
+                setSidebarButtonState(
+                    true
+                );
+
+            }
+        );
+
+
+        /* =====================================================
+           SIDEBAR SHOWN
+           ===================================================== */
+
+        sidebar.addEventListener(
+            "shown.bs.offcanvas",
+            function () {
+
+                setSidebarButtonState(
+                    true
+                );
+
+            }
+        );
+
+
+        /* =====================================================
+           SIDEBAR CLOSING
+           ===================================================== */
+
+        sidebar.addEventListener(
+            "hide.bs.offcanvas",
+            function () {
+
+                setSidebarButtonState(
+                    false
+                );
+
+            }
+        );
+
+
+        /* =====================================================
+           SIDEBAR CLOSED
+           ===================================================== */
+
+        sidebar.addEventListener(
+            "hidden.bs.offcanvas",
+            function () {
+
+                setSidebarButtonState(
+                    false
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       SIDEBAR TOGGLE CLICK
+       
+       IMPORTANT:
+       We do NOT manually open the sidebar here.
+       
+       Bootstrap's:
+       
+       data-bs-toggle="offcanvas"
+       data-bs-target="#kucsaSidebarOffcanvas"
+       
+       handles the actual operation.
+       
+       This prevents duplicate/conflicting Bootstrap logic.
+       ========================================================= */
+
+    if (sidebarToggle) {
+
+        sidebarToggle.addEventListener(
+            "click",
+            function () {
+
+                /*
+                 * If the mobile navbar menu is open,
+                 * close it before opening the sidebar.
+                 */
+
+                closeNavbarCollapse();
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       MOBILE NAVBAR MENU
+       
+       If the user opens the right-side navbar menu while the
+       sidebar is open, close the sidebar first.
+       ========================================================= */
+
+    if (navbarMenuToggle) {
+
+        navbarMenuToggle.addEventListener(
+            "click",
+            function () {
+
+                if (
+                    window.innerWidth < 992 &&
+                    sidebar &&
+                    window.bootstrap
+                ) {
+
+                    const sidebarInstance =
+                        bootstrap.Offcanvas
+                        .getInstance(
+                            sidebar
+                        );
+
+
+                    if (
+                        sidebarInstance &&
+                        sidebar.classList.contains(
+                            "show"
+                        )
+                    ) {
+
+                        sidebarInstance.hide();
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       CLOSE NAVBAR AFTER MOBILE NAVIGATION
        ========================================================= */
 
     if (navbarCollapse) {
@@ -1410,6 +2109,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "a[href]"
             );
 
+
         navigationLinks.forEach(
             function (link) {
 
@@ -1417,26 +2117,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     "click",
                     function () {
 
-                        /*
-                         * Bootstrap handles the actual collapse.
-                         * We only provide a clean transition when
-                         * the user navigates from the mobile menu.
-                         */
-
                         if (
-                            window.innerWidth <= 991 &&
-                            window.bootstrap
+                            window.innerWidth < 992
                         ) {
 
-                            const collapse =
-                                bootstrap.Collapse
-                                .getInstance(
-                                    navbarCollapse
-                                );
-
-                            if (collapse) {
-                                collapse.hide();
-                            }
+                            closeNavbarCollapse();
 
                         }
 
@@ -1450,82 +2135,90 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================================================
-       SIDEBAR TOGGLE — MOBILE ONLY
+       CLOSE SIDEBAR WHEN RESIZED TO DESKTOP
        ========================================================= */
 
-    if (sidebarToggle) {
+    function handleResponsiveState() {
 
-        sidebarToggle.addEventListener(
-            "click",
-            function () {
+        if (
+            window.innerWidth >= 992 &&
+            sidebar &&
+            window.bootstrap
+        ) {
 
-                /*
-                 * The Bootstrap offcanvas component attached to
-                 * #kucsaSidebarOffcanvas is responsible for opening
-                 * and closing the actual sidebar.
-                 *
-                 * We intentionally do not duplicate that behavior
-                 * here. This prevents conflicts with Bootstrap.
-                 */
+            const sidebarInstance =
+                bootstrap.Offcanvas
+                .getInstance(
+                    sidebar
+                );
 
-                if (navbarCollapse) {
 
-                    if (
-                        window.innerWidth <= 991 &&
-                        navbarCollapse.classList.contains("show") &&
-                        window.bootstrap
-                    ) {
+            if (sidebarInstance) {
 
-                        const collapse =
-                            bootstrap.Collapse
-                            .getInstance(
-                                navbarCollapse
-                            );
-
-                        if (collapse) {
-                            collapse.hide();
-                        }
-
-                    }
-
-                }
+                sidebarInstance.hide();
 
             }
-        );
+
+
+            setSidebarButtonState(
+                false
+            );
+
+        }
 
     }
 
 
+    window.addEventListener(
+        "resize",
+        handleResponsiveState
+    );
+
+
     /* =========================================================
-       KEYBOARD ACCESSIBILITY
+       ESCAPE KEY
+       
+       Bootstrap normally handles Escape for the offcanvas,
+       but we ensure the navbar state is synchronized.
        ========================================================= */
 
     document.addEventListener(
         "keydown",
         function (event) {
 
+            if (event.key !== "Escape") {
+                return;
+            }
+
+
             /*
-             * Escape closes the mobile navbar if Bootstrap
-             * currently has it open.
+             * Bootstrap will close the sidebar.
+             * We only make sure the button state follows.
              */
 
             if (
-                event.key === "Escape" &&
-                navbarCollapse &&
-                navbarCollapse.classList.contains("show") &&
-                window.innerWidth <= 991 &&
-                window.bootstrap
+                sidebar &&
+                !sidebar.classList.contains(
+                    "show"
+                )
             ) {
 
-                const collapse =
-                    bootstrap.Collapse
-                    .getInstance(
-                        navbarCollapse
-                    );
+                setSidebarButtonState(
+                    false
+                );
 
-                if (collapse) {
-                    collapse.hide();
-                }
+            }
+
+
+            /*
+             * Close mobile navbar menu.
+             */
+
+            if (
+                window.innerWidth < 992
+            ) {
+
+                closeNavbarCollapse();
 
             }
 
@@ -1542,6 +2235,7 @@ document.addEventListener("DOMContentLoaded", function () {
             ".kucsa-navbar-wrapper .navbar-avatar"
         );
 
+
     profileImages.forEach(
         function (image) {
 
@@ -1554,16 +2248,20 @@ document.addEventListener("DOMContentLoaded", function () {
                             "span"
                         );
 
+
                     fallback.className =
                         "navbar-default-avatar";
+
 
                     fallback.setAttribute(
                         "aria-hidden",
                         "true"
                     );
 
+
                     fallback.innerHTML =
                         '<i class="bi bi-person-circle"></i>';
+
 
                     image.replaceWith(
                         fallback
@@ -1580,16 +2278,79 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================================================
-       RESET MOBILE NAVIGATION AFTER BFCACHE RETURN
+       INITIAL STATE
+       ========================================================= */
+
+    if (
+        sidebar &&
+        sidebar.classList.contains(
+            "show"
+        )
+    ) {
+
+        setSidebarButtonState(
+            true
+        );
+
+    } else {
+
+        setSidebarButtonState(
+            false
+        );
+
+    }
+
+
+    /* =========================================================
+       BFCACHE / PAGE RESTORE
+       
+       Prevents a stale mobile menu/sidebar state when
+       navigating back or forward in the browser.
        ========================================================= */
 
     window.addEventListener(
         "pageshow",
         function () {
 
+            if (window.innerWidth >= 992) {
+
+                setSidebarButtonState(
+                    false
+                );
+
+                return;
+            }
+
+
+            if (
+                sidebar &&
+                window.bootstrap
+            ) {
+
+                const sidebarInstance =
+                    bootstrap.Offcanvas
+                    .getInstance(
+                        sidebar
+                    );
+
+
+                if (sidebarInstance) {
+
+                    sidebarInstance.hide();
+
+                }
+
+            }
+
+
+            setSidebarButtonState(
+                false
+            );
+
+
             if (
                 navbarCollapse &&
-                window.innerWidth > 991
+                window.innerWidth >= 992
             ) {
 
                 navbarCollapse.classList.remove(

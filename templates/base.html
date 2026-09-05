@@ -7,7 +7,10 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
 
     <title>
         {% block title %}
@@ -15,25 +18,37 @@
         {% endblock %}
     </title>
 
-    <!-- Bootstrap CSS -->
+    <!-- =========================================================
+         BOOTSTRAP CSS
+    ========================================================== -->
+
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
         rel="stylesheet"
     >
 
-    <!-- Bootstrap Icons -->
+    <!-- =========================================================
+         BOOTSTRAP ICONS
+    ========================================================== -->
+
     <link
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
     >
 
-    <!-- Google Fonts -->
+    <!-- =========================================================
+         GOOGLE FONTS
+    ========================================================== -->
+
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet"
     >
 
-    <!-- Project CSS -->
+    <!-- =========================================================
+         PROJECT CSS
+    ========================================================== -->
+
     <link
         rel="stylesheet"
         href="{% static 'css/style.css' %}"
@@ -42,36 +57,721 @@
     {% block extra_css %}
     {% endblock %}
 
+    <!-- =========================================================
+         BASE LAYOUT STYLES
+         Only responsible for the global layout/sidebar behavior.
+    ========================================================== -->
+
+    <style>
+
+        /* =====================================================
+           KUCSA GLOBAL LAYOUT
+        ===================================================== */
+
+        .kucsa-layout {
+            min-height: calc(100vh - 70px);
+        }
+
+        .kucsa-layout-row {
+            min-height: calc(100vh - 70px);
+        }
+
+
+        /* =====================================================
+           SIDEBAR DESKTOP CONTAINER
+        ===================================================== */
+
+        .kucsa-sidebar-column {
+            padding: 0 !important;
+            position: relative;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE SIDEBAR OFFCANVAS
+           
+           Desktop:
+           - Normal static sidebar
+           - Takes its Bootstrap column width
+           
+           Mobile/tablet:
+           - Completely hidden
+           - Becomes an offcanvas panel
+        ===================================================== */
+
+        #kucsaSidebarOffcanvas {
+
+            --kucsa-sidebar-width: min(88vw, 360px);
+
+            width: var(--kucsa-sidebar-width);
+
+            max-width: var(--kucsa-sidebar-width);
+
+            border: 0;
+
+            padding: 0;
+
+            background: transparent;
+
+            box-shadow: none;
+
+            z-index: 1055;
+        }
+
+
+        /* =====================================================
+           SIDEBAR OFFCANVAS BODY
+        ===================================================== */
+
+        #kucsaSidebarOffcanvas .offcanvas-body {
+
+            padding: 0 !important;
+
+            overflow: hidden;
+
+            height: 100%;
+
+            min-height: 100%;
+
+            background: transparent;
+        }
+
+
+        /* =====================================================
+           THE ACTUAL SIDEBAR
+           
+           This allows the existing sidebar.html styling
+           to remain responsible for its own appearance.
+        ===================================================== */
+
+        #kucsaSidebarOffcanvas .kucsa-sidebar {
+
+            width: 100%;
+
+            min-height: 100%;
+
+            height: 100%;
+
+            overflow-y: auto;
+
+            overflow-x: hidden;
+
+            -webkit-overflow-scrolling: touch;
+
+            overscroll-behavior: contain;
+
+            scrollbar-width: thin;
+        }
+
+
+        /* =====================================================
+           MOBILE OFFCANVAS HEADER
+        ===================================================== */
+
+        .kucsa-mobile-sidebar-header {
+
+            display: none;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            min-height: 64px;
+
+            padding:
+
+                max(10px, env(safe-area-inset-top))
+
+                16px
+
+                10px
+
+                16px;
+
+            background: inherit;
+
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+
+        .kucsa-mobile-sidebar-title {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            min-width: 0;
+        }
+
+
+        .kucsa-mobile-sidebar-title-icon {
+
+            width: 36px;
+
+            height: 36px;
+
+            flex: 0 0 36px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 10px;
+
+            background: rgba(13, 110, 253, 0.12);
+
+            color: #0d6efd;
+        }
+
+
+        .kucsa-mobile-sidebar-title-text {
+
+            min-width: 0;
+        }
+
+
+        .kucsa-mobile-sidebar-title-text strong {
+
+            display: block;
+
+            font-size: 0.92rem;
+
+            line-height: 1.2;
+
+            font-weight: 700;
+        }
+
+
+        .kucsa-mobile-sidebar-title-text span {
+
+            display: block;
+
+            margin-top: 2px;
+
+            font-size: 0.68rem;
+
+            line-height: 1.2;
+
+            opacity: 0.65;
+
+            letter-spacing: 0.05em;
+
+            text-transform: uppercase;
+        }
+
+
+        .kucsa-mobile-sidebar-close {
+
+            width: 42px;
+
+            height: 42px;
+
+            flex: 0 0 42px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border: 1px solid rgba(127, 127, 127, 0.2);
+
+            border-radius: 12px;
+
+            background: rgba(255, 255, 255, 0.04);
+
+            color: inherit;
+
+            font-size: 1.15rem;
+
+            cursor: pointer;
+
+            transition:
+
+                background 0.2s ease,
+
+                transform 0.2s ease,
+
+                border-color 0.2s ease;
+        }
+
+
+        .kucsa-mobile-sidebar-close:hover {
+
+            background: rgba(255, 255, 255, 0.08);
+
+            transform: translateY(-1px);
+        }
+
+
+        .kucsa-mobile-sidebar-close:focus-visible {
+
+            outline: 3px solid rgba(13, 110, 253, 0.28);
+
+            outline-offset: 2px;
+        }
+
+
+        /* =====================================================
+           MOBILE SIDEBAR BACKDROP
+        ===================================================== */
+
+        #kucsaSidebarOffcanvas + .offcanvas-backdrop {
+
+            z-index: 1050;
+        }
+
+
+        /* =====================================================
+           MOBILE/TABLET
+           
+           Bootstrap navbar-expand-lg uses 992px as the
+           breakpoint, so the sidebar follows the same breakpoint.
+        ===================================================== */
+
+        @media (max-width: 991.98px) {
+
+            .kucsa-layout {
+
+                min-height: calc(100vh - 64px);
+            }
+
+
+            .kucsa-layout-row {
+
+                min-height: calc(100vh - 64px);
+            }
+
+
+            .kucsa-sidebar-column {
+
+                display: contents;
+            }
+
+
+            /*
+             * Bootstrap's responsive offcanvas behavior.
+             *
+             * The sidebar is hidden from the normal document
+             * layout on mobile and appears only when Bootstrap
+             * opens #kucsaSidebarOffcanvas.
+             */
+
+            #kucsaSidebarOffcanvas {
+
+                position: fixed;
+
+                top: 0;
+
+                left: 0;
+
+                bottom: 0;
+
+                height: 100dvh;
+
+                min-height: 100dvh;
+
+                width: min(88vw, 360px);
+
+                max-width: min(88vw, 360px);
+
+                visibility: hidden;
+
+                transform: translateX(-100%);
+
+                transition:
+
+                    transform 0.28s ease-in-out,
+
+                    visibility 0.28s ease-in-out;
+
+                background: transparent;
+
+                overflow: hidden;
+            }
+
+
+            #kucsaSidebarOffcanvas.show {
+
+                visibility: visible;
+
+                transform: translateX(0);
+            }
+
+
+            #kucsaSidebarOffcanvas .offcanvas-body {
+
+                height: 100dvh;
+
+                max-height: 100dvh;
+
+                overflow: hidden;
+
+                padding:
+
+                    env(safe-area-inset-top)
+
+                    0
+
+                    env(safe-area-inset-bottom)
+
+                    0 !important;
+            }
+
+
+            #kucsaSidebarOffcanvas .kucsa-sidebar {
+
+                height: 100%;
+
+                min-height: 100%;
+
+                max-height: 100%;
+
+                overflow-y: auto;
+
+                overflow-x: hidden;
+
+                padding-bottom:
+
+                    max(20px, env(safe-area-inset-bottom));
+            }
+
+
+            .kucsa-mobile-sidebar-header {
+
+                display: flex;
+            }
+
+
+            /*
+             * Main content must occupy the full screen on
+             * mobile/tablet because the sidebar is no longer
+             * taking a Bootstrap column.
+             */
+
+            .kucsa-main-content {
+
+                width: 100% !important;
+
+                max-width: 100% !important;
+
+                flex: 0 0 100% !important;
+
+                padding-left: 12px;
+
+                padding-right: 12px;
+            }
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 767.98px) {
+
+            .kucsa-main-content {
+
+                padding-top: 20px !important;
+
+                padding-bottom: 24px !important;
+
+                padding-left: 10px;
+
+                padding-right: 10px;
+            }
+
+
+            #kucsaSidebarOffcanvas {
+
+                width: min(90vw, 350px);
+
+                max-width: min(90vw, 350px);
+            }
+        }
+
+
+        /* =====================================================
+           SMALL MOBILE
+        ===================================================== */
+
+        @media (max-width: 575.98px) {
+
+            #kucsaSidebarOffcanvas {
+
+                width: min(92vw, 340px);
+
+                max-width: min(92vw, 340px);
+            }
+
+
+            .kucsa-mobile-sidebar-header {
+
+                min-height: 60px;
+
+                padding-left: 14px;
+
+                padding-right: 14px;
+            }
+        }
+
+
+        /* =====================================================
+           VERY SMALL PHONES
+        ===================================================== */
+
+        @media (max-width: 359.98px) {
+
+            #kucsaSidebarOffcanvas {
+
+                width: 94vw;
+
+                max-width: 94vw;
+            }
+
+
+            .kucsa-mobile-sidebar-title-text strong {
+
+                font-size: 0.85rem;
+            }
+        }
+
+
+        /* =====================================================
+           DESKTOP
+           
+           At 992px and above the sidebar returns to the normal
+           Bootstrap page layout.
+        ===================================================== */
+
+        @media (min-width: 992px) {
+
+            #kucsaSidebarOffcanvas {
+
+                position: static;
+
+                width: 100%;
+
+                max-width: none;
+
+                height: auto;
+
+                min-height: calc(100vh - 70px);
+
+                visibility: visible !important;
+
+                transform: none !important;
+
+                transition: none;
+
+                background: transparent;
+
+                box-shadow: none;
+
+                overflow: visible;
+            }
+
+
+            #kucsaSidebarOffcanvas .offcanvas-body {
+
+                height: auto;
+
+                min-height: calc(100vh - 70px);
+
+                max-height: none;
+
+                overflow: visible;
+
+                padding: 0 !important;
+            }
+
+
+            #kucsaSidebarOffcanvas .kucsa-sidebar {
+
+                width: 100%;
+
+                height: auto;
+
+                min-height: calc(100vh - 70px);
+
+                max-height: none;
+
+                overflow: visible;
+            }
+
+
+            .kucsa-main-content {
+
+                min-width: 0;
+            }
+        }
+
+
+        /* =====================================================
+           REDUCED MOTION
+        ===================================================== */
+
+        @media (prefers-reduced-motion: reduce) {
+
+            #kucsaSidebarOffcanvas {
+
+                transition: none !important;
+            }
+
+
+            .kucsa-mobile-sidebar-close {
+
+                transition: none !important;
+            }
+        }
+
+    </style>
+
 </head>
+
 
 <body>
 
-    <!-- Navigation -->
+    <!-- =========================================================
+         NAVIGATION
+    ========================================================== -->
+
     {% include "partials/navbar.html" %}
 
-    <div class="container-fluid">
 
-        <div class="row">
+    <!-- =========================================================
+         MAIN APPLICATION LAYOUT
+    ========================================================== -->
 
-            <!-- Sidebar -->
+    <div class="container-fluid kucsa-layout">
+
+        <div class="row g-0 kucsa-layout-row">
+
+
+            <!-- =================================================
+                 SIDEBAR
+                 
+                 Desktop:
+                 Visible in the left column.
+
+                 Mobile:
+                 Hidden off-canvas and opened by the navbar
+                 hamburger button targeting:
+                 #kucsaSidebarOffcanvas
+            ================================================== -->
 
             {% if user.is_authenticated %}
 
-                <div class="col-lg-2 col-md-3 p-0">
+                <div class="col-lg-2 kucsa-sidebar-column">
 
-                    {% include "partials/sidebar.html" %}
+                    <div
+                        id="kucsaSidebarOffcanvas"
+                        class="offcanvas-lg offcanvas-start"
+                        tabindex="-1"
+                        aria-labelledby="kucsaSidebarLabel"
+                    >
+
+                        <!-- =====================================
+                             MOBILE SIDEBAR HEADER
+                             
+                             This only appears on mobile.
+                        ====================================== -->
+
+                        <div class="kucsa-mobile-sidebar-header">
+
+                            <div class="kucsa-mobile-sidebar-title">
+
+                                <div
+                                    class="kucsa-mobile-sidebar-title-icon"
+                                    aria-hidden="true"
+                                >
+                                    <i class="bi bi-cpu"></i>
+                                </div>
+
+                                <div class="kucsa-mobile-sidebar-title-text">
+
+                                    <strong id="kucsaSidebarLabel">
+                                        KUCSA
+                                    </strong>
+
+                                    <span>
+                                        Computing Association
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="kucsa-mobile-sidebar-close"
+                                data-bs-dismiss="offcanvas"
+                                aria-label="Close navigation menu"
+                            >
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+
+                        </div>
+
+
+                        <!-- =====================================
+                             EXISTING SIDEBAR
+                             
+                             The sidebar logic itself remains
+                             completely untouched.
+                        ====================================== -->
+
+                        <div class="offcanvas-body p-0">
+
+                            {% include "partials/sidebar.html" %}
+
+                        </div>
+
+                    </div>
 
                 </div>
 
             {% endif %}
 
-            <!-- Main Content -->
 
-            <main class="{% if user.is_authenticated %}col-lg-10 col-md-9{% else %}col-12{% endif %} py-4">
+            <!-- =================================================
+                 MAIN CONTENT
+            ================================================== -->
+
+            <main
+                class="
+                    {% if user.is_authenticated %}
+                        col-lg-10
+                    {% else %}
+                        col-12
+                    {% endif %}
+                    kucsa-main-content
+                    py-4
+                "
+            >
+
+                <!-- =============================================
+                     SYSTEM MESSAGES
+                ============================================== -->
 
                 {% include "partials/messages.html" %}
 
+
+                <!-- =============================================
+                     BREADCRUMBS
+                ============================================== -->
+
                 {% include "partials/breadcrumbs.html" %}
+
+
+                <!-- =============================================
+                     PAGE CONTENT
+                ============================================== -->
 
                 {% block content %}
                 {% endblock %}
@@ -82,23 +782,223 @@
 
     </div>
 
-    <!-- Footer -->
+
+    <!-- =========================================================
+         FOOTER
+    ========================================================== -->
 
     {% include "partials/footer.html" %}
 
-    <!-- Reusable Modal -->
+
+    <!-- =========================================================
+         REUSABLE MODAL
+    ========================================================== -->
 
     {% include "partials/modal.html" %}
 
-    <!-- Bootstrap JS -->
+
+    <!-- =========================================================
+         BOOTSTRAP JS
+    ========================================================== -->
 
     <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js">
     </script>
 
-    <!-- Project JS -->
+
+    <!-- =========================================================
+         PROJECT JS
+    ========================================================== -->
 
     <script src="{% static 'js/app.js' %}"></script>
+
+
+    <!-- =========================================================
+         GLOBAL SIDEBAR MOBILE BEHAVIOR
+         
+         The navbar will later contain the hamburger button
+         targeting #kucsaSidebarOffcanvas.
+
+         This code ensures:
+         - sidebar closes after selecting a link
+         - desktop navigation is unaffected
+         - mobile navigation remains smooth
+    ========================================================== -->
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const sidebar =
+                document.getElementById("kucsaSidebarOffcanvas");
+
+
+            if (!sidebar) {
+                return;
+            }
+
+
+            /*
+             * Close the mobile sidebar automatically when
+             * a navigation link is selected.
+             */
+            sidebar.addEventListener("click", function (event) {
+
+                const link =
+                    event.target.closest("a[href]");
+
+
+                if (!link) {
+                    return;
+                }
+
+
+                /*
+                 * Ignore special links that should not trigger
+                 * the mobile sidebar closing behavior.
+                 */
+                if (
+                    link.getAttribute("href") === "#" ||
+                    link.hasAttribute("data-bs-toggle")
+                ) {
+                    return;
+                }
+
+
+                /*
+                 * Only close the offcanvas below the desktop
+                 * breakpoint.
+                 */
+                if (
+                    window.innerWidth < 992 &&
+                    window.bootstrap &&
+                    window.bootstrap.Offcanvas
+                ) {
+
+                    const instance =
+                        bootstrap.Offcanvas.getInstance(sidebar) ||
+                        bootstrap.Offcanvas.getOrCreateInstance(sidebar);
+
+
+                    /*
+                     * Small delay allows the navigation event
+                     * to proceed naturally while the sidebar
+                     * closes smoothly.
+                     */
+                    window.setTimeout(function () {
+
+                        instance.hide();
+
+                    }, 10);
+                }
+
+            });
+
+
+            /*
+             * Mark the current page for accessibility.
+             */
+            const currentPath =
+                window.location.pathname;
+
+
+            sidebar
+                .querySelectorAll("a[href]")
+                .forEach(function (link) {
+
+                    try {
+
+                        const url =
+                            new URL(
+                                link.href,
+                                window.location.origin
+                            );
+
+
+                        if (
+                            url.origin === window.location.origin &&
+                            url.pathname === currentPath
+                        ) {
+
+                            link.setAttribute(
+                                "aria-current",
+                                "page"
+                            );
+
+                        }
+
+                    } catch (error) {
+
+                        /*
+                         * Ignore malformed or special URLs.
+                         */
+
+                    }
+
+                });
+
+
+            /*
+             * Make sure the sidebar does not remain visually
+             * stuck open if the browser restores a page from
+             * its back/forward cache.
+             */
+            window.addEventListener("pageshow", function () {
+
+                if (window.innerWidth >= 992) {
+                    return;
+                }
+
+
+                if (
+                    window.bootstrap &&
+                    window.bootstrap.Offcanvas
+                ) {
+
+                    const instance =
+                        bootstrap.Offcanvas.getInstance(sidebar);
+
+
+                    if (instance) {
+                        instance.hide();
+                    }
+
+                }
+
+            });
+
+
+            /*
+             * If the browser is resized from mobile to desktop,
+             * clean up any active mobile offcanvas state.
+             */
+            window.addEventListener("resize", function () {
+
+                if (window.innerWidth >= 992) {
+
+                    if (
+                        window.bootstrap &&
+                        window.bootstrap.Offcanvas
+                    ) {
+
+                        const instance =
+                            bootstrap.Offcanvas.getInstance(sidebar);
+
+
+                        if (instance) {
+                            instance.hide();
+                        }
+
+                    }
+
+                }
+
+            });
+
+        });
+
+    </script>
+
 
     {% block extra_js %}
     {% endblock %}

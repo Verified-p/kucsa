@@ -30,20 +30,23 @@
         --sidebar-transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 
         /*
-         * Desktop:
-         * Fill the height provided by the stretched Bootstrap
-         * desktop column instead of using a fixed viewport height.
+         * =====================================================
+         * DESKTOP SIDEBAR HEIGHT
+         * =====================================================
          *
-         * This allows the sidebar background to continue from
-         * below the navbar all the way down to the footer when
-         * the page content is taller than the viewport.
+         * The OUTER shell must follow the complete height of
+         * the Bootstrap desktop column.
          *
-         * Bootstrap Offcanvas overrides the available height
-         * on mobile/tablet.
+         * This is intentionally NOT limited to 100vh.
+         *
+         * Therefore, when the page content extends down to
+         * the footer, the sidebar background also extends down
+         * to the footer.
          */
         width: 100%;
+
         height: 100%;
-        min-height: 0;
+        min-height: 100%;
 
         display: flex;
         flex-direction: column;
@@ -65,13 +68,13 @@
         overflow: hidden;
 
         /*
-         * Prevents the sidebar background from becoming
-         * visually transparent inside Bootstrap Offcanvas.
+         * Keeps the sidebar visually isolated from surrounding
+         * Bootstrap/content layers.
          */
         isolation: isolate;
 
         /*
-         * Prevent accidental horizontal scrolling.
+         * Prevent accidental horizontal overscroll.
          */
         overscroll-behavior: contain;
     }
@@ -92,31 +95,52 @@
         width: 100%;
 
         /*
-         * Critical for independent sidebar scrolling.
+         * IMPORTANT:
+         *
+         * Do NOT allow this element to determine the full
+         * height of the sidebar.
+         *
+         * The shell handles the full page/background height.
+         * This element handles only the independently
+         * scrollable navigation area.
          */
-        flex: 1 1 auto;
+        flex: 0 0 auto;
+
         min-height: 0;
 
         /*
-         * Keep the navigation independently scrollable
-         * while allowing the outer sidebar background to
-         * continue with the full page height.
+         * The sidebar starts below the 70px KUCSA navbar.
          *
-         * 70px corresponds to the KUCSA navbar height.
+         * This gives the navigation its own viewport-height
+         * scrolling area while the OUTER shell can continue
+         * all the way down to the footer.
          */
+        height: calc(100vh - 70px);
+
         max-height: calc(100vh - 70px);
 
         overflow-x: hidden;
         overflow-y: auto;
 
         /*
-         * Smooth touch scrolling on mobile/tablet.
+         * Smooth touch scrolling.
          */
         -webkit-overflow-scrolling: touch;
+
+        /*
+         * Allow vertical finger scrolling inside the sidebar.
+         */
         touch-action: pan-y;
 
+        /*
+         * Prevent scroll chaining from the sidebar into the
+         * document when the sidebar reaches its boundaries.
+         */
         overscroll-behavior-y: contain;
 
+        /*
+         * Firefox scrollbar.
+         */
         scrollbar-width: thin;
 
         scrollbar-color:
@@ -1000,23 +1024,40 @@
 
         /*
          * Bootstrap Offcanvas determines the available height.
-         * The sidebar simply fills that available space.
+         *
+         * The shell fills the Offcanvas.
          */
         .kucsa-sidebar-shell {
             width: 100%;
 
             height: 100%;
 
-            min-height: 0;
+            min-height: 100%;
         }
 
 
         /*
-         * Keep the scroll area constrained to the
-         * Bootstrap Offcanvas height on mobile/tablet.
+         * IMPORTANT:
+         *
+         * On mobile/tablet we must NOT keep the desktop
+         * calc(100vh - 70px) height.
+         *
+         * Bootstrap Offcanvas controls the available height.
+         *
+         * Therefore the inner scroll area fills the
+         * Offcanvas height and scrolls independently.
          */
         .kucsa-sidebar-shell .kucsa-sidebar-scroll {
+            flex: 1 1 auto;
+
+            height: auto;
+
             max-height: 100%;
+
+            min-height: 0;
+
+            overflow-x: hidden;
+            overflow-y: auto;
         }
 
 

@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 
 {% block title %}Expenses | KUCSA Finance{% endblock %}
@@ -14,22 +15,35 @@
                 gap-3 mb-4">
 
         <div>
-            <h3 class="fw-bold mb-1">
-                <i class="bi bi-wallet2 me-2"></i>
-                Expenses
-            </h3>
+            <div class="d-flex align-items-center gap-2 mb-1">
+
+                <h3 class="fw-bold mb-0">
+                    <i class="bi bi-wallet2 me-2"></i>
+                    Expenses
+                </h3>
+
+                <span class="badge bg-primary-subtle text-primary">
+                    KUCSA Finance
+                </span>
+
+            </div>
 
             <p class="text-muted mb-0">
                 Manage and monitor KUCSA financial expenses.
             </p>
+
         </div>
 
         {% if can_manage_expenses %}
+
             <a href="{% url 'finance:expense_create' %}"
                class="btn btn-primary">
+
                 <i class="bi bi-plus-circle me-1"></i>
                 Record Expense
+
             </a>
+
         {% endif %}
 
     </div>
@@ -42,121 +56,176 @@
 
         <!-- Total Expenses -->
         <div class="col-12 col-sm-6 col-xl-3">
+
             <div class="card border-0 shadow-sm h-100">
+
                 <div class="card-body">
 
                     <div class="d-flex justify-content-between
                                 align-items-start">
 
                         <div>
-                            <small class="text-muted">
+
+                            <small class="text-muted d-block">
                                 Total Expenses
                             </small>
 
-                            <h4 class="fw-bold mb-0 mt-1">
+                            <h4 class="fw-bold mb-1 mt-1">
                                 KES {{ total_expenses|default:"0.00"|floatformat:2 }}
                             </h4>
+
+                            <small class="text-muted">
+                                Recorded expenses
+                            </small>
+
                         </div>
 
-                        <div class="rounded-circle bg-danger bg-opacity-10
-                                    p-2">
-                            <i class="bi bi-wallet2 text-danger"></i>
+                        <div class="rounded-circle
+                                    bg-danger-subtle
+                                    p-3">
+
+                            <i class="bi bi-wallet2 text-danger fs-5"></i>
+
                         </div>
 
                     </div>
 
                 </div>
+
             </div>
+
         </div>
 
 
         <!-- Paid -->
         <div class="col-12 col-sm-6 col-xl-3">
+
             <div class="card border-0 shadow-sm h-100">
+
                 <div class="card-body">
 
                     <div class="d-flex justify-content-between
                                 align-items-start">
 
                         <div>
-                            <small class="text-muted">
+
+                            <small class="text-muted d-block">
                                 Paid
                             </small>
 
-                            <h4 class="fw-bold mb-0 mt-1">
+                            <h4 class="fw-bold mb-1 mt-1 text-success">
                                 KES {{ paid_expenses|default:"0.00"|floatformat:2 }}
                             </h4>
+
+                            <small class="text-muted">
+                                Completed expenses
+                            </small>
+
                         </div>
 
-                        <div class="rounded-circle bg-success bg-opacity-10
-                                    p-2">
-                            <i class="bi bi-check-circle text-success"></i>
+                        <div class="rounded-circle
+                                    bg-success-subtle
+                                    p-3">
+
+                            <i class="bi bi-check-circle
+                                      text-success fs-5"></i>
+
                         </div>
 
                     </div>
 
                 </div>
+
             </div>
+
         </div>
 
 
         <!-- Pending -->
         <div class="col-12 col-sm-6 col-xl-3">
+
             <div class="card border-0 shadow-sm h-100">
+
                 <div class="card-body">
 
                     <div class="d-flex justify-content-between
                                 align-items-start">
 
                         <div>
-                            <small class="text-muted">
+
+                            <small class="text-muted d-block">
                                 Pending
                             </small>
 
-                            <h4 class="fw-bold mb-0 mt-1">
+                            <h4 class="fw-bold mb-1 mt-1 text-warning">
                                 KES {{ pending_expenses|default:"0.00"|floatformat:2 }}
                             </h4>
+
+                            <small class="text-muted">
+                                Awaiting processing
+                            </small>
+
                         </div>
 
-                        <div class="rounded-circle bg-warning bg-opacity-10
-                                    p-2">
-                            <i class="bi bi-hourglass-split text-warning"></i>
+                        <div class="rounded-circle
+                                    bg-warning-subtle
+                                    p-3">
+
+                            <i class="bi bi-hourglass-split
+                                      text-warning fs-5"></i>
+
                         </div>
 
                     </div>
 
                 </div>
+
             </div>
+
         </div>
 
 
         <!-- Rejected -->
         <div class="col-12 col-sm-6 col-xl-3">
+
             <div class="card border-0 shadow-sm h-100">
+
                 <div class="card-body">
 
                     <div class="d-flex justify-content-between
                                 align-items-start">
 
                         <div>
-                            <small class="text-muted">
+
+                            <small class="text-muted d-block">
                                 Rejected
                             </small>
 
-                            <h4 class="fw-bold mb-0 mt-1">
+                            <h4 class="fw-bold mb-1 mt-1 text-secondary">
                                 KES {{ rejected_expenses|default:"0.00"|floatformat:2 }}
                             </h4>
+
+                            <small class="text-muted">
+                                Rejected expense requests
+                            </small>
+
                         </div>
 
-                        <div class="rounded-circle bg-secondary bg-opacity-10
-                                    p-2">
-                            <i class="bi bi-x-circle text-secondary"></i>
+                        <div class="rounded-circle
+                                    bg-secondary-subtle
+                                    p-3">
+
+                            <i class="bi bi-x-circle
+                                      text-secondary fs-5"></i>
+
                         </div>
 
                     </div>
 
                 </div>
+
             </div>
+
         </div>
 
     </div>
@@ -169,6 +238,17 @@
 
         <div class="card-body">
 
+            <div class="d-flex align-items-center gap-2 mb-3">
+
+                <i class="bi bi-funnel text-primary"></i>
+
+                <h6 class="fw-bold mb-0">
+                    Filter Expenses
+                </h6>
+
+            </div>
+
+
             <form method="get">
 
                 <div class="row g-3 align-items-end">
@@ -178,7 +258,9 @@
 
                         <label for="search"
                                class="form-label fw-semibold">
+
                             Search
+
                         </label>
 
                         <input type="text"
@@ -196,7 +278,9 @@
 
                         <label for="status"
                                class="form-label fw-semibold">
+
                             Status
+
                         </label>
 
                         <select name="status"
@@ -242,12 +326,17 @@
                     </div>
 
 
-                    <!-- Category -->
+                    <!-- =================================================
+                         CATEGORY FILTER
+                         Fixed KUCSA categories are always available.
+                    ================================================== -->
                     <div class="col-12 col-md-3">
 
                         <label for="category"
                                class="form-label fw-semibold">
+
                             Category
+
                         </label>
 
                         <select name="category"
@@ -259,15 +348,61 @@
                             </option>
 
                             {% for category in categories %}
+
                                 <option value="{{ category.id }}"
                                     {% if request.GET.category == category.id|stringformat:"s" %}
                                         selected
                                     {% endif %}>
+
                                     {{ category.name }}
+
                                 </option>
+
+                            {% empty %}
+
+                                <!-- Fallback categories for production -->
+                                <option value="TRANSPORT"
+                                    {% if request.GET.category == "TRANSPORT" %}
+                                        selected
+                                    {% endif %}>
+                                    Transport
+                                </option>
+
+                                <option value="STATIONERY"
+                                    {% if request.GET.category == "STATIONERY" %}
+                                        selected
+                                    {% endif %}>
+                                    Stationery
+                                </option>
+
+                                <option value="EVENTS"
+                                    {% if request.GET.category == "EVENTS" %}
+                                        selected
+                                    {% endif %}>
+                                    Events
+                                </option>
+
+                                <option value="COMMUNICATION"
+                                    {% if request.GET.category == "COMMUNICATION" %}
+                                        selected
+                                    {% endif %}>
+                                    Communication
+                                </option>
+
+                                <option value="EQUIPMENT"
+                                    {% if request.GET.category == "EQUIPMENT" %}
+                                        selected
+                                    {% endif %}>
+                                    Equipment
+                                </option>
+
                             {% endfor %}
 
                         </select>
+
+                        <small class="text-muted">
+                            Select an expense category to filter the records.
+                        </small>
 
                     </div>
 
@@ -279,14 +414,19 @@
 
                             <button type="submit"
                                     class="btn btn-primary flex-grow-1">
+
                                 <i class="bi bi-funnel me-1"></i>
                                 Filter
+
                             </button>
 
                             <a href="{% url 'finance:expenses' %}"
                                class="btn btn-outline-secondary"
-                               title="Clear filters">
+                               title="Clear filters"
+                               aria-label="Clear filters">
+
                                 <i class="bi bi-arrow-counterclockwise"></i>
+
                             </a>
 
                         </div>
@@ -298,6 +438,7 @@
             </form>
 
         </div>
+
     </div>
 
 
@@ -308,15 +449,27 @@
 
         <div class="card-header bg-white border-0 py-3">
 
-            <div class="d-flex justify-content-between
-                        align-items-center">
+            <div class="d-flex flex-column flex-sm-row
+                        justify-content-between
+                        align-items-sm-center gap-2">
 
-                <h5 class="fw-bold mb-0">
-                    Expense Records
-                </h5>
+                <div>
 
-                <span class="badge bg-light text-dark">
-                    {{ expenses|length }} record{{ expenses|length|pluralize }}
+                    <h5 class="fw-bold mb-1">
+                        Expense Records
+                    </h5>
+
+                    <small class="text-muted">
+                        Recorded KUCSA expenses and their current status.
+                    </small>
+
+                </div>
+
+                <span class="badge bg-light text-dark border">
+
+                    {{ expenses|length }}
+                    record{{ expenses|length|pluralize }}
+
                 </span>
 
             </div>
@@ -330,7 +483,8 @@
 
                 <div class="table-responsive">
 
-                    <table class="table table-hover align-middle mb-0">
+                    <table class="table table-hover
+                                  align-middle mb-0">
 
                         <thead class="table-light">
 
@@ -395,15 +549,33 @@
 
                                     <!-- Category -->
                                     <td>
-                                        <span class="text-muted">
-                                            {{ expense.category.name }}
-                                        </span>
+
+                                        {% if expense.category %}
+
+                                            <span class="text-dark">
+                                                {{ expense.category.name }}
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+                                                Uncategorized
+                                            </span>
+
+                                        {% endif %}
+
                                     </td>
 
 
                                     <!-- Payee -->
                                     <td>
-                                        {{ expense.payee|default:"—" }}
+
+                                        {% if expense.payee %}
+                                            {{ expense.payee }}
+                                        {% else %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+
                                     </td>
 
 
@@ -422,20 +594,24 @@
 
                                         {% if expense.payment_source %}
 
-                                            <div>
+                                            <div class="fw-semibold small">
                                                 {{ expense.get_payment_source_display }}
                                             </div>
 
                                             {% if expense.payment_reference %}
+
                                                 <small class="text-muted">
                                                     {{ expense.payment_reference }}
                                                 </small>
+
                                             {% endif %}
 
                                         {% else %}
+
                                             <span class="text-muted">
                                                 —
                                             </span>
+
                                         {% endif %}
 
                                     </td>
@@ -443,9 +619,21 @@
 
                                     <!-- Date -->
                                     <td>
-                                        <span class="text-nowrap">
-                                            {{ expense.expense_date|date:"d M Y" }}
-                                        </span>
+
+                                        {% if expense.expense_date %}
+
+                                            <span class="text-nowrap">
+                                                {{ expense.expense_date|date:"d M Y" }}
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+                                                —
+                                            </span>
+
+                                        {% endif %}
+
                                     </td>
 
 
@@ -455,36 +643,42 @@
                                         {% if expense.status == "DRAFT" %}
 
                                             <span class="badge bg-secondary">
+                                                <i class="bi bi-pencil-square me-1"></i>
                                                 Draft
                                             </span>
 
                                         {% elif expense.status == "SUBMITTED" %}
 
                                             <span class="badge bg-warning text-dark">
+                                                <i class="bi bi-send me-1"></i>
                                                 Submitted
                                             </span>
 
                                         {% elif expense.status == "APPROVED" %}
 
                                             <span class="badge bg-info text-dark">
+                                                <i class="bi bi-check2-circle me-1"></i>
                                                 Approved
                                             </span>
 
                                         {% elif expense.status == "PAID" %}
 
                                             <span class="badge bg-success">
+                                                <i class="bi bi-check-circle me-1"></i>
                                                 Paid
                                             </span>
 
                                         {% elif expense.status == "REJECTED" %}
 
                                             <span class="badge bg-danger">
+                                                <i class="bi bi-x-circle me-1"></i>
                                                 Rejected
                                             </span>
 
                                         {% elif expense.status == "VOIDED" %}
 
                                             <span class="badge bg-dark">
+                                                <i class="bi bi-slash-circle me-1"></i>
                                                 Voided
                                             </span>
 
@@ -504,7 +698,8 @@
 
                                         <a href="{% url 'finance:expense_detail' expense.pk %}"
                                            class="btn btn-sm btn-outline-primary"
-                                           title="View expense">
+                                           title="View expense"
+                                           aria-label="View expense">
 
                                             <i class="bi bi-eye"></i>
 
@@ -541,6 +736,7 @@
                                         <a class="page-link"
                                            href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
 
+                                            <i class="bi bi-chevron-left me-1"></i>
                                             Previous
 
                                         </a>
@@ -550,9 +746,12 @@
                                 {% else %}
 
                                     <li class="page-item disabled">
+
                                         <span class="page-link">
+                                            <i class="bi bi-chevron-left me-1"></i>
                                             Previous
                                         </span>
+
                                     </li>
 
                                 {% endif %}
@@ -575,6 +774,7 @@
                                            href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
 
                                             Next
+                                            <i class="bi bi-chevron-right ms-1"></i>
 
                                         </a>
 
@@ -583,9 +783,12 @@
                                 {% else %}
 
                                     <li class="page-item disabled">
+
                                         <span class="page-link">
                                             Next
+                                            <i class="bi bi-chevron-right ms-1"></i>
                                         </span>
+
                                     </li>
 
                                 {% endif %}
@@ -608,7 +811,17 @@
 
                     <div class="mb-3">
 
-                        <i class="bi bi-wallet2 display-4 text-muted"></i>
+                        <div class="d-inline-flex
+                                    align-items-center
+                                    justify-content-center
+                                    rounded-circle
+                                    bg-light"
+                             style="width:76px;height:76px;">
+
+                            <i class="bi bi-wallet2
+                                      fs-2 text-muted"></i>
+
+                        </div>
 
                     </div>
 
@@ -617,8 +830,10 @@
                     </h5>
 
                     <p class="text-muted mb-4">
+
                         There are no expense records matching
                         your current filters.
+
                     </p>
 
                     {% if can_manage_expenses %}

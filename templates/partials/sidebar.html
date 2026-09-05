@@ -97,6 +97,15 @@
         flex: 1 1 auto;
         min-height: 0;
 
+        /*
+         * Keep the navigation independently scrollable
+         * while allowing the outer sidebar background to
+         * continue with the full page height.
+         *
+         * 70px corresponds to the KUCSA navbar height.
+         */
+        max-height: calc(100vh - 70px);
+
         overflow-x: hidden;
         overflow-y: auto;
 
@@ -999,6 +1008,15 @@
             height: 100%;
 
             min-height: 0;
+        }
+
+
+        /*
+         * Keep the scroll area constrained to the
+         * Bootstrap Offcanvas height on mobile/tablet.
+         */
+        .kucsa-sidebar-shell .kucsa-sidebar-scroll {
+            max-height: 100%;
         }
 
 

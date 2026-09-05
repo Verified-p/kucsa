@@ -1,128 +1,164 @@
 {% load static %}
 
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>
-    {% block title %}
-        KUCSA Platform
+    <title>
+        {% block title %}
+            KUCSA Platform
+        {% endblock %}
+    </title>
+
+
+    <!-- =========================================================
+         BOOTSTRAP CSS
+         ========================================================= -->
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+
+    <!-- =========================================================
+         BOOTSTRAP ICONS
+         ========================================================= -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    >
+
+
+    <!-- =========================================================
+         GOOGLE FONTS
+         ========================================================= -->
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- =========================================================
+         PROJECT CSS
+         ========================================================= -->
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/style.css' %}"
+    >
+
+
+    {% block extra_css %}
     {% endblock %}
-</title>
-
-<!-- Bootstrap CSS -->
-<link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-    rel="stylesheet"
->
-
-<!-- Bootstrap Icons -->
-<link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
->
-
-<!-- Google Fonts -->
-<link
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet"
->
-
-<!-- Project CSS -->
-<link
-    rel="stylesheet"
-    href="{% static 'css/style.css' %}"
->
-
-{% block extra_css %}
-{% endblock %}
 
 </head>
+
 
 <body class="d-flex flex-column min-vh-100">
 
 
-<!-- Navigation -->
-{% include "partials/navbar.html" %}
+    <!-- =========================================================
+         NAVIGATION
+         ========================================================= -->
+
+    {% include "partials/navbar.html" %}
 
 
-<div class="container-fluid flex-grow-1">
+    <!-- =========================================================
+         PAGE BODY
+         ========================================================= -->
 
-    <div class="row h-100 align-items-stretch">
+    <div class="container-fluid flex-grow-1 d-flex flex-column">
 
-        <!-- =====================================================
-             DESKTOP SIDEBAR
-             =====================================================
-
-             The sidebar remains visible only on desktop.
-
-             On mobile/tablet it is removed from the normal page
-             layout so that the navbar can control the sidebar
-             through Bootstrap Offcanvas.
-
-             ===================================================== -->
-
-        {% if user.is_authenticated %}
-
-            <div class="col-lg-2 p-0 d-none d-lg-flex h-100">
-
-                {% include "partials/sidebar.html" %}
-
-            </div>
-
-        {% endif %}
+        <div class="row flex-grow-1 align-items-stretch">
 
 
-        <!-- =====================================================
-             MAIN CONTENT
-             ===================================================== -->
+            {% if user.is_authenticated %}
 
-        <main class="{% if user.is_authenticated %}col-lg-10 col-12{% else %}col-12{% endif %} py-4">
+                <!-- =================================================
+                     DESKTOP SIDEBAR
+                     
+                     IMPORTANT:
+                     - No h-100 here.
+                     - The Bootstrap row stretches the column
+                       automatically to the height of the main content.
+                     - The sidebar itself can therefore extend all
+                       the way down to the footer.
+                     ================================================= -->
 
-            {% include "partials/messages.html" %}
+                <div class="col-lg-2 p-0 d-none d-lg-flex">
 
-            {% include "partials/breadcrumbs.html" %}
+                    {% include "partials/sidebar.html" %}
 
-            {% block content %}
-            {% endblock %}
+                </div>
 
-        </main>
+            {% endif %}
+
+
+            <!-- =====================================================
+                 MAIN CONTENT
+                 ===================================================== -->
+
+            <main
+                class="{% if user.is_authenticated %}col-lg-10 col-12{% else %}col-12{% endif %} py-4"
+            >
+
+                {% include "partials/messages.html" %}
+
+                {% include "partials/breadcrumbs.html" %}
+
+
+                {% block content %}
+                {% endblock %}
+
+            </main>
+
+
+        </div>
 
     </div>
 
-</div>
+
+    <!-- =========================================================
+         FOOTER
+         ========================================================= -->
+
+    {% include "partials/footer.html" %}
 
 
-<!-- Footer -->
+    <!-- =========================================================
+         REUSABLE MODAL
+         ========================================================= -->
 
-{% include "partials/footer.html" %}
-
-
-<!-- Reusable Modal -->
-
-{% include "partials/modal.html" %}
+    {% include "partials/modal.html" %}
 
 
-<!-- Bootstrap JS -->
+    <!-- =========================================================
+         BOOTSTRAP JS
+         ========================================================= -->
 
-<script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js">
-</script>
-
-
-<!-- Project JS -->
-
-<script src="{% static 'js/app.js' %}"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js">
+    </script>
 
 
-{% block extra_js %}
-{% endblock %}
+    <!-- =========================================================
+         PROJECT JS
+         ========================================================= -->
+
+    <script src="{% static 'js/app.js' %}"></script>
+
+
+    {% block extra_js %}
+    {% endblock %}
 
 
 </body>

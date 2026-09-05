@@ -10,949 +10,1057 @@
      ========================================================= -->
 
 <style>
-    /* =========================================================
-       KUCSA SIDEBAR — ISOLATED DESIGN SYSTEM
-       ========================================================= */
+/* ============================================================
+   KUCSA SIDEBAR
+   Production-safe Bootstrap Offcanvas integration
+   ============================================================ */
 
+.kucsa-sidebar-shell {
+    --sidebar-bg: #111827;
+    --sidebar-bg-deep: #0b1220;
+
+    --sidebar-surface: rgba(255, 255, 255, 0.055);
+    --sidebar-surface-hover: rgba(255, 255, 255, 0.085);
+
+    --sidebar-primary: #0d6efd;
+    --sidebar-primary-light: #6ea8fe;
+
+    --sidebar-text: rgba(255, 255, 255, 0.88);
+    --sidebar-text-soft: rgba(255, 255, 255, 0.68);
+    --sidebar-text-muted: rgba(255, 255, 255, 0.52);
+
+    --sidebar-border: rgba(255, 255, 255, 0.09);
+
+    --sidebar-danger: #ff6b7a;
+    --sidebar-success: #20c997;
+
+    --sidebar-radius: 12px;
+    --sidebar-transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /*
+     * IMPORTANT
+     * The sidebar itself never controls positioning.
+     * Bootstrap controls the Offcanvas.
+     */
+    position: relative;
+
+    width: 100%;
+    min-width: 0;
+
+    height: 100%;
+    min-height: 100%;
+
+    color: #fff;
+
+    /*
+     * SOLID COLOR FIRST.
+     *
+     * This guarantees that the page behind the sidebar
+     * can never show through.
+     */
+    background-color: var(--sidebar-bg-deep);
+
+    /*
+     * Decorative background only.
+     * The solid background remains underneath it.
+     */
+    background-image:
+        radial-gradient(
+            circle at top left,
+            rgba(13, 110, 253, 0.14),
+            transparent 32%
+        ),
+        linear-gradient(
+            180deg,
+            var(--sidebar-bg) 0%,
+            var(--sidebar-bg-deep) 100%
+        );
+
+    /*
+     * Desktop sidebar owns its internal scrolling.
+     */
+    overflow: hidden;
+
+    /*
+     * Prevent scroll chaining on desktop.
+     */
+    overscroll-behavior: contain;
+
+    /*
+     * Prevent visual blending with surrounding layouts.
+     */
+    isolation: isolate;
+
+    /*
+     * Prevent accidental flex/grid overflow.
+     */
+    flex: 0 0 auto;
+}
+
+
+/* ============================================================
+   UNIVERSAL BOX SIZING
+   ============================================================ */
+
+.kucsa-sidebar-shell *,
+.kucsa-sidebar-shell *::before,
+.kucsa-sidebar-shell *::after {
+    box-sizing: border-box;
+}
+
+
+/* ============================================================
+   BOOTSTRAP OFFCANVAS COMPATIBILITY
+   ============================================================ */
+
+/*
+ * If the sidebar is placed inside Bootstrap's offcanvas,
+ * make sure its own background is completely opaque.
+ */
+.offcanvas .kucsa-sidebar-shell {
+    width: 100%;
+    min-width: 0;
+
+    background-color: var(--sidebar-bg-deep);
+}
+
+
+/*
+ * Never allow the sidebar to create horizontal overflow.
+ */
+.offcanvas .kucsa-sidebar-shell,
+.offcanvas .kucsa-sidebar-shell * {
+    max-width: 100%;
+}
+
+
+/* ============================================================
+   SIDEBAR SCROLL AREA
+   ============================================================ */
+
+.kucsa-sidebar-shell .kucsa-sidebar-scroll {
+    width: 100%;
+    min-width: 0;
+
+    /*
+     * Desktop:
+     * this is the only internal scrolling layer.
+     */
+    height: 100%;
+    min-height: 0;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    overscroll-behavior-y: contain;
+
+    -webkit-overflow-scrolling: touch;
+
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        rgba(255, 255, 255, 0.18)
+        transparent;
+}
+
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+
+.kucsa-sidebar-shell .kucsa-sidebar-scroll::-webkit-scrollbar {
+    width: 5px;
+}
+
+.kucsa-sidebar-shell .kucsa-sidebar-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.kucsa-sidebar-shell .kucsa-sidebar-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+}
+
+.kucsa-sidebar-shell .kucsa-sidebar-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.27);
+}
+
+
+/* ============================================================
+   PROFILE HEADER
+   ============================================================ */
+
+.kucsa-sidebar-shell .sidebar-header {
+    position: relative;
+
+    width: 100%;
+
+    padding: 1.5rem 1rem 1.25rem;
+
+    text-align: center;
+
+    border-bottom: 1px solid var(--sidebar-border);
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.035),
+            transparent
+        );
+
+    flex-shrink: 0;
+}
+
+
+.kucsa-sidebar-shell .sidebar-header::after {
+    content: "";
+
+    position: absolute;
+
+    left: 20%;
+    right: 20%;
+    bottom: -1px;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(13, 110, 253, 0.7),
+            transparent
+        );
+
+    opacity: 0.65;
+
+    pointer-events: none;
+}
+
+
+/* ============================================================
+   AVATAR
+   ============================================================ */
+
+.kucsa-sidebar-shell .sidebar-avatar-wrap {
+    position: relative;
+
+    width: 78px;
+    height: 78px;
+
+    margin: 0 auto;
+}
+
+
+.kucsa-sidebar-shell .sidebar-profile-picture {
+    display: block;
+
+    width: 78px;
+    height: 78px;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+
+    border: 3px solid rgba(255, 255, 255, 0.18);
+
+    box-shadow:
+        0 0 0 5px rgba(13, 110, 253, 0.08),
+        0 10px 28px rgba(0, 0, 0, 0.24);
+
+    transition:
+        transform var(--sidebar-transition),
+        border-color var(--sidebar-transition),
+        box-shadow var(--sidebar-transition);
+}
+
+
+.kucsa-sidebar-shell .sidebar-profile-picture:hover {
+    transform: translateY(-2px);
+
+    border-color: rgba(13, 110, 253, 0.7);
+
+    box-shadow:
+        0 0 0 6px rgba(13, 110, 253, 0.10),
+        0 14px 30px rgba(0, 0, 0, 0.28);
+}
+
+
+.kucsa-sidebar-shell .sidebar-default-avatar {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 78px;
+    height: 78px;
+
+    border-radius: 50%;
+
+    color: rgba(255, 255, 255, 0.86);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(13, 110, 253, 0.35),
+            rgba(255, 255, 255, 0.06)
+        );
+
+    border: 3px solid rgba(255, 255, 255, 0.14);
+
+    box-shadow:
+        0 0 0 5px rgba(13, 110, 253, 0.06),
+        0 10px 28px rgba(0, 0, 0, 0.22);
+
+    font-size: 3.6rem;
+    line-height: 1;
+}
+
+
+/* ============================================================
+   ONLINE INDICATOR
+   ============================================================ */
+
+.kucsa-sidebar-shell .sidebar-online-indicator {
+    position: absolute;
+
+    right: 2px;
+    bottom: 3px;
+
+    width: 15px;
+    height: 15px;
+
+    border: 3px solid #111827;
+
+    border-radius: 50%;
+
+    background: var(--sidebar-success);
+
+    box-shadow:
+        0 0 0 3px rgba(32, 201, 151, 0.12);
+
+    pointer-events: none;
+}
+
+
+/* ============================================================
+   USER INFORMATION
+   ============================================================ */
+
+.kucsa-sidebar-shell .sidebar-user-name {
+    margin-top: 0.9rem;
+    margin-bottom: 0.25rem;
+
+    color: #fff;
+
+    font-size: 1rem;
+    line-height: 1.35;
+
+    font-weight: 700;
+
+    letter-spacing: -0.01em;
+
+    overflow-wrap: anywhere;
+}
+
+
+.kucsa-sidebar-shell .sidebar-user-role {
+    color: var(--sidebar-text-soft);
+
+    font-size: 0.76rem;
+    line-height: 1.4;
+
+    font-weight: 500;
+
+    overflow-wrap: anywhere;
+}
+
+
+.kucsa-sidebar-shell .sidebar-membership-number {
+    margin-top: 0.3rem;
+
+    color: var(--sidebar-text-muted);
+
+    font-size: 0.66rem;
+    line-height: 1.4;
+
+    letter-spacing: 0.02em;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* ============================================================
+   MEMBERSHIP STATUS
+   ============================================================ */
+
+.kucsa-sidebar-shell .sidebar-status {
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+
+    margin-top: 0.85rem;
+}
+
+
+.kucsa-sidebar-shell .sidebar-status .badge {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    max-width: 100%;
+
+    padding: 0.42rem 0.7rem;
+
+    border-radius: 999px;
+
+    font-size: 0.66rem;
+    line-height: 1.2;
+
+    font-weight: 600;
+
+    letter-spacing: 0.01em;
+
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+
+/* ============================================================
+   NAVIGATION CONTAINER
+   ============================================================ */
+
+.kucsa-sidebar-shell .sidebar-nav {
+    width: 100%;
+
+    padding: 0.85rem 0 1.25rem;
+    margin: 0;
+
+    list-style: none;
+}
+
+
+.kucsa-sidebar-shell .sidebar-nav .nav-item,
+.kucsa-sidebar-shell .sidebar-nav > li {
+    list-style: none;
+}
+
+
+/* ============================================================
+   SECTION TITLES
+   ============================================================ */
+
+.kucsa-sidebar-shell .sidebar-section {
+    width: 100%;
+
+    margin-top: 1rem;
+    margin-bottom: 0.35rem;
+
+    padding: 0 0.9rem;
+
+    list-style: none;
+}
+
+
+.kucsa-sidebar-shell .sidebar-section:first-child {
+    margin-top: 0;
+}
+
+
+.kucsa-sidebar-shell .sidebar-section-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 0.45rem;
+
+    width: 100%;
+
+    color: var(--sidebar-text-muted) !important;
+
+    font-size: 0.62rem;
+    line-height: 1.4;
+
+    font-weight: 700;
+
+    letter-spacing: 0.11em;
+
+    text-transform: uppercase;
+}
+
+
+.kucsa-sidebar-shell .sidebar-section-title::before {
+    content: "";
+
+    width: 4px;
+    height: 4px;
+
+    flex: 0 0 4px;
+
+    border-radius: 50%;
+
+    background: rgba(13, 110, 253, 0.75);
+}
+
+
+/* ============================================================
+   NAV LINKS
+   ============================================================ */
+
+.kucsa-sidebar-shell .nav-link {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    width: calc(100% - 1rem);
+
+    min-width: 0;
+    min-height: 44px;
+
+    margin: 2px 0.5rem;
+
+    padding: 0.66rem 0.75rem;
+
+    border: 1px solid transparent;
+
+    border-radius: var(--sidebar-radius);
+
+    color: var(--sidebar-text) !important;
+
+    background: transparent;
+
+    text-decoration: none !important;
+
+    font-size: 0.84rem;
+    line-height: 1.35;
+
+    font-weight: 500;
+
+    transition:
+        background-color var(--sidebar-transition),
+        border-color var(--sidebar-transition),
+        color var(--sidebar-transition),
+        transform var(--sidebar-transition),
+        box-shadow var(--sidebar-transition);
+
+    -webkit-tap-highlight-color: transparent;
+
+    touch-action: manipulation;
+}
+
+
+.kucsa-sidebar-shell .nav-link::before {
+    content: "";
+
+    position: absolute;
+
+    left: -1px;
+    top: 50%;
+
+    width: 3px;
+    height: 0;
+
+    border-radius: 0 4px 4px 0;
+
+    background: var(--sidebar-primary);
+
+    transform: translateY(-50%);
+
+    transition:
+        height var(--sidebar-transition),
+        opacity var(--sidebar-transition);
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+
+.kucsa-sidebar-shell .nav-link i {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 24px;
+    min-width: 24px;
+    height: 24px;
+
+    margin-right: 0.68rem;
+
+    color: rgba(255, 255, 255, 0.68);
+
+    font-size: 1rem;
+    line-height: 1;
+
+    text-align: center;
+
+    transition:
+        color var(--sidebar-transition),
+        transform var(--sidebar-transition);
+}
+
+
+.kucsa-sidebar-shell .nav-link span {
+    min-width: 0;
+
+    flex: 1;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+}
+
+
+.kucsa-sidebar-shell .nav-link:hover {
+    background: var(--sidebar-surface-hover);
+
+    border-color: rgba(255, 255, 255, 0.055);
+
+    color: #fff !important;
+
+    transform: translateX(2px);
+}
+
+
+.kucsa-sidebar-shell .nav-link:hover i {
+    color: #fff;
+
+    transform: translateX(1px);
+}
+
+
+.kucsa-sidebar-shell .nav-link:focus-visible {
+    outline: 0;
+
+    border-color: rgba(110, 168, 254, 0.65);
+
+    box-shadow:
+        0 0 0 3px rgba(13, 110, 253, 0.18);
+}
+
+
+.kucsa-sidebar-shell .nav-link.active {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(13, 110, 253, 0.20),
+            rgba(13, 110, 253, 0.08)
+        );
+
+    border-color: rgba(13, 110, 253, 0.16);
+
+    color: #fff !important;
+
+    font-weight: 650;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+
+.kucsa-sidebar-shell .nav-link.active::before {
+    height: 22px;
+
+    opacity: 1;
+}
+
+
+.kucsa-sidebar-shell .nav-link.active i {
+    color: #78aefc;
+}
+
+
+/* ============================================================
+   DIVIDERS
+   ============================================================ */
+
+.kucsa-sidebar-shell .sidebar-divider {
+    height: 1px;
+
+    margin: 0.8rem 0.9rem;
+
+    border: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.10),
+            transparent
+        );
+
+    opacity: 1;
+}
+
+
+/* ============================================================
+   PAYMENT BOXES
+   ============================================================ */
+
+.kucsa-sidebar-shell .payment-required-box,
+.kucsa-sidebar-shell .payment-pending-box {
+    width: calc(100% - 1.5rem);
+
+    margin: 0.65rem 0.75rem 0.75rem;
+
+    padding: 0.8rem;
+
+    border-radius: var(--sidebar-radius);
+
+    font-size: 0.71rem;
+    line-height: 1.55;
+
+    color: var(--sidebar-text-soft);
+
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.10);
+
+    overflow-wrap: anywhere;
+}
+
+
+.kucsa-sidebar-shell .payment-required-box {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 193, 7, 0.11),
+            rgba(255, 193, 7, 0.045)
+        );
+
+    border: 1px solid rgba(255, 193, 7, 0.22);
+}
+
+
+.kucsa-sidebar-shell .payment-pending-box {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(13, 202, 240, 0.10),
+            rgba(13, 202, 240, 0.035)
+        );
+
+    border: 1px solid rgba(13, 202, 240, 0.20);
+}
+
+
+.kucsa-sidebar-shell .payment-required-box strong,
+.kucsa-sidebar-shell .payment-pending-box strong {
+    display: flex;
+
+    align-items: center;
+
+    gap: 0.3rem;
+
+    margin-bottom: 0.35rem;
+
+    font-size: 0.72rem;
+    line-height: 1.4;
+}
+
+
+.kucsa-sidebar-shell .payment-required-box strong {
+    color: #ffd45c;
+}
+
+
+.kucsa-sidebar-shell .payment-pending-box strong {
+    color: #58d9f5;
+}
+
+
+/* ============================================================
+   LOGOUT
+   ============================================================ */
+
+.kucsa-sidebar-shell .logout-link {
+    color: var(--sidebar-danger) !important;
+}
+
+
+.kucsa-sidebar-shell .logout-link i {
+    color: var(--sidebar-danger) !important;
+}
+
+
+.kucsa-sidebar-shell .logout-link:hover {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(220, 53, 69, 0.14),
+            rgba(220, 53, 69, 0.055)
+        );
+
+    border-color: rgba(220, 53, 69, 0.14);
+
+    color: #ff8792 !important;
+}
+
+
+/* ============================================================
+   NAVIGATION FEEDBACK
+   ============================================================ */
+
+.kucsa-sidebar-shell .nav-link.is-navigating {
+    opacity: 0.65;
+}
+
+
+.kucsa-sidebar-shell .nav-link.is-navigating i {
+    animation:
+        kucsaSidebarIconPulse
+        0.9s
+        ease-in-out
+        infinite;
+}
+
+
+@keyframes kucsaSidebarIconPulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.35;
+    }
+}
+
+
+/* ============================================================
+   TABLET / MOBILE
+   ============================================================ */
+
+@media (max-width: 991.98px) {
+
+    /*
+     * VERY IMPORTANT:
+     *
+     * Bootstrap Offcanvas is already responsible for:
+     *
+     * - viewport height
+     * - positioning
+     * - backdrop
+     * - scrolling
+     *
+     * Therefore the sidebar must NOT create a second
+     * 100%-height scrolling container here.
+     */
     .kucsa-sidebar-shell {
-        --sidebar-bg: #111827;
-        --sidebar-bg-deep: #0b1220;
-        --sidebar-surface: rgba(255, 255, 255, 0.055);
-        --sidebar-surface-hover: rgba(255, 255, 255, 0.085);
-        --sidebar-primary: #0d6efd;
-        --sidebar-text: rgba(255, 255, 255, 0.88);
-        --sidebar-text-muted: rgba(255, 255, 255, 0.52);
-        --sidebar-text-soft: rgba(255, 255, 255, 0.68);
-        --sidebar-border: rgba(255, 255, 255, 0.09);
-        --sidebar-danger: #ff6b7a;
-        --sidebar-success: #20c997;
-        --sidebar-radius: 12px;
-        --sidebar-transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-
-        /*
-         * IMPORTANT:
-         * Use a solid background here.
-         * Do not use transparent backgrounds because this element
-         * can be placed inside a Bootstrap offcanvas container.
-         */
         width: 100%;
-        min-width: 0;
+
+        height: auto;
         min-height: 100%;
-        height: 100%;
 
-        color: #fff;
+        max-height: none;
 
-        background:
-            radial-gradient(
-                circle at top left,
-                rgba(13, 110, 253, 0.12),
-                transparent 30%
-            ),
-            linear-gradient(
-                180deg,
-                #111827 0%,
-                #0b1220 100%
-            );
+        overflow: visible;
 
-        background-color: #111827;
+        overscroll-behavior: auto;
 
-        /*
-         * Do NOT allow the sidebar to create horizontal overflow.
-         */
-        overflow: hidden;
-
-        /*
-         * Prevent scroll chaining from creating strange movement
-         * between the page, offcanvas and sidebar.
-         */
-        overscroll-behavior: contain;
-
-        isolation: isolate;
-    }
-
-
-    .kucsa-sidebar-shell *,
-    .kucsa-sidebar-shell *::before,
-    .kucsa-sidebar-shell *::after {
-        box-sizing: border-box;
-    }
-
-
-    /* =========================================================
-       SCROLL CONTAINER
-       ========================================================= */
-
-    .kucsa-sidebar-shell .kucsa-sidebar-scroll {
-        width: 100%;
-        height: 100%;
-        min-width: 0;
-        min-height: 0;
-
-        /*
-         * THIS is the only element responsible for sidebar
-         * vertical scrolling.
-         */
-        overflow-x: hidden;
-        overflow-y: auto;
-
-        overscroll-behavior-y: contain;
-        -webkit-overflow-scrolling: touch;
-
-        scrollbar-width: thin;
-        scrollbar-color:
-            rgba(255, 255, 255, 0.18)
-            transparent;
-    }
-
-
-    .kucsa-sidebar-shell .kucsa-sidebar-scroll::-webkit-scrollbar {
-        width: 5px;
-    }
-
-    .kucsa-sidebar-shell .kucsa-sidebar-scroll::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    .kucsa-sidebar-shell .kucsa-sidebar-scroll::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.16);
-        border-radius: 999px;
-    }
-
-    .kucsa-sidebar-shell .kucsa-sidebar-scroll::-webkit-scrollbar-thumb:hover {
-        background: rgba(255, 255, 255, 0.25);
-    }
-
-
-    /* =========================================================
-       PROFILE HEADER
-       ========================================================= */
-
-    .kucsa-sidebar-shell .sidebar-header {
-        position: relative;
-
-        padding: 1.5rem 1rem 1.25rem;
-
-        text-align: center;
-
-        border-bottom: 1px solid var(--sidebar-border);
-
-        background:
-            linear-gradient(
-                180deg,
-                rgba(255, 255, 255, 0.035),
-                transparent
-            );
-
-        flex-shrink: 0;
-    }
-
-
-    .kucsa-sidebar-shell .sidebar-header::after {
-        content: "";
-
-        position: absolute;
-
-        left: 20%;
-        right: 20%;
-        bottom: -1px;
-
-        height: 1px;
-
-        background:
-            linear-gradient(
-                90deg,
-                transparent,
-                rgba(13, 110, 253, 0.7),
-                transparent
-            );
-
-        opacity: 0.65;
-    }
-
-
-    /* =========================================================
-       PROFILE AVATAR
-       ========================================================= */
-
-    .kucsa-sidebar-shell .sidebar-avatar-wrap {
-        position: relative;
-
-        width: 78px;
-        height: 78px;
-
-        margin: 0 auto;
-    }
-
-
-    .kucsa-sidebar-shell .sidebar-profile-picture {
-        display: block;
-
-        width: 78px;
-        height: 78px;
-
-        object-fit: cover;
-
-        border-radius: 50%;
-
-        border: 3px solid rgba(255, 255, 255, 0.18);
-
-        box-shadow:
-            0 0 0 5px rgba(13, 110, 253, 0.08),
-            0 10px 28px rgba(0, 0, 0, 0.24);
-
-        transition:
-            transform var(--sidebar-transition),
-            border-color var(--sidebar-transition),
-            box-shadow var(--sidebar-transition);
-    }
-
-
-    .kucsa-sidebar-shell .sidebar-profile-picture:hover {
-        transform: translateY(-2px);
-
-        border-color: rgba(13, 110, 253, 0.7);
-
-        box-shadow:
-            0 0 0 6px rgba(13, 110, 253, 0.10),
-            0 14px 30px rgba(0, 0, 0, 0.28);
-    }
-
-
-    .kucsa-sidebar-shell .sidebar-default-avatar {
-        display: flex;
-
-        align-items: center;
-        justify-content: center;
-
-        width: 78px;
-        height: 78px;
-
-        border-radius: 50%;
-
-        color: rgba(255, 255, 255, 0.86);
-
-        background:
-            linear-gradient(
-                145deg,
-                rgba(13, 110, 253, 0.35),
-                rgba(255, 255, 255, 0.06)
-            );
-
-        border: 3px solid rgba(255, 255, 255, 0.14);
-
-        box-shadow:
-            0 0 0 5px rgba(13, 110, 253, 0.06),
-            0 10px 28px rgba(0, 0, 0, 0.22);
-
-        font-size: 3.6rem;
-        line-height: 1;
-    }
-
-
-    /* =========================================================
-       ONLINE INDICATOR
-       ========================================================= */
-
-    .kucsa-sidebar-shell .sidebar-online-indicator {
-        position: absolute;
-
-        right: 2px;
-        bottom: 3px;
-
-        width: 15px;
-        height: 15px;
-
-        border: 3px solid #111827;
-        border-radius: 50%;
-
-        background: var(--sidebar-success);
-
-        box-shadow:
-            0 0 0 3px rgba(32, 201, 151, 0.12);
-    }
-
-
-    /* =========================================================
-       USER INFORMATION
-       ========================================================= */
-
-    .kucsa-sidebar-shell .sidebar-user-name {
-        margin-top: 0.9rem;
-        margin-bottom: 0.25rem;
-
-        color: #fff;
-
-        font-size: 1rem;
-        line-height: 1.35;
-        font-weight: 700;
-
-        letter-spacing: -0.01em;
-
-        overflow-wrap: anywhere;
-    }
-
-
-    .kucsa-sidebar-shell .sidebar-user-role {
-        color: var(--sidebar-text-soft);
-
-        font-size: 0.76rem;
-        line-height: 1.4;
-        font-weight: 500;
-    }
-
-
-    .kucsa-sidebar-shell .sidebar-membership-number {
-        margin-top: 0.3rem;
-
-        color: var(--sidebar-text-muted);
-
-        font-size: 0.66rem;
-        line-height: 1.4;
-
-        letter-spacing: 0.02em;
-    }
-
-
-    /* =========================================================
-       MEMBERSHIP STATUS
-       ========================================================= */
-
-    .kucsa-sidebar-shell .sidebar-status {
-        display: flex;
-
-        justify-content: center;
-
-        margin-top: 0.85rem;
-    }
-
-
-    .kucsa-sidebar-shell .sidebar-status .badge {
-        display: inline-flex;
-
-        align-items: center;
-        justify-content: center;
-
-        max-width: 100%;
-
-        padding: 0.42rem 0.7rem;
-
-        border-radius: 999px;
-
-        font-size: 0.66rem;
-        line-height: 1.2;
-        font-weight: 600;
-
-        letter-spacing: 0.01em;
-
-        box-shadow:
-            0 4px 12px rgba(0, 0, 0, 0.12);
-    }
-
-
-    /* =========================================================
-       NAVIGATION
-       ========================================================= */
-
-    .kucsa-sidebar-shell .sidebar-nav {
-        width: 100%;
-
-        padding: 0.85rem 0 1.25rem;
-        margin: 0;
-
-        list-style: none;
-    }
-
-
-    .kucsa-sidebar-shell .sidebar-nav .nav-item {
-        list-style: none;
-    }
-
-
-    /* =========================================================
-       SECTION TITLES
-       ========================================================= */
-
-    .kucsa-sidebar-shell .sidebar-section {
-        margin-top: 1rem;
-        margin-bottom: 0.35rem;
-
-        padding: 0 0.9rem;
-
-        list-style: none;
-    }
-
-
-    .kucsa-sidebar-shell .sidebar-section:first-child {
-        margin-top: 0;
-    }
-
-
-    .kucsa-sidebar-shell .sidebar-section-title {
-        display: flex;
-
-        align-items: center;
-
-        gap: 0.45rem;
-
-        color: var(--sidebar-text-muted) !important;
-
-        font-size: 0.62rem;
-        line-height: 1.4;
-
-        font-weight: 700;
-
-        letter-spacing: 0.11em;
-
-        text-transform: uppercase;
-    }
-
-
-    .kucsa-sidebar-shell .sidebar-section-title::before {
-        content: "";
-
-        width: 4px;
-        height: 4px;
-
-        flex: 0 0 4px;
-
-        border-radius: 50%;
-
-        background: rgba(13, 110, 253, 0.75);
-    }
-
-
-    /* =========================================================
-       NAV LINKS
-       ========================================================= */
-
-    .kucsa-sidebar-shell .nav-link {
-        position: relative;
-
-        display: flex;
-
-        align-items: center;
-
-        width: calc(100% - 1rem);
-        min-height: 44px;
-
-        margin: 2px 0.5rem;
-
-        padding: 0.66rem 0.75rem;
-
-        border: 1px solid transparent;
-        border-radius: var(--sidebar-radius);
-
-        color: var(--sidebar-text) !important;
-
-        background: transparent;
-
-        text-decoration: none !important;
-
-        font-size: 0.84rem;
-        line-height: 1.35;
-        font-weight: 500;
-
-        transition:
-            background-color var(--sidebar-transition),
-            border-color var(--sidebar-transition),
-            color var(--sidebar-transition),
-            transform var(--sidebar-transition),
-            box-shadow var(--sidebar-transition);
-
-        -webkit-tap-highlight-color: transparent;
-
-        /*
-         * Prevent flex items from causing horizontal overflow.
-         */
-        min-width: 0;
-    }
-
-
-    .kucsa-sidebar-shell .nav-link::before {
-        content: "";
-
-        position: absolute;
-
-        left: -1px;
-        top: 50%;
-
-        width: 3px;
-        height: 0;
-
-        border-radius: 0 4px 4px 0;
-
-        background: var(--sidebar-primary);
-
-        transform: translateY(-50%);
-
-        transition:
-            height var(--sidebar-transition),
-            opacity var(--sidebar-transition);
-
-        opacity: 0;
-    }
-
-
-    .kucsa-sidebar-shell .nav-link i {
-        display: inline-flex;
-
-        align-items: center;
-        justify-content: center;
-
-        width: 24px;
-        min-width: 24px;
-        height: 24px;
-
-        margin-right: 0.68rem;
-
-        color: rgba(255, 255, 255, 0.68);
-
-        font-size: 1rem;
-        line-height: 1;
-
-        text-align: center;
-
-        transition:
-            color var(--sidebar-transition),
-            transform var(--sidebar-transition);
-    }
-
-
-    .kucsa-sidebar-shell .nav-link span {
-        min-width: 0;
-
-        flex: 1;
-
-        overflow: hidden;
-
-        white-space: nowrap;
-
-        text-overflow: ellipsis;
-    }
-
-
-    .kucsa-sidebar-shell .nav-link:hover {
-        background: var(--sidebar-surface-hover);
-
-        border-color: rgba(255, 255, 255, 0.055);
-
-        color: #fff !important;
-
-        transform: translateX(2px);
-    }
-
-
-    .kucsa-sidebar-shell .nav-link:hover i {
-        color: #fff;
-
-        transform: translateX(1px);
-    }
-
-
-    .kucsa-sidebar-shell .nav-link:focus-visible {
-        outline: 0;
-
-        border-color: rgba(110, 168, 254, 0.65);
-
-        box-shadow:
-            0 0 0 3px rgba(13, 110, 253, 0.18);
-    }
-
-
-    .kucsa-sidebar-shell .nav-link.active {
-        background:
-            linear-gradient(
-                90deg,
-                rgba(13, 110, 253, 0.20),
-                rgba(13, 110, 253, 0.08)
-            );
-
-        border-color: rgba(13, 110, 253, 0.16);
-
-        color: #fff !important;
-
-        font-weight: 650;
-
-        box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, 0.035);
-    }
-
-
-    .kucsa-sidebar-shell .nav-link.active::before {
-        height: 22px;
-
-        opacity: 1;
-    }
-
-
-    .kucsa-sidebar-shell .nav-link.active i {
-        color: #78aefc;
-    }
-
-
-    /* =========================================================
-       DIVIDERS
-       ========================================================= */
-
-    .kucsa-sidebar-shell .sidebar-divider {
-        height: 1px;
-
-        margin: 0.8rem 0.9rem;
-
-        border: 0;
-
-        background:
-            linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.10),
-                transparent
-            );
-
-        opacity: 1;
-    }
-
-
-    /* =========================================================
-       PAYMENT BOXES
-       ========================================================= */
-
-    .kucsa-sidebar-shell .payment-required-box,
-    .kucsa-sidebar-shell .payment-pending-box {
-        margin: 0.65rem 0.75rem 0.75rem;
-
-        padding: 0.8rem;
-
-        border-radius: var(--sidebar-radius);
-
-        font-size: 0.71rem;
-        line-height: 1.55;
-
-        color: var(--sidebar-text-soft);
-
-        box-shadow:
-            0 6px 18px rgba(0, 0, 0, 0.10);
-    }
-
-
-    .kucsa-sidebar-shell .payment-required-box {
-        background:
-            linear-gradient(
-                145deg,
-                rgba(255, 193, 7, 0.11),
-                rgba(255, 193, 7, 0.045)
-            );
-
-        border: 1px solid rgba(255, 193, 7, 0.22);
-    }
-
-
-    .kucsa-sidebar-shell .payment-required-box strong,
-    .kucsa-sidebar-shell .payment-pending-box strong {
-        display: flex;
-
-        align-items: center;
-
-        gap: 0.3rem;
-
-        margin-bottom: 0.35rem;
-
-        font-size: 0.72rem;
-        line-height: 1.4;
-    }
-
-
-    .kucsa-sidebar-shell .payment-required-box strong {
-        color: #ffd45c;
-    }
-
-
-    .kucsa-sidebar-shell .payment-pending-box {
-        background:
-            linear-gradient(
-                145deg,
-                rgba(13, 202, 240, 0.10),
-                rgba(13, 202, 240, 0.035)
-            );
-
-        border: 1px solid rgba(13, 202, 240, 0.20);
-    }
-
-
-    .kucsa-sidebar-shell .payment-pending-box strong {
-        color: #58d9f5;
-    }
-
-
-    /* =========================================================
-       LOGOUT
-       ========================================================= */
-
-    .kucsa-sidebar-shell .logout-link {
-        color: var(--sidebar-danger) !important;
-    }
-
-
-    .kucsa-sidebar-shell .logout-link i {
-        color: var(--sidebar-danger) !important;
-    }
-
-
-    .kucsa-sidebar-shell .logout-link:hover {
-        background:
-            linear-gradient(
-                90deg,
-                rgba(220, 53, 69, 0.14),
-                rgba(220, 53, 69, 0.055)
-            );
-
-        border-color: rgba(220, 53, 69, 0.14);
-
-        color: #ff8792 !important;
-    }
-
-
-    /* =========================================================
-       NAVIGATION FEEDBACK
-       ========================================================= */
-
-    .kucsa-sidebar-shell .nav-link.is-navigating {
-        opacity: 0.65;
+        background-color: var(--sidebar-bg-deep);
     }
 
 
     /*
-     * IMPORTANT:
-     * We no longer permanently disable the link with
-     * pointer-events:none.
-     *
-     * This prevents the sidebar from becoming visually stuck
-     * if navigation is interrupted or Bootstrap closes the
-     * offcanvas at the same time.
+     * Let Bootstrap's offcanvas handle the scroll.
      */
-    .kucsa-sidebar-shell .nav-link.is-navigating i {
-        animation:
-            kucsaSidebarIconPulse
-            0.9s
-            ease-in-out
-            infinite;
+    .kucsa-sidebar-shell .kucsa-sidebar-scroll {
+        width: 100%;
+
+        height: auto;
+
+        min-height: 0;
+
+        max-height: none;
+
+        overflow: visible;
+
+        overscroll-behavior: auto;
+
+        -webkit-overflow-scrolling: auto;
     }
 
 
-    @keyframes kucsaSidebarIconPulse {
-        0%,
-        100% {
-            opacity: 1;
-        }
-
-        50% {
-            opacity: 0.35;
-        }
+    .kucsa-sidebar-shell .sidebar-header {
+        padding:
+            1.35rem
+            1rem
+            1.2rem;
     }
 
 
-    /* =========================================================
-       MOBILE / TABLET
-       ========================================================= */
-
-    @media (max-width: 991.98px) {
-
-        /*
-         * Do not force another viewport-sized scrolling layer
-         * inside Bootstrap's offcanvas body.
-         */
-        .kucsa-sidebar-shell {
-            width: 100%;
-            height: 100%;
-            min-height: 100%;
-
-            overflow: hidden;
-
-            background-color: #111827;
-        }
-
-
-        .kucsa-sidebar-shell .kucsa-sidebar-scroll {
-            height: 100%;
-            min-height: 0;
-
-            overflow-x: hidden;
-            overflow-y: auto;
-
-            overscroll-behavior-y: contain;
-
-            -webkit-overflow-scrolling: touch;
-        }
-
-
-        .kucsa-sidebar-shell .sidebar-header {
-            padding:
-                1.35rem
-                1rem
-                1.2rem;
-        }
-
-
-        .kucsa-sidebar-shell .sidebar-nav {
-            padding-bottom: 1.5rem;
-        }
-
-
-        .kucsa-sidebar-shell .nav-link {
-            min-height: 46px;
-
-            margin-top: 3px;
-            margin-bottom: 3px;
-
-            padding:
-                0.7rem
-                0.8rem;
-
-            font-size: 0.86rem;
-        }
-
-
-        .kucsa-sidebar-shell .nav-link:active {
-            transform: scale(0.985);
-        }
-
-
-        .kucsa-sidebar-shell .sidebar-section {
-            margin-top: 1.1rem;
-        }
+    .kucsa-sidebar-shell .sidebar-nav {
+        padding-bottom: 1.5rem;
     }
 
 
-    /* =========================================================
-       SMALL MOBILE
-       ========================================================= */
+    .kucsa-sidebar-shell .nav-link {
+        min-height: 46px;
 
-    @media (max-width: 575.98px) {
+        margin-top: 3px;
+        margin-bottom: 3px;
 
-        .kucsa-sidebar-shell .sidebar-header {
-            padding:
-                1.15rem
-                0.85rem
-                1rem;
-        }
+        padding:
+            0.7rem
+            0.8rem;
 
-
-        .kucsa-sidebar-shell .sidebar-avatar-wrap,
-        .kucsa-sidebar-shell .sidebar-profile-picture,
-        .kucsa-sidebar-shell .sidebar-default-avatar {
-            width: 68px;
-            height: 68px;
-        }
-
-
-        .kucsa-sidebar-shell .sidebar-default-avatar {
-            font-size: 3.15rem;
-        }
-
-
-        .kucsa-sidebar-shell .sidebar-user-name {
-            margin-top: 0.75rem;
-
-            font-size: 0.94rem;
-        }
-
-
-        .kucsa-sidebar-shell .sidebar-user-role {
-            font-size: 0.72rem;
-        }
-
-
-        .kucsa-sidebar-shell .sidebar-membership-number {
-            font-size: 0.63rem;
-        }
-
-
-        .kucsa-sidebar-shell .nav-link {
-            width: calc(100% - 0.7rem);
-
-            margin-left: 0.35rem;
-            margin-right: 0.35rem;
-
-            min-height: 45px;
-
-            font-size: 0.83rem;
-        }
-
-
-        .kucsa-sidebar-shell .payment-required-box,
-        .kucsa-sidebar-shell .payment-pending-box {
-            margin-left: 0.6rem;
-            margin-right: 0.6rem;
-        }
+        font-size: 0.86rem;
     }
 
 
-    /* =========================================================
-       VERY SMALL DEVICES
-       ========================================================= */
-
-    @media (max-width: 359.98px) {
-
-        .kucsa-sidebar-shell .sidebar-header {
-            padding:
-                1rem
-                0.7rem
-                0.9rem;
-        }
-
-
-        .kucsa-sidebar-shell .sidebar-avatar-wrap,
-        .kucsa-sidebar-shell .sidebar-profile-picture,
-        .kucsa-sidebar-shell .sidebar-default-avatar {
-            width: 62px;
-            height: 62px;
-        }
-
-
-        .kucsa-sidebar-shell .sidebar-default-avatar {
-            font-size: 2.85rem;
-        }
-
-
-        .kucsa-sidebar-shell .nav-link {
-            min-height: 43px;
-
-            padding-left: 0.65rem;
-            padding-right: 0.65rem;
-
-            font-size: 0.78rem;
-        }
-
-
-        .kucsa-sidebar-shell .nav-link i {
-            width: 22px;
-            min-width: 22px;
-
-            margin-right: 0.55rem;
-
-            font-size: 0.94rem;
-        }
+    .kucsa-sidebar-shell .nav-link:active {
+        transform: scale(0.985);
     }
 
 
-    /* =========================================================
-       REDUCED MOTION
-       ========================================================= */
-
-    @media (prefers-reduced-motion: reduce) {
-
-        .kucsa-sidebar-shell *,
-        .kucsa-sidebar-shell *::before,
-        .kucsa-sidebar-shell *::after {
-            scroll-behavior: auto !important;
-
-            transition-duration: 0.01ms !important;
-
-            animation-duration: 0.01ms !important;
-
-            animation-iteration-count: 1 !important;
-        }
+    .kucsa-sidebar-shell .sidebar-section {
+        margin-top: 1.1rem;
     }
+}
+
+
+/* ============================================================
+   SMALL MOBILE
+   ============================================================ */
+
+@media (max-width: 575.98px) {
+
+    .kucsa-sidebar-shell .sidebar-header {
+        padding:
+            1.15rem
+            0.85rem
+            1rem;
+    }
+
+
+    .kucsa-sidebar-shell .sidebar-avatar-wrap,
+    .kucsa-sidebar-shell .sidebar-profile-picture,
+    .kucsa-sidebar-shell .sidebar-default-avatar {
+        width: 68px;
+        height: 68px;
+    }
+
+
+    .kucsa-sidebar-shell .sidebar-default-avatar {
+        font-size: 3.15rem;
+    }
+
+
+    .kucsa-sidebar-shell .sidebar-user-name {
+        margin-top: 0.75rem;
+
+        font-size: 0.94rem;
+    }
+
+
+    .kucsa-sidebar-shell .sidebar-user-role {
+        font-size: 0.72rem;
+    }
+
+
+    .kucsa-sidebar-shell .sidebar-membership-number {
+        font-size: 0.63rem;
+    }
+
+
+    .kucsa-sidebar-shell .nav-link {
+        width: calc(100% - 0.7rem);
+
+        margin-left: 0.35rem;
+        margin-right: 0.35rem;
+
+        min-height: 45px;
+
+        font-size: 0.83rem;
+    }
+
+
+    .kucsa-sidebar-shell .payment-required-box,
+    .kucsa-sidebar-shell .payment-pending-box {
+        width: calc(100% - 1.2rem);
+
+        margin-left: 0.6rem;
+        margin-right: 0.6rem;
+    }
+}
+
+
+/* ============================================================
+   VERY SMALL DEVICES
+   ============================================================ */
+
+@media (max-width: 359.98px) {
+
+    .kucsa-sidebar-shell .sidebar-header {
+        padding:
+            1rem
+            0.7rem
+            0.9rem;
+    }
+
+
+    .kucsa-sidebar-shell .sidebar-avatar-wrap,
+    .kucsa-sidebar-shell .sidebar-profile-picture,
+    .kucsa-sidebar-shell .sidebar-default-avatar {
+        width: 62px;
+        height: 62px;
+    }
+
+
+    .kucsa-sidebar-shell .sidebar-default-avatar {
+        font-size: 2.85rem;
+    }
+
+
+    .kucsa-sidebar-shell .nav-link {
+        min-height: 43px;
+
+        padding-left: 0.65rem;
+        padding-right: 0.65rem;
+
+        font-size: 0.78rem;
+    }
+
+
+    .kucsa-sidebar-shell .nav-link i {
+        width: 22px;
+        min-width: 22px;
+
+        margin-right: 0.55rem;
+
+        font-size: 0.94rem;
+    }
+}
+
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .kucsa-sidebar-shell *,
+    .kucsa-sidebar-shell *::before,
+    .kucsa-sidebar-shell *::after {
+
+        scroll-behavior: auto !important;
+
+        transition-duration: 0.01ms !important;
+
+        animation-duration: 0.01ms !important;
+
+        animation-iteration-count: 1 !important;
+    }
+}
 </style>
 
 <!-- =========================================================
@@ -964,7 +1072,7 @@
     id="kucsaSidebar"
 >
 
-```
+
 <div class="kucsa-sidebar-scroll">
 
 
@@ -2532,30 +2640,34 @@
 ```
 
 </div>
-
 <script>
 (function () {
     "use strict";
 
     /*
      * ============================================================
-     * KUCSA SIDEBAR INTERACTIONS
+     * KUCSA SIDEBAR LOCAL BEHAVIOUR
      * ============================================================
      *
-     * IMPORTANT:
-     *
-     * This script deliberately does NOT:
+     * This script DOES NOT:
      *
      * - create an offcanvas
      * - open an offcanvas
      * - close an offcanvas
-     * - manipulate Bootstrap backdrops
-     * - manipulate body overflow
+     * - create a backdrop
+     * - remove a backdrop
+     * - manipulate document.body overflow
      * - manipulate navbar state
+     * - manipulate Bootstrap
      *
-     * The navbar owns all offcanvas behavior.
+     * Bootstrap Offcanvas remains completely controlled by
+     * the navbar.
      *
-     * This script only handles sidebar-local behavior.
+     * This script only handles:
+     *
+     * - navigation feedback
+     * - active-link accessibility
+     * - profile-image fallback
      * ============================================================
      */
 
@@ -2570,6 +2682,17 @@
 
 
         /* ========================================================
+           PREVENT DUPLICATE INITIALIZATION
+           ======================================================== */
+
+        if (sidebar.dataset.kucsaInitialized === "true") {
+            return;
+        }
+
+        sidebar.dataset.kucsaInitialized = "true";
+
+
+        /* ========================================================
            NAVIGATION FEEDBACK
            ======================================================== */
 
@@ -2580,36 +2703,42 @@
 
         links.forEach(function (link) {
 
-            link.addEventListener("click", function () {
+            link.addEventListener(
+                "click",
+                function () {
 
-                const href = this.getAttribute("href");
+                    const href = this.getAttribute("href");
 
-                if (
-                    !href ||
-                    href === "#" ||
-                    href.startsWith("javascript:")
-                ) {
-                    return;
+                    /*
+                     * Ignore empty/non-navigation links.
+                     */
+                    if (
+                        !href ||
+                        href === "#" ||
+                        href.startsWith("javascript:")
+                    ) {
+                        return;
+                    }
+
+
+                    /*
+                     * Visual feedback only.
+                     *
+                     * IMPORTANT:
+                     * We do NOT disable the link.
+                     */
+                    this.classList.add("is-navigating");
+
+                    this.setAttribute(
+                        "aria-busy",
+                        "true"
+                    );
+
+                },
+                {
+                    passive: true
                 }
-
-
-                /*
-                 * Visual feedback only.
-                 *
-                 * We intentionally do NOT disable the link.
-                 * Bootstrap may close the mobile offcanvas at the
-                 * same time and disabling the link can make the UI
-                 * appear stuck.
-                 */
-
-                this.classList.add("is-navigating");
-
-                this.setAttribute(
-                    "aria-busy",
-                    "true"
-                );
-
-            });
+            );
 
         });
 
@@ -2618,76 +2747,82 @@
            ACTIVE LINK ACCESSIBILITY
            ======================================================== */
 
-        sidebar
-            .querySelectorAll(".nav-link.active")
-            .forEach(function (link) {
+        const activeLinks = sidebar.querySelectorAll(
+            ".nav-link.active"
+        );
 
-                link.setAttribute(
-                    "aria-current",
-                    "page"
-                );
 
-            });
+        activeLinks.forEach(function (link) {
+
+            link.setAttribute(
+                "aria-current",
+                "page"
+            );
+
+        });
 
 
         /* ========================================================
            PROFILE IMAGE FALLBACK
            ======================================================== */
 
-        sidebar
-            .querySelectorAll(
-                "img.sidebar-profile-picture"
-            )
-            .forEach(function (image) {
+        const profileImages = sidebar.querySelectorAll(
+            "img.sidebar-profile-picture"
+        );
 
-                image.addEventListener(
-                    "error",
-                    function () {
 
-                        /*
-                         * Remove broken-image rendering.
-                         */
+        profileImages.forEach(function (image) {
 
-                        this.style.display = "none";
+            image.addEventListener(
+                "error",
+                function () {
 
-                    },
-                    {
-                        once: true
-                    }
-                );
+                    /*
+                     * Hide only the broken image.
+                     *
+                     * We intentionally do not manipulate the
+                     * sidebar layout or scrolling.
+                     */
 
-            });
+                    this.style.display = "none";
+
+                },
+                {
+                    once: true
+                }
+            );
+
+        });
 
 
         /* ========================================================
-           CLEAN NAVIGATION STATE
+           PAGE RESTORATION
            ======================================================== */
-
-        /*
-         * If the browser restores the page from its back/forward
-         * cache, remove any old navigation state.
-         */
 
         window.addEventListener(
             "pageshow",
             function () {
 
-                sidebar
-                    .querySelectorAll(
-                        ".nav-link.is-navigating"
-                    )
-                    .forEach(function (link) {
+                const navigatingLinks = sidebar.querySelectorAll(
+                    ".nav-link.is-navigating"
+                );
 
-                        link.classList.remove(
-                            "is-navigating"
-                        );
 
-                        link.removeAttribute(
-                            "aria-busy"
-                        );
+                navigatingLinks.forEach(function (link) {
 
-                    });
+                    link.classList.remove(
+                        "is-navigating"
+                    );
 
+                    link.removeAttribute(
+                        "aria-busy"
+                    );
+
+                });
+
+            },
+            {
+                passive: true
             }
         );
 
@@ -2695,12 +2830,10 @@
 
 
     /* ============================================================
-       INITIALIZATION
+       SAFE INITIALIZATION
        ============================================================ */
 
-    if (
-        document.readyState === "loading"
-    ) {
+    if (document.readyState === "loading") {
 
         document.addEventListener(
             "DOMContentLoaded",

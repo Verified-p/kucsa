@@ -6,7 +6,6 @@
 
 <head>
 
-
 <meta charset="UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -44,25 +43,24 @@
 {% block extra_css %}
 {% endblock %}
 
-
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
 
 
 <!-- Navigation -->
 {% include "partials/navbar.html" %}
 
 
-<div class="container-fluid">
+<div class="container-fluid flex-grow-1">
 
-    <div class="row">
+    <div class="row h-100 align-items-stretch">
 
         <!-- =====================================================
              DESKTOP SIDEBAR
              =====================================================
 
-             The sidebar remains exactly where it is on desktop.
+             The sidebar remains visible only on desktop.
 
              On mobile/tablet it is removed from the normal page
              layout so that the navbar can control the sidebar
@@ -72,7 +70,7 @@
 
         {% if user.is_authenticated %}
 
-            <div class="col-lg-2 col-md-3 p-0 d-none d-md-block">
+            <div class="col-lg-2 p-0 d-none d-lg-flex">
 
                 {% include "partials/sidebar.html" %}
 
@@ -85,7 +83,7 @@
              MAIN CONTENT
              ===================================================== -->
 
-        <main class="{% if user.is_authenticated %}col-lg-10 col-md-9{% else %}col-12{% endif %} py-4">
+        <main class="{% if user.is_authenticated %}col-lg-10 col-12{% else %}col-12{% endif %} py-4">
 
             {% include "partials/messages.html" %}
 

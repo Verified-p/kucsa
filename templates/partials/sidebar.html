@@ -1,923 +1,959 @@
 <!-- =========================================================
      KUCSA RESPONSIVE SIDEBAR
      Desktop: Persistent sidebar
-     Mobile: Bootstrap Offcanvas
+     Mobile/Tablet: Controlled by Bootstrap Offcanvas in navbar
+     
+     IMPORTANT:
+     - This sidebar does NOT create or control the offcanvas.
+     - The navbar remains responsible for opening/closing it.
+     - The sidebar owns only its content, navigation and scrolling.
      ========================================================= -->
 
 <style>
-/* =========================================================
-   KUCSA SIDEBAR — PRODUCTION READY
-   ========================================================= */
-
-.kucsa-sidebar {
-    /* KEEPING YOUR ORIGINAL BACKGROUND COLOR */
-    background: #212529;
-
-    color: #fff;
-    min-height: 100%;
-    width: 100%;
-
-    overflow-x: hidden;
-    overflow-y: auto;
-
-    position: relative;
-    isolation: isolate;
-
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255,255,255,.22) transparent;
-
-    transition:
-        transform .28s ease,
-        box-shadow .28s ease,
-        visibility .28s ease;
-}
-
-
-/* =========================================================
-   BOX SIZING
-   ========================================================= */
-
-.kucsa-sidebar *,
-.kucsa-sidebar *::before,
-.kucsa-sidebar *::after {
-    box-sizing: border-box;
-}
-
-
-/* =========================================================
-   SCROLLBAR
-   ========================================================= */
-
-.kucsa-sidebar::-webkit-scrollbar {
-    width: 6px;
-}
-
-.kucsa-sidebar::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.kucsa-sidebar::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,.20);
-    border-radius: 999px;
-}
-
-.kucsa-sidebar::-webkit-scrollbar-thumb:hover {
-    background: rgba(255,255,255,.32);
-}
-
-
-/* =========================================================
-   PROFILE HEADER
-   ========================================================= */
-
-.kucsa-sidebar .sidebar-header {
-    position: relative;
-
-    padding: 1.5rem 1rem;
-
-    text-align: center;
-
-    border-bottom: 1px solid rgba(255,255,255,.12);
-
-    background:
-        linear-gradient(
-            180deg,
-            rgba(255,255,255,.025),
-            rgba(255,255,255,0)
-        );
-
-    transition:
-        padding .25s ease,
-        background-color .25s ease;
-}
-
-
-/* =========================================================
-   PROFILE PICTURE
-   ========================================================= */
-
-.kucsa-sidebar .sidebar-profile-picture {
-    display: block;
-
-    width: 82px;
-    height: 82px;
-
-    margin: 0 auto;
-
-    object-fit: cover;
-
-    border-radius: 50%;
-
-    border: 3px solid rgba(255,255,255,.25);
-
-    background: #212529;
-
-    box-shadow:
-        0 0 0 5px rgba(255,255,255,.035),
-        0 10px 25px rgba(0,0,0,.18);
-
-    transition:
-        transform .25s ease,
-        border-color .25s ease,
-        box-shadow .25s ease;
-}
-
-.kucsa-sidebar .sidebar-profile-picture:hover {
-    transform: translateY(-2px);
-
-    border-color: rgba(255,255,255,.42);
-
-    box-shadow:
-        0 0 0 6px rgba(255,255,255,.055),
-        0 12px 28px rgba(0,0,0,.24);
-}
-
-
-/* =========================================================
-   DEFAULT AVATAR
-   ========================================================= */
-
-.kucsa-sidebar .sidebar-default-avatar {
-    display: block;
-
-    width: 82px;
-    height: 82px;
-
-    margin: 0 auto;
-
-    font-size: 4.9rem;
-    line-height: 82px;
-
-    color: rgba(255,255,255,.9);
-
-    filter: drop-shadow(0 8px 16px rgba(0,0,0,.18));
-
-    transition:
-        transform .25s ease,
-        color .25s ease;
-}
-
-.kucsa-sidebar .sidebar-default-avatar:hover {
-    transform: translateY(-2px);
-    color: #fff;
-}
-
-
-/* =========================================================
-   USER NAME
-   ========================================================= */
-
-.kucsa-sidebar .sidebar-user-name {
-    max-width: 100%;
-
-    margin-top: .85rem;
-    margin-bottom: .2rem;
-
-    padding: 0 .35rem;
-
-    color: #fff;
-
-    font-size: 1rem;
-    font-weight: 600;
-
-    line-height: 1.35;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-
-/* =========================================================
-   USER ROLE
-   ========================================================= */
-
-.kucsa-sidebar .sidebar-user-role {
-    color: rgba(255,255,255,.65);
-
-    font-size: .8rem;
-    font-weight: 400;
-
-    line-height: 1.4;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-
-/* =========================================================
-   MEMBERSHIP NUMBER
-   ========================================================= */
-
-.kucsa-sidebar .sidebar-membership-number {
-    margin-top: .35rem;
-
-    color: rgba(255,255,255,.45);
-
-    font-size: .68rem;
-
-    line-height: 1.4;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-
-/* =========================================================
-   STATUS
-   ========================================================= */
-
-.kucsa-sidebar .sidebar-status {
-    display: flex;
-
-    justify-content: center;
-    align-items: center;
-
-    margin-top: .8rem;
-
-    min-height: 28px;
-}
-
-.kucsa-sidebar .sidebar-status .badge {
-    display: inline-flex;
-
-    align-items: center;
-    justify-content: center;
-
-    min-height: 28px;
-
-    max-width: 100%;
-
-    padding: .4rem .68rem;
-
-    border-radius: 999px;
-
-    font-size: .68rem;
-    font-weight: 500;
-
-    line-height: 1.2;
-
-    box-shadow:
-        0 4px 12px rgba(0,0,0,.10);
-}
-
-.kucsa-sidebar .sidebar-status .badge i {
-    font-size: .72rem;
-}
-
-
-/* =========================================================
-   NAVIGATION CONTAINER
-   ========================================================= */
-
-.kucsa-sidebar .sidebar-nav {
-    padding: .75rem 0 1.25rem;
-
-    margin: 0;
-
-    list-style: none;
-}
-
-
-/* =========================================================
-   NAV ITEMS
-   ========================================================= */
-
-.kucsa-sidebar .nav-item {
-    list-style: none;
-}
-
-
-/* =========================================================
-   NAV LINKS
-   ========================================================= */
-
-.kucsa-sidebar .nav-link {
-    position: relative;
-
-    display: flex;
-
-    align-items: center;
-
-    width: calc(100% - 16px);
-
-    min-height: 44px;
-
-    margin: 2px 8px;
-
-    padding: .65rem .85rem;
-
-    border-radius: 7px;
-
-    color: rgba(255,255,255,.88) !important;
-
-    text-decoration: none;
-
-    font-size: .88rem;
-    font-weight: 400;
-
-    line-height: 1.35;
-
-    overflow: hidden;
-
-    transition:
-        background-color .18s ease,
-        color .18s ease,
-        transform .18s ease,
-        box-shadow .18s ease;
-}
-
-
-/* subtle active indicator */
-
-.kucsa-sidebar .nav-link::before {
-    content: "";
-
-    position: absolute;
-
-    left: 0;
-    top: 50%;
-
-    width: 3px;
-    height: 0;
-
-    border-radius: 0 4px 4px 0;
-
-    background: #fff;
-
-    transform: translateY(-50%);
-
-    opacity: 0;
-
-    transition:
-        height .18s ease,
-        opacity .18s ease;
-}
-
-
-/* =========================================================
-   NAV ICON
-   ========================================================= */
-
-.kucsa-sidebar .nav-link i {
-    flex: 0 0 22px;
-
-    width: 22px;
-    min-width: 22px;
-
-    margin-right: .65rem;
-
-    color: rgba(255,255,255,.78);
-
-    font-size: 1rem;
-
-    text-align: center;
-
-    transition:
-        color .18s ease,
-        transform .18s ease;
-}
-
-
-/* =========================================================
-   NAV TEXT
-   ========================================================= */
-
-.kucsa-sidebar .nav-link span {
-    min-width: 0;
-
-    white-space: nowrap;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-}
-
-
-/* =========================================================
-   HOVER
-   ========================================================= */
-
-.kucsa-sidebar .nav-link:hover {
-    background: rgba(255,255,255,.09);
-
-    color: #fff !important;
-
-    transform: translateX(2px);
-}
-
-.kucsa-sidebar .nav-link:hover i {
-    color: #fff;
-
-    transform: translateX(1px);
-}
-
-
-/* =========================================================
-   ACTIVE
-   ========================================================= */
-
-.kucsa-sidebar .nav-link.active {
-    background: rgba(255,255,255,.15);
-
-    color: #fff !important;
-
-    font-weight: 600;
-
-    box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,.025);
-}
-
-.kucsa-sidebar .nav-link.active::before {
-    height: 22px;
-    opacity: 1;
-}
-
-.kucsa-sidebar .nav-link.active i {
-    color: #fff;
-}
-
-
-/* =========================================================
-   KEYBOARD FOCUS
-   ========================================================= */
-
-.kucsa-sidebar .nav-link:focus-visible {
-    outline: 2px solid rgba(255,255,255,.75);
-
-    outline-offset: 2px;
-
-    background: rgba(255,255,255,.11);
-}
-
-
-/* =========================================================
-   SECTION TITLES
-   ========================================================= */
-
-.kucsa-sidebar .sidebar-section {
-    margin-top: 1rem;
-    margin-bottom: .25rem;
-
-    padding: 0 1rem;
-}
-
-.kucsa-sidebar .sidebar-section:first-child {
-    margin-top: .25rem;
-}
-
-.kucsa-sidebar .sidebar-section-title {
-    display: block;
-
-    color: rgba(255,255,255,.48) !important;
-
-    font-size: .66rem;
-    font-weight: 700;
-
-    letter-spacing: .09em;
-
-    text-transform: uppercase;
-
-    line-height: 1.4;
-
-    user-select: none;
-}
-
-
-/* =========================================================
-   DIVIDERS
-   ========================================================= */
-
-.kucsa-sidebar .sidebar-divider {
-    margin: .8rem 1rem;
-
-    border: 0;
-
-    border-top: 1px solid rgba(255,255,255,.12);
-
-    opacity: 1;
-}
-
-
-/* =========================================================
-   PAYMENT NOTICES
-   ========================================================= */
-
-.kucsa-sidebar .payment-required-box,
-.kucsa-sidebar .payment-pending-box {
-    margin: .75rem;
-
-    padding: .8rem;
-
-    border-radius: 8px;
-
-    font-size: .75rem;
-
-    line-height: 1.5;
-
-    color: rgba(255,255,255,.85);
-
-    transition:
-        background-color .2s ease,
-        border-color .2s ease,
-        transform .2s ease;
-}
-
-.kucsa-sidebar .payment-required-box:hover,
-.kucsa-sidebar .payment-pending-box:hover {
-    transform: translateY(-1px);
-}
-
-
-/* REQUIRED */
-
-.kucsa-sidebar .payment-required-box {
-    background: rgba(255,193,7,.10);
-
-    border: 1px solid rgba(255,193,7,.25);
-}
-
-.kucsa-sidebar .payment-required-box strong {
-    display: block;
-
-    margin-bottom: .3rem;
-
-    color: #ffc107;
-
-    font-weight: 600;
-}
-
-
-/* PENDING */
-
-.kucsa-sidebar .payment-pending-box {
-    background: rgba(13,202,240,.08);
-
-    border: 1px solid rgba(13,202,240,.25);
-}
-
-.kucsa-sidebar .payment-pending-box strong {
-    display: block;
-
-    margin-bottom: .3rem;
-
-    color: #0dcaf0;
-
-    font-weight: 600;
-}
-
-
-/* =========================================================
-   ACCOUNT STATE
-   ========================================================= */
-
-.kucsa-sidebar .account-state-box {
-    margin: .75rem;
-
-    padding: .7rem .8rem;
-
-    background: rgba(255,255,255,.04);
-
-    border: 1px solid rgba(255,255,255,.08);
-
-    border-radius: 8px;
-
-    font-size: .72rem;
-
-    line-height: 1.45;
-}
-
-.kucsa-sidebar .account-state-label {
-    display: block;
-
-    margin-bottom: .15rem;
-
-    color: rgba(255,255,255,.45);
-}
-
-.kucsa-sidebar .account-state-value {
-    color: rgba(255,255,255,.85);
-
-    font-weight: 500;
-}
-
-
-/* =========================================================
-   LOGOUT
-   ========================================================= */
-
-.kucsa-sidebar .logout-link {
-    color: #ff7676 !important;
-}
-
-.kucsa-sidebar .logout-link i {
-    color: #ff7676 !important;
-}
-
-.kucsa-sidebar .logout-link:hover {
-    background: rgba(220,53,69,.14);
-
-    color: #ff7676 !important;
-
-    transform: translateX(2px);
-}
-
-
-/* =========================================================
-   MOBILE CLOSE BUTTON
-   Added automatically by JavaScript
-   ========================================================= */
-
-.kucsa-sidebar .kucsa-mobile-close {
-    display: none;
-
-    position: absolute;
-
-    top: calc(.75rem + env(safe-area-inset-top, 0px));
-    right: .75rem;
-
-    z-index: 20;
-
-    width: 42px;
-    height: 42px;
-
-    align-items: center;
-    justify-content: center;
-
-    padding: 0;
-
-    border: 1px solid rgba(255,255,255,.13);
-
-    border-radius: 10px;
-
-    background: rgba(255,255,255,.07);
-
-    color: rgba(255,255,255,.9);
-
-    cursor: pointer;
-
-    box-shadow: 0 6px 18px rgba(0,0,0,.16);
-
-    transition:
-        background-color .18s ease,
-        border-color .18s ease,
-        transform .18s ease,
-        color .18s ease;
-}
-
-.kucsa-sidebar .kucsa-mobile-close:hover {
-    background: rgba(255,255,255,.14);
-
-    border-color: rgba(255,255,255,.22);
-
-    color: #fff;
-
-    transform: rotate(3deg);
-}
-
-.kucsa-sidebar .kucsa-mobile-close:active {
-    transform: scale(.94);
-}
-
-.kucsa-sidebar .kucsa-mobile-close:focus-visible {
-    outline: 2px solid rgba(255,255,255,.8);
-
-    outline-offset: 2px;
-}
-
-.kucsa-sidebar .kucsa-mobile-close i {
-    font-size: 1rem;
-}
-
-
-/* =========================================================
-   DESKTOP
-   992px AND ABOVE
-   ========================================================= */
-
-@media (min-width: 992px) {
-
-    .kucsa-sidebar {
-        position: relative;
-
+    /* =========================================================
+       KUCSA SIDEBAR — ISOLATED DESIGN SYSTEM
+       ========================================================= */
+
+    .kucsa-sidebar-shell {
+        --sidebar-bg: #111827;
+        --sidebar-bg-deep: #0b1220;
+        --sidebar-surface: rgba(255, 255, 255, 0.055);
+        --sidebar-surface-hover: rgba(255, 255, 255, 0.085);
+        --sidebar-primary: #0d6efd;
+        --sidebar-text: rgba(255, 255, 255, 0.88);
+        --sidebar-text-muted: rgba(255, 255, 255, 0.52);
+        --sidebar-text-soft: rgba(255, 255, 255, 0.68);
+        --sidebar-border: rgba(255, 255, 255, 0.09);
+        --sidebar-danger: #ff6b7a;
+        --sidebar-success: #20c997;
+        --sidebar-radius: 12px;
+        --sidebar-transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+
+        /*
+         * IMPORTANT:
+         * Use a solid background here.
+         * Do not use transparent backgrounds because this element
+         * can be placed inside a Bootstrap offcanvas container.
+         */
         width: 100%;
-
+        min-width: 0;
         min-height: 100%;
+        height: 100%;
 
-        max-height: none;
+        color: #fff;
 
-        transform: none !important;
+        background:
+            radial-gradient(
+                circle at top left,
+                rgba(13, 110, 253, 0.12),
+                transparent 30%
+            ),
+            linear-gradient(
+                180deg,
+                #111827 0%,
+                #0b1220 100%
+            );
 
-        visibility: visible !important;
+        background-color: #111827;
 
-        box-shadow: none !important;
+        /*
+         * Do NOT allow the sidebar to create horizontal overflow.
+         */
+        overflow: hidden;
+
+        /*
+         * Prevent scroll chaining from creating strange movement
+         * between the page, offcanvas and sidebar.
+         */
+        overscroll-behavior: contain;
+
+        isolation: isolate;
     }
 
-    .kucsa-sidebar .kucsa-mobile-close {
-        display: none !important;
+
+    .kucsa-sidebar-shell *,
+    .kucsa-sidebar-shell *::before,
+    .kucsa-sidebar-shell *::after {
+        box-sizing: border-box;
     }
-}
 
 
-/* =========================================================
-   TABLET + MOBILE
-   BELOW 992px
-   ========================================================= */
+    /* =========================================================
+       SCROLL CONTAINER
+       ========================================================= */
 
-@media (max-width: 991.98px) {
+    .kucsa-sidebar-shell .kucsa-sidebar-scroll {
+        width: 100%;
+        height: 100%;
+        min-width: 0;
+        min-height: 0;
 
-    .kucsa-sidebar.offcanvas {
-        display: block;
-
-        position: fixed;
-
-        top: 0;
-        bottom: 0;
-        left: 0;
-
-        width: min(90vw, 360px);
-
-        max-width: 360px;
-
-        height: 100dvh;
-        min-height: 100dvh;
-
-        margin: 0;
-
-        padding:
-            env(safe-area-inset-top, 0px)
-            0
-            env(safe-area-inset-bottom, 0px)
-            0;
-
-        z-index: 1055;
-
-        border: 0;
-
-        border-radius: 0 14px 14px 0;
-
-        background: #212529;
-
+        /*
+         * THIS is the only element responsible for sidebar
+         * vertical scrolling.
+         */
         overflow-x: hidden;
         overflow-y: auto;
 
+        overscroll-behavior-y: contain;
         -webkit-overflow-scrolling: touch;
 
-        overscroll-behavior: contain;
-
-        transform: translateX(-105%);
-
-        visibility: hidden;
-
-        box-shadow:
-            12px 0 40px rgba(0,0,0,.28);
+        scrollbar-width: thin;
+        scrollbar-color:
+            rgba(255, 255, 255, 0.18)
+            transparent;
     }
 
 
-    .kucsa-sidebar.offcanvas.show {
-        transform: translateX(0);
+    .kucsa-sidebar-shell .kucsa-sidebar-scroll::-webkit-scrollbar {
+        width: 5px;
+    }
 
-        visibility: visible;
+    .kucsa-sidebar-shell .kucsa-sidebar-scroll::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .kucsa-sidebar-shell .kucsa-sidebar-scroll::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.16);
+        border-radius: 999px;
+    }
+
+    .kucsa-sidebar-shell .kucsa-sidebar-scroll::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.25);
+    }
+
+
+    /* =========================================================
+       PROFILE HEADER
+       ========================================================= */
+
+    .kucsa-sidebar-shell .sidebar-header {
+        position: relative;
+
+        padding: 1.5rem 1rem 1.25rem;
+
+        text-align: center;
+
+        border-bottom: 1px solid var(--sidebar-border);
+
+        background:
+            linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0.035),
+                transparent
+            );
+
+        flex-shrink: 0;
+    }
+
+
+    .kucsa-sidebar-shell .sidebar-header::after {
+        content: "";
+
+        position: absolute;
+
+        left: 20%;
+        right: 20%;
+        bottom: -1px;
+
+        height: 1px;
+
+        background:
+            linear-gradient(
+                90deg,
+                transparent,
+                rgba(13, 110, 253, 0.7),
+                transparent
+            );
+
+        opacity: 0.65;
+    }
+
+
+    /* =========================================================
+       PROFILE AVATAR
+       ========================================================= */
+
+    .kucsa-sidebar-shell .sidebar-avatar-wrap {
+        position: relative;
+
+        width: 78px;
+        height: 78px;
+
+        margin: 0 auto;
+    }
+
+
+    .kucsa-sidebar-shell .sidebar-profile-picture {
+        display: block;
+
+        width: 78px;
+        height: 78px;
+
+        object-fit: cover;
+
+        border-radius: 50%;
+
+        border: 3px solid rgba(255, 255, 255, 0.18);
+
+        box-shadow:
+            0 0 0 5px rgba(13, 110, 253, 0.08),
+            0 10px 28px rgba(0, 0, 0, 0.24);
+
+        transition:
+            transform var(--sidebar-transition),
+            border-color var(--sidebar-transition),
+            box-shadow var(--sidebar-transition);
+    }
+
+
+    .kucsa-sidebar-shell .sidebar-profile-picture:hover {
+        transform: translateY(-2px);
+
+        border-color: rgba(13, 110, 253, 0.7);
+
+        box-shadow:
+            0 0 0 6px rgba(13, 110, 253, 0.10),
+            0 14px 30px rgba(0, 0, 0, 0.28);
+    }
+
+
+    .kucsa-sidebar-shell .sidebar-default-avatar {
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        width: 78px;
+        height: 78px;
+
+        border-radius: 50%;
+
+        color: rgba(255, 255, 255, 0.86);
+
+        background:
+            linear-gradient(
+                145deg,
+                rgba(13, 110, 253, 0.35),
+                rgba(255, 255, 255, 0.06)
+            );
+
+        border: 3px solid rgba(255, 255, 255, 0.14);
+
+        box-shadow:
+            0 0 0 5px rgba(13, 110, 253, 0.06),
+            0 10px 28px rgba(0, 0, 0, 0.22);
+
+        font-size: 3.6rem;
+        line-height: 1;
+    }
+
+
+    /* =========================================================
+       ONLINE INDICATOR
+       ========================================================= */
+
+    .kucsa-sidebar-shell .sidebar-online-indicator {
+        position: absolute;
+
+        right: 2px;
+        bottom: 3px;
+
+        width: 15px;
+        height: 15px;
+
+        border: 3px solid #111827;
+        border-radius: 50%;
+
+        background: var(--sidebar-success);
+
+        box-shadow:
+            0 0 0 3px rgba(32, 201, 151, 0.12);
+    }
+
+
+    /* =========================================================
+       USER INFORMATION
+       ========================================================= */
+
+    .kucsa-sidebar-shell .sidebar-user-name {
+        margin-top: 0.9rem;
+        margin-bottom: 0.25rem;
+
+        color: #fff;
+
+        font-size: 1rem;
+        line-height: 1.35;
+        font-weight: 700;
+
+        letter-spacing: -0.01em;
+
+        overflow-wrap: anywhere;
+    }
+
+
+    .kucsa-sidebar-shell .sidebar-user-role {
+        color: var(--sidebar-text-soft);
+
+        font-size: 0.76rem;
+        line-height: 1.4;
+        font-weight: 500;
+    }
+
+
+    .kucsa-sidebar-shell .sidebar-membership-number {
+        margin-top: 0.3rem;
+
+        color: var(--sidebar-text-muted);
+
+        font-size: 0.66rem;
+        line-height: 1.4;
+
+        letter-spacing: 0.02em;
+    }
+
+
+    /* =========================================================
+       MEMBERSHIP STATUS
+       ========================================================= */
+
+    .kucsa-sidebar-shell .sidebar-status {
+        display: flex;
+
+        justify-content: center;
+
+        margin-top: 0.85rem;
+    }
+
+
+    .kucsa-sidebar-shell .sidebar-status .badge {
+        display: inline-flex;
+
+        align-items: center;
+        justify-content: center;
+
+        max-width: 100%;
+
+        padding: 0.42rem 0.7rem;
+
+        border-radius: 999px;
+
+        font-size: 0.66rem;
+        line-height: 1.2;
+        font-weight: 600;
+
+        letter-spacing: 0.01em;
+
+        box-shadow:
+            0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+
+    /* =========================================================
+       NAVIGATION
+       ========================================================= */
+
+    .kucsa-sidebar-shell .sidebar-nav {
+        width: 100%;
+
+        padding: 0.85rem 0 1.25rem;
+        margin: 0;
+
+        list-style: none;
+    }
+
+
+    .kucsa-sidebar-shell .sidebar-nav .nav-item {
+        list-style: none;
+    }
+
+
+    /* =========================================================
+       SECTION TITLES
+       ========================================================= */
+
+    .kucsa-sidebar-shell .sidebar-section {
+        margin-top: 1rem;
+        margin-bottom: 0.35rem;
+
+        padding: 0 0.9rem;
+
+        list-style: none;
+    }
+
+
+    .kucsa-sidebar-shell .sidebar-section:first-child {
+        margin-top: 0;
+    }
+
+
+    .kucsa-sidebar-shell .sidebar-section-title {
+        display: flex;
+
+        align-items: center;
+
+        gap: 0.45rem;
+
+        color: var(--sidebar-text-muted) !important;
+
+        font-size: 0.62rem;
+        line-height: 1.4;
+
+        font-weight: 700;
+
+        letter-spacing: 0.11em;
+
+        text-transform: uppercase;
+    }
+
+
+    .kucsa-sidebar-shell .sidebar-section-title::before {
+        content: "";
+
+        width: 4px;
+        height: 4px;
+
+        flex: 0 0 4px;
+
+        border-radius: 50%;
+
+        background: rgba(13, 110, 253, 0.75);
+    }
+
+
+    /* =========================================================
+       NAV LINKS
+       ========================================================= */
+
+    .kucsa-sidebar-shell .nav-link {
+        position: relative;
+
+        display: flex;
+
+        align-items: center;
+
+        width: calc(100% - 1rem);
+        min-height: 44px;
+
+        margin: 2px 0.5rem;
+
+        padding: 0.66rem 0.75rem;
+
+        border: 1px solid transparent;
+        border-radius: var(--sidebar-radius);
+
+        color: var(--sidebar-text) !important;
+
+        background: transparent;
+
+        text-decoration: none !important;
+
+        font-size: 0.84rem;
+        line-height: 1.35;
+        font-weight: 500;
+
+        transition:
+            background-color var(--sidebar-transition),
+            border-color var(--sidebar-transition),
+            color var(--sidebar-transition),
+            transform var(--sidebar-transition),
+            box-shadow var(--sidebar-transition);
+
+        -webkit-tap-highlight-color: transparent;
+
+        /*
+         * Prevent flex items from causing horizontal overflow.
+         */
+        min-width: 0;
+    }
+
+
+    .kucsa-sidebar-shell .nav-link::before {
+        content: "";
+
+        position: absolute;
+
+        left: -1px;
+        top: 50%;
+
+        width: 3px;
+        height: 0;
+
+        border-radius: 0 4px 4px 0;
+
+        background: var(--sidebar-primary);
+
+        transform: translateY(-50%);
+
+        transition:
+            height var(--sidebar-transition),
+            opacity var(--sidebar-transition);
+
+        opacity: 0;
+    }
+
+
+    .kucsa-sidebar-shell .nav-link i {
+        display: inline-flex;
+
+        align-items: center;
+        justify-content: center;
+
+        width: 24px;
+        min-width: 24px;
+        height: 24px;
+
+        margin-right: 0.68rem;
+
+        color: rgba(255, 255, 255, 0.68);
+
+        font-size: 1rem;
+        line-height: 1;
+
+        text-align: center;
+
+        transition:
+            color var(--sidebar-transition),
+            transform var(--sidebar-transition);
+    }
+
+
+    .kucsa-sidebar-shell .nav-link span {
+        min-width: 0;
+
+        flex: 1;
+
+        overflow: hidden;
+
+        white-space: nowrap;
+
+        text-overflow: ellipsis;
+    }
+
+
+    .kucsa-sidebar-shell .nav-link:hover {
+        background: var(--sidebar-surface-hover);
+
+        border-color: rgba(255, 255, 255, 0.055);
+
+        color: #fff !important;
+
+        transform: translateX(2px);
+    }
+
+
+    .kucsa-sidebar-shell .nav-link:hover i {
+        color: #fff;
+
+        transform: translateX(1px);
+    }
+
+
+    .kucsa-sidebar-shell .nav-link:focus-visible {
+        outline: 0;
+
+        border-color: rgba(110, 168, 254, 0.65);
+
+        box-shadow:
+            0 0 0 3px rgba(13, 110, 253, 0.18);
+    }
+
+
+    .kucsa-sidebar-shell .nav-link.active {
+        background:
+            linear-gradient(
+                90deg,
+                rgba(13, 110, 253, 0.20),
+                rgba(13, 110, 253, 0.08)
+            );
+
+        border-color: rgba(13, 110, 253, 0.16);
+
+        color: #fff !important;
+
+        font-weight: 650;
+
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.035);
+    }
+
+
+    .kucsa-sidebar-shell .nav-link.active::before {
+        height: 22px;
+
+        opacity: 1;
+    }
+
+
+    .kucsa-sidebar-shell .nav-link.active i {
+        color: #78aefc;
+    }
+
+
+    /* =========================================================
+       DIVIDERS
+       ========================================================= */
+
+    .kucsa-sidebar-shell .sidebar-divider {
+        height: 1px;
+
+        margin: 0.8rem 0.9rem;
+
+        border: 0;
+
+        background:
+            linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.10),
+                transparent
+            );
+
+        opacity: 1;
+    }
+
+
+    /* =========================================================
+       PAYMENT BOXES
+       ========================================================= */
+
+    .kucsa-sidebar-shell .payment-required-box,
+    .kucsa-sidebar-shell .payment-pending-box {
+        margin: 0.65rem 0.75rem 0.75rem;
+
+        padding: 0.8rem;
+
+        border-radius: var(--sidebar-radius);
+
+        font-size: 0.71rem;
+        line-height: 1.55;
+
+        color: var(--sidebar-text-soft);
+
+        box-shadow:
+            0 6px 18px rgba(0, 0, 0, 0.10);
+    }
+
+
+    .kucsa-sidebar-shell .payment-required-box {
+        background:
+            linear-gradient(
+                145deg,
+                rgba(255, 193, 7, 0.11),
+                rgba(255, 193, 7, 0.045)
+            );
+
+        border: 1px solid rgba(255, 193, 7, 0.22);
+    }
+
+
+    .kucsa-sidebar-shell .payment-required-box strong,
+    .kucsa-sidebar-shell .payment-pending-box strong {
+        display: flex;
+
+        align-items: center;
+
+        gap: 0.3rem;
+
+        margin-bottom: 0.35rem;
+
+        font-size: 0.72rem;
+        line-height: 1.4;
+    }
+
+
+    .kucsa-sidebar-shell .payment-required-box strong {
+        color: #ffd45c;
+    }
+
+
+    .kucsa-sidebar-shell .payment-pending-box {
+        background:
+            linear-gradient(
+                145deg,
+                rgba(13, 202, 240, 0.10),
+                rgba(13, 202, 240, 0.035)
+            );
+
+        border: 1px solid rgba(13, 202, 240, 0.20);
+    }
+
+
+    .kucsa-sidebar-shell .payment-pending-box strong {
+        color: #58d9f5;
+    }
+
+
+    /* =========================================================
+       LOGOUT
+       ========================================================= */
+
+    .kucsa-sidebar-shell .logout-link {
+        color: var(--sidebar-danger) !important;
+    }
+
+
+    .kucsa-sidebar-shell .logout-link i {
+        color: var(--sidebar-danger) !important;
+    }
+
+
+    .kucsa-sidebar-shell .logout-link:hover {
+        background:
+            linear-gradient(
+                90deg,
+                rgba(220, 53, 69, 0.14),
+                rgba(220, 53, 69, 0.055)
+            );
+
+        border-color: rgba(220, 53, 69, 0.14);
+
+        color: #ff8792 !important;
+    }
+
+
+    /* =========================================================
+       NAVIGATION FEEDBACK
+       ========================================================= */
+
+    .kucsa-sidebar-shell .nav-link.is-navigating {
+        opacity: 0.65;
     }
 
 
     /*
-       Keep the sidebar content usable when the
-       mobile close button occupies the top area.
-    */
-
-    .kucsa-sidebar.offcanvas .sidebar-header {
-        padding-top: 4.35rem;
+     * IMPORTANT:
+     * We no longer permanently disable the link with
+     * pointer-events:none.
+     *
+     * This prevents the sidebar from becoming visually stuck
+     * if navigation is interrupted or Bootstrap closes the
+     * offcanvas at the same time.
+     */
+    .kucsa-sidebar-shell .nav-link.is-navigating i {
+        animation:
+            kucsaSidebarIconPulse
+            0.9s
+            ease-in-out
+            infinite;
     }
 
 
-    .kucsa-sidebar.offcanvas .kucsa-mobile-close {
-        display: flex;
+    @keyframes kucsaSidebarIconPulse {
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.35;
+        }
     }
 
 
-    .kucsa-sidebar.offcanvas .sidebar-profile-picture {
-        width: 72px;
-        height: 72px;
+    /* =========================================================
+       MOBILE / TABLET
+       ========================================================= */
+
+    @media (max-width: 991.98px) {
+
+        /*
+         * Do not force another viewport-sized scrolling layer
+         * inside Bootstrap's offcanvas body.
+         */
+        .kucsa-sidebar-shell {
+            width: 100%;
+            height: 100%;
+            min-height: 100%;
+
+            overflow: hidden;
+
+            background-color: #111827;
+        }
+
+
+        .kucsa-sidebar-shell .kucsa-sidebar-scroll {
+            height: 100%;
+            min-height: 0;
+
+            overflow-x: hidden;
+            overflow-y: auto;
+
+            overscroll-behavior-y: contain;
+
+            -webkit-overflow-scrolling: touch;
+        }
+
+
+        .kucsa-sidebar-shell .sidebar-header {
+            padding:
+                1.35rem
+                1rem
+                1.2rem;
+        }
+
+
+        .kucsa-sidebar-shell .sidebar-nav {
+            padding-bottom: 1.5rem;
+        }
+
+
+        .kucsa-sidebar-shell .nav-link {
+            min-height: 46px;
+
+            margin-top: 3px;
+            margin-bottom: 3px;
+
+            padding:
+                0.7rem
+                0.8rem;
+
+            font-size: 0.86rem;
+        }
+
+
+        .kucsa-sidebar-shell .nav-link:active {
+            transform: scale(0.985);
+        }
+
+
+        .kucsa-sidebar-shell .sidebar-section {
+            margin-top: 1.1rem;
+        }
     }
 
 
-    .kucsa-sidebar.offcanvas .sidebar-default-avatar {
-        width: 72px;
-        height: 72px;
+    /* =========================================================
+       SMALL MOBILE
+       ========================================================= */
 
-        font-size: 4.1rem;
+    @media (max-width: 575.98px) {
 
-        line-height: 72px;
+        .kucsa-sidebar-shell .sidebar-header {
+            padding:
+                1.15rem
+                0.85rem
+                1rem;
+        }
+
+
+        .kucsa-sidebar-shell .sidebar-avatar-wrap,
+        .kucsa-sidebar-shell .sidebar-profile-picture,
+        .kucsa-sidebar-shell .sidebar-default-avatar {
+            width: 68px;
+            height: 68px;
+        }
+
+
+        .kucsa-sidebar-shell .sidebar-default-avatar {
+            font-size: 3.15rem;
+        }
+
+
+        .kucsa-sidebar-shell .sidebar-user-name {
+            margin-top: 0.75rem;
+
+            font-size: 0.94rem;
+        }
+
+
+        .kucsa-sidebar-shell .sidebar-user-role {
+            font-size: 0.72rem;
+        }
+
+
+        .kucsa-sidebar-shell .sidebar-membership-number {
+            font-size: 0.63rem;
+        }
+
+
+        .kucsa-sidebar-shell .nav-link {
+            width: calc(100% - 0.7rem);
+
+            margin-left: 0.35rem;
+            margin-right: 0.35rem;
+
+            min-height: 45px;
+
+            font-size: 0.83rem;
+        }
+
+
+        .kucsa-sidebar-shell .payment-required-box,
+        .kucsa-sidebar-shell .payment-pending-box {
+            margin-left: 0.6rem;
+            margin-right: 0.6rem;
+        }
     }
 
 
-    .kucsa-sidebar.offcanvas .nav-link {
-        width: calc(100% - 16px);
+    /* =========================================================
+       VERY SMALL DEVICES
+       ========================================================= */
 
-        min-height: 46px;
+    @media (max-width: 359.98px) {
 
-        margin-left: 8px;
-        margin-right: 8px;
+        .kucsa-sidebar-shell .sidebar-header {
+            padding:
+                1rem
+                0.7rem
+                0.9rem;
+        }
 
-        padding-top: .72rem;
-        padding-bottom: .72rem;
-    }
-}
+
+        .kucsa-sidebar-shell .sidebar-avatar-wrap,
+        .kucsa-sidebar-shell .sidebar-profile-picture,
+        .kucsa-sidebar-shell .sidebar-default-avatar {
+            width: 62px;
+            height: 62px;
+        }
 
 
-/* =========================================================
-   SMALL PHONES
-   ========================================================= */
+        .kucsa-sidebar-shell .sidebar-default-avatar {
+            font-size: 2.85rem;
+        }
 
-@media (max-width: 575.98px) {
 
-    .kucsa-sidebar.offcanvas {
-        width: min(91vw, 340px);
+        .kucsa-sidebar-shell .nav-link {
+            min-height: 43px;
 
-        border-radius: 0 12px 12px 0;
-    }
+            padding-left: 0.65rem;
+            padding-right: 0.65rem;
 
-    .kucsa-sidebar.offcanvas .sidebar-header {
-        padding-left: .8rem;
-        padding-right: .8rem;
-    }
+            font-size: 0.78rem;
+        }
 
-    .kucsa-sidebar.offcanvas .sidebar-user-name {
-        font-size: .96rem;
-    }
 
-    .kucsa-sidebar.offcanvas .sidebar-user-role {
-        font-size: .76rem;
-    }
+        .kucsa-sidebar-shell .nav-link i {
+            width: 22px;
+            min-width: 22px;
 
-    .kucsa-sidebar.offcanvas .sidebar-section {
-        padding-left: .85rem;
-        padding-right: .85rem;
-    }
+            margin-right: 0.55rem;
 
-    .kucsa-sidebar.offcanvas .sidebar-divider {
-        margin-left: .85rem;
-        margin-right: .85rem;
+            font-size: 0.94rem;
+        }
     }
 
-    .kucsa-sidebar.offcanvas .payment-required-box,
-    .kucsa-sidebar.offcanvas .payment-pending-box,
-    .kucsa-sidebar.offcanvas .account-state-box {
-        margin-left: .7rem;
-        margin-right: .7rem;
+
+    /* =========================================================
+       REDUCED MOTION
+       ========================================================= */
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .kucsa-sidebar-shell *,
+        .kucsa-sidebar-shell *::before,
+        .kucsa-sidebar-shell *::after {
+            scroll-behavior: auto !important;
+
+            transition-duration: 0.01ms !important;
+
+            animation-duration: 0.01ms !important;
+
+            animation-iteration-count: 1 !important;
+        }
     }
-}
-
-
-/* =========================================================
-   VERY SMALL PHONES
-   ========================================================= */
-
-@media (max-width: 359.98px) {
-
-    .kucsa-sidebar.offcanvas {
-        width: 92vw;
-    }
-
-    .kucsa-sidebar.offcanvas .nav-link {
-        font-size: .84rem;
-    }
-
-    .kucsa-sidebar.offcanvas .nav-link i {
-        margin-right: .55rem;
-    }
-
-    .kucsa-sidebar.offcanvas .sidebar-section-title {
-        font-size: .62rem;
-    }
-
-    .kucsa-sidebar.offcanvas .sidebar-header {
-        padding-top: 4.2rem;
-    }
-}
-
-
-/* =========================================================
-   REDUCED MOTION
-   ========================================================= */
-
-@media (prefers-reduced-motion: reduce) {
-
-    .kucsa-sidebar,
-    .kucsa-sidebar *,
-    .kucsa-sidebar *::before,
-    .kucsa-sidebar *::after {
-        transition: none !important;
-        animation: none !important;
-        scroll-behavior: auto !important;
-    }
-}
 </style>
-
-
 
 <!-- =========================================================
      SIDEBAR ROOT
@@ -928,180 +964,494 @@
     id="kucsaSidebar"
 >
 
-    <div class="kucsa-sidebar-scroll">
+```
+<div class="kucsa-sidebar-scroll">
 
 
-        <!-- =====================================================
-             USER PROFILE
-             ===================================================== -->
+    <!-- =====================================================
+         USER PROFILE
+         ===================================================== -->
 
-        <div class="sidebar-header">
+    <div class="sidebar-header">
 
-            <div class="sidebar-avatar-wrap">
+        <div class="sidebar-avatar-wrap">
 
-                {% if user.profile_picture %}
+            {% if user.profile_picture %}
 
-                    <img
-                        src="{{ user.profile_picture.url }}"
-                        class="sidebar-profile-picture"
-                        alt="{{ user.full_name|default:user.username }}"
-                        loading="eager"
-                    >
+                <img
+                    src="{{ user.profile_picture.url }}"
+                    class="sidebar-profile-picture"
+                    alt="{{ user.full_name|default:user.username }}"
+                    loading="eager"
+                >
 
-                {% else %}
+            {% else %}
 
-                    <i
-                        class="bi bi-person-circle sidebar-default-avatar"
-                        aria-hidden="true"
-                    ></i>
-
-                {% endif %}
-
-                <span
-                    class="sidebar-online-indicator"
+                <i
+                    class="bi bi-person-circle sidebar-default-avatar"
                     aria-hidden="true"
-                ></span>
-
-            </div>
-
-
-            <div class="sidebar-user-name">
-
-                {{ user.full_name|default:user.username }}
-
-            </div>
-
-
-            {% if user.get_role_display %}
-
-                <div class="sidebar-user-role">
-
-                    {{ user.get_role_display }}
-
-                </div>
+                ></i>
 
             {% endif %}
 
-
-            {% if user.membership_number %}
-
-                <div class="sidebar-membership-number">
-
-                    Membership No. {{ user.membership_number }}
-
-                </div>
-
-            {% endif %}
-
-
-            <!-- =================================================
-                 MEMBERSHIP STATUS
-                 ================================================= -->
-
-            <div class="sidebar-status">
-
-                {% if user.is_kucsa_admin %}
-
-                    <span class="badge bg-primary">
-
-                        <i
-                            class="bi bi-shield-check me-1"
-                            aria-hidden="true"
-                        ></i>
-
-                        Administrator
-
-                    </span>
-
-                {% elif user.has_platform_access %}
-
-                    <span class="badge bg-success">
-
-                        <i
-                            class="bi bi-check-circle me-1"
-                            aria-hidden="true"
-                        ></i>
-
-                        Active Membership
-
-                    </span>
-
-                {% elif user.payment_state == "PENDING" %}
-
-                    <span class="badge bg-info text-dark">
-
-                        <i
-                            class="bi bi-hourglass-split me-1"
-                            aria-hidden="true"
-                        ></i>
-
-                        Payment Pending
-
-                    </span>
-
-                {% elif user.payment_state == "SUSPENDED" %}
-
-                    <span class="badge bg-danger">
-
-                        <i
-                            class="bi bi-slash-circle me-1"
-                            aria-hidden="true"
-                        ></i>
-
-                        Membership Suspended
-
-                    </span>
-
-                {% elif user.payment_state == "EXPIRED" %}
-
-                    <span class="badge bg-secondary">
-
-                        <i
-                            class="bi bi-calendar-x me-1"
-                            aria-hidden="true"
-                        ></i>
-
-                        Membership Expired
-
-                    </span>
-
-                {% else %}
-
-                    <span class="badge bg-warning text-dark">
-
-                        <i
-                            class="bi bi-credit-card me-1"
-                            aria-hidden="true"
-                        ></i>
-
-                        Payment Required
-
-                    </span>
-
-                {% endif %}
-
-            </div>
+            <span
+                class="sidebar-online-indicator"
+                aria-hidden="true"
+            ></span>
 
         </div>
 
 
-        <!-- =====================================================
-             NAVIGATION
-             ===================================================== -->
-
-        <ul class="nav flex-column sidebar-nav">
+        <div class="sidebar-user-name">
+            {{ user.full_name|default:user.username }}
+        </div>
 
 
-            <!-- =================================================
-                 ACCOUNT
-                 ================================================= -->
+        {% if user.get_role_display %}
+
+            <div class="sidebar-user-role">
+                {{ user.get_role_display }}
+            </div>
+
+        {% endif %}
+
+
+        {% if user.membership_number %}
+
+            <div class="sidebar-membership-number">
+                Membership No. {{ user.membership_number }}
+            </div>
+
+        {% endif %}
+
+
+        <div class="sidebar-status">
+
+            {% if user.is_kucsa_admin %}
+
+                <span class="badge bg-primary">
+                    <i
+                        class="bi bi-shield-check me-1"
+                        aria-hidden="true"
+                    ></i>
+                    Administrator
+                </span>
+
+            {% elif user.has_platform_access %}
+
+                <span class="badge bg-success">
+                    <i
+                        class="bi bi-check-circle me-1"
+                        aria-hidden="true"
+                    ></i>
+                    Active Membership
+                </span>
+
+            {% elif user.payment_state == "PENDING" %}
+
+                <span class="badge bg-info text-dark">
+                    <i
+                        class="bi bi-hourglass-split me-1"
+                        aria-hidden="true"
+                    ></i>
+                    Payment Pending
+                </span>
+
+            {% elif user.payment_state == "SUSPENDED" %}
+
+                <span class="badge bg-danger">
+                    <i
+                        class="bi bi-slash-circle me-1"
+                        aria-hidden="true"
+                    ></i>
+                    Membership Suspended
+                </span>
+
+            {% elif user.payment_state == "EXPIRED" %}
+
+                <span class="badge bg-secondary">
+                    <i
+                        class="bi bi-calendar-x me-1"
+                        aria-hidden="true"
+                    ></i>
+                    Membership Expired
+                </span>
+
+            {% else %}
+
+                <span class="badge bg-warning text-dark">
+                    <i
+                        class="bi bi-credit-card me-1"
+                        aria-hidden="true"
+                    ></i>
+                    Payment Required
+                </span>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         NAVIGATION
+         ===================================================== -->
+
+    <ul class="nav flex-column sidebar-nav">
+
+
+        <!-- =================================================
+             ACCOUNT
+             ================================================= -->
+
+        <li class="sidebar-section">
+
+            <span class="sidebar-section-title">
+                Account
+            </span>
+
+        </li>
+
+
+        <li class="nav-item">
+
+            <a
+                href="{% url 'accounts:profile' %}"
+                class="nav-link {% if request.resolver_match.app_name == 'accounts' and request.resolver_match.url_name == 'profile' %}active{% endif %}"
+                aria-label="My Profile"
+            >
+
+                <i
+                    class="bi bi-person"
+                    aria-hidden="true"
+                ></i>
+
+                <span>
+                    My Profile
+                </span>
+
+            </a>
+
+        </li>
+
+
+        <!-- =================================================
+             PAYMENT GATE
+             ================================================= -->
+
+        {% if not user.is_kucsa_admin and not user.has_platform_access %}
+
+            <li>
+                <hr class="sidebar-divider">
+            </li>
+
 
             <li class="sidebar-section">
 
                 <span class="sidebar-section-title">
+                    Membership
+                </span>
 
-                    Account
+            </li>
 
+
+            {% if user.payment_state == "REQUIRED" %}
+
+                <li class="nav-item">
+
+                    <div class="payment-required-box">
+
+                        <strong>
+                            <i
+                                class="bi bi-exclamation-circle"
+                                aria-hidden="true"
+                            ></i>
+
+                            Membership Payment Required
+                        </strong>
+
+                        Complete your KUCSA membership payment
+                        to unlock the platform.
+
+                    </div>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'payments:payment_create' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'payments' and request.resolver_match.url_name == 'payment_create' %}active{% endif %}"
+                    >
+
+                        <i
+                            class="bi bi-phone"
+                            aria-hidden="true"
+                        ></i>
+
+                        <span>
+                            Make Membership Payment
+                        </span>
+
+                    </a>
+
+                </li>
+
+            {% endif %}
+
+
+            {% if user.payment_state == "PENDING" %}
+
+                <li class="nav-item">
+
+                    <div class="payment-pending-box">
+
+                        <strong>
+
+                            <i
+                                class="bi bi-hourglass-split"
+                                aria-hidden="true"
+                            ></i>
+
+                            Payment Pending
+
+                        </strong>
+
+                        Your M-Pesa payment is awaiting
+                        confirmation.
+
+                    </div>
+
+                </li>
+
+
+                {% if user.member and user.member.has_pending_payment %}
+
+                    {% with pending_payment=user.member.payments.all|first %}
+
+                        {% if pending_payment %}
+
+                            <li class="nav-item">
+
+                                <a
+                                    href="{% url 'payments:payment_pending' payment_id=pending_payment.id %}"
+                                    class="nav-link"
+                                >
+
+                                    <i
+                                        class="bi bi-clock-history"
+                                        aria-hidden="true"
+                                    ></i>
+
+                                    <span>
+                                        Payment Status
+                                    </span>
+
+                                </a>
+
+                            </li>
+
+                        {% endif %}
+
+                    {% endwith %}
+
+                {% endif %}
+
+            {% endif %}
+
+
+            <li class="nav-item">
+
+                <a
+                    href="{% url 'payments:payment_list' %}"
+                    class="nav-link {% if request.resolver_match.app_name == 'payments' and request.resolver_match.url_name == 'payment_list' %}active{% endif %}"
+                >
+
+                    <i
+                        class="bi bi-wallet2"
+                        aria-hidden="true"
+                    ></i>
+
+                    <span>
+                        My Payments
+                    </span>
+
+                </a>
+
+            </li>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             PLATFORM ACCESS
+             ================================================= -->
+
+        {% if user.is_kucsa_admin or user.has_platform_access %}
+
+            <li>
+                <hr class="sidebar-divider">
+            </li>
+
+
+            <li class="sidebar-section">
+
+                <span class="sidebar-section-title">
+                    KUCSA Platform
+                </span>
+
+            </li>
+
+
+            <!-- DASHBOARD -->
+
+            <li class="nav-item">
+
+                {% if user.is_kucsa_admin %}
+
+                    <a
+                        href="{% url 'executives:dashboard' %}"
+                        class="nav-link"
+                    >
+
+                        <i
+                            class="bi bi-speedometer2"
+                            aria-hidden="true"
+                        ></i>
+
+                        <span>
+                            Administration Dashboard
+                        </span>
+
+                    </a>
+
+                {% elif user.is_executive %}
+
+                    <a
+                        href="{% url 'executives:dashboard' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                    >
+
+                        <i
+                            class="bi bi-speedometer2"
+                            aria-hidden="true"
+                        ></i>
+
+                        <span>
+                            Executive Dashboard
+                        </span>
+
+                    </a>
+
+                {% else %}
+
+                    <a
+                        href="{% url 'dashboard:student_dashboard' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'dashboard' %}active{% endif %}"
+                    >
+
+                        <i
+                            class="bi bi-speedometer2"
+                            aria-hidden="true"
+                        ></i>
+
+                        <span>
+                            Dashboard
+                        </span>
+
+                    </a>
+
+                {% endif %}
+
+            </li>
+
+
+            <!-- MEMBER SERVICES -->
+
+            {% if not user.is_kucsa_admin %}
+
+                <li class="sidebar-section">
+
+                    <span class="sidebar-section-title">
+                        Membership
+                    </span>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'members:profile' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'members' and request.resolver_match.url_name == 'profile' %}active{% endif %}"
+                    >
+
+                        <i
+                            class="bi bi-person-badge"
+                            aria-hidden="true"
+                        ></i>
+
+                        <span>
+                            My Membership
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'members:membership_status' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'members' and request.resolver_match.url_name == 'membership_status' %}active{% endif %}"
+                    >
+
+                        <i
+                            class="bi bi-card-checklist"
+                            aria-hidden="true"
+                        ></i>
+
+                        <span>
+                            Membership Status
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'members:technical_domains' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'members' and request.resolver_match.url_name == 'technical_domains' %}active{% endif %}"
+                    >
+
+                        <i
+                            class="bi bi-code-slash"
+                            aria-hidden="true"
+                        ></i>
+
+                        <span>
+                            Technical Domains
+                        </span>
+
+                    </a>
+
+                </li>
+
+            {% endif %}
+
+
+            <!-- PAYMENTS -->
+
+            <li class="sidebar-section">
+
+                <span class="sidebar-section-title">
+                    Payments
                 </span>
 
             </li>
@@ -1110,18 +1460,17 @@
             <li class="nav-item">
 
                 <a
-                    href="{% url 'accounts:profile' %}"
-                    class="nav-link {% if request.resolver_match.app_name == 'accounts' and request.resolver_match.url_name == 'profile' %}active{% endif %}"
-                    aria-label="My Profile"
+                    href="{% url 'payments:payment_list' %}"
+                    class="nav-link {% if request.resolver_match.app_name == 'payments' %}active{% endif %}"
                 >
 
                     <i
-                        class="bi bi-person"
+                        class="bi bi-wallet2"
                         aria-hidden="true"
                     ></i>
 
                     <span>
-                        My Profile
+                        My Payments
                     </span>
 
                 </a>
@@ -1129,152 +1478,107 @@
             </li>
 
 
-            <!-- =================================================
-                 PAYMENT GATE
-                 ================================================= -->
+            <!-- EVENTS -->
 
-            {% if not user.is_kucsa_admin and not user.has_platform_access %}
+            <li class="sidebar-section">
 
-                <li>
+                <span class="sidebar-section-title">
+                    Events
+                </span>
 
-                    <hr class="sidebar-divider">
+            </li>
 
-                </li>
 
+            <li class="nav-item">
+
+                <a
+                    href="{% url 'events:list' %}"
+                    class="nav-link {% if request.resolver_match.app_name == 'events' and request.resolver_match.url_name == 'list' %}active{% endif %}"
+                >
+
+                    <i
+                        class="bi bi-calendar-event"
+                        aria-hidden="true"
+                    ></i>
+
+                    <span>
+                        Browse Events
+                    </span>
+
+                </a>
+
+            </li>
+
+
+            <li class="nav-item">
+
+                <a
+                    href="{% url 'events:my_events' %}"
+                    class="nav-link {% if request.resolver_match.app_name == 'events' and request.resolver_match.url_name == 'my_events' %}active{% endif %}"
+                >
+
+                    <i
+                        class="bi bi-calendar-check"
+                        aria-hidden="true"
+                    ></i>
+
+                    <span>
+                        My Events
+                    </span>
+
+                </a>
+
+            </li>
+
+
+            <!-- MEMBER ATTENDANCE -->
+
+            {% if not user.is_kucsa_admin and not user.is_executive %}
 
                 <li class="sidebar-section">
 
                     <span class="sidebar-section-title">
-
-                        Membership
-
+                        Attendance
                     </span>
 
                 </li>
 
 
-                {% if user.payment_state == "REQUIRED" %}
+                <li class="nav-item">
 
-                    <li class="nav-item">
+                    <a
+                        href="{% url 'attendance:active' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'active' %}active{% endif %}"
+                    >
 
-                        <div class="payment-required-box">
+                        <i
+                            class="bi bi-broadcast-pin"
+                            aria-hidden="true"
+                        ></i>
 
-                            <strong>
+                        <span>
+                            Active Attendance
+                        </span>
 
-                                <i
-                                    class="bi bi-exclamation-circle"
-                                    aria-hidden="true"
-                                ></i>
+                    </a>
 
-                                Membership Payment Required
-
-                            </strong>
-
-                            Complete your KUCSA membership payment
-                            to unlock the platform.
-
-                        </div>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'payments:payment_create' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'payments' and request.resolver_match.url_name == 'payment_create' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-phone"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Make Membership Payment
-                            </span>
-
-                        </a>
-
-                    </li>
-
-                {% endif %}
-
-
-                {% if user.payment_state == "PENDING" %}
-
-                    <li class="nav-item">
-
-                        <div class="payment-pending-box">
-
-                            <strong>
-
-                                <i
-                                    class="bi bi-hourglass-split"
-                                    aria-hidden="true"
-                                ></i>
-
-                                Payment Pending
-
-                            </strong>
-
-                            Your M-Pesa payment is awaiting
-                            confirmation.
-
-                        </div>
-
-                    </li>
-
-
-                    {% if user.member and user.member.has_pending_payment %}
-
-                        {% with pending_payment=user.member.payments.all|first %}
-
-                            {% if pending_payment %}
-
-                                <li class="nav-item">
-
-                                    <a
-                                        href="{% url 'payments:payment_pending' payment_id=pending_payment.id %}"
-                                        class="nav-link"
-                                    >
-
-                                        <i
-                                            class="bi bi-clock-history"
-                                            aria-hidden="true"
-                                        ></i>
-
-                                        <span>
-                                            Payment Status
-                                        </span>
-
-                                    </a>
-
-                                </li>
-
-                            {% endif %}
-
-                        {% endwith %}
-
-                    {% endif %}
-
-                {% endif %}
+                </li>
 
 
                 <li class="nav-item">
 
                     <a
-                        href="{% url 'payments:payment_list' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'payments' and request.resolver_match.url_name == 'payment_list' %}active{% endif %}"
+                        href="{% url 'attendance:my_attendance' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'my_attendance' %}active{% endif %}"
                     >
 
                         <i
-                            class="bi bi-wallet2"
+                            class="bi bi-person-check"
                             aria-hidden="true"
                         ></i>
 
                         <span>
-                            My Payments
+                            My Attendance
                         </span>
 
                     </a>
@@ -1284,187 +1588,53 @@
             {% endif %}
 
 
-            <!-- =================================================
-                 PLATFORM ACCESS
-                 ================================================= -->
+            <!-- COMMUNICATION -->
 
-            {% if user.is_kucsa_admin or user.has_platform_access %}
+            <li class="sidebar-section">
 
-                <li>
+                <span class="sidebar-section-title">
+                    Communication
+                </span>
 
-                    <hr class="sidebar-divider">
-
-                </li>
+            </li>
 
 
-                <li class="sidebar-section">
+            <li class="nav-item">
 
-                    <span class="sidebar-section-title">
+                <a
+                    href="{% url 'announcements:list' %}"
+                    class="nav-link {% if request.resolver_match.app_name == 'announcements' %}active{% endif %}"
+                >
 
-                        KUCSA Platform
+                    <i
+                        class="bi bi-megaphone"
+                        aria-hidden="true"
+                    ></i>
 
+                    <span>
+                        Announcements
                     </span>
 
+                </a>
+
+            </li>
+
+
+            <!-- =================================================
+                 EXECUTIVE AREA
+                 ================================================= -->
+
+            {% if user.is_executive %}
+
+                <li>
+                    <hr class="sidebar-divider">
                 </li>
 
-
-                <!-- =================================================
-                     DASHBOARD
-                     ================================================= -->
-
-                <li class="nav-item">
-
-                    {% if user.is_kucsa_admin %}
-
-                        <a
-                            href="{% url 'executives:dashboard' %}"
-                            class="nav-link"
-                        >
-
-                            <i
-                                class="bi bi-speedometer2"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Administration Dashboard
-                            </span>
-
-                        </a>
-
-                    {% elif user.is_executive %}
-
-                        <a
-                            href="{% url 'executives:dashboard' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-speedometer2"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Executive Dashboard
-                            </span>
-
-                        </a>
-
-                    {% else %}
-
-                        <a
-                            href="{% url 'dashboard:student_dashboard' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'dashboard' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-speedometer2"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Dashboard
-                            </span>
-
-                        </a>
-
-                    {% endif %}
-
-                </li>
-
-
-                <!-- =================================================
-                     MEMBER SERVICES
-                     ================================================= -->
-
-                {% if not user.is_kucsa_admin %}
-
-                    <li class="sidebar-section">
-
-                        <span class="sidebar-section-title">
-
-                            Membership
-
-                        </span>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'members:profile' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'members' and request.resolver_match.url_name == 'profile' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-person-badge"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                My Membership
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'members:membership_status' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'members' and request.resolver_match.url_name == 'membership_status' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-card-checklist"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Membership Status
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'members:technical_domains' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'members' and request.resolver_match.url_name == 'technical_domains' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-code-slash"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Technical Domains
-                            </span>
-
-                        </a>
-
-                    </li>
-
-                {% endif %}
-
-
-                <!-- =================================================
-                     PAYMENTS
-                     ================================================= -->
 
                 <li class="sidebar-section">
 
                     <span class="sidebar-section-title">
-
-                        Payments
-
+                        Executive
                     </span>
 
                 </li>
@@ -1473,17 +1643,14 @@
                 <li class="nav-item">
 
                     <a
-                        href="{% url 'payments:payment_list' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'payments' %}active{% endif %}"
+                        href="{% url 'executives:dashboard' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
                     >
 
-                        <i
-                            class="bi bi-wallet2"
-                            aria-hidden="true"
-                        ></i>
+                        <i class="bi bi-speedometer2"></i>
 
                         <span>
-                            My Payments
+                            Executive Dashboard
                         </span>
 
                     </a>
@@ -1491,16 +1658,131 @@
                 </li>
 
 
-                <!-- =================================================
-                     EVENTS
-                     ================================================= -->
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'executives:board' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'board' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-diagram-3"></i>
+
+                        <span>
+                            Executive Board
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'executives:profile' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'profile' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-person-vcard"></i>
+
+                        <span>
+                            My Executive Profile
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'executives:edit_profile' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'edit_profile' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-pencil-square"></i>
+
+                        <span>
+                            Edit Executive Profile
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'executives:list' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-people"></i>
+
+                        <span>
+                            Executive Directory
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'executives:search' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'search' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-search"></i>
+
+                        <span>
+                            Search Executives
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <!-- MEMBER MANAGEMENT -->
 
                 <li class="sidebar-section">
 
                     <span class="sidebar-section-title">
+                        Member Management
+                    </span>
 
-                        Events
+                </li>
 
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'members:list' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'members' and request.resolver_match.url_name == 'list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-people-fill"></i>
+
+                        <span>
+                            Members
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <!-- EVENT MANAGEMENT -->
+
+                <li class="sidebar-section">
+
+                    <span class="sidebar-section-title">
+                        Event Management
                     </span>
 
                 </li>
@@ -1513,13 +1795,10 @@
                         class="nav-link {% if request.resolver_match.app_name == 'events' and request.resolver_match.url_name == 'list' %}active{% endif %}"
                     >
 
-                        <i
-                            class="bi bi-calendar-event"
-                            aria-hidden="true"
-                        ></i>
+                        <i class="bi bi-calendar-event"></i>
 
                         <span>
-                            Browse Events
+                            Manage Events
                         </span>
 
                     </a>
@@ -1530,17 +1809,14 @@
                 <li class="nav-item">
 
                     <a
-                        href="{% url 'events:my_events' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'events' and request.resolver_match.url_name == 'my_events' %}active{% endif %}"
+                        href="{% url 'events:create' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'events' and request.resolver_match.url_name == 'create' %}active{% endif %}"
                     >
 
-                        <i
-                            class="bi bi-calendar-check"
-                            aria-hidden="true"
-                        ></i>
+                        <i class="bi bi-calendar-plus"></i>
 
                         <span>
-                            My Events
+                            Create Event
                         </span>
 
                     </a>
@@ -1548,77 +1824,214 @@
                 </li>
 
 
-                <!-- =================================================
-                     MEMBER ATTENDANCE
-                     ================================================= -->
-
-                {% if not user.is_kucsa_admin and not user.is_executive %}
-
-                    <li class="sidebar-section">
-
-                        <span class="sidebar-section-title">
-
-                            Attendance
-
-                        </span>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'attendance:active' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'active' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-broadcast-pin"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Active Attendance
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'attendance:my_attendance' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'my_attendance' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-person-check"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                My Attendance
-                            </span>
-
-                        </a>
-
-                    </li>
-
-                {% endif %}
-
-
-                <!-- =================================================
-                     COMMUNICATION
-                     ================================================= -->
+                <!-- ATTENDANCE MANAGEMENT -->
 
                 <li class="sidebar-section">
 
                     <span class="sidebar-section-title">
+                        Attendance Management
+                    </span>
 
-                        Communication
+                </li>
 
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'attendance:list' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-check2-square"></i>
+
+                        <span>
+                            Attendance Management
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'attendance:active' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'active' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-broadcast-pin"></i>
+
+                        <span>
+                            Active Sessions
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'attendance:report' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'report' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-file-earmark-bar-graph"></i>
+
+                        <span>
+                            Attendance Reports
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <!-- FINANCE MANAGEMENT -->
+
+                <li class="sidebar-section">
+
+                    <span class="sidebar-section-title">
+                        Finance Management
+                    </span>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:dashboard' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-cash-stack"></i>
+
+                        <span>
+                            Finance Dashboard
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:income' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'income_list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-arrow-down-circle"></i>
+
+                        <span>
+                            Income
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:expenses' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'expense_list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-arrow-up-circle"></i>
+
+                        <span>
+                            Expenses
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:transactions' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'transaction_list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-receipt"></i>
+
+                        <span>
+                            Transactions
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:categories' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'category_list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-tags"></i>
+
+                        <span>
+                            Categories
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:reconciliation' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'reconciliation' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-check2-circle"></i>
+
+                        <span>
+                            Reconciliation
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:audit_logs' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'audit_logs' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-journal-text"></i>
+
+                        <span>
+                            Audit Logs
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <!-- ANNOUNCEMENTS -->
+
+                <li class="sidebar-section">
+
+                    <span class="sidebar-section-title">
+                        Announcements
                     </span>
 
                 </li>
@@ -1628,16 +2041,13 @@
 
                     <a
                         href="{% url 'announcements:list' %}"
-                        class="nav-link {% if request.resolver_match.app_name == 'announcements' %}active{% endif %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'announcements' and request.resolver_match.url_name == 'list' %}active{% endif %}"
                     >
 
-                        <i
-                            class="bi bi-megaphone"
-                            aria-hidden="true"
-                        ></i>
+                        <i class="bi bi-megaphone"></i>
 
                         <span>
-                            Announcements
+                            Manage Announcements
                         </span>
 
                     </a>
@@ -1645,1892 +2055,648 @@
                 </li>
 
 
-                <!-- =================================================
-                     EXECUTIVE AREA
-                     ================================================= -->
+                <li class="nav-item">
 
-                {% if user.is_executive %}
+                    <a
+                        href="{% url 'announcements:create' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'announcements' and request.resolver_match.url_name == 'create' %}active{% endif %}"
+                    >
 
-                    <li>
+                        <i class="bi bi-megaphone-fill"></i>
 
-                        <hr class="sidebar-divider">
-
-                    </li>
-
-
-                    <li class="sidebar-section">
-
-                        <span class="sidebar-section-title">
-
-                            Executive
-
+                        <span>
+                            Create Announcement
                         </span>
 
-                    </li>
+                    </a>
 
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'executives:dashboard' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-speedometer2"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Executive Dashboard
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'executives:board' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'board' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-diagram-3"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Executive Board
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'executives:profile' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'profile' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-person-vcard"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                My Executive Profile
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'executives:edit_profile' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'edit_profile' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-pencil-square"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Edit Executive Profile
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'executives:list' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'list' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-people"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Executive Directory
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'executives:search' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'search' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-search"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Search Executives
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <!-- =============================================
-                         MEMBER MANAGEMENT
-                         ============================================= -->
-
-                    <li class="sidebar-section">
-
-                        <span class="sidebar-section-title">
-
-                            Member Management
-
-                        </span>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'members:list' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'members' and request.resolver_match.url_name == 'list' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-people-fill"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Members
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <!-- =============================================
-                         EVENT MANAGEMENT
-                         ============================================= -->
-
-                    <li class="sidebar-section">
-
-                        <span class="sidebar-section-title">
-
-                            Event Management
-
-                        </span>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'events:list' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'events' and request.resolver_match.url_name == 'list' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-calendar-event"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Manage Events
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'events:create' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'events' and request.resolver_match.url_name == 'create' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-calendar-plus"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Create Event
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <!-- =============================================
-                         EXECUTIVE ATTENDANCE MANAGEMENT
-                         ============================================= -->
-
-                    <li class="sidebar-section">
-
-                        <span class="sidebar-section-title">
-
-                            Attendance Management
-
-                        </span>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'attendance:list' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'list' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-check2-square"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Attendance Management
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'attendance:active' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'active' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-broadcast-pin"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Active Sessions
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'attendance:report' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'report' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-file-earmark-bar-graph"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Attendance Reports
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <!-- =============================================
-                         EXECUTIVE FINANCE MANAGEMENT
-                         ============================================= -->
-
-                    <li class="sidebar-section">
-
-                        <span class="sidebar-section-title">
-
-                            Finance Management
-
-                        </span>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'finance:dashboard' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-cash-stack"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Finance Dashboard
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'finance:income' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'income_list' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-arrow-down-circle"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Income
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'finance:expenses' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'expense_list' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-arrow-up-circle"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Expenses
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'finance:transactions' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'transaction_list' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-receipt"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Transactions
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'finance:categories' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'category_list' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-tags"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Categories
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'finance:reconciliation' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'reconciliation' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-check2-circle"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Reconciliation
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'finance:audit_logs' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'audit_logs' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-journal-text"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Audit Logs
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <!-- =============================================
-                         EXECUTIVE ANNOUNCEMENTS
-                         ============================================= -->
-
-                    <li class="sidebar-section">
-
-                        <span class="sidebar-section-title">
-
-                            Announcements
-
-                        </span>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'announcements:list' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'announcements' and request.resolver_match.url_name == 'list' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-megaphone"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Manage Announcements
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'announcements:create' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'announcements' and request.resolver_match.url_name == 'create' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-megaphone-fill"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Create Announcement
-                            </span>
-
-                        </a>
-
-                    </li>
-
-                {% endif %}
-
-
-                <!-- =================================================
-                     ADMINISTRATION
-                     ================================================= -->
-
-                {% if user.is_kucsa_admin %}
-
-                    <li>
-
-                        <hr class="sidebar-divider">
-
-                    </li>
-
-
-                    <li class="sidebar-section">
-
-                        <span class="sidebar-section-title">
-
-                            Administration
-
-                        </span>
-
-                    </li>
-
-
-                    <!-- MEMBERS -->
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'members:list' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'members' and request.resolver_match.url_name == 'list' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-people-fill"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                All Members
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <!-- EXECUTIVES -->
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'executives:list' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'list' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-person-badge"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Executive Management
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'executives:assign_role' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'assign_role' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-person-plus-fill"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Assign Executive Role
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <!-- EVENTS -->
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'events:list' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'events' and request.resolver_match.url_name == 'list' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-calendar-event"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                All Events
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'events:create' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'events' and request.resolver_match.url_name == 'create' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-calendar-plus"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Create Event
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <!-- =================================================
-                         ADMIN ATTENDANCE
-                         ================================================= -->
-
-                    <li class="sidebar-section">
-
-                        <span class="sidebar-section-title">
-
-                            Attendance Administration
-
-                        </span>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'attendance:list' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'list' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-check2-square"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Attendance Management
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'attendance:active' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'active' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-broadcast-pin"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Active Sessions
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'attendance:report' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'report' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-file-earmark-bar-graph"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Attendance Reports
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <!-- =================================================
-                         ADMIN FINANCE
-                         ================================================= -->
-
-                    <li class="sidebar-section">
-
-                        <span class="sidebar-section-title">
-
-                            Finance Administration
-
-                        </span>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'finance:dashboard' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-cash-stack"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Finance Dashboard
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'finance:income' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'income_list' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-arrow-down-circle"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Income
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'finance:expenses' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'expense_list' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-arrow-up-circle"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Expenses
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'finance:transactions' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'transaction_list' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-receipt"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Transactions
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'finance:categories' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'category_list' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-tags"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Categories
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'finance:reconciliation' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'reconciliation' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-check2-circle"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Reconciliation
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'finance:audit_logs' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'audit_logs' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-journal-text"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Audit Logs
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <!-- =================================================
-                         ADMIN ANNOUNCEMENTS
-                         ================================================= -->
-
-                    <li class="sidebar-section">
-
-                        <span class="sidebar-section-title">
-
-                            Announcements
-
-                        </span>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'announcements:list' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'announcements' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-megaphone"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                All Announcements
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'announcements:create' %}"
-                            class="nav-link {% if request.resolver_match.app_name == 'announcements' and request.resolver_match.url_name == 'create' %}active{% endif %}"
-                        >
-
-                            <i
-                                class="bi bi-megaphone-fill"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                Create Announcement
-                            </span>
-
-                        </a>
-
-                    </li>
-
-
-                    <!-- =================================================
-                         SYSTEM
-                         ================================================= -->
-
-                    <li class="sidebar-section">
-
-                        <span class="sidebar-section-title">
-
-                            System
-
-                        </span>
-
-                    </li>
-
-
-                    <li class="nav-item">
-
-                        <a
-                            href="{% url 'executives:dashboard' %}"
-                            class="nav-link"
-                        >
-
-                            <i
-                                class="bi bi-shield-lock"
-                                aria-hidden="true"
-                            ></i>
-
-                            <span>
-                                System Administration
-                            </span>
-
-                        </a>
-
-                    </li>
-
-                {% endif %}
+                </li>
 
             {% endif %}
 
 
             <!-- =================================================
-                 ACCOUNT ACTIONS
+                 ADMINISTRATION
                  ================================================= -->
 
-            <li>
+            {% if user.is_kucsa_admin %}
 
-                <hr class="sidebar-divider">
+                <li>
+                    <hr class="sidebar-divider">
+                </li>
 
-            </li>
+
+                <li class="sidebar-section">
+
+                    <span class="sidebar-section-title">
+                        Administration
+                    </span>
+
+                </li>
 
 
-            <li class="sidebar-section">
+                <!-- MEMBERS -->
 
-                <span class="sidebar-section-title">
+                <li class="nav-item">
 
-                    Account
+                    <a
+                        href="{% url 'members:list' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'members' and request.resolver_match.url_name == 'list' %}active{% endif %}"
+                    >
 
+                        <i class="bi bi-people-fill"></i>
+
+                        <span>
+                            All Members
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <!-- EXECUTIVES -->
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'executives:list' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-person-badge"></i>
+
+                        <span>
+                            Executive Management
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'executives:assign_role' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'executives' and request.resolver_match.url_name == 'assign_role' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-person-plus-fill"></i>
+
+                        <span>
+                            Assign Executive Role
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <!-- EVENTS -->
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'events:list' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'events' and request.resolver_match.url_name == 'list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-calendar-event"></i>
+
+                        <span>
+                            All Events
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'events:create' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'events' and request.resolver_match.url_name == 'create' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-calendar-plus"></i>
+
+                        <span>
+                            Create Event
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <!-- ATTENDANCE -->
+
+                <li class="sidebar-section">
+
+                    <span class="sidebar-section-title">
+                        Attendance Administration
+                    </span>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'attendance:list' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-check2-square"></i>
+
+                        <span>
+                            Attendance Management
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'attendance:active' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'active' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-broadcast-pin"></i>
+
+                        <span>
+                            Active Sessions
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'attendance:report' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'attendance' and request.resolver_match.url_name == 'report' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-file-earmark-bar-graph"></i>
+
+                        <span>
+                            Attendance Reports
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <!-- FINANCE -->
+
+                <li class="sidebar-section">
+
+                    <span class="sidebar-section-title">
+                        Finance Administration
+                    </span>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:dashboard' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-cash-stack"></i>
+
+                        <span>
+                            Finance Dashboard
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:income' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'income_list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-arrow-down-circle"></i>
+
+                        <span>
+                            Income
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:expenses' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'expense_list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-arrow-up-circle"></i>
+
+                        <span>
+                            Expenses
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:transactions' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'transaction_list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-receipt"></i>
+
+                        <span>
+                            Transactions
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:categories' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'category_list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-tags"></i>
+
+                        <span>
+                            Categories
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:reconciliation' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'reconciliation' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-check2-circle"></i>
+
+                        <span>
+                            Reconciliation
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'finance:audit_logs' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'finance' and request.resolver_match.url_name == 'audit_logs' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-journal-text"></i>
+
+                        <span>
+                            Audit Logs
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <!-- ANNOUNCEMENTS -->
+
+                <li class="sidebar-section">
+
+                    <span class="sidebar-section-title">
+                        Announcements
+                    </span>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'announcements:list' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'announcements' and request.resolver_match.url_name == 'list' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-megaphone"></i>
+
+                        <span>
+                            All Announcements
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'announcements:create' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'announcements' and request.resolver_match.url_name == 'create' %}active{% endif %}"
+                    >
+
+                        <i class="bi bi-megaphone-fill"></i>
+
+                        <span>
+                            Create Announcement
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <!-- SYSTEM -->
+
+                <li class="sidebar-section">
+
+                    <span class="sidebar-section-title">
+                        System
+                    </span>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        href="{% url 'executives:dashboard' %}"
+                        class="nav-link"
+                    >
+
+                        <i class="bi bi-shield-lock"></i>
+
+                        <span>
+                            System Administration
+                        </span>
+
+                    </a>
+
+                </li>
+
+            {% endif %}
+
+        {% endif %}
+
+
+        <!-- =================================================
+             ACCOUNT ACTIONS
+             ================================================= -->
+
+        <li>
+            <hr class="sidebar-divider">
+        </li>
+
+
+        <li class="sidebar-section">
+
+            <span class="sidebar-section-title">
+                Account
+            </span>
+
+        </li>
+
+
+        <li class="nav-item">
+
+            <a
+                href="{% url 'accounts:change_password' %}"
+                class="nav-link {% if request.resolver_match.app_name == 'accounts' and request.resolver_match.url_name == 'change_password' %}active{% endif %}"
+            >
+
+                <i class="bi bi-key"></i>
+
+                <span>
+                    Change Password
                 </span>
 
-            </li>
+            </a>
+
+        </li>
 
 
-            <!-- CHANGE PASSWORD -->
+        <li class="nav-item">
 
-            <li class="nav-item">
+            <a
+                href="{% url 'accounts:logout' %}"
+                class="nav-link logout-link"
+            >
 
-                <a
-                    href="{% url 'accounts:change_password' %}"
-                    class="nav-link {% if request.resolver_match.app_name == 'accounts' and request.resolver_match.url_name == 'change_password' %}active{% endif %}"
-                >
+                <i class="bi bi-box-arrow-right"></i>
 
-                    <i
-                        class="bi bi-key"
-                        aria-hidden="true"
-                    ></i>
+                <span>
+                    Logout
+                </span>
 
-                    <span>
-                        Change Password
-                    </span>
+            </a>
 
-                </a>
+        </li>
 
-            </li>
-
-
-            <!-- LOGOUT -->
-
-            <li class="nav-item">
-
-                <a
-                    href="{% url 'accounts:logout' %}"
-                    class="nav-link logout-link"
-                >
-
-                    <i
-                        class="bi bi-box-arrow-right"
-                        aria-hidden="true"
-                    ></i>
-
-                    <span>
-                        Logout
-                    </span>
-
-                </a>
-
-            </li>
-
-        </ul>
-
-    </div>
+    </ul>
 
 </div>
+```
+
+</div>
+
 <script>
 (function () {
     "use strict";
 
     /*
-     * =========================================================
-     * KUCSA SIDEBAR CONTROLLER
-     * =========================================================
+     * ============================================================
+     * KUCSA SIDEBAR INTERACTIONS
+     * ============================================================
      *
-     * Desktop:
-     *   >= 992px
-     *   Sidebar behaves normally/static.
+     * IMPORTANT:
      *
-     * Tablet/Mobile:
-     *   < 992px
-     *   Sidebar becomes Bootstrap Offcanvas.
+     * This script deliberately does NOT:
      *
-     * No sidebar HTML/Django logic is changed.
-     * =========================================================
+     * - create an offcanvas
+     * - open an offcanvas
+     * - close an offcanvas
+     * - manipulate Bootstrap backdrops
+     * - manipulate body overflow
+     * - manipulate navbar state
+     *
+     * The navbar owns all offcanvas behavior.
+     *
+     * This script only handles sidebar-local behavior.
+     * ============================================================
      */
+
 
     function initKucsaSidebar() {
 
-        const sidebar = document.querySelector(".kucsa-sidebar");
+        const sidebar = document.getElementById("kucsaSidebar");
 
         if (!sidebar) {
             return;
         }
 
 
-        /* =====================================================
-           CONFIGURATION
-           ===================================================== */
+        /* ========================================================
+           NAVIGATION FEEDBACK
+           ======================================================== */
 
-        const MOBILE_BREAKPOINT = 992;
-
-
-        /* =====================================================
-           IDENTIFY SIDEBAR FOR NAVBAR
-           ===================================================== */
-
-        sidebar.id = "kucsaSidebarOffcanvas";
-
-        sidebar.setAttribute(
-            "aria-label",
-            "KUCSA navigation"
+        const links = sidebar.querySelectorAll(
+            "a.nav-link[href]"
         );
 
 
-        /* =====================================================
-           ADD MOBILE CLOSE BUTTON
-           ===================================================== */
+        links.forEach(function (link) {
 
-        let closeButton =
-            sidebar.querySelector(".kucsa-mobile-close");
+            link.addEventListener("click", function () {
 
-        if (!closeButton) {
-
-            closeButton = document.createElement("button");
-
-            closeButton.type = "button";
-
-            closeButton.className =
-                "kucsa-mobile-close";
-
-            closeButton.setAttribute(
-                "aria-label",
-                "Close navigation menu"
-            );
-
-            closeButton.setAttribute(
-                "title",
-                "Close navigation menu"
-            );
-
-            closeButton.innerHTML =
-                '<i class="bi bi-x-lg" aria-hidden="true"></i>';
-
-            sidebar.prepend(closeButton);
-        }
-
-
-        /* =====================================================
-           HELPERS
-           ===================================================== */
-
-        function isMobile() {
-
-            return window.innerWidth < MOBILE_BREAKPOINT;
-
-        }
-
-
-        function getBootstrapOffcanvas() {
-
-            if (
-                !window.bootstrap ||
-                !window.bootstrap.Offcanvas
-            ) {
-                return null;
-            }
-
-            return window.bootstrap.Offcanvas;
-
-        }
-
-
-        function getOffcanvasInstance() {
-
-            const Offcanvas = getBootstrapOffcanvas();
-
-            if (!Offcanvas) {
-                return null;
-            }
-
-            return (
-                Offcanvas.getInstance(sidebar) ||
-                Offcanvas.getOrCreateInstance(
-                    sidebar,
-                    {
-                        backdrop: true,
-                        keyboard: true,
-                        scroll: false
-                    }
-                )
-            );
-
-        }
-
-
-        /* =====================================================
-           ADD OFFCANVAS CLASSES
-           ===================================================== */
-
-        function enableMobileSidebar() {
-
-            sidebar.classList.add(
-                "offcanvas",
-                "offcanvas-start"
-            );
-
-            sidebar.setAttribute(
-                "tabindex",
-                "-1"
-            );
-
-            sidebar.setAttribute(
-                "role",
-                "dialog"
-            );
-
-            sidebar.setAttribute(
-                "aria-modal",
-                "true"
-            );
-
-            sidebar.setAttribute(
-                "aria-label",
-                "KUCSA navigation"
-            );
-
-
-            /*
-             * Bootstrap may already be loaded.
-             * Create the instance so the navbar's
-             * data-bs-toggle="offcanvas" works.
-             */
-
-            getOffcanvasInstance();
-
-
-            /*
-             * Mark the active navigation item.
-             */
-
-            updateActiveNavigation();
-
-        }
-
-
-        /* =====================================================
-           RESTORE DESKTOP SIDEBAR
-           ===================================================== */
-
-        function disableMobileSidebar() {
-
-            const Offcanvas =
-                getBootstrapOffcanvas();
-
-            if (Offcanvas) {
-
-                const instance =
-                    Offcanvas.getInstance(sidebar);
-
-                if (instance) {
-
-                    /*
-                     * Close first.
-                     */
-
-                    try {
-                        instance.hide();
-                    } catch (error) {
-                        /* Safe fallback */
-                    }
-
-
-                    /*
-                     * Dispose after closing.
-                     */
-
-                    try {
-                        instance.dispose();
-                    } catch (error) {
-                        /* Safe fallback */
-                    }
-                }
-            }
-
-
-            sidebar.classList.remove(
-                "offcanvas",
-                "offcanvas-start",
-                "show"
-            );
-
-            sidebar.removeAttribute("tabindex");
-
-            sidebar.removeAttribute("role");
-
-            sidebar.removeAttribute("aria-modal");
-
-            sidebar.setAttribute(
-                "aria-label",
-                "KUCSA navigation"
-            );
-
-
-            /*
-             * Clean any accidental Bootstrap
-             * body state when moving back to desktop.
-             */
-
-            document.body.classList.remove(
-                "offcanvas-open"
-            );
-
-
-            const backdrop =
-                document.querySelector(
-                    ".offcanvas-backdrop"
-                );
-
-            if (backdrop) {
-                backdrop.remove();
-            }
-
-
-            document.body.style.removeProperty(
-                "overflow"
-            );
-
-            document.body.style.removeProperty(
-                "padding-right"
-            );
-
-        }
-
-
-        /* =====================================================
-           ACTIVE NAVIGATION
-           ===================================================== */
-
-        function updateActiveNavigation() {
-
-            const links =
-                sidebar.querySelectorAll(
-                    "a.nav-link"
-                );
-
-            links.forEach(function (link) {
+                const href = this.getAttribute("href");
 
                 if (
-                    link.classList.contains("active")
+                    !href ||
+                    href === "#" ||
+                    href.startsWith("javascript:")
                 ) {
-
-                    link.setAttribute(
-                        "aria-current",
-                        "page"
-                    );
-
-                } else {
-
-                    link.removeAttribute(
-                        "aria-current"
-                    );
-
+                    return;
                 }
+
+
+                /*
+                 * Visual feedback only.
+                 *
+                 * We intentionally do NOT disable the link.
+                 * Bootstrap may close the mobile offcanvas at the
+                 * same time and disabling the link can make the UI
+                 * appear stuck.
+                 */
+
+                this.classList.add("is-navigating");
+
+                this.setAttribute(
+                    "aria-busy",
+                    "true"
+                );
 
             });
 
-        }
+        });
 
 
-        /* =====================================================
-           CLOSE SIDEBAR
-           ===================================================== */
+        /* ========================================================
+           ACTIVE LINK ACCESSIBILITY
+           ======================================================== */
 
-        function closeSidebar() {
+        sidebar
+            .querySelectorAll(".nav-link.active")
+            .forEach(function (link) {
 
-            if (!isMobile()) {
-                return;
-            }
+                link.setAttribute(
+                    "aria-current",
+                    "page"
+                );
 
-
-            const Offcanvas =
-                getBootstrapOffcanvas();
-
-            if (Offcanvas) {
-
-                const instance =
-                    Offcanvas.getInstance(sidebar) ||
-                    Offcanvas.getOrCreateInstance(
-                        sidebar,
-                        {
-                            backdrop: true,
-                            keyboard: true,
-                            scroll: false
-                        }
-                    );
-
-                instance.hide();
-
-                return;
-            }
+            });
 
 
-            /*
-             * Fallback if Bootstrap JS is unavailable.
-             */
+        /* ========================================================
+           PROFILE IMAGE FALLBACK
+           ======================================================== */
 
-            sidebar.classList.remove("show");
+        sidebar
+            .querySelectorAll(
+                "img.sidebar-profile-picture"
+            )
+            .forEach(function (image) {
 
-        }
-
-
-        /* =====================================================
-           OPEN SIDEBAR FALLBACK
-           ===================================================== */
-
-        function openSidebar() {
-
-            if (!isMobile()) {
-                return;
-            }
-
-
-            const Offcanvas =
-                getBootstrapOffcanvas();
-
-            if (Offcanvas) {
-
-                const instance =
-                    Offcanvas.getInstance(sidebar) ||
-                    Offcanvas.getOrCreateInstance(
-                        sidebar,
-                        {
-                            backdrop: true,
-                            keyboard: true,
-                            scroll: false
-                        }
-                    );
-
-                instance.show();
-
-                return;
-            }
-
-
-            /*
-             * Fallback.
-             */
-
-            sidebar.classList.add("show");
-
-        }
-
-
-        /* =====================================================
-           NAVIGATION LINK CLICK
-           ===================================================== */
-
-        sidebar.addEventListener(
-            "click",
-            function (event) {
-
-                const link =
-                    event.target.closest(
-                        "a.nav-link"
-                    );
-
-                if (!link) {
-                    return;
-                }
-
-
-                /*
-                 * On mobile, close the drawer
-                 * before navigating.
-                 */
-
-                if (isMobile()) {
-
-                    const href =
-                        link.getAttribute("href");
-
-                    if (
-                        href &&
-                        href !== "#" &&
-                        !href.startsWith("javascript:")
-                    ) {
+                image.addEventListener(
+                    "error",
+                    function () {
 
                         /*
-                         * Hide the sidebar immediately.
-                         * Navigation will then proceed normally.
+                         * Remove broken-image rendering.
                          */
 
-                        closeSidebar();
+                        this.style.display = "none";
 
+                    },
+                    {
+                        once: true
                     }
-                }
-
-            },
-            true
-        );
-
-
-        /* =====================================================
-           CLOSE BUTTON
-           ===================================================== */
-
-        closeButton.addEventListener(
-            "click",
-            function (event) {
-
-                event.preventDefault();
-
-                event.stopPropagation();
-
-                closeSidebar();
-
-            }
-        );
-
-
-        /* =====================================================
-           ESCAPE KEY FALLBACK
-           ===================================================== */
-
-        document.addEventListener(
-            "keydown",
-            function (event) {
-
-                if (
-                    event.key === "Escape" &&
-                    isMobile() &&
-                    sidebar.classList.contains("show")
-                ) {
-
-                    closeSidebar();
-
-                }
-
-            }
-        );
-
-
-        /* =====================================================
-           NAVBAR HAMBURGER SUPPORT
-           ===================================================== */
-
-        document.addEventListener(
-            "click",
-            function (event) {
-
-                const toggle =
-                    event.target.closest(
-                        '[data-bs-target="#kucsaSidebarOffcanvas"]'
-                    );
-
-                if (!toggle) {
-                    return;
-                }
-
-
-                /*
-                 * Make absolutely sure the sidebar
-                 * is prepared before Bootstrap handles
-                 * the click.
-                 */
-
-                if (isMobile()) {
-
-                    enableMobileSidebar();
-
-                }
-
-            },
-            true
-        );
-
-
-        /* =====================================================
-           BOOTSTRAP OFFCANVAS EVENTS
-           ===================================================== */
-
-        sidebar.addEventListener(
-            "show.bs.offcanvas",
-            function () {
-
-                sidebar.classList.add(
-                    "kucsa-sidebar-opening"
                 );
 
-            }
-        );
+            });
 
 
-        sidebar.addEventListener(
-            "shown.bs.offcanvas",
-            function () {
+        /* ========================================================
+           CLEAN NAVIGATION STATE
+           ======================================================== */
 
-                sidebar.classList.remove(
-                    "kucsa-sidebar-opening"
-                );
-
-
-                /*
-                 * Focus the close button for
-                 * keyboard accessibility.
-                 */
-
-                if (
-                    isMobile() &&
-                    closeButton &&
-                    typeof closeButton.focus === "function"
-                ) {
-
-                    setTimeout(function () {
-
-                        try {
-                            closeButton.focus();
-                        } catch (error) {
-                            /* Ignore focus errors */
-                        }
-
-                    }, 80);
-
-                }
-
-            }
-        );
-
-
-        sidebar.addEventListener(
-            "hide.bs.offcanvas",
-            function () {
-
-                sidebar.classList.add(
-                    "kucsa-sidebar-closing"
-                );
-
-            }
-        );
-
-
-        sidebar.addEventListener(
-            "hidden.bs.offcanvas",
-            function () {
-
-                sidebar.classList.remove(
-                    "kucsa-sidebar-closing"
-                );
-
-            }
-        );
-
-
-        /* =====================================================
-           BACKDROP ENHANCEMENT
-           ===================================================== */
-
-        document.addEventListener(
-            "shown.bs.offcanvas",
-            function (event) {
-
-                if (
-                    event.target !== sidebar
-                ) {
-                    return;
-                }
-
-
-                const backdrop =
-                    document.querySelector(
-                        ".offcanvas-backdrop"
-                    );
-
-                if (backdrop) {
-
-                    backdrop.classList.add(
-                        "kucsa-sidebar-backdrop"
-                    );
-
-                }
-
-            }
-        );
-
-
-        /* =====================================================
-           BACKDROP CLICK
-           ===================================================== */
-
-        document.addEventListener(
-            "click",
-            function (event) {
-
-                const backdrop =
-                    event.target.closest(
-                        ".kucsa-sidebar-backdrop"
-                    );
-
-                if (!backdrop) {
-                    return;
-                }
-
-
-                if (isMobile()) {
-                    closeSidebar();
-                }
-
-            }
-        );
-
-
-        /* =====================================================
-           RESIZE HANDLING
-           ===================================================== */
-
-        let resizeTimer = null;
-
-        function handleResponsiveState() {
-
-            clearTimeout(resizeTimer);
-
-            resizeTimer = setTimeout(
-                function () {
-
-                    if (isMobile()) {
-
-                        enableMobileSidebar();
-
-                    } else {
-
-                        disableMobileSidebar();
-
-                    }
-
-                    updateActiveNavigation();
-
-                },
-                120
-            );
-
-        }
-
-
-        window.addEventListener(
-            "resize",
-            handleResponsiveState,
-            {
-                passive: true
-            }
-        );
-
-
-        window.addEventListener(
-            "orientationchange",
-            function () {
-
-                setTimeout(
-                    handleResponsiveState,
-                    150
-                );
-
-            },
-            {
-                passive: true
-            }
-        );
-
-
-        /* =====================================================
-           PAGE SHOW
-           ===================================================== */
+        /*
+         * If the browser restores the page from its back/forward
+         * cache, remove any old navigation state.
+         */
 
         window.addEventListener(
             "pageshow",
             function () {
 
-                if (isMobile()) {
+                sidebar
+                    .querySelectorAll(
+                        ".nav-link.is-navigating"
+                    )
+                    .forEach(function (link) {
 
-                    enableMobileSidebar();
+                        link.classList.remove(
+                            "is-navigating"
+                        );
 
-                } else {
+                        link.removeAttribute(
+                            "aria-busy"
+                        );
 
-                    disableMobileSidebar();
-
-                }
-
-                updateActiveNavigation();
+                    });
 
             }
         );
 
-
-        /* =====================================================
-           INITIALIZE
-           ===================================================== */
-
-        if (isMobile()) {
-
-            enableMobileSidebar();
-
-        } else {
-
-            disableMobileSidebar();
-
-        }
-
-
-        updateActiveNavigation();
-
-
-        /* =====================================================
-           SAFETY: HANDLE BOOTSTRAP LOADING ORDER
-           ===================================================== */
-
-        if (
-            !window.bootstrap ||
-            !window.bootstrap.Offcanvas
-        ) {
-
-            let bootstrapRetryCount = 0;
-
-            const bootstrapRetry =
-                setInterval(
-                    function () {
-
-                        bootstrapRetryCount++;
-
-                        if (
-                            window.bootstrap &&
-                            window.bootstrap.Offcanvas
-                        ) {
-
-                            clearInterval(
-                                bootstrapRetry
-                            );
-
-                            if (isMobile()) {
-                                enableMobileSidebar();
-                            }
-
-                        }
-
-
-                        if (
-                            bootstrapRetryCount >= 30
-                        ) {
-
-                            clearInterval(
-                                bootstrapRetry
-                            );
-
-                        }
-
-                    },
-                    100
-                );
-
-        }
-
     }
 
 
-    /* =========================================================
-       START AFTER DOM READY
-       ========================================================= */
+    /* ============================================================
+       INITIALIZATION
+       ============================================================ */
 
     if (
         document.readyState === "loading"
@@ -3538,7 +2704,10 @@
 
         document.addEventListener(
             "DOMContentLoaded",
-            initKucsaSidebar
+            initKucsaSidebar,
+            {
+                once: true
+            }
         );
 
     } else {

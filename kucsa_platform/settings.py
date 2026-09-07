@@ -1,27 +1,25 @@
+
 """
 Django settings for kucsa_platform project.
 
 KUCSA Digital Computing Community Platform
 
-Development / production-ready configuration.
-
-Sensitive values such as SECRET_KEY, database credentials,
-email credentials, and M-Pesa credentials should be supplied
-through environment variables.
+Development configuration.
+For production, move sensitive values such as SECRET_KEY,
+database credentials, and M-Pesa credentials to environment
+variables.
 """
 
-# =========================================================
-# IMPORTS
-# =========================================================
-
-import os
-from pathlib import Path
-
-import dj_database_url
 from dotenv import load_dotenv
+import os
 
 load_dotenv()
 
+import dj_database_url
+
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # =========================================================
 # BASE DIRECTORY
@@ -29,14 +27,16 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+import os
+from dotenv import load_dotenv
 
-# =========================================================
+load_dotenv()
+# ================================
 # SECURITY
-# =========================================================
-
+# ================================
 SECRET_KEY = os.getenv(
     "SECRET_KEY",
-    "django-insecure-dev-key",
+    "django-insecure-dev-key"
 )
 
 # False on Vercel / production
@@ -46,7 +46,7 @@ ALLOWED_HOSTS = [
     ".vercel.app",
     "localhost",
     "127.0.0.1",
-    "freddy-porkiest-rumblingly.ngrok-free.dev",
+    "freddy-porkiest-rumblingly.ngrok-free.dev", 
     ".ngrok-free.dev",
 ]
 
@@ -56,7 +56,6 @@ ALLOWED_HOSTS = [
 # =========================================================
 
 INSTALLED_APPS = [
-
     # -----------------------------------------------------
     # Django
     # -----------------------------------------------------
@@ -82,7 +81,7 @@ INSTALLED_APPS = [
     "dashboard",
     "reports",
     "core",
-    "finance",
+    'finance',
 ]
 
 
@@ -91,7 +90,6 @@ INSTALLED_APPS = [
 # =========================================================
 
 MIDDLEWARE = [
-
     "django.middleware.security.SecurityMiddleware",
 
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -121,21 +119,19 @@ ROOT_URLCONF = "kucsa_platform.urls"
 
 TEMPLATES = [
     {
-        "BACKEND": (
-            "django.template.backends.django.DjangoTemplates"
-        ),
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
 
         # Global templates directory
         "DIRS": [
             BASE_DIR / "templates",
         ],
 
-        # App templates
+        # App templates:
+        # payments/templates/payments/...
         "APP_DIRS": True,
 
         "OPTIONS": {
             "context_processors": [
-
                 "django.template.context_processors.debug",
 
                 "django.template.context_processors.request",
@@ -161,9 +157,9 @@ WSGI_APPLICATION = "kucsa_platform.wsgi.application"
 # =========================================================
 
 DATABASES = {
-    "default": dj_database_url.config(
+    'default': dj_database_url.config(
         default=os.getenv("DATABASE_URL"),
-        conn_max_age=600,
+        conn_max_age=600
     )
 }
 
@@ -191,28 +187,24 @@ LOGOUT_REDIRECT_URL = "accounts:login"
 # =========================================================
 
 AUTH_PASSWORD_VALIDATORS = [
-
     {
         "NAME": (
             "django.contrib.auth.password_validation."
             "UserAttributeSimilarityValidator"
         ),
     },
-
     {
         "NAME": (
             "django.contrib.auth.password_validation."
             "MinimumLengthValidator"
         ),
     },
-
     {
         "NAME": (
             "django.contrib.auth.password_validation."
             "CommonPasswordValidator"
         ),
     },
-
     {
         "NAME": (
             "django.contrib.auth.password_validation."
@@ -226,12 +218,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # INTERNATIONALIZATION
 # =========================================================
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = "Africa/Nairobi"
+TIME_ZONE = 'Africa/Nairobi'   # ✅ FIXED (important for real system)
 
 USE_I18N = True
-
 USE_TZ = True
 
 
@@ -239,22 +230,33 @@ USE_TZ = True
 # STATIC FILES
 # =========================================================
 
-STATIC_URL = "/static/"
+# ================================
+# STATIC FILES
+# ================================
+STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    BASE_DIR / 'static',
 ]
 
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_STORAGE = (
-    "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    'whitenoise.storage.CompressedManifestStaticFilesStorage'
 )
-
-
 # =========================================================
 # MEDIA FILES
 # =========================================================
+
+# Payment proof uploads are stored here.
+#
+# Example:
+# media/
+# └── payments/
+#     └── proofs/
+#         └── 2026/
+#             └── 08/
+#                 └── receipt.pdf
 
 MEDIA_URL = "/media/"
 
@@ -264,6 +266,9 @@ MEDIA_ROOT = BASE_DIR / "media"
 # =========================================================
 # FILE UPLOAD SETTINGS
 # =========================================================
+
+# Maximum request body size.
+# Adjust depending on the type of payment proofs allowed.
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024
 
@@ -290,6 +295,7 @@ MESSAGE_TAGS = {
     message_constants.WARNING: "warning",
     message_constants.ERROR: "error",
 }
+
 
 
 # =========================================================
@@ -363,40 +369,155 @@ DEFAULT_FROM_EMAIL = os.getenv(
 )
 
 
+
+
 # =========================================================
 # M-PESA / SAFARICOM DARAJA
 # =========================================================
-#
-# These values are provided through environment variables.
+
+# These values MUST be provided through environment variables
+# in production.
+
+
+
 # =========================================================
+# SECURITY SETTINGS
+# =========================================================
+
+# Development defaults.
+#
+# These should be enabled/strengthened in production.
+
+SECURE_BROWSER_XSS_FILTER = True
+
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+X_FRAME_OPTIONS = "DENY"
+
+# ================================
+# SECURITY HEADERS (PRODUCTION)
+# ================================
+if not DEBUG:
+
+    SECURE_BROWSER_XSS_FILTER = True
+
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+
+    X_FRAME_OPTIONS = 'DENY'
+
+    SECURE_PROXY_SSL_HEADER = (
+        'HTTP_X_FORWARDED_PROTO',
+        'https'
+    )
+
+    SESSION_COOKIE_SECURE = True
+
+    CSRF_COOKIE_SECURE = True
+
+
+# =========================================================
+# SESSION SETTINGS
+# =========================================================
+
+SESSION_COOKIE_HTTPONLY = True
+
+SESSION_COOKIE_SAMESITE = "Lax"
+
+CSRF_COOKIE_SAMESITE = "Lax"
+
+
+# =========================================================
+# CSRF
+# =========================================================
+
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get(
+        "DJANGO_CSRF_TRUSTED_ORIGINS",
+        "",
+    ).split(",")
+    if origin.strip()
+]
+
+
+# =========================================================
+# LOGGING
+# =========================================================
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+
+    "formatters": {
+        "verbose": {
+            "format": (
+                "{levelname} {asctime} "
+                "{module} {process:d} {thread:d} "
+                "{message}"
+            ),
+            "style": "{",
+        },
+
+        "simple": {
+            "format": (
+                "{levelname} {message}"
+            ),
+            "style": "{",
+        },
+    },
+
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+
+        "payments": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+}
 
 KUCSA_MEMBERSHIP_FEE = 1
 
+# =========================================================
+# M-PESA DARAJA CONFIGURATION
+# =========================================================
 
 MPESA_CONSUMER_KEY = os.getenv(
-    "MPESA_CONSUMER_KEY",
+    "MPESA_CONSUMER_KEY"
 )
 
 MPESA_CONSUMER_SECRET = os.getenv(
-    "MPESA_CONSUMER_SECRET",
+    "MPESA_CONSUMER_SECRET"
 )
 
 MPESA_SHORTCODE = os.getenv(
     "MPESA_SHORTCODE",
-    "174379",
+    "174379"
 )
 
 MPESA_PASSKEY = os.getenv(
-    "MPESA_PASSKEY",
+    "MPESA_PASSKEY"
 )
 
 MPESA_CALLBACK_URL = os.getenv(
-    "MPESA_CALLBACK_URL",
+    "MPESA_CALLBACK_URL"
 )
 
 MPESA_ENVIRONMENT = os.getenv(
     "MPESA_ENVIRONMENT",
-    "sandbox",
+    "sandbox"
 )
 
 
@@ -426,145 +547,11 @@ MPESA_STK_PUSH_URL = (
 )
 
 
-# =========================================================
-# SECURITY HEADERS
-# =========================================================
-
-SECURE_BROWSER_XSS_FILTER = True
-
-SECURE_CONTENT_TYPE_NOSNIFF = True
-
-X_FRAME_OPTIONS = "DENY"
-
-
-# =========================================================
-# PRODUCTION SECURITY
-# =========================================================
-
-if not DEBUG:
-
-    SECURE_BROWSER_XSS_FILTER = True
-
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-
-    X_FRAME_OPTIONS = "DENY"
-
-    # Vercel / reverse-proxy HTTPS detection.
-    #
-    # This is important for password reset because the view
-    # uses request.is_secure() when generating the reset link.
-
-    SECURE_PROXY_SSL_HEADER = (
-        "HTTP_X_FORWARDED_PROTO",
-        "https",
-    )
-
-    SESSION_COOKIE_SECURE = True
-
-    CSRF_COOKIE_SECURE = True
-
-
-# =========================================================
-# SESSION SECURITY
-# =========================================================
-
-SESSION_COOKIE_HTTPONLY = True
-
-SESSION_COOKIE_SAMESITE = "Lax"
-
-CSRF_COOKIE_SAMESITE = "Lax"
-
-
-# =========================================================
-# CSRF TRUSTED ORIGINS
-# =========================================================
-#
-# Multiple origins can be supplied through:
-#
-# DJANGO_CSRF_TRUSTED_ORIGINS
-#
-# Example:
-#
-# DJANGO_CSRF_TRUSTED_ORIGINS=
-# https://kucsa.vercel.app,https://your-domain.com
-#
-# The default keeps your current Vercel deployment trusted.
-# =========================================================
-
 CSRF_TRUSTED_ORIGINS = [
-    origin.strip()
-    for origin in os.getenv(
-        "DJANGO_CSRF_TRUSTED_ORIGINS",
-        "https://kucsa.vercel.app",
-    ).split(",")
-    if origin.strip()
+    "https://kucsa-six.vercel.app",
 ]
 
-
-# =========================================================
-# LOGGING
-# =========================================================
-
-LOGGING = {
-    "version": 1,
-
-    "disable_existing_loggers": False,
-
-    "formatters": {
-
-        "verbose": {
-            "format": (
-                "{levelname} {asctime} "
-                "{module} {process:d} {thread:d} "
-                "{message}"
-            ),
-            "style": "{",
-        },
-
-        "simple": {
-            "format": "{levelname} {message}",
-            "style": "{",
-        },
-    },
-
-    "handlers": {
-
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "verbose",
-        },
-    },
-
-    "loggers": {
-
-        "django": {
-            "handlers": ["console"],
-            "level": "INFO",
-            "propagate": False,
-        },
-
-        "payments": {
-            "handlers": ["console"],
-            "level": "INFO",
-            "propagate": False,
-        },
-    },
-}
-
-
-# =========================================================
-# SESSION LIFETIME
-# =========================================================
-#
-# Automatically log the user out after 5 minutes of
-# inactivity.
-#
-# SESSION_SAVE_EVERY_REQUEST resets the inactivity timer
-# whenever the user makes a request.
-# =========================================================
-
-SESSION_COOKIE_AGE = 300
-
-SESSION_SAVE_EVERY_REQUEST = True
-
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# ── Auto logout after 5 minutes of inactivity ──
+SESSION_COOKIE_AGE = 300              # 5 minutes in seconds
+SESSION_SAVE_EVERY_REQUEST = True     # reset timer on every request
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # also logout when browser closes

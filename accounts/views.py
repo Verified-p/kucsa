@@ -875,6 +875,10 @@ def change_password_view(request):
 # FORGOT PASSWORD
 # =========================================================
 
+# =========================================================
+# FORGOT PASSWORD
+# =========================================================
+
 
 def forgot_password_view(request):
     """
@@ -893,9 +897,9 @@ def forgot_password_view(request):
               ↓
         Django PasswordResetForm
               ↓
-        Secure password-reset token
+        Secure Password-Reset Token
               ↓
-        Password-reset email
+        Password-Reset Email
               ↓
         Password Reset Confirmation
               ↓
@@ -913,11 +917,11 @@ def forgot_password_view(request):
 
     Django's PasswordResetForm is responsible for:
 
-        - finding eligible users
-        - generating the reset token
-        - generating uidb64
-        - constructing the reset URL
-        - sending the reset email
+        - Finding eligible users
+        - Generating the password-reset token
+        - Generating the uidb64 value
+        - Constructing the reset URL
+        - Sending the password-reset email
     """
 
     # =====================================================
@@ -940,53 +944,55 @@ def forgot_password_view(request):
             request.POST,
         )
 
-        # -------------------------------------------------
+        # =================================================
         # VALIDATE EMAIL
-        # -------------------------------------------------
+        # =================================================
 
         if form.is_valid():
 
             try:
 
-                # -------------------------------------------------
+                # =============================================
                 # SEND PASSWORD RESET EMAIL
-                # -------------------------------------------------
+                # =============================================
                 #
-                # Django handles the security-sensitive password
-                # reset process.
+                # Django creates a multipart email containing:
                 #
-                # use_https=request.is_secure() ensures that the
-                # generated reset link uses HTTPS when the request
-                # is being served securely.
+                #   1. Plain-text version
+                #   2. HTML version
                 #
-                # The templates are kept inside:
+                # The email client can then display the HTML
+                # version normally.
                 #
-                # templates/accounts/
-                #
-                # -------------------------------------------------
+                # =============================================
 
                 form.save(
                     request=request,
                     use_https=request.is_secure(),
                     email_template_name=(
-                        "accounts/password_reset_email.html"
+                        "password_reset_email.txt"
+                    ),
+                    html_email_template_name=(
+                        "password_reset_email.html"
                     ),
                     subject_template_name=(
-                        "accounts/password_reset_subject.txt"
+                        "password_reset_subject.txt"
                     ),
                 )
 
             except Exception:
 
-                # -------------------------------------------------
+                # =============================================
                 # LOG INTERNAL EMAIL ERROR
-                # -------------------------------------------------
+                # =============================================
                 #
-                # Never expose SMTP/provider details to the user.
+                # Never expose SMTP/provider details to the
+                # user.
                 #
-                # The complete exception is available in the
+                # The complete exception is recorded in the
                 # application logs for troubleshooting.
-                # -------------------------------------------------
+                #
+                # =============================================
 
                 logger.exception(
                     "KUCSA password reset email could not be sent."
@@ -1003,15 +1009,16 @@ def forgot_password_view(request):
 
             else:
 
-                # -------------------------------------------------
+                # =============================================
                 # SUCCESS
-                # -------------------------------------------------
+                # =============================================
                 #
                 # Always redirect to the generic success page.
                 #
-                # This deliberately does not tell the user whether
+                # This deliberately does not reveal whether
                 # the submitted email exists in the system.
-                # -------------------------------------------------
+                #
+                # =============================================
 
                 return redirect(
                     "accounts:password_reset_done"

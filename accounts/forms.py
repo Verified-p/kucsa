@@ -681,6 +681,14 @@ class UserPasswordChangeForm(
 # PASSWORD RESET REQUEST
 # =========================================================
 
+# =========================================================
+# PASSWORD RESET REQUEST
+# =========================================================
+
+# =========================================================
+# PASSWORD RESET REQUEST
+# =========================================================
+
 
 class UserPasswordResetForm(
     BootstrapFormMixin,
@@ -711,9 +719,9 @@ class UserPasswordResetForm(
     tokenized PasswordResetConfirmView.
     """
 
-    # -----------------------------------------------------
+    # =====================================================
     # EMAIL FIELD
-    # -----------------------------------------------------
+    # =====================================================
 
     email = forms.EmailField(
         label="Email Address",
@@ -721,26 +729,28 @@ class UserPasswordResetForm(
         widget=forms.EmailInput(
             attrs={
                 "class": "form-control",
-                "placeholder": "Enter your registered email address",
+                "placeholder": (
+                    "Enter your registered email address"
+                ),
                 "autocomplete": "email",
                 "inputmode": "email",
                 "spellcheck": "false",
-            }
+            },
         ),
     )
 
-    # -----------------------------------------------------
+    # =====================================================
     # INITIALIZATION
-    # -----------------------------------------------------
+    # =====================================================
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.apply_bootstrap_classes()
 
-    # -----------------------------------------------------
+    # =====================================================
     # EMAIL NORMALIZATION
-    # -----------------------------------------------------
+    # =====================================================
 
     def clean_email(self):
         """
@@ -756,8 +766,6 @@ class UserPasswordResetForm(
             return email
 
         return email.strip().lower()
-
-
 # =========================================================
 # ADMIN / STAFF USER UPDATE
 # =========================================================

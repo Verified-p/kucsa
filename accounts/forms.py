@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import (
     AuthenticationForm,
     PasswordChangeForm,
+    PasswordResetForm,
     UserCreationForm,
 )
 
@@ -674,6 +675,87 @@ class UserPasswordChangeForm(
         super().__init__(*args, **kwargs)
 
         self.apply_bootstrap_classes()
+
+
+# =========================================================
+# PASSWORD RESET REQUEST
+# =========================================================
+
+
+class UserPasswordResetForm(
+    BootstrapFormMixin,
+    PasswordResetForm,
+):
+    """
+    Request a secure password-reset email for a KUCSA
+    platform account.
+
+    Django's PasswordResetForm handles the security-sensitive
+    parts of the reset workflow:
+
+        - Locating eligible users by email
+        - Generating the password-reset token
+        - Generating the uidb64 value
+        - Constructing the reset URL
+        - Sending the password-reset email
+
+    SECURITY
+    --------
+
+    This form deliberately does NOT reveal whether an email
+    address belongs to a KUCSA account.
+
+    This prevents account/email enumeration.
+
+    The actual password reset is completed through Django's
+    tokenized PasswordResetConfirmView.
+    """
+
+    # -----------------------------------------------------
+    # EMAIL FIELD
+    # -----------------------------------------------------
+
+    email = forms.EmailField(
+        label="Email Address",
+        required=True,
+        widget=forms.EmailInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Enter your registered email address",
+                "autocomplete": "email",
+                "inputmode": "email",
+                "spellcheck": "false",
+            }
+        ),
+    )
+
+    # -----------------------------------------------------
+    # INITIALIZATION
+    # -----------------------------------------------------
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.apply_bootstrap_classes()
+
+    # -----------------------------------------------------
+    # EMAIL NORMALIZATION
+    # -----------------------------------------------------
+
+    def clean_email(self):
+        """
+        Normalize the submitted email address.
+
+        This matches the normalization already used by the
+        registration and profile forms.
+        """
+
+        email = self.cleaned_data.get("email")
+
+        if not email:
+            return email
+
+        return email.strip().lower()
 
 
 # =========================================================

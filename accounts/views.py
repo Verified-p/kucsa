@@ -14,6 +14,7 @@ from django.shortcuts import redirect, render
 from .forms import (
     UserLoginForm,
     UserPasswordChangeForm,
+    UserPasswordResetForm,
     UserRegistrationForm,
     UserUpdateForm,
 )
@@ -870,14 +871,58 @@ def change_password_view(request):
 # FORGOT PASSWORD
 # =========================================================
 
+# =========================================================
+# FORGOT PASSWORD
+# =========================================================
+
 
 def forgot_password_view(request):
     """
-    Display the password recovery page.
+    Request a secure password-reset email.
 
-    The actual password-reset workflow can be handled by
-    the dedicated password-reset service/forms.
+    This view handles the first stage of Django's password
+    reset workflow.
+
+    Flow:
+
+        Forgot Password
+              ↓
+        Submit Email Address
+              ↓
+        UserPasswordResetForm
+              ↓
+        Django PasswordResetForm
+              ↓
+        Secure password-reset token
+              ↓
+        Password-reset email
+              ↓
+        Password Reset Confirmation
+              ↓
+        New Password
+              ↓
+        Password Reset Complete
+
+    SECURITY
+    --------
+
+    The view intentionally does not reveal whether the
+    submitted email address belongs to a KUCSA account.
+
+    This prevents account/email enumeration.
+
+    Django's PasswordResetForm is responsible for:
+
+        - finding eligible users
+        - generating the reset token
+        - generating uidb64
+        - constructing the reset URL
+        - sending the reset email
     """
+
+    # =====================================================
+    # AUTHENTICATED USERS
+    # =====================================================
 
     if request.user.is_authenticated:
 
@@ -885,11 +930,116 @@ def forgot_password_view(request):
             request
         )
 
+    # =====================================================
+    # POST REQUEST
+    # =====================================================
+
+    if request.method == "POST":
+
+        form = UserPasswordResetForm(
+            request.POST,
+        )
+
+        # -------------------------------------------------
+        # VALIDATE EMAIL
+        # -------------------------------------------------
+
+        if form.is_valid():
+
+            try:
+
+                # -------------------------------------------------
+                # SEND PASSWORD RESET EMAIL
+                # -------------------------------------------------
+                #
+                # Django handles the security-sensitive password
+                # reset process.
+                #
+                # use_https=request.is_secure() ensures that the
+                # generated reset link uses HTTPS when the request
+                # is being served securely.
+                #
+                # The templates are kept inside:
+                #
+                # templates/accounts/
+                #
+                # -------------------------------------------------
+
+                form.save(
+                    request=request,
+                    use_https=request.is_secure(),
+                    email_template_name=(
+                        "accounts/password_reset_email.html"
+                    ),
+                    subject_template_name=(
+                        "accounts/password_reset_subject.txt"
+                    ),
+                )
+
+            except Exception:
+
+                # -------------------------------------------------
+                # LOG INTERNAL EMAIL ERROR
+                # -------------------------------------------------
+                #
+                # Never expose SMTP/provider details to the user.
+                #
+                # The complete exception is available in the
+                # application logs for troubleshooting.
+                # -------------------------------------------------
+
+                logger.exception(
+                    "KUCSA password reset email could not be sent."
+                )
+
+                messages.error(
+                    request,
+                    (
+                        "We could not send the password reset "
+                        "email at this time. Please try again "
+                        "later."
+                    ),
+                )
+
+            else:
+
+                # -------------------------------------------------
+                # SUCCESS
+                # -------------------------------------------------
+                #
+                # Always redirect to the generic success page.
+                #
+                # This deliberately does not tell the user whether
+                # the submitted email exists in the system.
+                # -------------------------------------------------
+
+                return redirect(
+                    "accounts:password_reset_done"
+                )
+
+    # =====================================================
+    # GET REQUEST
+    # =====================================================
+
+    else:
+
+        form = UserPasswordResetForm()
+
+    # =====================================================
+    # DISPLAY FORM
+    # =====================================================
+
     return render(
         request,
         "forgot_password.html",
+        {
+            "form": form,
+        },
     )
 
+# =========================================================
+# RESET PASSWORD
+# =========================================================
 
 # =========================================================
 # RESET PASSWORD
@@ -898,11 +1048,30 @@ def forgot_password_view(request):
 
 def reset_password_view(request):
     """
-    Display the password reset page.
+    Redirect the generic password-reset URL to the password
+    reset request page.
 
-    The actual password-reset workflow can be handled by
-    the dedicated password-reset service/forms.
+    The actual password reset is handled by Django's secure
+    token-based PasswordResetConfirmView.
+
+    The complete workflow is:
+
+        /forgot-password/
+                ↓
+        Enter email
+                ↓
+        Password reset email
+                ↓
+        /reset-password/<uidb64>/<token>/
+                ↓
+        Create new password
+                ↓
+        /reset-password/complete/
     """
+
+    # =====================================================
+    # AUTHENTICATED USERS
+    # =====================================================
 
     if request.user.is_authenticated:
 
@@ -910,11 +1079,31 @@ def reset_password_view(request):
             request
         )
 
-    return render(
-        request,
-        "reset_password.html",
-    )
+    # =====================================================
+    # BACKWARD-COMPATIBLE REDIRECT
+    # =====================================================
+    #
+    # The old generic:
+    #
+    #     /reset-password/
+    #
+    # is not itself a secure password-reset confirmation URL.
+    #
+    # The actual confirmation URL contains:
+    #
+    #     uidb64
+    #     token
+    #
+    # Django will generate that URL and place it inside the
+    # password-reset email.
+    #
+    # Therefore this route simply sends users back to the
+    # password-reset request page.
+    # =====================================================
 
+    return redirect(
+        "accounts:forgot_password"
+    )
 
 # =========================================================
 # EMAIL VERIFICATION

@@ -5,6 +5,8 @@
        KUCSA NAVBAR — MODERN PRODUCTION UI
 
        Scoped to .kucsa-navbar-wrapper / .kucsa-navbar
+       Desktop behavior preserved.
+       Mobile account dropdown fully visible.
        ============================================================ */
 
     .kucsa-navbar-wrapper {
@@ -75,8 +77,7 @@
 
 
     /* ============================================================
-       BRAND AREA
-       Logo + KUCSA + Computing Association
+       BRAND
        ============================================================ */
 
     .kucsa-navbar-wrapper .navbar-brand {
@@ -124,14 +125,6 @@
 
     /* ============================================================
        UNIVERSITY LOGO
-
-       UPDATED:
-       - Removed circular container
-       - Removed white background
-       - Removed padding
-       - Removed artificial shadow
-       - Increased visual size
-       - Keeps the actual image clean and prominent
        ============================================================ */
 
     .kucsa-navbar-wrapper .navbar-brand-logo {
@@ -217,8 +210,7 @@
 
 
     /* ============================================================
-       LEFT MOBILE SIDEBAR BUTTON
-       MOBILE + TABLET ONLY
+       LEFT SIDEBAR BUTTON
        ============================================================ */
 
     .kucsa-navbar-wrapper .kucsa-sidebar-toggle {
@@ -299,7 +291,7 @@
 
 
     /* ============================================================
-       RIGHT NAVBAR MENU TOGGLE
+       RIGHT MOBILE MENU TOGGLE
        ============================================================ */
 
     .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle {
@@ -439,7 +431,7 @@
 
 
     /* ============================================================
-       PAYMENT STATUS ALERT
+       PAYMENT STATUS
        ============================================================ */
 
     .kucsa-navbar-wrapper .payment-alert {
@@ -642,7 +634,7 @@
 
 
     /* ============================================================
-       DROPDOWN
+       DROPDOWN — DESKTOP
        ============================================================ */
 
     .kucsa-navbar-wrapper .dropdown-menu {
@@ -864,7 +856,7 @@
 
 
     /* ============================================================
-       MOBILE / TABLET NAVIGATION
+       MOBILE / TABLET
        ============================================================ */
 
     @media (max-width: 991.98px) {
@@ -876,14 +868,28 @@
             padding-top: 0.4rem;
 
             padding-bottom: 0.4rem;
+
+            position: relative;
+
+            z-index: 1030;
         }
 
 
         .kucsa-navbar-wrapper .kucsa-navbar > .container-fluid {
 
             min-height: 54px;
+
+            position: relative;
         }
 
+
+        /* --------------------------------------------------------
+           MOBILE COLLAPSED NAVIGATION
+
+           Important:
+           The menu itself can scroll, but the account dropdown
+           must NOT be clipped by the collapse container.
+           -------------------------------------------------------- */
 
         .kucsa-navbar-wrapper .navbar-collapse {
 
@@ -905,7 +911,13 @@
 
             overflow-y: auto;
 
+            overflow-x: visible;
+
             -webkit-overflow-scrolling: touch;
+
+            position: relative;
+
+            z-index: 1050;
         }
 
 
@@ -941,13 +953,23 @@
         }
 
 
+        /* --------------------------------------------------------
+           ACCOUNT SECTION
+           -------------------------------------------------------- */
+
         .kucsa-navbar-wrapper .navbar-collapse > .dropdown {
+
+            width: 100%;
 
             margin-top: 0.55rem;
 
             padding-top: 0.65rem;
 
             border-top: 1px solid var(--kucsa-nav-border);
+
+            position: relative;
+
+            z-index: 1060;
         }
 
 
@@ -955,9 +977,37 @@
 
             width: 100%;
 
+            min-height: 54px;
+
             justify-content: flex-start;
 
-            padding: 0.35rem;
+            padding: 0.45rem 0.55rem;
+
+            border-radius: 12px;
+
+            background: var(--kucsa-nav-soft);
+
+            border: 1px solid var(--kucsa-nav-border);
+        }
+
+
+        .kucsa-navbar-wrapper .navbar-user-trigger:hover {
+
+            background:
+                rgba(var(--kucsa-nav-primary-rgb), 0.06);
+
+            border-color:
+                rgba(var(--kucsa-nav-primary-rgb), 0.16);
+        }
+
+
+        .kucsa-navbar-wrapper .navbar-user {
+
+            width: 100%;
+
+            justify-content: flex-start;
+
+            gap: 0.65rem;
         }
 
 
@@ -968,11 +1018,151 @@
         }
 
 
-        .kucsa-navbar-wrapper .dropdown-menu {
+        .kucsa-navbar-wrapper .navbar-user-name {
+
+            max-width: calc(100vw - 130px);
+        }
+
+
+        /* --------------------------------------------------------
+           MOBILE ACCOUNT DROPDOWN
+
+           The critical fix:
+           - position: static
+           - width: 100%
+           - no viewport clipping
+           - normal document flow
+           - enough vertical space for ALL items
+           -------------------------------------------------------- */
+
+        .kucsa-navbar-wrapper .navbar-collapse > .dropdown .dropdown-menu {
+
+            position: static !important;
+
+            transform: none !important;
 
             width: 100%;
 
-            margin-top: 0.45rem !important;
+            min-width: 0;
+
+            max-width: none;
+
+            margin: 0.55rem 0 0 !important;
+
+            padding: 0.45rem;
+
+            border-radius: 12px;
+
+            box-shadow:
+                0 8px 24px rgba(20, 35, 55, 0.08);
+
+            animation:
+                kucsaNavbarMobileDropdown 180ms ease-out both;
+
+            overflow: visible;
+
+            float: none;
+        }
+
+
+        @keyframes kucsaNavbarMobileDropdown {
+
+            from {
+
+                opacity: 0;
+
+                transform: translateY(-4px) !important;
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform: translateY(0) !important;
+            }
+        }
+
+
+        /* --------------------------------------------------------
+           MOBILE ACCOUNT HEADER
+           -------------------------------------------------------- */
+
+        .kucsa-navbar-wrapper .navbar-collapse
+        .dropdown-header {
+
+            padding: 0.78rem 0.8rem;
+
+            margin-bottom: 0.25rem;
+
+            border-radius: 10px;
+        }
+
+
+        .kucsa-navbar-wrapper .navbar-collapse
+        .dropdown-header strong {
+
+            font-size: 0.84rem;
+        }
+
+
+        .kucsa-navbar-wrapper .navbar-collapse
+        .dropdown-header .text-muted {
+
+            font-size: 0.74rem;
+        }
+
+
+        /* --------------------------------------------------------
+           MOBILE DROPDOWN ITEMS
+
+           Slightly taller so every option is easy to tap.
+           -------------------------------------------------------- */
+
+        .kucsa-navbar-wrapper .navbar-collapse
+        .dropdown-item {
+
+            width: 100%;
+
+            min-height: 44px;
+
+            padding: 0.68rem 0.75rem;
+
+            font-size: 0.84rem;
+
+            border-radius: 9px;
+        }
+
+
+        .kucsa-navbar-wrapper .navbar-collapse
+        .dropdown-item i {
+
+            width: 25px;
+
+            margin-right: 0.45rem;
+
+            font-size: 1rem;
+        }
+
+
+        /* --------------------------------------------------------
+           MAKE SURE THE LAST ITEM — LOGOUT — HAS ROOM
+           -------------------------------------------------------- */
+
+        .kucsa-navbar-wrapper .navbar-collapse
+        .dropdown-item.logout-item {
+
+            margin-bottom: 0.1rem;
+        }
+
+
+        /* --------------------------------------------------------
+           MOBILE DIVIDERS
+           -------------------------------------------------------- */
+
+        .kucsa-navbar-wrapper .navbar-collapse
+        .dropdown-divider {
+
+            margin: 0.35rem 0;
         }
     }
 
@@ -990,8 +1180,6 @@
             margin-right: 0.5rem;
         }
 
-
-        /* UPDATED LOGO SIZE */
 
         .kucsa-navbar-wrapper .navbar-brand-logo {
 
@@ -1012,6 +1200,15 @@
         .kucsa-navbar-wrapper .navbar-brand small {
 
             font-size: 0.52rem;
+        }
+
+
+        /* Tablet account menu gets comfortable spacing */
+
+        .kucsa-navbar-wrapper .navbar-collapse
+        .dropdown-menu {
+
+            max-height: none;
         }
     }
 
@@ -1046,8 +1243,6 @@
         }
 
 
-        /* UPDATED LOGO SIZE */
-
         .kucsa-navbar-wrapper .navbar-brand-logo {
 
             width: 46px;
@@ -1075,6 +1270,15 @@
         .kucsa-navbar-wrapper .navbar-collapse {
 
             max-height: calc(100vh - 76px);
+        }
+
+
+        /* Ensure account dropdown has enough width */
+
+        .kucsa-navbar-wrapper .navbar-collapse > .dropdown,
+        .kucsa-navbar-wrapper .navbar-collapse > .dropdown .dropdown-menu {
+
+            width: 100%;
         }
     }
 
@@ -1123,8 +1327,6 @@
         }
 
 
-        /* UPDATED LOGO SIZE */
-
         .kucsa-navbar-wrapper .navbar-brand-logo {
 
             width: 42px;
@@ -1150,12 +1352,35 @@
             padding: 0.55rem;
 
             border-radius: 12px;
+
+            /*
+             * Leave enough room for the complete account menu.
+             * The menu itself remains scrollable if the phone
+             * viewport is unusually short.
+             */
+            max-height: calc(100vh - 70px);
         }
 
 
-        .kucsa-navbar-wrapper .dropdown-menu {
+        .kucsa-navbar-wrapper
+        .navbar-collapse .dropdown-menu {
 
             min-width: 0;
+
+            width: 100%;
+
+            max-height: none;
+        }
+
+
+        .kucsa-navbar-wrapper
+        .navbar-collapse .dropdown-item {
+
+            min-height: 43px;
+
+            padding-top: 0.64rem;
+
+            padding-bottom: 0.64rem;
         }
     }
 
@@ -1183,8 +1408,6 @@
         }
 
 
-        /* UPDATED LOGO SIZE */
-
         .kucsa-navbar-wrapper .navbar-brand-logo {
 
             width: 37px;
@@ -1199,13 +1422,20 @@
 
             display: none;
         }
+
+
+        .kucsa-navbar-wrapper
+        .navbar-collapse .dropdown-item {
+
+            min-height: 42px;
+
+            font-size: 0.8rem;
+        }
     }
 
 
     /* ============================================================
        EXTRA SMALL WIDTH SAFETY
-       Prevents the logo + brand from pushing navbar controls
-       outside the viewport.
        ============================================================ */
 
     @media (max-width: 319.98px) {
@@ -1234,6 +1464,17 @@
             width: 34px;
 
             height: 34px;
+        }
+
+
+        .kucsa-navbar-wrapper
+        .navbar-collapse .dropdown-item {
+
+            min-height: 40px;
+
+            padding-left: 0.6rem;
+
+            padding-right: 0.6rem;
         }
     }
 

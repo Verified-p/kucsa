@@ -1,6 +1,9 @@
+
 <style>
+
     /* ============================================================
        KUCSA NAVBAR — MODERN PRODUCTION UI
+
        Scoped to .kucsa-navbar-wrapper / .kucsa-navbar
        ============================================================ */
 
@@ -97,6 +100,7 @@
         text-decoration: none;
 
         font-size: 1.22rem;
+
         font-weight: 850;
 
         line-height: 1;
@@ -120,14 +124,23 @@
 
     /* ============================================================
        UNIVERSITY LOGO
+
+       UPDATED:
+       - Removed circular container
+       - Removed white background
+       - Removed padding
+       - Removed artificial shadow
+       - Increased visual size
+       - Keeps the actual image clean and prominent
        ============================================================ */
 
     .kucsa-navbar-wrapper .navbar-brand-logo {
 
-        width: 46px;
-        height: 46px;
+        width: 56px;
 
-        flex: 0 0 46px;
+        height: 56px;
+
+        flex: 0 0 56px;
 
         display: block;
 
@@ -135,27 +148,25 @@
 
         object-position: center;
 
-        border-radius: 50%;
+        border-radius: 0;
 
-        background: #ffffff;
+        background: transparent;
 
-        padding: 2px;
+        padding: 0;
 
-        box-shadow:
-            0 2px 8px rgba(20, 35, 55, 0.08);
+        box-shadow: none;
 
         transition:
             transform var(--kucsa-nav-transition),
-            box-shadow var(--kucsa-nav-transition);
+            opacity var(--kucsa-nav-transition);
     }
 
 
     .kucsa-navbar-wrapper .navbar-brand:hover .navbar-brand-logo {
 
-        transform: scale(1.035);
+        transform: scale(1.045);
 
-        box-shadow:
-            0 4px 12px rgba(20, 35, 55, 0.12);
+        box-shadow: none;
     }
 
 
@@ -213,11 +224,13 @@
     .kucsa-navbar-wrapper .kucsa-sidebar-toggle {
 
         width: 42px;
+
         height: 42px;
 
         display: inline-flex;
 
         align-items: center;
+
         justify-content: center;
 
         flex-shrink: 0;
@@ -292,11 +305,13 @@
     .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle {
 
         width: 42px;
+
         height: 42px;
 
         display: inline-flex;
 
         align-items: center;
+
         justify-content: center;
 
         padding: 0;
@@ -353,6 +368,7 @@
         display: inline-flex;
 
         align-items: center;
+
         justify-content: center;
 
         min-height: 40px;
@@ -431,6 +447,7 @@
         display: inline-flex;
 
         align-items: center;
+
         justify-content: center;
 
         gap: 0.45rem;
@@ -547,6 +564,7 @@
     .kucsa-navbar-wrapper .navbar-default-avatar {
 
         width: 39px;
+
         height: 39px;
 
         flex: 0 0 39px;
@@ -574,6 +592,7 @@
         display: inline-flex;
 
         align-items: center;
+
         justify-content: center;
 
         background: #edf0f4;
@@ -811,9 +830,11 @@
         display: inline-flex;
 
         align-items: center;
+
         justify-content: center;
 
         padding-left: 1rem;
+
         padding-right: 1rem;
 
         border-radius: 10px !important;
@@ -853,6 +874,7 @@
             min-height: 64px;
 
             padding-top: 0.4rem;
+
             padding-bottom: 0.4rem;
         }
 
@@ -969,12 +991,15 @@
         }
 
 
+        /* UPDATED LOGO SIZE */
+
         .kucsa-navbar-wrapper .navbar-brand-logo {
 
-            width: 44px;
-            height: 44px;
+            width: 52px;
 
-            flex-basis: 44px;
+            height: 52px;
+
+            flex-basis: 52px;
         }
 
 
@@ -1000,6 +1025,7 @@
         .kucsa-navbar-wrapper .kucsa-navbar > .container-fluid {
 
             padding-left: 0.75rem !important;
+
             padding-right: 0.75rem !important;
         }
 
@@ -1020,14 +1046,15 @@
         }
 
 
+        /* UPDATED LOGO SIZE */
+
         .kucsa-navbar-wrapper .navbar-brand-logo {
 
-            width: 40px;
-            height: 40px;
+            width: 46px;
 
-            flex-basis: 40px;
+            height: 46px;
 
-            padding: 2px;
+            flex-basis: 46px;
         }
 
 
@@ -1074,6 +1101,7 @@
         .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle {
 
             width: 39px;
+
             height: 39px;
 
             border-radius: 10px;
@@ -1095,12 +1123,15 @@
         }
 
 
+        /* UPDATED LOGO SIZE */
+
         .kucsa-navbar-wrapper .navbar-brand-logo {
 
-            width: 36px;
-            height: 36px;
+            width: 42px;
 
-            flex-basis: 36px;
+            height: 42px;
+
+            flex-basis: 42px;
         }
 
 
@@ -1139,6 +1170,7 @@
         .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle {
 
             width: 36px;
+
             height: 36px;
         }
 
@@ -1151,12 +1183,15 @@
         }
 
 
+        /* UPDATED LOGO SIZE */
+
         .kucsa-navbar-wrapper .navbar-brand-logo {
 
-            width: 32px;
-            height: 32px;
+            width: 37px;
 
-            flex-basis: 32px;
+            height: 37px;
+
+            flex-basis: 37px;
         }
 
 
@@ -1185,10 +1220,11 @@
 
         .kucsa-navbar-wrapper .navbar-brand-logo {
 
-            width: 29px;
-            height: 29px;
+            width: 34px;
 
-            flex-basis: 29px;
+            height: 34px;
+
+            flex-basis: 34px;
         }
 
 
@@ -1196,6 +1232,7 @@
         .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle {
 
             width: 34px;
+
             height: 34px;
         }
     }
@@ -1239,6 +1276,7 @@
             display: none !important;
         }
     }
+
 </style>
 
 
@@ -1294,8 +1332,8 @@
                     src="{{ kucsa_logo }}"
                     class="navbar-brand-logo"
                     alt="Kisii University logo"
-                    width="46"
-                    height="46"
+                    width="56"
+                    height="56"
                     loading="eager"
                     decoding="async"
                 >
@@ -1558,6 +1596,7 @@
 
                                     </span>
 
+
                                     <span class="navbar-user-role">
 
                                         {{ user.get_role_display|default:user.role }}
@@ -1816,7 +1855,7 @@
 
     <!-- ================================================================
          MOBILE / TABLET SIDEBAR OFFCANVAS
-         ================================================================ -->
+         ================================================================= -->
 
     {% if user.is_authenticated %}
 
@@ -1835,8 +1874,11 @@
                     class="offcanvas-title"
                     id="kucsaSidebarOffcanvasLabel"
                 >
+
                     KUCSA Navigation
+
                 </h5>
+
 
                 <button
                     type="button"
@@ -1898,6 +1940,7 @@ document.addEventListener("DOMContentLoaded", function () {
             navbar.classList.remove("is-scrolled");
 
         }
+
     }
 
 
@@ -1955,7 +1998,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* =========================================================
        SIDEBAR OFFCANVAS
-
        Bootstrap handles:
        - opening
        - closing
@@ -2044,7 +2086,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* =========================================================
        LOGO IMAGE FALLBACK
-
        If logo.png cannot be loaded, the KUCSA text remains
        visible and the broken image does not remain on screen.
        ========================================================= */

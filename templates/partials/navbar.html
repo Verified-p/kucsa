@@ -124,6 +124,14 @@
 
     /* ============================================================
        UNIVERSITY LOGO
+
+       UPDATED:
+       - Removed circular container
+       - Removed white background
+       - Removed padding
+       - Removed artificial shadow
+       - Increased visual size
+       - Keeps the actual image clean and prominent
        ============================================================ */
 
     .kucsa-navbar-wrapper .navbar-brand-logo {
@@ -175,8 +183,6 @@
         justify-content: center;
 
         min-width: 0;
-
-        flex: 1 1 auto;
     }
 
 
@@ -185,10 +191,6 @@
         display: block;
 
         white-space: nowrap;
-
-        overflow: hidden;
-
-        text-overflow: ellipsis;
     }
 
 
@@ -211,10 +213,6 @@
         text-transform: uppercase;
 
         white-space: nowrap;
-
-        overflow: hidden;
-
-        text-overflow: ellipsis;
     }
 
 
@@ -315,10 +313,6 @@
         align-items: center;
 
         justify-content: center;
-
-        flex: 0 0 42px;
-
-        flex-shrink: 0;
 
         padding: 0;
 
@@ -994,10 +988,10 @@
             gap: 0.62rem;
 
             margin-right: 0.5rem;
-
-            flex-shrink: 1;
         }
 
+
+        /* UPDATED LOGO SIZE */
 
         .kucsa-navbar-wrapper .navbar-brand-logo {
 
@@ -1005,7 +999,7 @@
 
             height: 52px;
 
-            flex: 0 0 52px;
+            flex-basis: 52px;
         }
 
 
@@ -1033,111 +1027,34 @@
             padding-left: 0.75rem !important;
 
             padding-right: 0.75rem !important;
-
-            display: flex;
-
-            align-items: center;
-
-            flex-wrap: nowrap;
-
-            width: 100%;
         }
 
 
         .kucsa-navbar-wrapper .kucsa-sidebar-toggle {
 
             display: inline-flex !important;
-
-            flex: 0 0 42px;
-
-            width: 42px;
-
-            height: 42px;
-
-            margin-right: 0.5rem !important;
         }
 
 
-        /* ========================================================
-           MOBILE BRAND FIX
-
-           Prevents the logo from being squeezed/hidden by flexbox.
-           ======================================================== */
-
         .kucsa-navbar-wrapper .navbar-brand {
-
-            display: inline-flex !important;
-
-            align-items: center;
-
-            flex: 1 1 auto;
-
-            min-width: 0;
-
-            width: auto;
-
-            max-width: none;
-
-            overflow: visible;
 
             gap: 0.5rem;
 
             margin-right: 0.35rem;
 
-            padding: 0.1rem 0;
-
             font-size: 1.08rem;
         }
 
 
+        /* UPDATED LOGO SIZE */
+
         .kucsa-navbar-wrapper .navbar-brand-logo {
 
-            display: block !important;
+            width: 46px;
 
-            visibility: visible !important;
+            height: 46px;
 
-            opacity: 1 !important;
-
-            flex: 0 0 46px !important;
-
-            width: 46px !important;
-
-            height: 46px !important;
-
-            min-width: 46px;
-
-            min-height: 46px;
-
-            max-width: 46px;
-
-            max-height: 46px;
-
-            object-fit: contain !important;
-
-            object-position: center;
-
-        }
-
-
-        .kucsa-navbar-wrapper .navbar-brand-text {
-
-            min-width: 0;
-
-            max-width: 100%;
-
-            overflow: hidden;
-
-            flex: 1 1 auto;
-        }
-
-
-        .kucsa-navbar-wrapper .navbar-brand-text > span {
-
-            overflow: hidden;
-
-            text-overflow: ellipsis;
-
-            white-space: nowrap;
+            flex-basis: 46px;
         }
 
 
@@ -1146,24 +1063,12 @@
             font-size: 0.5rem;
 
             letter-spacing: 0.075em;
-
-            overflow: hidden;
-
-            text-overflow: ellipsis;
         }
 
 
-        .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle {
+        .kucsa-navbar-wrapper .navbar-menu-toggle {
 
-            display: inline-flex !important;
-
-            flex: 0 0 42px;
-
-            width: 42px;
-
-            height: 42px;
-
-            margin-left: 0.35rem !important;
+            margin-left: auto;
         }
 
 
@@ -1189,10 +1094,6 @@
         .kucsa-navbar-wrapper .kucsa-navbar > .container-fluid {
 
             min-height: 50px;
-
-            padding-left: 0.65rem !important;
-
-            padding-right: 0.65rem !important;
         }
 
 
@@ -1202,8 +1103,6 @@
             width: 39px;
 
             height: 39px;
-
-            flex-basis: 39px;
 
             border-radius: 10px;
         }
@@ -1220,45 +1119,19 @@
 
             gap: 0.42rem;
 
-            margin-right: 0.2rem;
-
             font-size: 1rem;
-
-            flex: 1 1 auto;
-
-            min-width: 0;
         }
 
 
-        /* ========================================================
-           SMALL PHONE LOGO
-
-           Still large enough to remain clearly visible.
-           ======================================================== */
+        /* UPDATED LOGO SIZE */
 
         .kucsa-navbar-wrapper .navbar-brand-logo {
 
-            display: block !important;
+            width: 42px;
 
-            visibility: visible !important;
+            height: 42px;
 
-            opacity: 1 !important;
-
-            width: 42px !important;
-
-            height: 42px !important;
-
-            min-width: 42px;
-
-            min-height: 42px;
-
-            max-width: 42px;
-
-            max-height: 42px;
-
-            flex: 0 0 42px !important;
-
-            object-fit: contain !important;
+            flex-basis: 42px;
         }
 
 
@@ -1299,44 +1172,26 @@
             width: 36px;
 
             height: 36px;
-
-            flex-basis: 36px;
         }
 
 
         .kucsa-navbar-wrapper .navbar-brand {
 
-            gap: 0.32rem;
+            gap: 0.35rem;
 
             font-size: 0.94rem;
-
-            margin-right: 0.12rem;
         }
 
 
+        /* UPDATED LOGO SIZE */
+
         .kucsa-navbar-wrapper .navbar-brand-logo {
 
-            display: block !important;
+            width: 37px;
 
-            visibility: visible !important;
+            height: 37px;
 
-            opacity: 1 !important;
-
-            width: 37px !important;
-
-            height: 37px !important;
-
-            min-width: 37px;
-
-            min-height: 37px;
-
-            max-width: 37px;
-
-            max-height: 37px;
-
-            flex: 0 0 37px !important;
-
-            object-fit: contain !important;
+            flex-basis: 37px;
         }
 
 
@@ -1349,12 +1204,21 @@
 
     /* ============================================================
        EXTRA SMALL WIDTH SAFETY
+       Prevents the logo + brand from pushing navbar controls
+       outside the viewport.
        ============================================================ */
 
     @media (max-width: 319.98px) {
 
-        .kucsa-navbar-wrapper .kucsa-sidebar-toggle,
-        .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle {
+        .kucsa-navbar-wrapper .navbar-brand {
+
+            gap: 0.28rem;
+
+            font-size: 0.88rem;
+        }
+
+
+        .kucsa-navbar-wrapper .navbar-brand-logo {
 
             width: 34px;
 
@@ -1364,31 +1228,12 @@
         }
 
 
-        .kucsa-navbar-wrapper .navbar-brand {
+        .kucsa-navbar-wrapper .kucsa-sidebar-toggle,
+        .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle {
 
-            gap: 0.25rem;
+            width: 34px;
 
-            font-size: 0.88rem;
-
-            margin-right: 0.08rem;
-        }
-
-
-        .kucsa-navbar-wrapper .navbar-brand-logo {
-
-            width: 34px !important;
-
-            height: 34px !important;
-
-            min-width: 34px;
-
-            min-height: 34px;
-
-            max-width: 34px;
-
-            max-height: 34px;
-
-            flex: 0 0 34px !important;
+            height: 34px;
         }
     }
 
@@ -2234,7 +2079,6 @@ document.addEventListener("DOMContentLoaded", function () {
             {
                 once: true
             }
-
         );
 
     });

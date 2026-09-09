@@ -158,7 +158,8 @@
 
 
     /* =========================================================
-       CARD TOP BRAND AREA
+       CARD TOP LOGO AREA
+       Clean white background — logo stands alone.
     ========================================================== */
 
     .kucsa-login-brand {
@@ -167,55 +168,17 @@
         padding:
             clamp(1.7rem, 5vw, 2.5rem)
             1.5rem
-            1.6rem;
+            1.45rem;
 
         text-align: center;
 
-        color: #ffffff;
-
         background:
-            linear-gradient(
-                135deg,
-                #0d6efd 0%,
-                #1559c7 55%,
-                #084298 100%
-            );
+            #ffffff;
 
         overflow: hidden;
-    }
 
-    .kucsa-login-brand::before {
-        content: "";
-
-        position: absolute;
-
-        width: 190px;
-        height: 190px;
-
-        top: -110px;
-        right: -65px;
-
-        border-radius: 50%;
-
-        background:
-            rgba(255, 255, 255, 0.08);
-    }
-
-    .kucsa-login-brand::after {
-        content: "";
-
-        position: absolute;
-
-        width: 130px;
-        height: 130px;
-
-        bottom: -90px;
-        left: -30px;
-
-        border-radius: 50%;
-
-        background:
-            rgba(255, 255, 255, 0.06);
+        border-bottom:
+            1px solid #f0f2f5;
     }
 
 
@@ -229,10 +192,10 @@
         position: relative;
         z-index: 1;
 
-        width: 92px;
-        height: 92px;
+        width: 110px;
+        height: 110px;
 
-        margin: 0 auto 1rem;
+        margin: 0 auto;
 
         display: flex;
         align-items: center;
@@ -260,8 +223,8 @@
     .kucsa-login-icon img {
         display: block;
 
-        width: 92px;
-        height: 92px;
+        width: 110px;
+        height: 110px;
 
         max-width: 100%;
         max-height: 100%;
@@ -286,37 +249,6 @@
     }
 
 
-    .kucsa-login-brand h1 {
-        position: relative;
-        z-index: 1;
-
-        margin: 0 0 0.4rem;
-
-        font-size:
-            clamp(1.4rem, 4vw, 1.75rem);
-
-        line-height: 1.2;
-
-        font-weight: 800;
-
-        letter-spacing: -0.02em;
-    }
-
-    .kucsa-login-brand p {
-        position: relative;
-        z-index: 1;
-
-        margin: 0;
-
-        color:
-            rgba(255, 255, 255, 0.84);
-
-        font-size: 0.82rem;
-
-        line-height: 1.55;
-    }
-
-
     /* =========================================================
        CARD BODY
     ========================================================== */
@@ -332,18 +264,26 @@
     ========================================================== */
 
     .kucsa-login-intro {
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.6rem;
     }
 
     .kucsa-login-intro h2 {
-        margin: 0 0 0.3rem;
+        margin: 0 0 0.35rem;
 
         color:
             var(--kucsa-text);
 
-        font-size: 1.08rem;
+        font-size:
+            clamp(1.35rem, 4vw, 1.55rem);
 
-        font-weight: 750;
+        font-weight:
+            800;
+
+        letter-spacing:
+            -0.025em;
+
+        line-height:
+            1.25;
     }
 
     .kucsa-login-intro p {
@@ -352,9 +292,14 @@
         color:
             var(--kucsa-muted);
 
-        font-size: 0.78rem;
+        font-size:
+            0.82rem;
 
-        line-height: 1.6;
+        font-weight:
+            500;
+
+        line-height:
+            1.6;
     }
 
 
@@ -840,7 +785,7 @@
             padding:
                 1.6rem
                 1.25rem
-                1.5rem;
+                1.4rem;
         }
 
         .kucsa-login-body {
@@ -849,13 +794,13 @@
         }
 
         .kucsa-login-icon {
-            width: 82px;
-            height: 82px;
+            width: 100px;
+            height: 100px;
         }
 
         .kucsa-login-icon img {
-            width: 82px;
-            height: 82px;
+            width: 100px;
+            height: 100px;
         }
 
     }
@@ -892,30 +837,20 @@
             padding:
                 1.45rem
                 1rem
-                1.4rem;
+                1.25rem;
         }
 
         .kucsa-login-icon {
-            width: 74px;
-            height: 74px;
+            width: 90px;
+            height: 90px;
 
             margin-bottom:
-                0.85rem;
+                0;
         }
 
         .kucsa-login-icon img {
-            width: 74px;
-            height: 74px;
-        }
-
-        .kucsa-login-brand h1 {
-            font-size:
-                1.4rem;
-        }
-
-        .kucsa-login-brand p {
-            font-size:
-                0.76rem;
+            width: 90px;
+            height: 90px;
         }
 
         .kucsa-login-body {
@@ -928,6 +863,11 @@
         .kucsa-login-intro {
             margin-bottom:
                 1.25rem;
+        }
+
+        .kucsa-login-intro h2 {
+            font-size:
+                1.3rem;
         }
 
         .kucsa-login-page .form-control {
@@ -957,19 +897,19 @@
                 0.8rem;
         }
 
-        .kucsa-login-brand h1 {
-            font-size:
-                1.3rem;
-        }
-
         .kucsa-login-icon {
-            width: 66px;
-            height: 66px;
+            width: 82px;
+            height: 82px;
         }
 
         .kucsa-login-icon img {
-            width: 66px;
-            height: 66px;
+            width: 82px;
+            height: 82px;
+        }
+
+        .kucsa-login-intro h2 {
+            font-size:
+                1.25rem;
         }
 
     }
@@ -1012,7 +952,7 @@
         <main class="kucsa-login-card">
 
             <!-- =================================================
-                 BRAND HEADER
+                 LOGO AREA
             ================================================== -->
 
             <header class="kucsa-login-brand">
@@ -1022,22 +962,13 @@
                     <img
                         src="{{ university_logo }}"
                         alt="Kisii University logo"
-                        width="92"
-                        height="92"
+                        width="110"
+                        height="110"
                         loading="eager"
                         decoding="async"
                     >
 
                 </div>
-
-                <h1>
-                    KUCSA Platform
-                </h1>
-
-                <p>
-                    Your digital gateway to the
-                    Kisii University Computing Community
-                </p>
 
             </header>
 
@@ -1051,11 +982,11 @@
                 <div class="kucsa-login-intro">
 
                     <h2>
-                        Welcome back
+                        Hi, welcome back
                     </h2>
 
                     <p>
-                        Sign in to access your KUCSA member portal.
+                        Please fill in your details to log in
                     </p>
 
                 </div>
@@ -1538,10 +1469,6 @@
                 "submit",
                 function (event) {
 
-                    /*
-                     * Let browser validation run normally.
-                     */
-
                     if (
                         !loginForm.checkValidity()
                     ) {
@@ -1550,11 +1477,6 @@
 
                     }
 
-
-                    /*
-                     * Prevent accidental
-                     * double submissions.
-                     */
 
                     if (isSubmitting) {
 
@@ -1631,10 +1553,6 @@
             usernameField &&
             !usernameField.value
         ) {
-
-            /*
-             * Avoid forcing focus on mobile devices.
-             */
 
             if (
                 window.innerWidth >= 768

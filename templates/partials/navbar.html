@@ -120,6 +120,10 @@
 
     /* ============================================================
        UNIVERSITY LOGO
+       
+       IMPORTANT:
+       The circle keeps its original size.
+       The image now completely fills the circle.
        ============================================================ */
 
     .kucsa-navbar-wrapper .navbar-brand-logo {
@@ -131,7 +135,7 @@
 
         display: block;
 
-        object-fit: contain;
+        object-fit: cover;
 
         object-position: center;
 
@@ -139,7 +143,11 @@
 
         background: #ffffff;
 
-        padding: 2px;
+        padding: 0;
+
+        margin: 0;
+
+        overflow: hidden;
 
         box-shadow:
             0 2px 8px rgba(20, 35, 55, 0.08);
@@ -1027,7 +1035,7 @@
 
             flex-basis: 40px;
 
-            padding: 2px;
+            padding: 0;
         }
 
 
@@ -1101,6 +1109,8 @@
             height: 36px;
 
             flex-basis: 36px;
+
+            padding: 0;
         }
 
 
@@ -1157,6 +1167,8 @@
             height: 32px;
 
             flex-basis: 32px;
+
+            padding: 0;
         }
 
 
@@ -1169,8 +1181,6 @@
 
     /* ============================================================
        EXTRA SMALL WIDTH SAFETY
-       Prevents the logo + brand from pushing navbar controls
-       outside the viewport.
        ============================================================ */
 
     @media (max-width: 319.98px) {
@@ -1189,6 +1199,8 @@
             height: 29px;
 
             flex-basis: 29px;
+
+            padding: 0;
         }
 
 
@@ -1955,14 +1967,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* =========================================================
        SIDEBAR OFFCANVAS
-
-       Bootstrap handles:
-       - opening
-       - closing
-       - backdrop
-       - body scroll lock
-       - Escape key
-       - focus handling
        ========================================================= */
 
     if (sidebarOffcanvas) {
@@ -2037,6 +2041,7 @@ document.addEventListener("DOMContentLoaded", function () {
             {
                 once: true
             }
+
         );
 
     });
@@ -2044,9 +2049,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* =========================================================
        LOGO IMAGE FALLBACK
-
-       If logo.png cannot be loaded, the KUCSA text remains
-       visible and the broken image does not remain on screen.
        ========================================================= */
 
     const brandLogo =

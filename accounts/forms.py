@@ -214,7 +214,7 @@ class UserRegistrationForm(
             "email": forms.EmailInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "University Email Address",
+                    "placeholder": "Your Email Address",
                     "autocomplete": "email",
                 }
             ),

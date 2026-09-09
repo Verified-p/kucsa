@@ -159,16 +159,16 @@
 
     /* =========================================================
        CARD TOP LOGO AREA
-       Clean white background — logo stands alone.
+       White background — logo stands alone.
     ========================================================== */
 
     .kucsa-login-brand {
         position: relative;
 
         padding:
-            clamp(1.7rem, 5vw, 2.5rem)
+            clamp(1.35rem, 4vw, 1.8rem)
             1.5rem
-            1.45rem;
+            0.45rem;
 
         text-align: center;
 
@@ -178,7 +178,7 @@
         overflow: hidden;
 
         border-bottom:
-            1px solid #f0f2f5;
+            0;
     }
 
 
@@ -255,23 +255,37 @@
 
     .kucsa-login-body {
         padding:
+            0
+            clamp(1.25rem, 4vw, 2.25rem)
             clamp(1.25rem, 4vw, 2.25rem);
     }
 
 
     /* =========================================================
        WELCOME INTRO
+       Positioned immediately after the logo.
     ========================================================== */
 
     .kucsa-login-intro {
-        margin-bottom: 1.6rem;
+        margin-top:
+            0;
+
+        margin-bottom:
+            1.6rem;
+
+        padding-top:
+            0.2rem;
+
+        text-align:
+            center;
     }
 
     .kucsa-login-intro h2 {
-        margin: 0 0 0.35rem;
+        margin:
+            0 0 0.3rem;
 
         color:
-            var(--kucsa-text);
+            var(--kucsa-primary);
 
         font-size:
             clamp(1.35rem, 4vw, 1.55rem);
@@ -287,7 +301,8 @@
     }
 
     .kucsa-login-intro p {
-        margin: 0;
+        margin:
+            0;
 
         color:
             var(--kucsa-muted);
@@ -299,7 +314,7 @@
             500;
 
         line-height:
-            1.6;
+            1.5;
     }
 
 
@@ -783,13 +798,15 @@
 
         .kucsa-login-brand {
             padding:
-                1.6rem
+                1.35rem
                 1.25rem
-                1.4rem;
+                0.4rem;
         }
 
         .kucsa-login-body {
             padding:
+                0
+                1.4rem
                 1.4rem;
         }
 
@@ -835,9 +852,9 @@
 
         .kucsa-login-brand {
             padding:
-                1.45rem
+                1.25rem
                 1rem
-                1.25rem;
+                0.3rem;
         }
 
         .kucsa-login-icon {
@@ -855,12 +872,15 @@
 
         .kucsa-login-body {
             padding:
-                1.2rem
+                0
                 1rem
                 1.35rem;
         }
 
         .kucsa-login-intro {
+            margin-top:
+                0;
+
             margin-bottom:
                 1.25rem;
         }
@@ -978,6 +998,10 @@
             ================================================== -->
 
             <div class="kucsa-login-body">
+
+                <!-- =================================================
+                     WELCOME INTRO
+                ================================================== -->
 
                 <div class="kucsa-login-intro">
 

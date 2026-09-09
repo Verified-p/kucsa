@@ -1,5 +1,4 @@
 <style>
-
     /* ============================================================
        KUCSA NAVBAR — MODERN PRODUCTION UI
        Scoped to .kucsa-navbar-wrapper / .kucsa-navbar
@@ -73,18 +72,25 @@
 
 
     /* ============================================================
-       BRAND
+       BRAND AREA
+       Logo + KUCSA + Computing Association
        ============================================================ */
 
     .kucsa-navbar-wrapper .navbar-brand {
 
         display: inline-flex;
-        flex-direction: column;
-        justify-content: center;
+
+        flex-direction: row;
+
+        align-items: center;
+
+        gap: 0.68rem;
 
         min-width: 0;
 
-        padding: 0.25rem 0;
+        padding: 0.2rem 0;
+
+        margin-right: 1rem;
 
         color: var(--kucsa-nav-dark);
 
@@ -94,6 +100,7 @@
         font-weight: 850;
 
         line-height: 1;
+
         letter-spacing: -0.025em;
 
         transition:
@@ -111,7 +118,66 @@
     }
 
 
-    .kucsa-navbar-wrapper .navbar-brand > span {
+    /* ============================================================
+       UNIVERSITY LOGO
+       ============================================================ */
+
+    .kucsa-navbar-wrapper .navbar-brand-logo {
+
+        width: 46px;
+        height: 46px;
+
+        flex: 0 0 46px;
+
+        display: block;
+
+        object-fit: contain;
+
+        object-position: center;
+
+        border-radius: 50%;
+
+        background: #ffffff;
+
+        padding: 2px;
+
+        box-shadow:
+            0 2px 8px rgba(20, 35, 55, 0.08);
+
+        transition:
+            transform var(--kucsa-nav-transition),
+            box-shadow var(--kucsa-nav-transition);
+    }
+
+
+    .kucsa-navbar-wrapper .navbar-brand:hover .navbar-brand-logo {
+
+        transform: scale(1.035);
+
+        box-shadow:
+            0 4px 12px rgba(20, 35, 55, 0.12);
+    }
+
+
+    /* ============================================================
+       BRAND TEXT
+       ============================================================ */
+
+    .kucsa-navbar-wrapper .navbar-brand-text {
+
+        display: flex;
+
+        flex-direction: column;
+
+        justify-content: center;
+
+        min-width: 0;
+    }
+
+
+    .kucsa-navbar-wrapper .navbar-brand-text > span {
+
+        display: block;
 
         white-space: nowrap;
     }
@@ -126,6 +192,7 @@
         color: var(--kucsa-nav-muted);
 
         font-size: 0.58rem;
+
         font-weight: 700;
 
         line-height: 1;
@@ -297,6 +364,7 @@
         color: var(--kucsa-nav-text);
 
         font-size: 0.86rem;
+
         font-weight: 550;
 
         line-height: 1.2;
@@ -380,6 +448,7 @@
         color: #765900;
 
         font-size: 0.73rem;
+
         font-weight: 700;
 
         line-height: 1.2;
@@ -530,6 +599,7 @@
         color: var(--kucsa-nav-dark);
 
         font-size: 0.82rem;
+
         font-weight: 700;
 
         line-height: 1.25;
@@ -545,6 +615,7 @@
         color: var(--kucsa-nav-muted);
 
         font-size: 0.66rem;
+
         font-weight: 550;
 
         line-height: 1.15;
@@ -647,6 +718,7 @@
         color: var(--kucsa-nav-text);
 
         font-size: 0.82rem;
+
         font-weight: 550;
 
         transition:
@@ -747,6 +819,7 @@
         border-radius: 10px !important;
 
         font-size: 0.82rem;
+
         font-weight: 650;
 
         box-shadow:
@@ -883,6 +956,42 @@
 
 
     /* ============================================================
+       TABLETS / SMALL LAPTOPS
+       ============================================================ */
+
+    @media (min-width: 768px) and (max-width: 991.98px) {
+
+        .kucsa-navbar-wrapper .navbar-brand {
+
+            gap: 0.62rem;
+
+            margin-right: 0.5rem;
+        }
+
+
+        .kucsa-navbar-wrapper .navbar-brand-logo {
+
+            width: 44px;
+            height: 44px;
+
+            flex-basis: 44px;
+        }
+
+
+        .kucsa-navbar-wrapper .navbar-brand {
+
+            font-size: 1.08rem;
+        }
+
+
+        .kucsa-navbar-wrapper .navbar-brand small {
+
+            font-size: 0.52rem;
+        }
+    }
+
+
+    /* ============================================================
        MOBILE PHONES
        ============================================================ */
 
@@ -903,7 +1012,22 @@
 
         .kucsa-navbar-wrapper .navbar-brand {
 
+            gap: 0.5rem;
+
+            margin-right: 0.35rem;
+
             font-size: 1.08rem;
+        }
+
+
+        .kucsa-navbar-wrapper .navbar-brand-logo {
+
+            width: 40px;
+            height: 40px;
+
+            flex-basis: 40px;
+
+            padding: 2px;
         }
 
 
@@ -965,7 +1089,18 @@
 
         .kucsa-navbar-wrapper .navbar-brand {
 
+            gap: 0.42rem;
+
             font-size: 1rem;
+        }
+
+
+        .kucsa-navbar-wrapper .navbar-brand-logo {
+
+            width: 36px;
+            height: 36px;
+
+            flex-basis: 36px;
         }
 
 
@@ -1010,13 +1145,58 @@
 
         .kucsa-navbar-wrapper .navbar-brand {
 
+            gap: 0.35rem;
+
             font-size: 0.94rem;
+        }
+
+
+        .kucsa-navbar-wrapper .navbar-brand-logo {
+
+            width: 32px;
+            height: 32px;
+
+            flex-basis: 32px;
         }
 
 
         .kucsa-navbar-wrapper .navbar-brand small {
 
             display: none;
+        }
+    }
+
+
+    /* ============================================================
+       EXTRA SMALL WIDTH SAFETY
+       Prevents the logo + brand from pushing navbar controls
+       outside the viewport.
+       ============================================================ */
+
+    @media (max-width: 319.98px) {
+
+        .kucsa-navbar-wrapper .navbar-brand {
+
+            gap: 0.28rem;
+
+            font-size: 0.88rem;
+        }
+
+
+        .kucsa-navbar-wrapper .navbar-brand-logo {
+
+            width: 29px;
+            height: 29px;
+
+            flex-basis: 29px;
+        }
+
+
+        .kucsa-navbar-wrapper .kucsa-sidebar-toggle,
+        .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle {
+
+            width: 34px;
+            height: 34px;
         }
     }
 
@@ -1048,33 +1228,23 @@
 
     @media (min-width: 992px) {
 
-        /*
-         * Sidebar toggle belongs to mobile/tablet navigation.
-         */
-
         .kucsa-navbar-wrapper .kucsa-sidebar-toggle {
 
             display: none !important;
         }
 
 
-        /*
-         * The three-dots navbar menu remains available for
-         * account actions/navigation on smaller layouts.
-         */
-
         .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle {
 
             display: none !important;
         }
     }
-
 </style>
 
 
 <!-- ================================================================
      KUCSA NAVBAR
-================================================================= -->
+     ================================================================= -->
 
 <div class="kucsa-navbar-wrapper">
 
@@ -1111,6 +1281,7 @@
 
             <!-- =====================================================
                  BRAND
+                 Logo + KUCSA + Computing Association
                  ===================================================== -->
 
             <a
@@ -1119,11 +1290,28 @@
                 aria-label="KUCSA home"
             >
 
-                <span>KUCSA</span>
+                <img
+                    src="{{ kucsa_logo }}"
+                    class="navbar-brand-logo"
+                    alt="Kisii University logo"
+                    width="46"
+                    height="46"
+                    loading="eager"
+                    decoding="async"
+                >
 
-                <small>
-                    Computing Association
-                </small>
+
+                <span class="navbar-brand-text">
+
+                    <span>
+                        KUCSA
+                    </span>
+
+                    <small>
+                        Computing Association
+                    </small>
+
+                </span>
 
             </a>
 
@@ -1160,6 +1348,7 @@
             >
 
                 {% if user.is_authenticated %}
+
 
                     <!-- =================================================
                          PRIMARY NAVIGATION
@@ -1570,8 +1759,9 @@
 
                 {% else %}
 
+
                     <!-- =================================================
-                         LOGGED OUT NAVIGATION
+                         LOGGED-OUT NAVIGATION
                          ================================================== -->
 
                     <ul class="navbar-nav ms-auto align-items-lg-center">
@@ -1626,13 +1816,7 @@
 
     <!-- ================================================================
          MOBILE / TABLET SIDEBAR OFFCANVAS
-         
-         IMPORTANT:
-         - Exists only for mobile/tablet.
-         - Desktop uses the normal sidebar from base.html.
-         - Bootstrap controls opening, closing and backdrop.
-         - No custom backdrop or body overflow JavaScript.
-    ================================================================= -->
+         ================================================================ -->
 
     {% if user.is_authenticated %}
 
@@ -1679,7 +1863,7 @@
 
 <!-- ================================================================
      NAVBAR JAVASCRIPT
-================================================================= -->
+     ================================================================= -->
 
 <script>
 
@@ -1771,16 +1955,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* =========================================================
        SIDEBAR OFFCANVAS
-       
-       Bootstrap itself handles:
+
+       Bootstrap handles:
        - opening
        - closing
        - backdrop
        - body scroll lock
        - Escape key
        - focus handling
-       
-       We intentionally do NOT manually control any of these.
        ========================================================= */
 
     if (sidebarOffcanvas) {
@@ -1788,11 +1970,6 @@ document.addEventListener("DOMContentLoaded", function () {
         sidebarOffcanvas.addEventListener(
             "show.bs.offcanvas",
             function () {
-
-                /*
-                 * If the three-dot navbar menu is open,
-                 * close it before opening the sidebar.
-                 */
 
                 if (
                     navbarCollapse &&
@@ -1863,6 +2040,36 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
     });
+
+
+    /* =========================================================
+       LOGO IMAGE FALLBACK
+
+       If logo.png cannot be loaded, the KUCSA text remains
+       visible and the broken image does not remain on screen.
+       ========================================================= */
+
+    const brandLogo =
+        document.querySelector(
+            ".kucsa-navbar-wrapper .navbar-brand-logo"
+        );
+
+
+    if (brandLogo) {
+
+        brandLogo.addEventListener(
+            "error",
+            function () {
+
+                this.style.display = "none";
+
+            },
+            {
+                once: true
+            }
+        );
+
+    }
 
 
     /* =========================================================

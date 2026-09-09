@@ -1,4 +1,4 @@
-
+```django
 {% load static %}
 
 <!DOCTYPE html>
@@ -18,14 +18,15 @@
 
 
     <!-- =========================================================
-         KISII UNIVERSITY LOGO
-
-         Centralized here so the navbar, login page, and other
-         templates extending base.html can consistently use
-         the official university logo.
+         KUCSA / KISII UNIVERSITY LOGO
+         
+         Centralized here so the navbar and other base-level
+         components can consistently use the official logo.
          ========================================================= -->
 
-    {% static 'images/logo.png' as university_logo %}
+    {% static 'images/logo.png' as kucsa_logo %}
+
+    {% static 'images/university.png' as university_logo %}
 
 
     <!-- =========================================================
@@ -176,3 +177,4 @@
 </body>
 
 </html>
+```

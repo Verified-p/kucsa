@@ -3,11 +3,18 @@
     "name": "KUCSA Digital Platform",
     "short_name": "KUCSA",
     "description": "The official digital platform of the Kisii University Computing Students Association (KUCSA).",
-    
+
+    "id": "/",
     "start_url": "/",
     "scope": "/",
-    
+
     "display": "standalone",
+    "display_override": [
+        "window-controls-overlay",
+        "standalone",
+        "minimal-ui"
+    ],
+
     "orientation": "portrait-primary",
 
     "background_color": "#ffffff",

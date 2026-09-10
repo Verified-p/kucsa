@@ -15,21 +15,70 @@
             KUCSA Platform
         {% endblock %}
     </title>
-    <link rel="icon" type="images/x-icon" href="{% static 'images/logoicon.png' %}">
+
+    <!-- =========================================================
+         KUCSA APP / WEBSITE ICON
+         ========================================================= -->
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="{% static 'images/logoicon.png' %}"
+    >
+
+    <link
+        rel="apple-touch-icon"
+        href="{% static 'images/logoicon.png' %}"
+    >
 
 
     <!-- =========================================================
-         KUCSA / KISII UNIVERSITY LOGO
-         
-         Centralized here so the navbar and other base-level
-         components can consistently use the official logo.
+         PROGRESSIVE WEB APP (PWA)
+         ========================================================= -->
+
+    <link
+        rel="manifest"
+        href="{% static 'manifest.json' %}"
+    >
+
+    <meta
+        name="theme-color"
+        content="#0d6efd"
+    >
+
+    <meta
+        name="mobile-web-app-capable"
+        content="yes"
+    >
+
+    <meta
+        name="apple-mobile-web-app-capable"
+        content="yes"
+    >
+
+    <meta
+        name="apple-mobile-web-app-status-bar-style"
+        content="default"
+    >
+
+    <meta
+        name="apple-mobile-web-app-title"
+        content="KUCSA"
+    >
+
+
+    <!-- =========================================================
+         KUCSA / KISII UNIVERSITY LOGOS
+
+         Centralized here so navbar and other base-level
+         components can consistently use the official logos.
          ========================================================= -->
 
     {% static 'images/logokucsaa.png' as kucsa_logo %}
 
     {% static 'images/university.png' as university_logo %}
 
- 
+
     <!-- =========================================================
          BOOTSTRAP CSS
          ========================================================= -->
@@ -99,13 +148,6 @@
 
                 <!-- =================================================
                      DESKTOP SIDEBAR
-
-                     IMPORTANT:
-                     - No h-100 here.
-                     - The Bootstrap row stretches the column
-                       automatically to the height of the main content.
-                     - The sidebar itself can therefore extend all
-                       the way down to the footer.
                      ================================================= -->
 
                 <div class="col-lg-2 p-0 d-none d-lg-flex">
@@ -169,6 +211,31 @@
          ========================================================= -->
 
     <script src="{% static 'js/app.js' %}"></script>
+
+
+    <!-- =========================================================
+         PWA SERVICE WORKER
+         ========================================================= -->
+
+    <script>
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", function () {
+                navigator.serviceWorker.register(
+                    "{% static 'service-worker.js' %}"
+                ).then(function (registration) {
+                    console.log(
+                        "KUCSA service worker registered:",
+                        registration.scope
+                    );
+                }).catch(function (error) {
+                    console.error(
+                        "KUCSA service worker registration failed:",
+                        error
+                    );
+                });
+            });
+        }
+    </script>
 
 
     {% block extra_js %}

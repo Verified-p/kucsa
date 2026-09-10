@@ -3,10 +3,8 @@
 
     /* ============================================================
        KUCSA NAVBAR — MODERN PRODUCTION UI
-
-       Scoped to .kucsa-navbar-wrapper / .kucsa-navbar
-       Desktop behavior preserved.
-       Mobile account dropdown fully visible.
+       PWA INSTALL BUTTON ADDED
+       Desktop + mobile account behavior preserved.
        ============================================================ */
 
     .kucsa-navbar-wrapper {
@@ -71,7 +69,6 @@
        ============================================================ */
 
     .kucsa-navbar-wrapper .kucsa-navbar > .container-fluid {
-
         min-height: 58px;
     }
 
@@ -83,9 +80,7 @@
     .kucsa-navbar-wrapper .navbar-brand {
 
         display: inline-flex;
-
         flex-direction: row;
-
         align-items: center;
 
         gap: 0.68rem;
@@ -101,7 +96,6 @@
         text-decoration: none;
 
         font-size: 1.22rem;
-
         font-weight: 850;
 
         line-height: 1;
@@ -130,7 +124,6 @@
     .kucsa-navbar-wrapper .navbar-brand-logo {
 
         width: 56px;
-
         height: 56px;
 
         flex: 0 0 56px;
@@ -138,7 +131,6 @@
         display: block;
 
         object-fit: contain;
-
         object-position: center;
 
         border-radius: 0;
@@ -170,9 +162,7 @@
     .kucsa-navbar-wrapper .navbar-brand-text {
 
         display: flex;
-
         flex-direction: column;
-
         justify-content: center;
 
         min-width: 0;
@@ -196,7 +186,6 @@
         color: var(--kucsa-nav-muted);
 
         font-size: 0.58rem;
-
         font-weight: 700;
 
         line-height: 1;
@@ -216,13 +205,11 @@
     .kucsa-navbar-wrapper .kucsa-sidebar-toggle {
 
         width: 42px;
-
         height: 42px;
 
         display: inline-flex;
 
         align-items: center;
-
         justify-content: center;
 
         flex-shrink: 0;
@@ -265,7 +252,6 @@
 
 
     .kucsa-navbar-wrapper .kucsa-sidebar-toggle:active {
-
         transform: scale(0.96);
     }
 
@@ -283,9 +269,7 @@
 
 
     .kucsa-navbar-wrapper .kucsa-sidebar-toggle i {
-
         font-size: 1.25rem;
-
         line-height: 1;
     }
 
@@ -297,13 +281,11 @@
     .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle {
 
         width: 42px;
-
         height: 42px;
 
         display: inline-flex;
 
         align-items: center;
-
         justify-content: center;
 
         padding: 0;
@@ -350,7 +332,6 @@
        ============================================================ */
 
     .kucsa-navbar-wrapper .navbar-nav {
-
         gap: 0.18rem;
     }
 
@@ -360,7 +341,6 @@
         display: inline-flex;
 
         align-items: center;
-
         justify-content: center;
 
         min-height: 40px;
@@ -372,7 +352,6 @@
         color: var(--kucsa-nav-text);
 
         font-size: 0.86rem;
-
         font-weight: 550;
 
         line-height: 1.2;
@@ -406,7 +385,6 @@
 
 
     .kucsa-navbar-wrapper .nav-link:hover i {
-
         transform: translateY(-1px);
     }
 
@@ -439,7 +417,6 @@
         display: inline-flex;
 
         align-items: center;
-
         justify-content: center;
 
         gap: 0.45rem;
@@ -457,7 +434,6 @@
         color: #765900;
 
         font-size: 0.73rem;
-
         font-weight: 700;
 
         line-height: 1.2;
@@ -476,7 +452,6 @@
 
 
     .kucsa-navbar-wrapper .payment-alert i {
-
         font-size: 0.9rem;
     }
 
@@ -493,6 +468,106 @@
 
         box-shadow:
             0 5px 14px rgba(255, 193, 7, 0.12);
+    }
+
+
+    /* ============================================================
+       PWA INSTALL BUTTON
+       ============================================================ */
+
+    .kucsa-navbar-wrapper .kucsa-install-button {
+
+        display: none;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 0.42rem;
+
+        min-height: 40px;
+
+        margin-right: 0.7rem;
+
+        padding: 0.55rem 0.82rem;
+
+        border: 1px solid rgba(var(--kucsa-nav-primary-rgb), 0.18);
+
+        border-radius: 10px;
+
+        background:
+            rgba(var(--kucsa-nav-primary-rgb), 0.075);
+
+        color: var(--kucsa-nav-primary);
+
+        font-size: 0.76rem;
+        font-weight: 700;
+
+        line-height: 1.2;
+
+        white-space: nowrap;
+
+        box-shadow:
+            0 3px 10px rgba(var(--kucsa-nav-primary-rgb), 0.06);
+
+        transition:
+            background var(--kucsa-nav-transition),
+            border-color var(--kucsa-nav-transition),
+            color var(--kucsa-nav-transition),
+            transform var(--kucsa-nav-transition),
+            box-shadow var(--kucsa-nav-transition);
+    }
+
+
+    .kucsa-navbar-wrapper .kucsa-install-button.is-visible {
+        display: inline-flex;
+    }
+
+
+    .kucsa-navbar-wrapper .kucsa-install-button i {
+
+        font-size: 0.92rem;
+
+        transition:
+            transform var(--kucsa-nav-transition);
+    }
+
+
+    .kucsa-navbar-wrapper .kucsa-install-button:hover {
+
+        background:
+            rgba(var(--kucsa-nav-primary-rgb), 0.13);
+
+        border-color:
+            rgba(var(--kucsa-nav-primary-rgb), 0.3);
+
+        color: #0b5ed7;
+
+        transform: translateY(-1px);
+
+        box-shadow:
+            0 6px 16px rgba(var(--kucsa-nav-primary-rgb), 0.12);
+    }
+
+
+    .kucsa-navbar-wrapper .kucsa-install-button:hover i {
+        transform: translateY(-1px);
+    }
+
+
+    .kucsa-navbar-wrapper .kucsa-install-button:active {
+        transform: scale(0.97);
+    }
+
+
+    .kucsa-navbar-wrapper .kucsa-install-button:focus-visible {
+
+        outline: none;
+
+        border-color: var(--kucsa-nav-primary);
+
+        box-shadow:
+            0 0 0 3px rgba(var(--kucsa-nav-primary-rgb), 0.13),
+            0 5px 14px rgba(var(--kucsa-nav-primary-rgb), 0.1);
     }
 
 
@@ -556,7 +631,6 @@
     .kucsa-navbar-wrapper .navbar-default-avatar {
 
         width: 39px;
-
         height: 39px;
 
         flex: 0 0 39px;
@@ -584,7 +658,6 @@
         display: inline-flex;
 
         align-items: center;
-
         justify-content: center;
 
         background: #edf0f4;
@@ -610,7 +683,6 @@
         color: var(--kucsa-nav-dark);
 
         font-size: 0.82rem;
-
         font-weight: 700;
 
         line-height: 1.25;
@@ -626,7 +698,6 @@
         color: var(--kucsa-nav-muted);
 
         font-size: 0.66rem;
-
         font-weight: 550;
 
         line-height: 1.15;
@@ -709,7 +780,6 @@
 
 
     .kucsa-navbar-wrapper .dropdown-divider {
-
         opacity: 0.65;
     }
 
@@ -729,7 +799,6 @@
         color: var(--kucsa-nav-text);
 
         font-size: 0.82rem;
-
         font-weight: 550;
 
         transition:
@@ -785,13 +854,11 @@
 
 
     .kucsa-navbar-wrapper .dropdown-item.logout-item {
-
         color: var(--kucsa-nav-danger);
     }
 
 
     .kucsa-navbar-wrapper .dropdown-item.logout-item i {
-
         color: var(--kucsa-nav-danger);
     }
 
@@ -810,7 +877,6 @@
        ============================================================ */
 
     .kucsa-navbar-wrapper .kucsa-login-link {
-
         min-height: 40px;
     }
 
@@ -822,17 +888,14 @@
         display: inline-flex;
 
         align-items: center;
-
         justify-content: center;
 
         padding-left: 1rem;
-
         padding-right: 1rem;
 
         border-radius: 10px !important;
 
         font-size: 0.82rem;
-
         font-weight: 650;
 
         box-shadow:
@@ -866,7 +929,6 @@
             min-height: 64px;
 
             padding-top: 0.4rem;
-
             padding-bottom: 0.4rem;
 
             position: relative;
@@ -885,10 +947,6 @@
 
         /* --------------------------------------------------------
            MOBILE COLLAPSED NAVIGATION
-
-           Important:
-           The menu itself can scroll, but the account dropdown
-           must NOT be clipped by the collapse container.
            -------------------------------------------------------- */
 
         .kucsa-navbar-wrapper .navbar-collapse {
@@ -910,7 +968,6 @@
             max-height: calc(100vh - 82px);
 
             overflow-y: auto;
-
             overflow-x: visible;
 
             -webkit-overflow-scrolling: touch;
@@ -922,7 +979,6 @@
 
 
         .kucsa-navbar-wrapper .navbar-collapse .navbar-nav {
-
             gap: 0.2rem;
         }
 
@@ -950,6 +1006,28 @@
             min-height: 44px;
 
             margin-top: 0.45rem;
+        }
+
+
+        /* --------------------------------------------------------
+           PWA INSTALL BUTTON — MOBILE
+           -------------------------------------------------------- */
+
+        .kucsa-navbar-wrapper .navbar-collapse .kucsa-install-button {
+
+            width: 100%;
+
+            justify-content: flex-start;
+
+            min-height: 46px;
+
+            margin: 0.35rem 0 0.25rem;
+
+            padding: 0.68rem 0.75rem;
+
+            border-radius: 10px;
+
+            font-size: 0.84rem;
         }
 
 
@@ -1026,16 +1104,10 @@
 
         /* --------------------------------------------------------
            MOBILE ACCOUNT DROPDOWN
-
-           The critical fix:
-           - position: static
-           - width: 100%
-           - no viewport clipping
-           - normal document flow
-           - enough vertical space for ALL items
            -------------------------------------------------------- */
 
-        .kucsa-navbar-wrapper .navbar-collapse > .dropdown .dropdown-menu {
+        .kucsa-navbar-wrapper
+        .navbar-collapse > .dropdown .dropdown-menu {
 
             position: static !important;
 
@@ -1087,7 +1159,8 @@
            MOBILE ACCOUNT HEADER
            -------------------------------------------------------- */
 
-        .kucsa-navbar-wrapper .navbar-collapse
+        .kucsa-navbar-wrapper
+        .navbar-collapse
         .dropdown-header {
 
             padding: 0.78rem 0.8rem;
@@ -1098,14 +1171,16 @@
         }
 
 
-        .kucsa-navbar-wrapper .navbar-collapse
+        .kucsa-navbar-wrapper
+        .navbar-collapse
         .dropdown-header strong {
 
             font-size: 0.84rem;
         }
 
 
-        .kucsa-navbar-wrapper .navbar-collapse
+        .kucsa-navbar-wrapper
+        .navbar-collapse
         .dropdown-header .text-muted {
 
             font-size: 0.74rem;
@@ -1114,11 +1189,10 @@
 
         /* --------------------------------------------------------
            MOBILE DROPDOWN ITEMS
-
-           Slightly taller so every option is easy to tap.
            -------------------------------------------------------- */
 
-        .kucsa-navbar-wrapper .navbar-collapse
+        .kucsa-navbar-wrapper
+        .navbar-collapse
         .dropdown-item {
 
             width: 100%;
@@ -1133,7 +1207,8 @@
         }
 
 
-        .kucsa-navbar-wrapper .navbar-collapse
+        .kucsa-navbar-wrapper
+        .navbar-collapse
         .dropdown-item i {
 
             width: 25px;
@@ -1145,10 +1220,11 @@
 
 
         /* --------------------------------------------------------
-           MAKE SURE THE LAST ITEM — LOGOUT — HAS ROOM
+           LOGOUT ROOM
            -------------------------------------------------------- */
 
-        .kucsa-navbar-wrapper .navbar-collapse
+        .kucsa-navbar-wrapper
+        .navbar-collapse
         .dropdown-item.logout-item {
 
             margin-bottom: 0.1rem;
@@ -1159,11 +1235,13 @@
            MOBILE DIVIDERS
            -------------------------------------------------------- */
 
-        .kucsa-navbar-wrapper .navbar-collapse
+        .kucsa-navbar-wrapper
+        .navbar-collapse
         .dropdown-divider {
 
             margin: 0.35rem 0;
         }
+
     }
 
 
@@ -1184,7 +1262,6 @@
         .kucsa-navbar-wrapper .navbar-brand-logo {
 
             width: 52px;
-
             height: 52px;
 
             flex-basis: 52px;
@@ -1192,24 +1269,22 @@
 
 
         .kucsa-navbar-wrapper .navbar-brand {
-
             font-size: 1.08rem;
         }
 
 
         .kucsa-navbar-wrapper .navbar-brand small {
-
             font-size: 0.52rem;
         }
 
 
-        /* Tablet account menu gets comfortable spacing */
-
-        .kucsa-navbar-wrapper .navbar-collapse
+        .kucsa-navbar-wrapper
+        .navbar-collapse
         .dropdown-menu {
 
             max-height: none;
         }
+
     }
 
 
@@ -1219,10 +1294,10 @@
 
     @media (max-width: 767.98px) {
 
-        .kucsa-navbar-wrapper .kucsa-navbar > .container-fluid {
+        .kucsa-navbar-wrapper
+        .kucsa-navbar > .container-fluid {
 
             padding-left: 0.75rem !important;
-
             padding-right: 0.75rem !important;
         }
 
@@ -1246,7 +1321,6 @@
         .kucsa-navbar-wrapper .navbar-brand-logo {
 
             width: 46px;
-
             height: 46px;
 
             flex-basis: 46px;
@@ -1273,13 +1347,15 @@
         }
 
 
-        /* Ensure account dropdown has enough width */
+        .kucsa-navbar-wrapper
+        .navbar-collapse > .dropdown,
 
-        .kucsa-navbar-wrapper .navbar-collapse > .dropdown,
-        .kucsa-navbar-wrapper .navbar-collapse > .dropdown .dropdown-menu {
+        .kucsa-navbar-wrapper
+        .navbar-collapse > .dropdown .dropdown-menu {
 
             width: 100%;
         }
+
     }
 
 
@@ -1295,7 +1371,8 @@
         }
 
 
-        .kucsa-navbar-wrapper .kucsa-navbar > .container-fluid {
+        .kucsa-navbar-wrapper
+        .kucsa-navbar > .container-fluid {
 
             min-height: 50px;
         }
@@ -1305,7 +1382,6 @@
         .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle {
 
             width: 39px;
-
             height: 39px;
 
             border-radius: 10px;
@@ -1330,7 +1406,6 @@
         .kucsa-navbar-wrapper .navbar-brand-logo {
 
             width: 42px;
-
             height: 42px;
 
             flex-basis: 42px;
@@ -1353,11 +1428,6 @@
 
             border-radius: 12px;
 
-            /*
-             * Leave enough room for the complete account menu.
-             * The menu itself remains scrollable if the phone
-             * viewport is unusually short.
-             */
             max-height: calc(100vh - 70px);
         }
 
@@ -1382,6 +1452,16 @@
 
             padding-bottom: 0.64rem;
         }
+
+
+        .kucsa-navbar-wrapper
+        .navbar-collapse .kucsa-install-button {
+
+            min-height: 44px;
+
+            font-size: 0.82rem;
+        }
+
     }
 
 
@@ -1395,7 +1475,6 @@
         .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle {
 
             width: 36px;
-
             height: 36px;
         }
 
@@ -1411,7 +1490,6 @@
         .kucsa-navbar-wrapper .navbar-brand-logo {
 
             width: 37px;
-
             height: 37px;
 
             flex-basis: 37px;
@@ -1419,7 +1497,6 @@
 
 
         .kucsa-navbar-wrapper .navbar-brand small {
-
             display: none;
         }
 
@@ -1431,6 +1508,7 @@
 
             font-size: 0.8rem;
         }
+
     }
 
 
@@ -1451,7 +1529,6 @@
         .kucsa-navbar-wrapper .navbar-brand-logo {
 
             width: 34px;
-
             height: 34px;
 
             flex-basis: 34px;
@@ -1462,7 +1539,6 @@
         .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle {
 
             width: 34px;
-
             height: 34px;
         }
 
@@ -1473,9 +1549,19 @@
             min-height: 40px;
 
             padding-left: 0.6rem;
-
             padding-right: 0.6rem;
         }
+
+
+        .kucsa-navbar-wrapper
+        .navbar-collapse .kucsa-install-button {
+
+            min-height: 42px;
+
+            padding-left: 0.6rem;
+            padding-right: 0.6rem;
+        }
+
     }
 
 
@@ -1497,6 +1583,7 @@
 
             transition-duration: 0.01ms !important;
         }
+
     }
 
 
@@ -1507,15 +1594,14 @@
     @media (min-width: 992px) {
 
         .kucsa-navbar-wrapper .kucsa-sidebar-toggle {
-
             display: none !important;
         }
 
 
         .kucsa-navbar-wrapper .kucsa-navbar-menu-toggle {
-
             display: none !important;
         }
+
     }
 
 </style>
@@ -1560,7 +1646,6 @@
 
             <!-- =====================================================
                  BRAND
-                 Logo + KUCSA + Computing Association
                  ===================================================== -->
 
             <a
@@ -1789,6 +1874,30 @@
                         {% endif %}
 
                     {% endif %}
+
+
+                    <!-- =================================================
+                         PWA INSTALL KUCSA APP
+                         ================================================== -->
+
+                    <button
+                        type="button"
+                        id="kucsaInstallButton"
+                        class="kucsa-install-button"
+                        aria-label="Install KUCSA App"
+                        title="Install KUCSA App"
+                    >
+
+                        <i
+                            class="bi bi-download"
+                            aria-hidden="true"
+                        ></i>
+
+                        <span>
+                            Install KUCSA App
+                        </span>
+
+                    </button>
 
 
                     <!-- =================================================
@@ -2161,6 +2270,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const sidebarOffcanvas =
         document.getElementById("kucsaSidebarOffcanvas");
 
+    const installButton =
+        document.getElementById("kucsaInstallButton");
+
 
     /* =========================================================
        NAVBAR SCROLL EFFECT
@@ -2198,6 +2310,162 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================================================
+       PWA INSTALL BUTTON
+       ========================================================= */
+
+    function showInstallButton() {
+
+        if (!installButton) {
+            return;
+        }
+
+        /*
+         * Do not show the installation button when KUCSA is
+         * already running as an installed application.
+         */
+
+        if (
+            window.matchMedia &&
+            window.matchMedia(
+                "(display-mode: standalone)"
+            ).matches
+        ) {
+
+            installButton.classList.remove("is-visible");
+
+            return;
+        }
+
+
+        /*
+         * iOS Safari uses a different installation process.
+         * The native beforeinstallprompt event is not available
+         * there, so this button remains hidden rather than
+         * presenting a button that cannot work.
+         */
+
+        installButton.classList.add("is-visible");
+
+    }
+
+
+    function hideInstallButton() {
+
+        if (!installButton) {
+            return;
+        }
+
+        installButton.classList.remove("is-visible");
+
+    }
+
+
+    /*
+     * The base template captures beforeinstallprompt and
+     * dispatches this event when installation becomes available.
+     */
+
+    document.addEventListener(
+        "kucsa:install-ready",
+        function () {
+
+            showInstallButton();
+
+        }
+    );
+
+
+    /*
+     * Installation completed or the prompt was consumed.
+     */
+
+    document.addEventListener(
+        "kucsa:install-finished",
+        function () {
+
+            hideInstallButton();
+
+        }
+    );
+
+
+    /*
+     * App has been installed.
+     */
+
+    document.addEventListener(
+        "kucsa:app-installed",
+        function () {
+
+            hideInstallButton();
+
+        }
+    );
+
+
+    /*
+     * Install button action.
+     */
+
+    if (installButton) {
+
+        installButton.addEventListener(
+            "click",
+            async function () {
+
+                if (
+                    typeof window.installKUCSAApp !==
+                    "function"
+                ) {
+
+                    console.warn(
+                        "[KUCSA PWA] Installation function is unavailable."
+                    );
+
+                    return;
+                }
+
+
+                /*
+                 * Temporarily disable the button so that
+                 * repeated taps cannot trigger multiple prompts.
+                 */
+
+                installButton.disabled = true;
+
+
+                try {
+
+                    const installed =
+                        await window.installKUCSAApp();
+
+
+                    if (installed) {
+
+                        hideInstallButton();
+
+                    }
+
+                } catch (error) {
+
+                    console.error(
+                        "[KUCSA PWA] Installation failed:",
+                        error
+                    );
+
+                } finally {
+
+                    installButton.disabled = false;
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
        CLOSE MOBILE NAVBAR AFTER NAVIGATION
        ========================================================= */
 
@@ -2209,28 +2477,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
         navigationLinks.forEach(function (link) {
 
-            link.addEventListener("click", function () {
+            link.addEventListener(
+                "click",
+                function () {
 
-                if (
-                    window.innerWidth <= 991 &&
-                    window.bootstrap
-                ) {
+                    if (
+                        window.innerWidth <= 991 &&
+                        window.bootstrap
+                    ) {
 
-                    const collapse =
-                        bootstrap.Collapse.getInstance(
-                            navbarCollapse
-                        );
+                        const collapse =
+                            bootstrap.Collapse.getInstance(
+                                navbarCollapse
+                            );
 
 
-                    if (collapse) {
+                        if (collapse) {
 
-                        collapse.hide();
+                            collapse.hide();
+
+                        }
 
                     }
 
                 }
-
-            });
+            );
 
         });
 
@@ -2327,8 +2598,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* =========================================================
        LOGO IMAGE FALLBACK
-       If logo.png cannot be loaded, the KUCSA text remains
-       visible and the broken image does not remain on screen.
        ========================================================= */
 
     const brandLogo =
@@ -2368,6 +2637,24 @@ document.addEventListener("DOMContentLoaded", function () {
             ) {
 
                 navbarCollapse.classList.remove("show");
+
+            }
+
+
+            /*
+             * Re-check the installed state when the page
+             * returns from browser/app navigation.
+             */
+
+            if (
+                installButton &&
+                window.matchMedia &&
+                window.matchMedia(
+                    "(display-mode: standalone)"
+                ).matches
+            ) {
+
+                hideInstallButton();
 
             }
 

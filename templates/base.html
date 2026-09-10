@@ -8,7 +8,10 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>
         {% block title %}
@@ -16,8 +19,9 @@
         {% endblock %}
     </title>
 
+
     <!-- =========================================================
-         KUCSA APP / WEBSITE ICON
+         KUCSA WEBSITE / APP ICON
          ========================================================= -->
 
     <link
@@ -28,7 +32,8 @@
 
     <link
         rel="apple-touch-icon"
-        href="{% static 'images/logoicon.png' %}"
+        sizes="192x192"
+        href="{% static 'images/icon-192.png' %}"
     >
 
 
@@ -69,9 +74,6 @@
 
     <!-- =========================================================
          KUCSA / KISII UNIVERSITY LOGOS
-
-         Centralized here so navbar and other base-level
-         components can consistently use the official logos.
          ========================================================= -->
 
     {% static 'images/logokucsaa.png' as kucsa_logo %}
@@ -214,27 +216,233 @@
 
 
     <!-- =========================================================
-         PWA SERVICE WORKER
+         KUCSA PWA
+         SERVICE WORKER + INSTALL PROMPT
          ========================================================= -->
 
     <script>
+
+        /*
+        ========================================================
+        KUCSA PWA INSTALLATION
+        ========================================================
+        */
+
+        let deferredInstallPrompt = null;
+
+
+        /*
+        --------------------------------------------------------
+        Capture the browser's native installation prompt.
+        --------------------------------------------------------
+        */
+
+        window.addEventListener("beforeinstallprompt", (event) => {
+
+            /*
+            Prevent Chrome from displaying its default prompt
+            immediately.
+            */
+
+            event.preventDefault();
+
+            /*
+            Save the event so the KUCSA Install button can
+            trigger it later.
+            */
+
+            deferredInstallPrompt = event;
+
+            /*
+            Tell the rest of the KUCSA interface that
+            installation is available.
+            */
+
+            document.dispatchEvent(
+                new CustomEvent("kucsa:install-ready")
+            );
+
+            console.log(
+                "[KUCSA PWA] Installation is available."
+            );
+        });
+
+
+        /*
+        --------------------------------------------------------
+        KUCSA INSTALL FUNCTION
+        --------------------------------------------------------
+        */
+
+        window.installKUCSAApp = async function () {
+
+            /*
+            If the browser does not currently provide an
+            installation prompt, stop safely.
+            */
+
+            if (!deferredInstallPrompt) {
+
+                console.log(
+                    "[KUCSA PWA] Installation prompt unavailable."
+                );
+
+                return false;
+            }
+
+
+            /*
+            Display the native browser installation dialog.
+            */
+
+            deferredInstallPrompt.prompt();
+
+
+            /*
+            Wait for the user's choice.
+            */
+
+            const result =
+                await deferredInstallPrompt.userChoice;
+
+
+            console.log(
+                "[KUCSA PWA] Installation result:",
+                result.outcome
+            );
+
+
+            /*
+            The saved prompt can only be used once.
+            */
+
+            deferredInstallPrompt = null;
+
+
+            /*
+            Tell the interface that the installation prompt
+            is no longer available.
+            */
+
+            document.dispatchEvent(
+                new CustomEvent("kucsa:install-finished")
+            );
+
+
+            return result.outcome === "accepted";
+        };
+
+
+        /*
+        --------------------------------------------------------
+        Detect when KUCSA has been installed.
+        --------------------------------------------------------
+        */
+
+        window.addEventListener("appinstalled", () => {
+
+            console.log(
+                "[KUCSA PWA] KUCSA has been installed."
+            );
+
+            deferredInstallPrompt = null;
+
+            document.dispatchEvent(
+                new CustomEvent("kucsa:app-installed")
+            );
+        });
+
+
+        /*
+        ========================================================
+        SERVICE WORKER REGISTRATION
+        ========================================================
+        */
+
         if ("serviceWorker" in navigator) {
+
             window.addEventListener("load", function () {
+
                 navigator.serviceWorker.register(
-                    "{% static 'service-worker.js' %}"
-                ).then(function (registration) {
+                    "/service-worker.js",
+                    {
+                        scope: "/"
+                    }
+                )
+
+                .then(function (registration) {
+
                     console.log(
-                        "KUCSA service worker registered:",
+                        "[KUCSA PWA] Service worker registered:",
                         registration.scope
                     );
-                }).catch(function (error) {
+
+
+                    /*
+                    Check for service-worker updates.
+                    */
+
+                    registration.update();
+
+                })
+
+                .catch(function (error) {
+
                     console.error(
-                        "KUCSA service worker registration failed:",
+                        "[KUCSA PWA] Service worker registration failed:",
                         error
                     );
+
                 });
+
             });
+
         }
+
+
+        /*
+        ========================================================
+        DETECT STANDALONE / INSTALLED MODE
+        ========================================================
+        */
+
+        function isKUCSAInstalled() {
+
+            return (
+                window.matchMedia(
+                    "(display-mode: standalone)"
+                ).matches ||
+
+                window.navigator.standalone === true
+            );
+        }
+
+
+        /*
+        --------------------------------------------------------
+        Let the navbar know whether KUCSA is already installed.
+        --------------------------------------------------------
+        */
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                if (isKUCSAInstalled()) {
+
+                    document.documentElement.classList.add(
+                        "kucsa-app-installed"
+                    );
+
+                    document.dispatchEvent(
+                        new CustomEvent("kucsa:app-installed")
+                    );
+
+                }
+
+            }
+        );
+
     </script>
 
 

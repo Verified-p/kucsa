@@ -1,6 +1,8 @@
 
 from django.shortcuts import redirect, render
-
+from django.http import FileResponse
+from django.conf import settings
+from pathlib import Path
 
 # =========================================================
 # HOME / PLATFORM ENTRY
@@ -125,3 +127,32 @@ def landing_page_view(request):
         "landing.html"
     )
 
+
+
+
+
+
+def service_worker(request):
+    """
+    Serve the KUCSA PWA service worker from the website root.
+
+    The actual service-worker.js file remains inside:
+        static/service-worker.js
+
+    But browsers receive it from:
+        /service-worker.js
+
+    This allows the service worker to control the entire
+    KUCSA website rather than only /static/.
+    """
+
+    service_worker_path = (
+        Path(settings.BASE_DIR)
+        / "static"
+        / "service-worker.js"
+    )
+
+    return FileResponse(
+        open(service_worker_path, "rb"),
+        content_type="application/javascript",
+    )

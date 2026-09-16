@@ -1,13 +1,112 @@
-# events/services.py
-
 from datetime import timedelta
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Q
+from django.urls import reverse
 from django.utils import timezone
 
 from .models import Event, EventRegistration
+
+from notifications.models import Notification
+from notifications.services import create_notification
+
+
+# =========================================================
+# EVENT NOTIFICATION HELPERS
+# =========================================================
+
+
+def _get_event_notification_recipients():
+    """
+    Return active users who should receive notifications for
+    newly published KUCSA events.
+
+    Event notifications are currently sent to all active users.
+    This keeps event notification delivery independent from the
+    event registration system.
+    """
+
+    from django.apps import apps
+
+    app_label, model_name = settings.AUTH_USER_MODEL.split(".", 1)
+
+    UserModel = apps.get_model(
+        app_label,
+        model_name,
+    )
+
+    return UserModel.objects.filter(
+        is_active=True,
+    )
+
+
+def _notify_published_event(event):
+    """
+    Create an in-system notification and send an email
+    notification when an event becomes published.
+
+    Notifications are sent only after the event has successfully
+    been saved as published.
+    """
+
+    recipients = _get_event_notification_recipients()
+
+    try:
+        action_url = reverse(
+            "events:detail",
+            kwargs={
+                "pk": event.pk,
+            },
+        )
+    except Exception:
+        action_url = None
+
+    title = "New KUCSA Event"
+
+    event_date = ""
+    event_time = ""
+
+    if event.start_datetime:
+        local_start = timezone.localtime(event.start_datetime)
+        event_date = local_start.strftime("%A, %d %B %Y")
+        event_time = local_start.strftime("%I:%M %p").lstrip("0")
+
+    venue = (
+        event.venue
+        if event.venue
+        else "Venue to be announced"
+    )
+
+    message_parts = [
+        f"A new KUCSA event has been published: {event.title}.",
+    ]
+
+    if event_date:
+        message_parts.append(f"Date: {event_date}")
+
+    if event_time:
+        message_parts.append(f"Time: {event_time}")
+
+    message_parts.append(f"Venue: {venue}")
+
+    message_parts.append(
+        "Open the KUCSA platform to view the event and register if required."
+    )
+
+    message = "\n".join(message_parts)
+
+    for recipient in recipients.iterator():
+        create_notification(
+            recipient=recipient,
+            title=title,
+            message=message,
+            notification_type=Notification.NotificationType.INFO,
+            action_url=action_url,
+            send_email=True,
+        )
+
 
 
 class EventService:
@@ -47,6 +146,9 @@ class EventService:
 
         The authenticated user becomes the event organizer.
 
+        If the event is created directly as PUBLISHED,
+        users are notified immediately.
+
         Raises:
             ValueError:
                 If no valid user is supplied.
@@ -65,6 +167,17 @@ class EventService:
 
         event.full_clean()
         event.save()
+
+        # -----------------------------------------------------
+        # Notify users when an event is created directly
+        # as a published event.
+        # -----------------------------------------------------
+
+        if event.status == Event.Status.PUBLISHED:
+
+            transaction.on_commit(
+                lambda event=event: _notify_published_event(event)
+            )
 
         return event
 
@@ -481,6 +594,9 @@ class EventService:
             - Event must have a valid end time.
             - Registration opens only when registration is
               required.
+
+        A notification and email are sent only when the event
+        actually changes from another status to PUBLISHED.
         """
 
         if not event:
@@ -513,6 +629,14 @@ class EventService:
                 "The event end time must be after the start time."
             )
 
+        # -----------------------------------------------------
+        # Remember whether this is a new publication.
+        # -----------------------------------------------------
+
+        was_already_published = (
+            event.status == Event.Status.PUBLISHED
+        )
+
         event.status = Event.Status.PUBLISHED
 
         if event.requires_registration:
@@ -533,6 +657,16 @@ class EventService:
                 "updated_at",
             ]
         )
+
+        # -----------------------------------------------------
+        # Notify users only for a new publication.
+        # -----------------------------------------------------
+
+        if not was_already_published:
+
+            transaction.on_commit(
+                lambda event=event: _notify_published_event(event)
+            )
 
         return event
 

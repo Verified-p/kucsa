@@ -1,12 +1,16 @@
 
 # announcements/services.py
 
+from django.conf import settings
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.db.models import Count, F, Q, Sum
+from django.urls import reverse
 from django.utils import timezone
 
 from .models import Announcement
+from notifications.models import Notification
+from notifications.services import create_notification
 
 
 # =========================================================
@@ -61,6 +65,192 @@ def require_management_permission(user):
 
 
 # =========================================================
+# NOTIFICATION HELPERS
+# =========================================================
+
+
+def _get_announcement_notification_recipients(announcement):
+    """
+    Return users who should receive a notification for the
+    published announcement.
+
+    The notification audience follows the same audience rules
+    used by the announcement visibility system.
+    """
+
+    User = settings.AUTH_USER_MODEL
+
+    from django.apps import apps
+
+    UserModel = apps.get_model(
+        User.split(".")[0],
+        User.split(".")[1],
+    )
+
+    queryset = UserModel.objects.filter(
+        is_active=True,
+    )
+
+    target_audience = announcement.target_audience
+
+    # -----------------------------------------------------
+    # Everyone
+    # -----------------------------------------------------
+
+    if target_audience == Announcement.TargetAudience.ALL:
+
+        return queryset
+
+    # -----------------------------------------------------
+    # Students
+    # -----------------------------------------------------
+
+    if target_audience == Announcement.TargetAudience.STUDENTS:
+
+        return queryset.filter(
+            role="STUDENT",
+        )
+
+    # -----------------------------------------------------
+    # First years
+    # -----------------------------------------------------
+
+    if target_audience == Announcement.TargetAudience.FIRST_YEARS:
+
+        return queryset.filter(
+            role="STUDENT",
+            year_of_study__in=[
+                "1",
+                "FIRST",
+                "FIRST_YEAR",
+                "YEAR_1",
+            ],
+        )
+
+    # -----------------------------------------------------
+    # Second years
+    # -----------------------------------------------------
+
+    if target_audience == Announcement.TargetAudience.SECOND_YEARS:
+
+        return queryset.filter(
+            role="STUDENT",
+            year_of_study__in=[
+                "2",
+                "SECOND",
+                "SECOND_YEAR",
+                "YEAR_2",
+            ],
+        )
+
+    # -----------------------------------------------------
+    # Third years
+    # -----------------------------------------------------
+
+    if target_audience == Announcement.TargetAudience.THIRD_YEARS:
+
+        return queryset.filter(
+            role="STUDENT",
+            year_of_study__in=[
+                "3",
+                "THIRD",
+                "THIRD_YEAR",
+                "YEAR_3",
+            ],
+        )
+
+    # -----------------------------------------------------
+    # Fourth years
+    # -----------------------------------------------------
+
+    if target_audience == Announcement.TargetAudience.FOURTH_YEARS:
+
+        return queryset.filter(
+            role="STUDENT",
+            year_of_study__in=[
+                "4",
+                "FOURTH",
+                "FOURTH_YEAR",
+                "YEAR_4",
+            ],
+        )
+
+    # -----------------------------------------------------
+    # Executives
+    # -----------------------------------------------------
+
+    if target_audience == Announcement.TargetAudience.EXECUTIVES:
+
+        return queryset.filter(
+            is_executive=True,
+        )
+
+    # -----------------------------------------------------
+    # Alumni
+    # -----------------------------------------------------
+
+    if target_audience == Announcement.TargetAudience.ALUMNI:
+
+        return queryset.filter(
+            role="ALUMNI",
+        )
+
+    # -----------------------------------------------------
+    # Unknown audience
+    # -----------------------------------------------------
+
+    return queryset.none()
+def _notify_published_announcement(announcement):
+    """
+    Create in-system notifications and email notifications
+    for users who belong to the announcement's target audience.
+
+    This function is called only when an announcement becomes
+    published, preventing notifications from being generated
+    for drafts, edits, archives, or unpublishing.
+    """
+
+    recipients = _get_announcement_notification_recipients(
+        announcement
+    )
+
+    action_url = reverse(
+        "announcements:detail",
+        kwargs={
+            "pk": announcement.pk,
+        },
+    )
+
+    # -----------------------------------------------------
+    # Notification type
+    # -----------------------------------------------------
+    #
+    # Announcement priority and notification type are
+    # separate concepts. Do not use Announcement.Priority
+    # values as notification types.
+    #
+    # INFO is the safe default for a newly published
+    # announcement.
+    # -----------------------------------------------------
+
+    notification_type = Notification.NotificationType.INFO
+
+    title = "New KUCSA Announcement"
+
+    message = announcement.title
+
+    for recipient in recipients.iterator():
+
+        create_notification(
+            recipient=recipient,
+            title=title,
+            message=message,
+            notification_type=notification_type,
+            action_url=action_url,
+            send_email=True,
+        )
+
+# =========================================================
 # ANNOUNCEMENT CREATION
 # =========================================================
 
@@ -92,10 +282,12 @@ def create_announcement(
     now = timezone.now()
 
     if status == Announcement.Status.PUBLISHED:
+
         if not published_at:
             published_at = now
 
     if status != Announcement.Status.PUBLISHED:
+
         is_featured = False
 
     announcement = Announcement(
@@ -118,6 +310,16 @@ def create_announcement(
 
     announcement.full_clean()
     announcement.save()
+
+    # -----------------------------------------------------
+    # Notify users when created directly as published
+    # -----------------------------------------------------
+
+    if announcement.status == Announcement.Status.PUBLISHED:
+
+        _notify_published_announcement(
+            announcement
+        )
 
     return announcement
 
@@ -175,6 +377,7 @@ def update_announcement(
             announcement.published_at = timezone.now()
 
     if announcement.status != Announcement.Status.PUBLISHED:
+
         announcement.is_featured = False
 
     announcement.updated_by = user
@@ -198,6 +401,10 @@ def publish_announcement(
 ):
     """
     Publish an announcement.
+
+    When the announcement changes from another status to
+    PUBLISHED, the appropriate users receive both an
+    in-system notification and an email notification.
     """
 
     require_management_permission(user)
@@ -209,9 +416,14 @@ def publish_announcement(
 
     now = timezone.now()
 
+    # -----------------------------------------------------
+    # Already published
+    # -----------------------------------------------------
+
     if announcement.status == Announcement.Status.PUBLISHED:
 
         if not announcement.published_at:
+
             announcement.published_at = now
             announcement.updated_by = user
 
@@ -226,6 +438,10 @@ def publish_announcement(
             )
 
         return announcement
+
+    # -----------------------------------------------------
+    # Change to published
+    # -----------------------------------------------------
 
     if not announcement.published_at:
         announcement.published_at = now
@@ -242,6 +458,14 @@ def publish_announcement(
             "updated_by",
             "updated_at",
         ]
+    )
+
+    # -----------------------------------------------------
+    # Notifications + email
+    # -----------------------------------------------------
+
+    _notify_published_announcement(
+        announcement
     )
 
     return announcement

@@ -82,6 +82,7 @@ INSTALLED_APPS = [
     "reports",
     "core",
     'finance',
+    'notifications',
 ]
 
 

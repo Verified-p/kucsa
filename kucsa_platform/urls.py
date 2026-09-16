@@ -115,6 +115,11 @@ urlpatterns = [
     name="admin_dashboard",
 ),
 
+path(
+    "notifications/",
+    include("notifications.urls"),
+),
+
 
     # =====================================================
     # REPORTS

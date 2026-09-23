@@ -1080,590 +1080,425 @@
     }
 </style>
 
-
 <div class="kucsa-finance-dashboard">
 
-    <!-- ============================================================
-         PAGE HEADER
-         ============================================================ -->
+```
+<!-- ============================================================
+     PAGE HEADER
+     ============================================================ -->
 
-    <section class="kucsa-finance-header kucsa-dashboard-animate"
-             aria-labelledby="financeDashboardTitle">
+<section class="kucsa-finance-header kucsa-dashboard-animate"
+         aria-labelledby="financeDashboardTitle">
 
-        <div class="kucsa-finance-header-content">
+    <div class="kucsa-finance-header-content">
 
-            <div class="row align-items-center g-4">
+        <div class="row align-items-center g-4">
 
-                <div class="col-12 col-xl-8">
+            <div class="col-12 col-xl-8">
 
-                    <div class="kucsa-finance-brand-row">
+                <div class="kucsa-finance-brand-row">
 
-                        <div class="kucsa-finance-icon"
-                             aria-hidden="true">
-                            <i class="bi bi-wallet2"></i>
-                        </div>
-
-                        <div>
-                            <div class="d-flex flex-wrap align-items-center gap-2">
-
-                                <h1 id="financeDashboardTitle"
-                                    class="kucsa-finance-title">
-                                    Finance Dashboard
-                                </h1>
-
-                                <span class="kucsa-finance-badge">
-                                    <i class="bi bi-shield-check"></i>
-                                    KUCSA Finance
-                                </span>
-
-                            </div>
-                        </div>
-
+                    <div class="kucsa-finance-icon"
+                         aria-hidden="true">
+                        <i class="bi bi-wallet2"></i>
                     </div>
 
-                    <p class="kucsa-finance-subtitle">
-                        Monitor KUCSA income, expenses, available balance
-                        and financial activity from one central dashboard.
-                    </p>
+                    <div>
+                        <div class="d-flex flex-wrap align-items-center gap-2">
 
-                </div>
+                            <h1 id="financeDashboardTitle"
+                                class="kucsa-finance-title">
+                                Finance Dashboard
+                            </h1>
 
-
-                <div class="col-12 col-xl-4">
-
-                    <div class="kucsa-finance-header-actions justify-content-xl-end">
-
-                        <a href="{% url 'finance:transactions' %}"
-                           class="btn btn-outline-primary">
-
-                            <i class="bi bi-journal-text me-1"></i>
-                            Transactions
-
-                        </a>
-
-                        <a href="{% url 'finance:expense_create' %}"
-                           class="btn btn-primary">
-
-                            <i class="bi bi-plus-circle me-1"></i>
-                            Record Expense
-
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- ============================================================
-         FINANCIAL SUMMARY
-         ============================================================ -->
-
-    <section class="mb-4"
-             aria-label="Financial summary">
-
-        <div class="row g-3">
-
-            <!-- AVAILABLE BALANCE -->
-
-            <div class="col-12 col-md-6 col-xl-3">
-
-                <div class="kucsa-finance-card
-                            kucsa-finance-summary-card
-                            balance
-                            h-100
-                            kucsa-dashboard-animate
-                            kucsa-delay-1">
-
-                    <div class="kucsa-finance-summary-body">
-
-                        <div class="min-w-0">
-
-                            <div class="kucsa-summary-label">
-                                Available Balance
-                            </div>
-
-                            <div class="kucsa-summary-value">
-                                KES
-                                {{ available_balance|default:"0.00"|floatformat:2 }}
-                            </div>
-
-                            <span class="kucsa-summary-description">
-                                Posted income less posted expenses
+                            <span class="kucsa-finance-badge">
+                                <i class="bi bi-shield-check"></i>
+                                KUCSA Finance
                             </span>
 
                         </div>
-
-                        <div class="kucsa-summary-icon success"
-                             aria-hidden="true">
-
-                            <i class="bi bi-wallet2"></i>
-
-                        </div>
-
                     </div>
 
                 </div>
+
+                <p class="kucsa-finance-subtitle">
+                    Monitor KUCSA income, expenses, available balance
+                    and financial activity from one central dashboard.
+                </p>
 
             </div>
 
 
-            <!-- POSTED INCOME -->
+            <div class="col-12 col-xl-4">
 
-            <div class="col-12 col-md-6 col-xl-3">
-
-                <div class="kucsa-finance-card
-                            kucsa-finance-summary-card
-                            income
-                            h-100
-                            kucsa-dashboard-animate
-                            kucsa-delay-2">
-
-                    <div class="kucsa-finance-summary-body">
-
-                        <div class="min-w-0">
-
-                            <div class="kucsa-summary-label">
-                                Posted Income
-                            </div>
-
-                            <div class="kucsa-summary-value text-success">
-                                KES
-                                {{ total_income|default:"0.00"|floatformat:2 }}
-                            </div>
-
-                            <span class="kucsa-summary-description">
-                                Income affecting the balance
-                            </span>
-
-                        </div>
-
-                        <div class="kucsa-summary-icon success"
-                             aria-hidden="true">
-
-                            <i class="bi bi-arrow-down-left"></i>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- POSTED EXPENSES -->
-
-            <div class="col-12 col-md-6 col-xl-3">
-
-                <div class="kucsa-finance-card
-                            kucsa-finance-summary-card
-                            expense
-                            h-100
-                            kucsa-dashboard-animate
-                            kucsa-delay-3">
-
-                    <div class="kucsa-finance-summary-body">
-
-                        <div class="min-w-0">
-
-                            <div class="kucsa-summary-label">
-                                Posted Expenses
-                            </div>
-
-                            <div class="kucsa-summary-value text-danger">
-                                KES
-                                {{ total_expenses|default:"0.00"|floatformat:2 }}
-                            </div>
-
-                            <span class="kucsa-summary-description">
-                                Expenses affecting the balance
-                            </span>
-
-                        </div>
-
-                        <div class="kucsa-summary-icon danger"
-                             aria-hidden="true">
-
-                            <i class="bi bi-arrow-up-right"></i>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- PENDING EXPENSES -->
-
-            <div class="col-12 col-md-6 col-xl-3">
-
-                <div class="kucsa-finance-card
-                            kucsa-finance-summary-card
-                            pending
-                            h-100
-                            kucsa-dashboard-animate
-                            kucsa-delay-4">
-
-                    <div class="kucsa-finance-summary-body">
-
-                        <div class="min-w-0">
-
-                            <div class="kucsa-summary-label">
-                                Pending Expenses
-                            </div>
-
-                            <div class="kucsa-summary-value">
-                                {{ pending_expenses|default:"0" }}
-                            </div>
-
-                            <span class="kucsa-summary-description">
-                                Awaiting processing
-                            </span>
-
-                        </div>
-
-                        <div class="kucsa-summary-icon warning"
-                             aria-hidden="true">
-
-                            <i class="bi bi-hourglass-split"></i>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- ============================================================
-         FINANCE STATUS NOTICE
-         ============================================================ -->
-
-    {% if available_balance is not None %}
-
-        {% if available_balance < 0 %}
-
-            <div class="kucsa-negative-balance
-                        d-flex
-                        align-items-start
-                        gap-3
-                        mb-4
-                        kucsa-dashboard-animate"
-                 role="alert">
-
-                <div class="kucsa-negative-balance-icon"
-                     aria-hidden="true">
-
-                    <i class="bi bi-exclamation-triangle-fill"></i>
-
-                </div>
-
-                <div class="min-w-0">
-
-                    <strong>
-                        Negative available balance
-                    </strong>
-
-                    <div class="small mt-1">
-                        Posted expenses currently exceed posted income.
-                        Review the financial transactions and reconciliation
-                        records.
-                    </div>
-
-                </div>
-
-            </div>
-
-        {% endif %}
-
-    {% endif %}
-
-
-    <!-- ============================================================
-         MAIN CONTENT
-         ============================================================ -->
-
-    <div class="row g-3">
-
-
-        <!-- ========================================================
-             RECENT TRANSACTIONS
-             ======================================================== -->
-
-        <div class="col-12 col-xl-8">
-
-            <section class="kucsa-finance-card h-100
-                            kucsa-dashboard-animate"
-                     aria-labelledby="recentTransactionsTitle">
-
-                <div class="kucsa-content-card-header">
-
-                    <div class="kucsa-card-heading-group">
-
-                        <div class="kucsa-card-heading-icon"
-                             aria-hidden="true">
-
-                            <i class="bi bi-journal-text"></i>
-
-                        </div>
-
-                        <div class="min-w-0">
-
-                            <h2 id="recentTransactionsTitle"
-                                class="kucsa-section-title">
-                                Recent Transactions
-                            </h2>
-
-                            <p class="kucsa-section-description">
-                                Latest posted financial activity.
-                            </p>
-
-                        </div>
-
-                    </div>
+                <div class="kucsa-finance-header-actions justify-content-xl-end">
 
                     <a href="{% url 'finance:transactions' %}"
-                       class="btn btn-sm btn-outline-primary">
+                       class="btn btn-outline-primary">
 
-                        View All
-                        <i class="bi bi-arrow-right ms-1"></i>
+                        <i class="bi bi-journal-text me-1"></i>
+                        Transactions
+
+                    </a>
+
+                    <a href="{% url 'finance:expense_create' %}"
+                       class="btn btn-primary">
+
+                        <i class="bi bi-plus-circle me-1"></i>
+                        Record Expense
 
                     </a>
 
                 </div>
 
+            </div>
 
-                <div class="card-body px-0 pb-0">
+        </div>
 
-                    {% if recent_transactions %}
+    </div>
 
-                        <!-- ====================================================
-                             DESKTOP / TABLET TABLE
-                             ==================================================== -->
+</section>
 
-                        <div class="kucsa-desktop-transactions
-                                    kucsa-transaction-table-wrap">
 
-                            <table class="table
-                                          align-middle
-                                          kucsa-transaction-table">
+<!-- ============================================================
+     FINANCIAL SUMMARY
+     ============================================================ -->
 
-                                <thead>
+<section class="mb-4"
+         aria-label="Financial summary">
+
+    <div class="row g-3">
+
+        <!-- AVAILABLE BALANCE -->
+
+        <div class="col-12 col-md-6 col-xl-3">
+
+            <div class="kucsa-finance-card
+                        kucsa-finance-summary-card
+                        balance
+                        h-100
+                        kucsa-dashboard-animate
+                        kucsa-delay-1">
+
+                <div class="kucsa-finance-summary-body">
+
+                    <div class="min-w-0">
+
+                        <div class="kucsa-summary-label">
+                            Available Balance
+                        </div>
+
+                        <div class="kucsa-summary-value">
+                            KES
+                            {{ available_balance|default:"0.00"|floatformat:2 }}
+                        </div>
+
+                        <span class="kucsa-summary-description">
+                            Posted income less posted expenses
+                        </span>
+
+                    </div>
+
+                    <div class="kucsa-summary-icon success"
+                         aria-hidden="true">
+
+                        <i class="bi bi-wallet2"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- POSTED INCOME -->
+
+        <div class="col-12 col-md-6 col-xl-3">
+
+            <div class="kucsa-finance-card
+                        kucsa-finance-summary-card
+                        income
+                        h-100
+                        kucsa-dashboard-animate
+                        kucsa-delay-2">
+
+                <div class="kucsa-finance-summary-body">
+
+                    <div class="min-w-0">
+
+                        <div class="kucsa-summary-label">
+                            Posted Income
+                        </div>
+
+                        <div class="kucsa-summary-value text-success">
+                            KES
+                            {{ posted_income|default:"0.00"|floatformat:2 }}
+                        </div>
+
+                        <span class="kucsa-summary-description">
+                            Income affecting the balance
+                        </span>
+
+                    </div>
+
+                    <div class="kucsa-summary-icon success"
+                         aria-hidden="true">
+
+                        <i class="bi bi-arrow-down-left"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- POSTED EXPENSES -->
+
+        <div class="col-12 col-md-6 col-xl-3">
+
+            <div class="kucsa-finance-card
+                        kucsa-finance-summary-card
+                        expense
+                        h-100
+                        kucsa-dashboard-animate
+                        kucsa-delay-3">
+
+                <div class="kucsa-finance-summary-body">
+
+                    <div class="min-w-0">
+
+                        <div class="kucsa-summary-label">
+                            Posted Expenses
+                        </div>
+
+                        <div class="kucsa-summary-value text-danger">
+                            KES
+                            {{ posted_expenses|default:"0.00"|floatformat:2 }}
+                        </div>
+
+                        <span class="kucsa-summary-description">
+                            Expenses affecting the balance
+                        </span>
+
+                    </div>
+
+                    <div class="kucsa-summary-icon danger"
+                         aria-hidden="true">
+
+                        <i class="bi bi-arrow-up-right"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PENDING EXPENSES -->
+
+        <div class="col-12 col-md-6 col-xl-3">
+
+            <div class="kucsa-finance-card
+                        kucsa-finance-summary-card
+                        pending
+                        h-100
+                        kucsa-dashboard-animate
+                        kucsa-delay-4">
+
+                <div class="kucsa-finance-summary-body">
+
+                    <div class="min-w-0">
+
+                        <div class="kucsa-summary-label">
+                            Pending Expenses
+                        </div>
+
+                        <div class="kucsa-summary-value">
+                            {{ pending_expenses|default:"0" }}
+                        </div>
+
+                        <span class="kucsa-summary-description">
+                            Awaiting processing
+                        </span>
+
+                    </div>
+
+                    <div class="kucsa-summary-icon warning"
+                         aria-hidden="true">
+
+                        <i class="bi bi-hourglass-split"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============================================================
+     FINANCE STATUS NOTICE
+     ============================================================ -->
+
+{% if available_balance is not None %}
+
+    {% if available_balance < 0 %}
+
+        <div class="kucsa-negative-balance
+                    d-flex
+                    align-items-start
+                    gap-3
+                    mb-4
+                    kucsa-dashboard-animate"
+             role="alert">
+
+            <div class="kucsa-negative-balance-icon"
+                 aria-hidden="true">
+
+                <i class="bi bi-exclamation-triangle-fill"></i>
+
+            </div>
+
+            <div class="min-w-0">
+
+                <strong>
+                    Negative available balance
+                </strong>
+
+                <div class="small mt-1">
+                    Posted expenses currently exceed posted income.
+                    Review the financial transactions and reconciliation
+                    records.
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+{% endif %}
+
+
+<!-- ============================================================
+     MAIN CONTENT
+     ============================================================ -->
+
+<div class="row g-3">
+
+
+    <!-- ========================================================
+         RECENT TRANSACTIONS
+         ======================================================== -->
+
+    <div class="col-12 col-xl-8">
+
+        <section class="kucsa-finance-card h-100
+                        kucsa-dashboard-animate"
+                 aria-labelledby="recentTransactionsTitle">
+
+            <div class="kucsa-content-card-header">
+
+                <div class="kucsa-card-heading-group">
+
+                    <div class="kucsa-card-heading-icon"
+                         aria-hidden="true">
+
+                        <i class="bi bi-journal-text"></i>
+
+                    </div>
+
+                    <div class="min-w-0">
+
+                        <h2 id="recentTransactionsTitle"
+                            class="kucsa-section-title">
+                            Recent Transactions
+                        </h2>
+
+                        <p class="kucsa-section-description">
+                            Latest posted financial activity.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <a href="{% url 'finance:transactions' %}"
+                   class="btn btn-sm btn-outline-primary">
+
+                    View All
+                    <i class="bi bi-arrow-right ms-1"></i>
+
+                </a>
+
+            </div>
+
+
+            <div class="card-body px-0 pb-0">
+
+                {% if recent_transactions %}
+
+                    <!-- ====================================================
+                         DESKTOP / TABLET TABLE
+                         ==================================================== -->
+
+                    <div class="kucsa-desktop-transactions
+                                kucsa-transaction-table-wrap">
+
+                        <table class="table
+                                      align-middle
+                                      kucsa-transaction-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th class="ps-4">
+                                        Reference
+                                    </th>
+
+                                    <th>
+                                        Type
+                                    </th>
+
+                                    <th>
+                                        Category
+                                    </th>
+
+                                    <th class="text-end">
+                                        Amount
+                                    </th>
+
+                                    <th class="pe-4">
+                                        Date
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for transaction in recent_transactions %}
 
                                     <tr>
 
-                                        <th class="ps-4">
-                                            Reference
-                                        </th>
+                                        <!-- Reference -->
 
-                                        <th>
-                                            Type
-                                        </th>
-
-                                        <th>
-                                            Category
-                                        </th>
-
-                                        <th class="text-end">
-                                            Amount
-                                        </th>
-
-                                        <th class="pe-4">
-                                            Date
-                                        </th>
-
-                                    </tr>
-
-                                </thead>
-
-
-                                <tbody>
-
-                                    {% for transaction in recent_transactions %}
-
-                                        <tr>
-
-                                            <!-- Reference -->
-
-                                            <td class="ps-4">
-
-                                                <a href="{% url 'finance:transaction_detail' transaction.pk %}"
-                                                   class="kucsa-transaction-number">
-
-                                                    {{ transaction.transaction_number }}
-
-                                                </a>
-
-                                                {% if transaction.reference %}
-
-                                                    <span class="kucsa-transaction-reference"
-                                                          title="{{ transaction.reference }}">
-
-                                                        {{ transaction.reference }}
-
-                                                    </span>
-
-                                                {% endif %}
-
-                                            </td>
-
-
-                                            <!-- Type -->
-
-                                            <td>
-
-                                                {% if transaction.is_income %}
-
-                                                    <span class="kucsa-type-badge
-                                                                 kucsa-type-income">
-
-                                                        <i class="bi bi-arrow-down-left"></i>
-                                                        Income
-
-                                                    </span>
-
-                                                {% elif transaction.is_expense %}
-
-                                                    <span class="kucsa-type-badge
-                                                                 kucsa-type-expense">
-
-                                                        <i class="bi bi-arrow-up-right"></i>
-                                                        Expense
-
-                                                    </span>
-
-                                                {% else %}
-
-                                                    <span class="kucsa-type-badge
-                                                                 kucsa-type-other">
-
-                                                        {{ transaction.transaction_type|title }}
-
-                                                    </span>
-
-                                                {% endif %}
-
-                                            </td>
-
-
-                                            <!-- Category -->
-
-                                            <td>
-
-                                                {% if transaction.category %}
-
-                                                    <span class="small fw-semibold">
-                                                        {{ transaction.category.name }}
-                                                    </span>
-
-                                                {% else %}
-
-                                                    <span class="text-muted small">
-                                                        —
-                                                    </span>
-
-                                                {% endif %}
-
-                                            </td>
-
-
-                                            <!-- Amount -->
-
-                                            <td class="text-end">
-
-                                                {% if transaction.is_income %}
-
-                                                    <span class="kucsa-amount text-success">
-
-                                                        + KES
-                                                        {{ transaction.amount|floatformat:2 }}
-
-                                                    </span>
-
-                                                {% elif transaction.is_expense %}
-
-                                                    <span class="kucsa-amount text-danger">
-
-                                                        − KES
-                                                        {{ transaction.amount|floatformat:2 }}
-
-                                                    </span>
-
-                                                {% else %}
-
-                                                    <span class="kucsa-amount">
-
-                                                        KES
-                                                        {{ transaction.amount|floatformat:2 }}
-
-                                                    </span>
-
-                                                {% endif %}
-
-                                            </td>
-
-
-                                            <!-- Date -->
-
-                                            <td class="pe-4">
-
-                                                {% if transaction.transaction_date %}
-
-                                                    <div class="kucsa-date">
-                                                        {{ transaction.transaction_date|date:"d M Y" }}
-                                                    </div>
-
-                                                    <small class="text-muted">
-                                                        {{ transaction.transaction_date|date:"H:i" }}
-                                                    </small>
-
-                                                {% else %}
-
-                                                    <span class="text-muted">
-                                                        —
-                                                    </span>
-
-                                                {% endif %}
-
-                                            </td>
-
-                                        </tr>
-
-                                    {% endfor %}
-
-                                </tbody>
-
-                            </table>
-
-                        </div>
-
-
-                        <!-- ====================================================
-                             MOBILE TRANSACTION CARDS
-                             ==================================================== -->
-
-                        <div class="kucsa-mobile-transactions">
-
-                            {% for transaction in recent_transactions %}
-
-                                <article class="kucsa-mobile-transaction">
-
-                                    <div class="kucsa-mobile-transaction-top">
-
-                                        <div class="kucsa-mobile-transaction-number">
+                                        <td class="ps-4">
 
                                             <a href="{% url 'finance:transaction_detail' transaction.pk %}"
                                                class="kucsa-transaction-number">
@@ -1683,10 +1518,12 @@
 
                                             {% endif %}
 
-                                        </div>
+                                        </td>
 
 
-                                        <div>
+                                        <!-- Type -->
+
+                                        <td>
 
                                             {% if transaction.is_income %}
 
@@ -1719,56 +1556,33 @@
 
                                             {% endif %}
 
-                                        </div>
-
-                                    </div>
+                                        </td>
 
 
-                                    <div class="kucsa-mobile-meta">
+                                        <!-- Category -->
 
-                                        <div>
+                                        <td>
 
-                                            <span class="kucsa-mobile-meta-label">
-                                                Category
-                                            </span>
+                                            {% if transaction.category %}
 
-                                            <span class="kucsa-mobile-meta-value">
-
-                                                {% if transaction.category %}
+                                                <span class="small fw-semibold">
                                                     {{ transaction.category.name }}
-                                                {% else %}
+                                                </span>
+
+                                            {% else %}
+
+                                                <span class="text-muted small">
                                                     —
-                                                {% endif %}
+                                                </span>
 
-                                            </span>
+                                            {% endif %}
 
-                                        </div>
-
-
-                                        <div>
-
-                                            <span class="kucsa-mobile-meta-label">
-                                                Date
-                                            </span>
-
-                                            <span class="kucsa-mobile-meta-value">
-
-                                                {% if transaction.transaction_date %}
-                                                    {{ transaction.transaction_date|date:"d M Y" }}
-                                                {% else %}
-                                                    —
-                                                {% endif %}
-
-                                            </span>
-
-                                        </div>
-
-                                    </div>
+                                        </td>
 
 
-                                    <div class="kucsa-mobile-transaction-bottom">
+                                        <!-- Amount -->
 
-                                        <div>
+                                        <td class="text-end">
 
                                             {% if transaction.is_income %}
 
@@ -1799,469 +1613,655 @@
 
                                             {% endif %}
 
-                                        </div>
+                                        </td>
 
+
+                                        <!-- Date -->
+
+                                        <td class="pe-4">
+
+                                            {% if transaction.transaction_date %}
+
+                                                <div class="kucsa-date">
+                                                    {{ transaction.transaction_date|date:"d M Y" }}
+                                                </div>
+
+                                                <small class="text-muted">
+                                                    {{ transaction.transaction_date|date:"H:i" }}
+                                                </small>
+
+                                            {% else %}
+
+                                                <span class="text-muted">
+                                                    —
+                                                </span>
+
+                                            {% endif %}
+
+                                        </td>
+
+                                    </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <!-- ====================================================
+                         MOBILE TRANSACTION CARDS
+                         ==================================================== -->
+
+                    <div class="kucsa-mobile-transactions">
+
+                        {% for transaction in recent_transactions %}
+
+                            <article class="kucsa-mobile-transaction">
+
+                                <div class="kucsa-mobile-transaction-top">
+
+                                    <div class="kucsa-mobile-transaction-number">
 
                                         <a href="{% url 'finance:transaction_detail' transaction.pk %}"
-                                           class="btn btn-sm btn-outline-primary kucsa-mobile-view-btn">
+                                           class="kucsa-transaction-number">
 
-                                            <i class="bi bi-eye me-1"></i>
-                                            View Transaction
+                                            {{ transaction.transaction_number }}
 
                                         </a>
 
+                                        {% if transaction.reference %}
+
+                                            <span class="kucsa-transaction-reference"
+                                                  title="{{ transaction.reference }}">
+
+                                                {{ transaction.reference }}
+
+                                            </span>
+
+                                        {% endif %}
+
                                     </div>
 
-                                </article>
 
-                            {% endfor %}
+                                    <div>
 
-                        </div>
+                                        {% if transaction.is_income %}
 
+                                            <span class="kucsa-type-badge
+                                                         kucsa-type-income">
 
-                    {% else %}
+                                                <i class="bi bi-arrow-down-left"></i>
+                                                Income
 
-                        <!-- ====================================================
-                             EMPTY STATE
-                             ==================================================== -->
+                                            </span>
 
-                        <div class="kucsa-empty-state">
+                                        {% elif transaction.is_expense %}
 
-                            <div class="kucsa-empty-icon"
-                                 aria-hidden="true">
+                                            <span class="kucsa-type-badge
+                                                         kucsa-type-expense">
 
-                                <i class="bi bi-journal-x"></i>
+                                                <i class="bi bi-arrow-up-right"></i>
+                                                Expense
 
-                            </div>
+                                            </span>
 
-                            <h3 class="kucsa-empty-title">
-                                No Posted Transactions
-                            </h3>
+                                        {% else %}
 
-                            <p class="kucsa-empty-description">
-                                Posted financial transactions will appear here
-                                once income or expenses have been officially posted.
-                            </p>
+                                            <span class="kucsa-type-badge
+                                                         kucsa-type-other">
 
-                            <a href="{% url 'finance:transactions' %}"
-                               class="btn btn-sm btn-outline-primary">
+                                                {{ transaction.transaction_type|title }}
 
-                                <i class="bi bi-journal-text me-1"></i>
-                                View Transactions
+                                            </span>
 
-                            </a>
+                                        {% endif %}
 
-                        </div>
+                                    </div>
 
-                    {% endif %}
-
-                </div>
-
-            </section>
-
-        </div>
+                                </div>
 
 
-        <!-- ========================================================
-             EXPENSE WORKFLOW
-             ======================================================== -->
+                                <div class="kucsa-mobile-meta">
 
-        <div class="col-12 col-xl-4">
+                                    <div>
 
-            <section class="kucsa-finance-card h-100
-                            kucsa-dashboard-animate"
-                     aria-labelledby="expenseWorkflowTitle">
+                                        <span class="kucsa-mobile-meta-label">
+                                            Category
+                                        </span>
 
-                <div class="kucsa-section-header">
+                                        <span class="kucsa-mobile-meta-value">
 
-                    <div class="kucsa-card-heading-group">
+                                            {% if transaction.category %}
+                                                {{ transaction.category.name }}
+                                            {% else %}
+                                                —
+                                            {% endif %}
 
-                        <div class="kucsa-card-heading-icon"
+                                        </span>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <span class="kucsa-mobile-meta-label">
+                                            Date
+                                        </span>
+
+                                        <span class="kucsa-mobile-meta-value">
+
+                                            {% if transaction.transaction_date %}
+                                                {{ transaction.transaction_date|date:"d M Y" }}
+                                            {% else %}
+                                                —
+                                            {% endif %}
+
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="kucsa-mobile-transaction-bottom">
+
+                                    <div>
+
+                                        {% if transaction.is_income %}
+
+                                            <span class="kucsa-amount text-success">
+
+                                                + KES
+                                                {{ transaction.amount|floatformat:2 }}
+
+                                            </span>
+
+                                        {% elif transaction.is_expense %}
+
+                                            <span class="kucsa-amount text-danger">
+
+                                                − KES
+                                                {{ transaction.amount|floatformat:2 }}
+
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="kucsa-amount">
+
+                                                KES
+                                                {{ transaction.amount|floatformat:2 }}
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+
+                                    <a href="{% url 'finance:transaction_detail' transaction.pk %}"
+                                       class="btn btn-sm btn-outline-primary kucsa-mobile-view-btn">
+
+                                        <i class="bi bi-eye me-1"></i>
+                                        View Transaction
+
+                                    </a>
+
+                                </div>
+
+                            </article>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                {% else %}
+
+                    <!-- ====================================================
+                         EMPTY STATE
+                         ==================================================== -->
+
+                    <div class="kucsa-empty-state">
+
+                        <div class="kucsa-empty-icon"
                              aria-hidden="true">
 
-                            <i class="bi bi-diagram-3"></i>
+                            <i class="bi bi-journal-x"></i>
 
                         </div>
 
-                        <div>
+                        <h3 class="kucsa-empty-title">
+                            No Posted Transactions
+                        </h3>
 
-                            <h2 id="expenseWorkflowTitle"
-                                class="kucsa-section-title">
+                        <p class="kucsa-empty-description">
+                            Posted financial transactions will appear here
+                            once income or expenses have been officially posted.
+                        </p>
 
-                                Expense Workflow
+                        <a href="{% url 'finance:transactions' %}"
+                           class="btn btn-sm btn-outline-primary">
 
-                            </h2>
+                            <i class="bi bi-journal-text me-1"></i>
+                            View Transactions
 
-                            <p class="kucsa-section-description">
+                        </a>
 
-                                Current expense processing activity.
+                    </div>
 
-                            </p>
+                {% endif %}
 
-                        </div>
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- ========================================================
+         EXPENSE WORKFLOW
+         ======================================================== -->
+
+    <div class="col-12 col-xl-4">
+
+        <section class="kucsa-finance-card h-100
+                        kucsa-dashboard-animate"
+                 aria-labelledby="expenseWorkflowTitle">
+
+            <div class="kucsa-section-header">
+
+                <div class="kucsa-card-heading-group">
+
+                    <div class="kucsa-card-heading-icon"
+                         aria-hidden="true">
+
+                        <i class="bi bi-diagram-3"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h2 id="expenseWorkflowTitle"
+                            class="kucsa-section-title">
+
+                            Expense Workflow
+
+                        </h2>
+
+                        <p class="kucsa-section-description">
+
+                            Current expense processing activity.
+
+                        </p>
 
                     </div>
 
                 </div>
 
+            </div>
 
-                <div class="kucsa-workflow-list">
 
-                    <!-- Draft -->
+            <div class="kucsa-workflow-list">
 
-                    <div class="kucsa-workflow-item">
+                <!-- Draft -->
 
-                        <div class="kucsa-workflow-label">
+                <div class="kucsa-workflow-item">
 
-                            <span class="kucsa-workflow-icon text-secondary">
-                                <i class="bi bi-pencil-square"></i>
-                            </span>
+                    <div class="kucsa-workflow-label">
 
-                            <span>
-                                Draft
-                            </span>
+                        <span class="kucsa-workflow-icon text-secondary">
+                            <i class="bi bi-pencil-square"></i>
+                        </span>
 
-                        </div>
-
-                        <span class="kucsa-workflow-count bg-secondary text-white">
-
-                            {{ draft_expenses|default:"0" }}
-
+                        <span>
+                            Draft
                         </span>
 
                     </div>
 
+                    <span class="kucsa-workflow-count bg-secondary text-white">
 
-                    <!-- Submitted -->
+                        {{ draft_expenses|default:"0" }}
 
-                    <div class="kucsa-workflow-item">
-
-                        <div class="kucsa-workflow-label">
-
-                            <span class="kucsa-workflow-icon text-info">
-                                <i class="bi bi-send"></i>
-                            </span>
-
-                            <span>
-                                Submitted
-                            </span>
-
-                        </div>
-
-                        <span class="kucsa-workflow-count bg-info text-dark">
-
-                            {{ submitted_expenses|default:"0" }}
-
-                        </span>
-
-                    </div>
-
-
-                    <!-- Approved -->
-
-                    <div class="kucsa-workflow-item">
-
-                        <div class="kucsa-workflow-label">
-
-                            <span class="kucsa-workflow-icon text-primary">
-                                <i class="bi bi-check2-circle"></i>
-                            </span>
-
-                            <span>
-                                Approved
-                            </span>
-
-                        </div>
-
-                        <span class="kucsa-workflow-count bg-primary text-white">
-
-                            {{ approved_expenses|default:"0" }}
-
-                        </span>
-
-                    </div>
-
-
-                    <!-- Paid -->
-
-                    <div class="kucsa-workflow-item">
-
-                        <div class="kucsa-workflow-label">
-
-                            <span class="kucsa-workflow-icon text-success">
-                                <i class="bi bi-check-circle-fill"></i>
-                            </span>
-
-                            <span>
-                                Paid
-                            </span>
-
-                        </div>
-
-                        <span class="kucsa-workflow-count bg-success text-white">
-
-                            {{ paid_expenses|default:"0" }}
-
-                        </span>
-
-                    </div>
-
-
-                    <!-- Rejected / Voided -->
-
-                    <div class="kucsa-workflow-item">
-
-                        <div class="kucsa-workflow-label">
-
-                            <span class="kucsa-workflow-icon text-danger">
-                                <i class="bi bi-x-circle"></i>
-                            </span>
-
-                            <span>
-                                Rejected / Voided
-                            </span>
-
-                        </div>
-
-                        <span class="kucsa-workflow-count bg-danger text-white">
-
-                            {{ rejected_voided_expenses|default:"0" }}
-
-                        </span>
-
-                    </div>
+                    </span>
 
                 </div>
 
 
-                <div class="kucsa-workflow-progress"
-                     aria-hidden="true">
+                <!-- Submitted -->
 
-                    <div class="kucsa-workflow-progress-bar"></div>
+                <div class="kucsa-workflow-item">
+
+                    <div class="kucsa-workflow-label">
+
+                        <span class="kucsa-workflow-icon text-info">
+                            <i class="bi bi-send"></i>
+                        </span>
+
+                        <span>
+                            Submitted
+                        </span>
+
+                    </div>
+
+                    <span class="kucsa-workflow-count bg-info text-dark">
+
+                        {{ submitted_expenses|default:"0" }}
+
+                    </span>
 
                 </div>
 
 
-                <div class="kucsa-workflow-action">
+                <!-- Approved -->
 
-                    <a href="{% url 'finance:expenses' %}"
-                       class="btn btn-outline-primary w-100">
+                <div class="kucsa-workflow-item">
 
-                        <i class="bi bi-receipt me-1"></i>
-                        Manage Expenses
+                    <div class="kucsa-workflow-label">
 
-                    </a>
+                        <span class="kucsa-workflow-icon text-primary">
+                            <i class="bi bi-check2-circle"></i>
+                        </span>
+
+                        <span>
+                            Approved
+                        </span>
+
+                    </div>
+
+                    <span class="kucsa-workflow-count bg-primary text-white">
+
+                        {{ approved_expenses|default:"0" }}
+
+                    </span>
 
                 </div>
 
-            </section>
+
+                <!-- Paid -->
+
+                <div class="kucsa-workflow-item">
+
+                    <div class="kucsa-workflow-label">
+
+                        <span class="kucsa-workflow-icon text-success">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </span>
+
+                        <span>
+                            Paid
+                        </span>
+
+                    </div>
+
+                    <span class="kucsa-workflow-count bg-success text-white">
+
+                        {{ paid_expenses|default:"0" }}
+
+                    </span>
+
+                </div>
+
+
+                <!-- Rejected / Voided -->
+
+                <div class="kucsa-workflow-item">
+
+                    <div class="kucsa-workflow-label">
+
+                        <span class="kucsa-workflow-icon text-danger">
+                            <i class="bi bi-x-circle"></i>
+                        </span>
+
+                        <span>
+                            Rejected / Voided
+                        </span>
+
+                    </div>
+
+                    <span class="kucsa-workflow-count bg-danger text-white">
+
+                        {{ rejected_expenses|default:"0" }}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="kucsa-workflow-progress"
+                 aria-hidden="true">
+
+                <div class="kucsa-workflow-progress-bar"></div>
+
+            </div>
+
+
+            <div class="kucsa-workflow-action">
+
+                <a href="{% url 'finance:expenses' %}"
+                   class="btn btn-outline-primary w-100">
+
+                    <i class="bi bi-receipt me-1"></i>
+                    Manage Expenses
+
+                </a>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+
+
+<!-- ============================================================
+     QUICK ACTIONS
+     ============================================================ -->
+
+<section class="kucsa-finance-card
+                kucsa-management-card
+                kucsa-dashboard-animate"
+         aria-labelledby="financeManagementTitle">
+
+    <div class="kucsa-management-header">
+
+        <div class="kucsa-card-heading-group">
+
+            <div class="kucsa-card-heading-icon"
+                 aria-hidden="true">
+
+                <i class="bi bi-grid-1x2"></i>
+
+            </div>
+
+            <div>
+
+                <h2 id="financeManagementTitle"
+                    class="kucsa-section-title">
+
+                    Finance Management
+
+                </h2>
+
+                <p class="kucsa-section-description">
+
+                    Access KUCSA financial management tools.
+
+                </p>
+
+            </div>
 
         </div>
 
     </div>
 
 
-    <!-- ============================================================
-         QUICK ACTIONS
-         ============================================================ -->
+    <div class="kucsa-action-grid">
 
-    <section class="kucsa-finance-card
-                    kucsa-management-card
-                    kucsa-dashboard-animate"
-             aria-labelledby="financeManagementTitle">
+        <div class="row g-3">
 
-        <div class="kucsa-management-header">
 
-            <div class="kucsa-card-heading-group">
+            <!-- INCOME -->
 
-                <div class="kucsa-card-heading-icon"
-                     aria-hidden="true">
+            <div class="col-12 col-md-6 col-lg-3">
 
-                    <i class="bi bi-grid-1x2"></i>
+                <a href="{% url 'finance:income' %}"
+                   class="kucsa-action-card">
 
-                </div>
+                    <span class="kucsa-action-icon text-success">
+                        <i class="bi bi-cash-stack"></i>
+                    </span>
 
-                <div>
+                    <span>
 
-                    <h2 id="financeManagementTitle"
-                        class="kucsa-section-title">
+                        <span class="kucsa-action-title">
+                            Income
+                        </span>
 
-                        Finance Management
+                        <span class="kucsa-action-description">
+                            View and manage income records.
+                        </span>
 
-                    </h2>
+                    </span>
 
-                    <p class="kucsa-section-description">
+                    <i class="bi bi-arrow-right
+                              kucsa-action-arrow"
+                       aria-hidden="true"></i>
 
-                        Access KUCSA financial management tools.
-
-                    </p>
-
-                </div>
+                </a>
 
             </div>
 
-        </div>
 
+            <!-- EXPENSES -->
 
-        <div class="kucsa-action-grid">
+            <div class="col-12 col-md-6 col-lg-3">
 
-            <div class="row g-3">
+                <a href="{% url 'finance:expenses' %}"
+                   class="kucsa-action-card">
 
+                    <span class="kucsa-action-icon text-danger">
+                        <i class="bi bi-receipt"></i>
+                    </span>
 
-                <!-- INCOME -->
+                    <span>
 
-                <div class="col-12 col-md-6 col-lg-3">
-
-                    <a href="{% url 'finance:income' %}"
-                       class="kucsa-action-card">
-
-                        <span class="kucsa-action-icon text-success">
-                            <i class="bi bi-cash-stack"></i>
+                        <span class="kucsa-action-title">
+                            Expenses
                         </span>
 
-                        <span>
-
-                            <span class="kucsa-action-title">
-                                Income
-                            </span>
-
-                            <span class="kucsa-action-description">
-                                View and manage income records.
-                            </span>
-
+                        <span class="kucsa-action-description">
+                            Manage expense records and processing.
                         </span>
 
-                        <i class="bi bi-arrow-right
-                                  kucsa-action-arrow"
-                           aria-hidden="true"></i>
+                    </span>
 
-                    </a>
+                    <i class="bi bi-arrow-right
+                              kucsa-action-arrow"
+                       aria-hidden="true"></i>
 
-                </div>
-
-
-                <!-- EXPENSES -->
-
-                <div class="col-12 col-md-6 col-lg-3">
-
-                    <a href="{% url 'finance:expenses' %}"
-                       class="kucsa-action-card">
-
-                        <span class="kucsa-action-icon text-danger">
-                            <i class="bi bi-receipt"></i>
-                        </span>
-
-                        <span>
-
-                            <span class="kucsa-action-title">
-                                Expenses
-                            </span>
-
-                            <span class="kucsa-action-description">
-                                Manage expense records and processing.
-                            </span>
-
-                        </span>
-
-                        <i class="bi bi-arrow-right
-                                  kucsa-action-arrow"
-                           aria-hidden="true"></i>
-
-                    </a>
-
-                </div>
-
-
-                <!-- RECONCILIATION -->
-
-                <div class="col-12 col-md-6 col-lg-3">
-
-                    <a href="{% url 'finance:reconciliation' %}"
-                       class="kucsa-action-card">
-
-                        <span class="kucsa-action-icon text-primary">
-                            <i class="bi bi-arrow-left-right"></i>
-                        </span>
-
-                        <span>
-
-                            <span class="kucsa-action-title">
-                                Reconciliation
-                            </span>
-
-                            <span class="kucsa-action-description">
-                                Compare and verify financial records.
-                            </span>
-
-                        </span>
-
-                        <i class="bi bi-arrow-right
-                                  kucsa-action-arrow"
-                           aria-hidden="true"></i>
-
-                    </a>
-
-                </div>
-
-
-                <!-- CATEGORIES -->
-
-                <div class="col-12 col-md-6 col-lg-3">
-
-                    <a href="{% url 'finance:categories' %}"
-                       class="kucsa-action-card">
-
-                        <span class="kucsa-action-icon text-warning">
-                            <i class="bi bi-tags"></i>
-                        </span>
-
-                        <span>
-
-                            <span class="kucsa-action-title">
-                                Categories
-                            </span>
-
-                            <span class="kucsa-action-description">
-                                Organize and manage finance categories.
-                            </span>
-
-                        </span>
-
-                        <i class="bi bi-arrow-right
-                                  kucsa-action-arrow"
-                           aria-hidden="true"></i>
-
-                    </a>
-
-                </div>
-
+                </a>
 
             </div>
 
+
+            <!-- RECONCILIATION -->
+
+            <div class="col-12 col-md-6 col-lg-3">
+
+                <a href="{% url 'finance:reconciliation' %}"
+                   class="kucsa-action-card">
+
+                    <span class="kucsa-action-icon text-primary">
+                        <i class="bi bi-arrow-left-right"></i>
+                    </span>
+
+                    <span>
+
+                        <span class="kucsa-action-title">
+                            Reconciliation
+                        </span>
+
+                        <span class="kucsa-action-description">
+                            Compare and verify financial records.
+                        </span>
+
+                    </span>
+
+                    <i class="bi bi-arrow-right
+                              kucsa-action-arrow"
+                       aria-hidden="true"></i>
+
+                </a>
+
+            </div>
+
+
+            <!-- CATEGORIES -->
+
+            <div class="col-12 col-md-6 col-lg-3">
+
+                <a href="{% url 'finance:categories' %}"
+                   class="kucsa-action-card">
+
+                    <span class="kucsa-action-icon text-warning">
+                        <i class="bi bi-tags"></i>
+                    </span>
+
+                    <span>
+
+                        <span class="kucsa-action-title">
+                            Categories
+                        </span>
+
+                        <span class="kucsa-action-description">
+                            Organize and manage finance categories.
+                        </span>
+
+                    </span>
+
+                    <i class="bi bi-arrow-right
+                              kucsa-action-arrow"
+                       aria-hidden="true"></i>
+
+                </a>
+
+            </div>
+
+
         </div>
 
-    </section>
+    </div>
+
+</section>
 
 
-    <!-- ============================================================
-         AUDIT ACCESS
-         ============================================================ -->
+<!-- ============================================================
+     AUDIT ACCESS
+     ============================================================ -->
 
-    {% if can_view_audit_logs %}
+{% if can_view_audit_logs %}
 
-        <div class="kucsa-audit-access">
+    <div class="kucsa-audit-access">
 
-            <a href="{% url 'finance:audit_logs' %}"
-               class="btn btn-sm btn-outline-secondary">
+        <a href="{% url 'finance:audit_logs' %}"
+           class="btn btn-sm btn-outline-secondary">
 
-                <i class="bi bi-shield-check me-1"></i>
-                Financial Audit Logs
+            <i class="bi bi-shield-check me-1"></i>
+            Financial Audit Logs
 
-            </a>
+        </a>
 
-        </div>
+    </div>
 
-    {% endif %}
+{% endif %}
 
 
 </div>

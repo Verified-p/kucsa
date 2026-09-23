@@ -990,7 +990,7 @@ def create_expense(
         receipt=receipt,
         notes=notes or "",
         status=Expense.Status.DRAFT,
-        created_by=user,
+        recorded_by=user,
     )
 
     _audit(

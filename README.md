@@ -491,3 +491,45 @@ u = User.objects.create_user(
 </script>
 
 {% endblock %}
+
+
+
+
+
+
+from finance.models import FinancialCategory
+
+categories = [
+    ("Transport", "Transport and travel expenses."),
+    ("Printing & Photocopying", "Printing and photocopying expenses."),
+    ("Refreshments", "Food and refreshments for KUCSA activities."),
+    ("Equipment", "Purchase of computing and office equipment."),
+    ("Stationery", "Stationery and office supplies."),
+    ("Events & Activities", "Expenses related to events and activities."),
+    ("Communication", "Communication and publicity expenses."),
+    ("Internet & Data", "Internet and mobile data expenses."),
+    ("Accommodation", "Accommodation expenses."),
+    ("Training & Workshops", "Training, workshops and seminars."),
+    ("Maintenance", "Repair and maintenance expenses."),
+    ("Bank Charges", "Bank and transaction charges."),
+    ("Other Expenses", "Other approved KUCSA expenses."),
+]
+
+for name, description in categories:
+    category, created = FinancialCategory.objects.update_or_create(
+        name=name,
+        defaults={
+            "category_type": FinancialCategory.CategoryType.EXPENSE,
+            "description": description,
+            "is_active": True,
+            "is_system": True,
+        },
+    )
+    print("Created:" if created else "Updated:", category.name)
+
+print("\nExpense categories now in the database:")
+for category in FinancialCategory.objects.filter(
+    category_type=FinancialCategory.CategoryType.EXPENSE,
+    is_active=True,
+).order_by("name"):
+    print(category.id, "-", category.name)

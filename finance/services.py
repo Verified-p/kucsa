@@ -300,6 +300,9 @@ def _audit(
     Create an immutable financial audit log.
 
     Audit logs should always be created through this helper.
+
+    For newly created records, there is no previous state, so
+    old_values defaults to an empty JSON object instead of NULL.
     """
 
     return FinancialAuditLog.objects.create(
@@ -310,8 +313,8 @@ def _audit(
         expense=expense,
         reconciliation=reconciliation,
         category=category,
-        old_values=old_values,
-        new_values=new_values,
+        old_values=old_values or {},
+        new_values=new_values or {},
     )
 
 

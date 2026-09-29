@@ -67,6 +67,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
+
+    "cloudinary",
+    "cloudinary_storage",
+
     # -----------------------------------------------------
     # KUCSA Applications
     # -----------------------------------------------------
@@ -236,37 +240,69 @@ USE_TZ = True
 # STATIC FILES
 # =========================================================
 
-# ================================
-# STATIC FILES
-# ================================
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    BASE_DIR / "static",
 ]
 
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
-STATICFILES_STORAGE = (
-    'whitenoise.storage.CompressedManifestStaticFilesStorage'
-)
-# =========================================================
-# MEDIA FILES
-# =========================================================
 
-# Payment proof uploads are stored here.
+# =========================================================
+# CLOUDINARY MEDIA STORAGE
+# =========================================================
 #
-# Example:
-# media/
-# └── payments/
-#     └── proofs/
-#         └── 2026/
-#             └── 08/
-#                 └── receipt.pdf
+# Cloudinary is used for user-uploaded files.
+#
+# This includes:
+#
+#   - Profile pictures
+#   - Images
+#   - PDFs
+#   - Word documents
+#   - Excel documents
+#   - Other supported uploaded files
+#
+# Credentials are supplied through:
+#
+#     CLOUDINARY_URL
+#
+# The API secret must NEVER be hardcoded here.
+# =========================================================
 
-MEDIA_URL = "/media/"
+CLOUDINARY_URL = os.getenv("CLOUDINARY_URL")
 
-MEDIA_ROOT = BASE_DIR / "media"
+if not CLOUDINARY_URL:
+    raise RuntimeError(
+        "CLOUDINARY_URL environment variable is not configured."
+    )
+
+
+# =========================================================
+# DJANGO FILE STORAGE
+# =========================================================
+#
+# All ImageField and FileField uploads use Cloudinary
+# instead of the local/Vercel filesystem.
+# =========================================================
+
+STORAGES = {
+    "default": {
+        "BACKEND": (
+            "cloudinary_storage.storage."
+            "MediaCloudinaryStorage"
+        ),
+    },
+
+    "staticfiles": {
+        "BACKEND": (
+            "whitenoise.storage."
+            "CompressedManifestStaticFilesStorage"
+        ),
+    },
+}
+
 
 
 # =========================================================

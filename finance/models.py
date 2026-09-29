@@ -57,6 +57,8 @@ Financial balance is calculated from:
 from decimal import Decimal
 import uuid
 
+from cloudinary.models import CloudinaryField
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
@@ -391,14 +393,6 @@ class FinancialTransaction(models.Model):
 
         # -------------------------------------------------
         # CATEGORY
-        #
-        # IMPORTANT:
-        # Use category_id instead of self.category.
-        #
-        # This prevents:
-        #
-        # RelatedObjectDoesNotExist:
-        # FinancialTransaction has no category.
         # -------------------------------------------------
 
         if self.category_id:
@@ -795,10 +789,16 @@ class Expense(models.Model):
     # RECEIPT
     # -----------------------------------------------------
 
-    receipt = models.FileField(
-        upload_to="finance/receipts/%Y/%m/",
+    receipt = CloudinaryField(
+        "receipt",
+        resource_type="auto",
+        folder="kucsa/finance/receipts",
         null=True,
         blank=True,
+        help_text=(
+            "Expense receipt uploaded to Cloudinary. "
+            "Supports documents and other receipt file types."
+        ),
     )
 
     notes = models.TextField(
@@ -886,9 +886,6 @@ class Expense(models.Model):
 
         # -------------------------------------------------
         # CATEGORY
-        #
-        # IMPORTANT:
-        # Check category_id before accessing self.category.
         # -------------------------------------------------
 
         if self.category_id:
@@ -1060,9 +1057,7 @@ class Expense(models.Model):
                     "the ledger transaction amount."
                 )
 
-            if (
-                transaction.payment_id is not None
-            ):
+            if transaction.payment_id is not None:
                 errors["transaction"] = (
                     "An expense transaction cannot "
                     "be linked to an incoming payment."
@@ -1269,10 +1264,21 @@ class FinancialReconciliation(models.Model):
         blank=True,
     )
 
-    statement_file = models.FileField(
-        upload_to="finance/statements/%Y/%m/",
+    # -----------------------------------------------------
+    # FINANCIAL STATEMENT FILE
+    # -----------------------------------------------------
+
+    statement_file = CloudinaryField(
+        "statement_file",
+        resource_type="auto",
+        folder="kucsa/finance/statements",
         null=True,
         blank=True,
+        help_text=(
+            "Financial statement uploaded to Cloudinary. "
+            "Supports PDF, Excel, CSV, and other statement "
+            "file formats."
+        ),
     )
 
     notes = models.TextField(

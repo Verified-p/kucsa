@@ -199,6 +199,13 @@ class User(AbstractUser):
     # PROFILE
     # =========================================================
 
+    # Cloudinary-backed profile picture.
+    #
+    # The actual image is stored remotely by Cloudinary.
+    # PostgreSQL stores the file reference/path.
+    #
+    # This prevents production uploads from being written to
+    # Vercel's temporary/local filesystem.
     profile_picture = models.ImageField(
         upload_to="profile_pictures/",
         blank=True,
@@ -414,15 +421,6 @@ class User(AbstractUser):
         # ADMINISTRATIVE ACCOUNT
         # -----------------------------------------------------
 
-        # Django superusers are always KUCSA administrators.
-        #
-        # This prevents an account such as:
-        #
-        #     role = STUDENT
-        #     is_superuser = True
-        #
-        # from remaining in an inconsistent organizational state.
-
         if self.is_superuser:
             self.role = self.Role.ADMIN
             self.is_staff = True
@@ -484,9 +482,6 @@ class User(AbstractUser):
         """
         Return True when the user holds a KUCSA
         executive position.
-
-        Administrators are not considered executives simply
-        because they have administrative privileges.
         """
 
         return self.role in self.EXECUTIVE_ROLES
@@ -500,17 +495,6 @@ class User(AbstractUser):
         """
         Return True only when the user has explicitly been
         assigned the KUCSA TREASURER role.
-
-        IMPORTANT
-        ---------
-
-        Being an executive does not make a user a treasurer.
-
-        The user must first have:
-
-            role = TREASURER
-
-        through the authorized role-assignment process.
         """
 
         return self.role == self.Role.TREASURER
@@ -524,19 +508,6 @@ class User(AbstractUser):
         """
         Return True when the user is authorized to manage
         KUCSA financial operations.
-
-        Finance management is restricted to:
-
-            1. KUCSA administrators
-            2. The explicitly assigned Treasurer
-
-        A Chairperson, Secretary, Secretary General, Vice
-        Chairperson, Organizing Secretary, or Publicity
-        Secretary does not automatically receive finance
-        management access.
-
-        The Treasurer must first be assigned the TREASURER
-        organizational role by an authorized administrator.
         """
 
         return (
@@ -564,9 +535,6 @@ class User(AbstractUser):
     def is_kucsa_admin(self):
         """
         Return True when the user is a KUCSA administrator.
-
-        Django superusers are automatically considered
-        administrators.
         """
 
         return (
@@ -602,10 +570,6 @@ class User(AbstractUser):
     def member(self):
         """
         Return the associated KUCSA Member profile.
-
-        Expected Member relationship:
-
-            related_name="member_profile"
         """
 
         try:
@@ -626,10 +590,6 @@ class User(AbstractUser):
         """
         Return True when the user has valid active
         KUCSA membership.
-
-        Administrators bypass the membership requirement.
-
-        Executives do NOT bypass membership requirements.
         """
 
         if self.is_kucsa_admin:
@@ -682,8 +642,6 @@ class User(AbstractUser):
     def membership_status(self):
         """
         Return the current membership status.
-
-        Returns None when no Member profile exists.
         """
 
         member = self.member
@@ -757,14 +715,6 @@ class User(AbstractUser):
     def payment_state(self):
         """
         Return a normalized membership/payment state.
-
-        Possible values:
-
-            REQUIRED
-            PENDING
-            ACTIVE
-            SUSPENDED
-            EXPIRED
         """
 
         if self.is_kucsa_admin:
@@ -811,26 +761,6 @@ class User(AbstractUser):
     def assign_role(self, role):
         """
         Assign a KUCSA organizational role.
-
-        Rules:
-
-        1. STUDENT can be assigned normally.
-        2. Executive roles require active membership.
-        3. TREASURER is treated as an executive role and
-           therefore requires active KUCSA membership.
-        4. ADMIN requires an authorized Django
-           administrative account.
-
-        IMPORTANT
-        ---------
-
-        The Treasurer does not receive finance access merely
-        because they are a member or an executive.
-
-        Finance access becomes available only after this method
-        successfully assigns:
-
-            role = TREASURER
         """
 
         valid_roles = {
@@ -843,10 +773,6 @@ class User(AbstractUser):
                 f"Invalid KUCSA role: {role}"
             )
 
-        # -----------------------------------------------------
-        # ADMIN ROLE
-        # -----------------------------------------------------
-
         if role == self.Role.ADMIN:
 
             if not (
@@ -857,10 +783,6 @@ class User(AbstractUser):
                     "The ADMIN role can only be assigned "
                     "to an authorized Django administrator."
                 )
-
-        # -----------------------------------------------------
-        # EXECUTIVE ROLE
-        # -----------------------------------------------------
 
         elif role in self.EXECUTIVE_ROLES:
 
@@ -878,16 +800,8 @@ class User(AbstractUser):
                     "to a member with active KUCSA membership."
                 )
 
-        # -----------------------------------------------------
-        # STUDENT ROLE
-        # -----------------------------------------------------
-
         elif role == self.Role.STUDENT:
             pass
-
-        # -----------------------------------------------------
-        # APPLY ROLE
-        # -----------------------------------------------------
 
         self.role = role
 

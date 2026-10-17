@@ -1,0 +1,28 @@
+
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | KUCSA Administration{% endblock %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+{% endblock %}
+
+{% block branding %}
+<div id="site-name" class="kucsa-admin-brand">
+    <a href="{% url 'admin:index' %}">
+        <span class="kucsa-admin-mark">K</span>
+        <span class="kucsa-admin-brand-text">
+            <strong>KUCSA</strong>
+            <small>Digital Administration</small>
+        </span>
+    </a>
+</div>
+{% endblock %}
+
+{% block welcome-msg %}
+    <span class="kucsa-welcome">
+        Welcome, <strong>{% firstof user.get_short_name user.username %}</strong>
+    </span>
+{% endblock %}

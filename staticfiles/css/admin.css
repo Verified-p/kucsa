@@ -1,0 +1,668 @@
+
+/* =========================================================
+   KUCSA ADMINISTRATION THEME
+   ========================================================= */
+
+:root {
+    --kucsa-primary: #1746a2;
+    --kucsa-primary-dark: #102f70;
+    --kucsa-accent: #35b8a5;
+    --kucsa-background: #f4f7fb;
+    --kucsa-surface: #ffffff;
+    --kucsa-border: #e4eaf2;
+    --kucsa-text: #17243a;
+    --kucsa-muted: #718096;
+    --kucsa-radius: 16px;
+    --kucsa-shadow: 0 8px 26px rgba(23, 48, 89, 0.06);
+}
+
+body {
+    background: var(--kucsa-background);
+    color: var(--kucsa-text);
+}
+
+#header {
+    min-height: 76px;
+    padding: 12px 28px;
+    background: linear-gradient(
+        110deg,
+        var(--kucsa-primary-dark),
+        var(--kucsa-primary)
+    );
+    color: #fff;
+    box-shadow: 0 4px 18px rgba(16, 47, 112, 0.16);
+}
+
+#header a:link,
+#header a:visited {
+    color: #fff;
+}
+
+#branding {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+}
+
+#site-name {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.kucsa-admin-brand a {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+}
+
+.kucsa-admin-mark {
+    display: grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    border-radius: 13px;
+    background: #fff;
+    color: var(--kucsa-primary);
+    font-size: 1.45rem;
+    font-weight: 900;
+}
+
+.kucsa-admin-brand-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.kucsa-admin-brand-text strong {
+    font-size: 1.05rem;
+    letter-spacing: 0.09em;
+}
+
+.kucsa-admin-brand-text small {
+    color: #dbe7ff;
+    font-size: 0.72rem;
+    font-weight: 500;
+}
+
+#user-tools {
+    padding-top: 8px;
+    font-size: 0.82rem;
+}
+
+.kucsa-welcome {
+    margin-right: 10px;
+}
+
+#user-tools a {
+    margin-left: 10px;
+    text-decoration: none;
+}
+
+#user-tools a:hover {
+    text-decoration: underline;
+}
+
+#content {
+    max-width: 1600px;
+    padding: 28px;
+}
+
+#content-main {
+    width: 100%;
+    float: none;
+}
+
+.breadcrumbs {
+    padding: 12px 28px;
+    background: #fff;
+    border-bottom: 1px solid var(--kucsa-border);
+    color: var(--kucsa-muted);
+}
+
+.breadcrumbs a {
+    color: var(--kucsa-primary);
+}
+
+#nav-sidebar {
+    border-right: 1px solid var(--kucsa-border);
+    background: #fff;
+}
+
+.module,
+.inline-group,
+.submit-row,
+#changelist,
+.change-form,
+#changelist-filter {
+    border: 1px solid var(--kucsa-border);
+    border-radius: 12px;
+    box-shadow: var(--kucsa-shadow);
+    overflow: hidden;
+}
+
+.module h2,
+.module caption,
+.inline-group h2 {
+    padding: 14px 18px;
+    background: #edf3ff;
+    color: var(--kucsa-primary-dark);
+}
+
+#content h1 {
+    color: var(--kucsa-text);
+    font-size: 1.8rem;
+    font-weight: 800;
+}
+
+#content h2 {
+    font-weight: 750;
+}
+
+a:link,
+a:visited {
+    color: var(--kucsa-primary);
+}
+
+a:hover {
+    color: var(--kucsa-primary-dark);
+}
+
+.button,
+input[type="submit"],
+input[type="button"],
+.submit-row input,
+a.button {
+    border-radius: 8px;
+    font-weight: 650;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="url"],
+input[type="search"],
+input[type="date"],
+input[type="datetime-local"],
+select,
+textarea {
+    max-width: 100%;
+    border: 1px solid #d7e0ed;
+    border-radius: 8px;
+    padding: 9px 11px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: 2px solid rgba(23, 70, 162, 0.18);
+    border-color: var(--kucsa-primary);
+}
+
+#changelist table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+#changelist table thead th {
+    background: #f1f5fb;
+}
+
+#changelist table tbody tr:hover {
+    background: #f6f9ff;
+}
+
+#changelist-filter {
+    background: #fff;
+}
+
+#changelist-filter h2 {
+    padding: 14px;
+    background: #edf3ff;
+}
+
+.paginator {
+    padding: 14px;
+}
+
+/* =========================================================
+   DASHBOARD HOMEPAGE
+   ========================================================= */
+
+.kucsa-dashboard {
+    width: 100%;
+}
+
+.kucsa-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 32px;
+    padding: 34px;
+    border-radius: 20px;
+    background: linear-gradient(
+        115deg,
+        #102f70 0%,
+        #1746a2 65%,
+        #2467c9 100%
+    );
+    color: #fff;
+    box-shadow: 0 15px 35px rgba(16, 47, 112, 0.15);
+}
+
+.kucsa-hero-copy {
+    max-width: 760px;
+}
+
+.kucsa-eyebrow {
+    display: inline-block;
+    margin-bottom: 12px;
+    color: #bfe8ff;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+}
+
+.kucsa-hero h1 {
+    margin: 0 0 12px;
+    color: #fff !important;
+    font-size: clamp(1.65rem, 3vw, 2.45rem) !important;
+    font-weight: 850 !important;
+    line-height: 1.2;
+}
+
+.kucsa-hero p {
+    max-width: 660px;
+    margin: 0;
+    color: #e2ebff;
+    font-size: 0.98rem;
+    line-height: 1.8;
+}
+
+.kucsa-hero-icon {
+    display: grid;
+    flex: 0 0 90px;
+    width: 90px;
+    height: 90px;
+    place-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.kucsa-hero-icon span {
+    font-size: 3rem;
+}
+
+.kucsa-section {
+    margin-bottom: 32px;
+}
+
+.kucsa-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.kucsa-section-heading h2 {
+    margin: 0 0 5px;
+    color: var(--kucsa-text);
+    font-size: 1.25rem;
+}
+
+.kucsa-section-heading p {
+    margin: 0;
+    color: var(--kucsa-muted);
+    font-size: 0.88rem;
+}
+
+.kucsa-section-label {
+    padding: 8px 12px;
+    border: 1px solid #dce6f8;
+    border-radius: 30px;
+    background: #eaf1ff;
+    color: var(--kucsa-primary);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.kucsa-app-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.kucsa-app-card {
+    min-width: 0;
+    padding: 22px;
+    border: 1px solid var(--kucsa-border);
+    border-radius: var(--kucsa-radius);
+    background: var(--kucsa-surface);
+    box-shadow: var(--kucsa-shadow);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.kucsa-app-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 13px 32px rgba(23, 48, 89, 0.1);
+}
+
+.kucsa-app-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.kucsa-app-icon {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    border-radius: 14px;
+    background: #eaf1ff;
+    color: var(--kucsa-primary);
+    font-size: 1.75rem;
+    font-weight: 800;
+}
+
+.kucsa-app-count {
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: #f0f4f9;
+    color: #627087;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.kucsa-app-card h3 {
+    margin: 0 0 16px;
+    color: var(--kucsa-text);
+    font-size: 1.05rem;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.kucsa-model-list {
+    border-top: 1px solid var(--kucsa-border);
+}
+
+.kucsa-model-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 0;
+    border-bottom: 1px solid #edf1f6;
+}
+
+.kucsa-model-row:last-child {
+    border-bottom: 0;
+}
+
+.kucsa-model-link {
+    min-width: 0;
+    color: #35445b !important;
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.kucsa-model-link:hover {
+    color: var(--kucsa-primary) !important;
+}
+
+.kucsa-model-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 7px;
+}
+
+.kucsa-add-link,
+.kucsa-open-link {
+    display: inline-grid;
+    width: 30px;
+    height: 30px;
+    place-items: center;
+    border: 1px solid var(--kucsa-border);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--kucsa-primary) !important;
+    font-size: 1.05rem;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.kucsa-add-link:hover,
+.kucsa-open-link:hover {
+    border-color: var(--kucsa-primary);
+    background: #edf3ff;
+}
+
+.kucsa-empty-state,
+.kucsa-empty-activity {
+    padding: 28px;
+    border: 1px dashed #cbd6e5;
+    border-radius: 14px;
+    background: #fff;
+    color: var(--kucsa-muted);
+    text-align: center;
+}
+
+.kucsa-empty-state h3 {
+    color: var(--kucsa-text);
+}
+
+/* Recent activity */
+
+.kucsa-activity-list {
+    overflow: hidden;
+    border: 1px solid var(--kucsa-border);
+    border-radius: var(--kucsa-radius);
+    background: #fff;
+    box-shadow: var(--kucsa-shadow);
+}
+
+.kucsa-activity-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 17px 20px;
+    border-bottom: 1px solid #edf1f6;
+}
+
+.kucsa-activity-item:last-child {
+    border-bottom: 0;
+}
+
+.kucsa-activity-indicator {
+    display: grid;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    place-items: center;
+    border-radius: 12px;
+    background: #eaf1ff;
+    color: var(--kucsa-primary);
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+.kucsa-activity-content {
+    min-width: 0;
+    flex: 1;
+}
+
+.kucsa-activity-content strong {
+    display: block;
+    margin-bottom: 5px;
+    overflow-wrap: anywhere;
+}
+
+.kucsa-activity-content strong a {
+    color: var(--kucsa-text);
+    text-decoration: none;
+}
+
+.kucsa-activity-content strong a:hover {
+    color: var(--kucsa-primary);
+}
+
+.kucsa-activity-content p {
+    margin: 0;
+    color: var(--kucsa-muted);
+    font-size: 0.82rem;
+    line-height: 1.6;
+}
+
+.kucsa-activity-type {
+    flex: 0 0 auto;
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: #edf3ff;
+    color: var(--kucsa-primary);
+    font-size: 0.72rem;
+    font-weight: 750;
+}
+
+.kucsa-dashboard-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 0 4px;
+    border-top: 1px solid var(--kucsa-border);
+    color: var(--kucsa-muted);
+    font-size: 0.78rem;
+}
+
+/* =========================================================
+   RESPONSIVE LAYOUT
+   ========================================================= */
+
+@media (max-width: 1100px) {
+    .kucsa-app-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767px) {
+    #header {
+        padding: 12px 16px;
+    }
+
+    #content {
+        padding: 18px 14px;
+    }
+
+    .kucsa-hero {
+        padding: 24px;
+        border-radius: 16px;
+    }
+
+    .kucsa-hero-icon {
+        display: none;
+    }
+
+    .kucsa-app-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+    }
+
+    .kucsa-section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .kucsa-activity-item {
+        align-items: flex-start;
+        flex-wrap: wrap;
+        padding: 15px;
+    }
+
+    .kucsa-activity-content {
+        width: calc(100% - 54px);
+    }
+
+    .kucsa-activity-type {
+        margin-left: 52px;
+    }
+
+    .kucsa-dashboard-footer {
+        flex-direction: column;
+    }
+
+    #user-tools {
+        line-height: 2;
+    }
+}
+
+
+/* =========================================================
+   FIX: DJANGO ADMIN PAGE SCROLLING
+   Keep add, edit, and change forms scrollable.
+   ========================================================= */
+
+html {
+    min-height: 100%;
+    height: auto;
+    overflow-y: auto !important;
+    overflow-x: hidden;
+}
+
+body {
+    min-height: 100vh;
+    height: auto !important;
+    overflow-y: auto !important;
+    overflow-x: hidden;
+}
+
+#container {
+    min-height: 100vh;
+    height: auto !important;
+    overflow: visible !important;
+}
+
+#content {
+    height: auto !important;
+    min-height: 0;
+    overflow: visible !important;
+}
+
+#content-main,
+.change-form,
+form,
+fieldset,
+.module,
+.inline-group {
+    max-height: none;
+    overflow: visible;
+}
+
+.submit-row {
+    position: static;
+}
+
+/* Allow long user forms to scroll on smaller screens. */
+@media (max-width: 767px) {
+    #content {
+        padding-bottom: 40px;
+    }
+
+    .form-row {
+        max-width: 100%;
+    }
+
+    input,
+    select,
+    textarea {
+        max-width: 100%;
+    }
+}

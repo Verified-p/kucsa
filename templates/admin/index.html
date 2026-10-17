@@ -1,0 +1,168 @@
+
+{% extends "admin/base_site.html" %}
+{% load i18n static log %}
+
+{% block title %}Administration Dashboard | KUCSA{% endblock %}
+
+{% block content %}
+<div class="kucsa-dashboard">
+
+    <section class="kucsa-hero">
+        <div class="kucsa-hero-copy">
+            <span class="kucsa-eyebrow">KUCSA DIGITAL PLATFORM</span>
+            <h1>Administration Dashboard</h1>
+            <p>
+                Manage members, events, attendance, payments and
+                the other services that power the computing community.
+            </p>
+        </div>
+
+        <div class="kucsa-hero-icon" aria-hidden="true">
+            <span>⚙</span>
+        </div>
+    </section>
+
+    <section class="kucsa-section">
+        <div class="kucsa-section-heading">
+            <div>
+                <h2>Management Centre</h2>
+                <p>Open a section to view, create or manage records.</p>
+            </div>
+            <span class="kucsa-section-label">YOUR WORKSPACE</span>
+        </div>
+
+        {% if app_list %}
+            <div class="kucsa-app-grid">
+                {% for app in app_list %}
+                    <article class="kucsa-app-card">
+                        <div class="kucsa-app-card-header">
+                            <div class="kucsa-app-icon" aria-hidden="true">
+                                {% if "member" in app.app_label|lower %}
+                                    <span>♟</span>
+                                {% elif "payment" in app.app_label|lower or "finance" in app.app_label|lower %}
+                                    <span>◈</span>
+                                {% elif "event" in app.app_label|lower or "attendance" in app.app_label|lower %}
+                                    <span>▦</span>
+                                {% elif "account" in app.app_label|lower or "auth" in app.app_label|lower %}
+                                    <span>◎</span>
+                                {% else %}
+                                    <span>◇</span>
+                                {% endif %}
+                            </div>
+                            <span class="kucsa-app-count">
+                                {{ app.models|length }}
+                                {% if app.models|length == 1 %}section{% else %}sections{% endif %}
+                            </span>
+                        </div>
+
+                        <h3>{{ app.name }}</h3>
+
+                        <div class="kucsa-model-list">
+                            {% for model in app.models %}
+                                <div class="kucsa-model-row">
+                                    <a href="{{ model.admin_url }}" class="kucsa-model-link">
+                                        {{ model.name }}
+                                    </a>
+
+                                    <div class="kucsa-model-actions">
+                                        {% if model.add_url and model.perms.add %}
+                                            <a href="{{ model.add_url }}"
+                                               class="kucsa-add-link"
+                                               aria-label="Add {{ model.name }}"
+                                               title="Add {{ model.name }}">+</a>
+                                        {% endif %}
+                                        <a href="{{ model.admin_url }}"
+                                           class="kucsa-open-link"
+                                           aria-label="Open {{ model.name }}">→</a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="kucsa-empty-state">
+                <h3>No management sections available</h3>
+                <p>
+                    Your account currently has no permission to view
+                    registered administration sections.
+                </p>
+            </div>
+        {% endif %}
+    </section>
+
+    {% get_admin_log 8 as admin_log for_user user %}
+
+    <section class="kucsa-section kucsa-activity-section">
+        <div class="kucsa-section-heading">
+            <div>
+                <h2>Recent Administration Activity</h2>
+                <p>Recent changes recorded by Django.</p>
+            </div>
+        </div>
+
+        {% if admin_log %}
+            <div class="kucsa-activity-list">
+                {% for entry in admin_log %}
+                    <div class="kucsa-activity-item">
+                        <div class="kucsa-activity-indicator">
+                            {% if entry.is_addition %}
+                                +
+                            {% elif entry.is_change %}
+                                ↻
+                            {% elif entry.is_deletion %}
+                                −
+                            {% else %}
+                                •
+                            {% endif %}
+                        </div>
+
+                        <div class="kucsa-activity-content">
+                            <strong>
+                                {% if entry.is_deletion or not entry.get_admin_url %}
+                                    {{ entry.object_repr }}
+                                {% else %}
+                                    <a href="{{ entry.get_admin_url }}">
+                                        {{ entry.object_repr }}
+                                    </a>
+                                {% endif %}
+                            </strong>
+                            <p>
+                                {% if entry.content_type %}
+                                    {{ entry.content_type.name }}
+                                {% else %}
+                                    Administration record
+                                {% endif %}
+                                · {{ entry.get_change_message|default:"Activity recorded" }}
+                            </p>
+                        </div>
+
+                        <span class="kucsa-activity-type">
+                            {% if entry.is_addition %}
+                                Added
+                            {% elif entry.is_change %}
+                                Updated
+                            {% elif entry.is_deletion %}
+                                Deleted
+                            {% else %}
+                                Activity
+                            {% endif %}
+                        </span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="kucsa-empty-activity">
+                <p>No recent administration activity is available.</p>
+            </div>
+        {% endif %}
+    </section>
+
+    <footer class="kucsa-dashboard-footer">
+        <span>KUCSA Digital Platform</span>
+        <span>Authorized administration workspace</span>
+    </footer>
+
+</div>
+{% endblock %}

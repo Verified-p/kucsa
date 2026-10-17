@@ -1,6 +1,3 @@
-
-# accounts/admin.py
-
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.core.exceptions import ValidationError
@@ -14,40 +11,10 @@ class CustomUserAdmin(UserAdmin):
     """
     Django Admin configuration for the KUCSA custom User model.
 
-    =========================================================
-    IMPORTANT ARCHITECTURE
-    =========================================================
-
     User.role represents the KUCSA organizational position.
-
-    Django permissions are controlled independently through:
-
-        is_staff
-        is_superuser
-        groups
-        user_permissions
-
-    Normal students:
-
-        role = STUDENT
-
-    Executives:
-
-        role = appropriate executive position
-
-    System administrators:
-
-        is_staff = True
-        and/or
-        is_superuser = True
-
-    Executive assignment should only be done to members who
-    already have active KUCSA membership.
+    Django system permissions are controlled independently by
+    is_staff, is_superuser, groups and user_permissions.
     """
-
-    # =========================================================
-    # LIST DISPLAY
-    # =========================================================
 
     list_display = (
         "username",
@@ -63,10 +30,6 @@ class CustomUserAdmin(UserAdmin):
         "date_joined",
     )
 
-    # =========================================================
-    # LIST FILTERS
-    # =========================================================
-
     list_filter = (
         "role",
         "is_verified",
@@ -74,10 +37,6 @@ class CustomUserAdmin(UserAdmin):
         "is_staff",
         "is_superuser",
     )
-
-    # =========================================================
-    # SEARCH
-    # =========================================================
 
     search_fields = (
         "username",
@@ -88,19 +47,11 @@ class CustomUserAdmin(UserAdmin):
         "phone_number",
     )
 
-    # =========================================================
-    # ORDERING
-    # =========================================================
-
     ordering = (
         "first_name",
         "last_name",
         "username",
     )
-
-    # =========================================================
-    # READ ONLY FIELDS
-    # =========================================================
 
     readonly_fields = (
         "last_login",
@@ -109,10 +60,6 @@ class CustomUserAdmin(UserAdmin):
         "updated_at",
         "membership_summary",
     )
-
-    # =========================================================
-    # FIELDSETS
-    # =========================================================
 
     fieldsets = (
         (
@@ -181,10 +128,6 @@ class CustomUserAdmin(UserAdmin):
         ),
     )
 
-    # =========================================================
-    # CREATE USER
-    # =========================================================
-
     add_fieldsets = (
         (
             "Create User Account",
@@ -207,83 +150,63 @@ class CustomUserAdmin(UserAdmin):
         ),
     )
 
-    # =========================================================
-    # FULL NAME DISPLAY
-    # =========================================================
-
-    @admin.display(
-        description="Name",
-        ordering="first_name",
-    )
+    @admin.display(description="Name", ordering="first_name")
     def full_name_display(self, obj):
         return obj.full_name
 
-    # =========================================================
-    # MEMBERSHIP DISPLAY
-    # =========================================================
-
-    @admin.display(
-        description="Membership",
-    )
+    @admin.display(description="Membership")
     def membership_display(self, obj):
-
         if obj.is_kucsa_admin:
             return format_html(
-                '<strong>Administrator</strong>'
+                "<strong>{}</strong>",
+                "Administrator",
             )
 
         member = obj.member
 
         if member is None:
             return format_html(
-                '<span style="color:#dc3545;">'
-                "No Member Profile"
-                "</span>"
+                '<span style="color: {};">{}</span>',
+                "#dc3545",
+                "No Member Profile",
             )
 
         if member.can_access_platform:
             return format_html(
-                '<strong style="color:#198754;">'
-                "ACTIVE"
-                "</strong>"
+                '<strong style="color: {};">{}</strong>',
+                "#198754",
+                "ACTIVE",
             )
 
         if member.has_pending_payment:
             return format_html(
-                '<strong style="color:#fd7e14;">'
-                "PAYMENT PENDING"
-                "</strong>"
+                '<strong style="color: {};">{}</strong>',
+                "#fd7e14",
+                "PAYMENT PENDING",
             )
 
         if member.is_suspended:
             return format_html(
-                '<strong style="color:#dc3545;">'
-                "SUSPENDED"
-                "</strong>"
+                '<strong style="color: {};">{}</strong>',
+                "#dc3545",
+                "SUSPENDED",
             )
 
         if member.is_expired:
             return format_html(
-                '<strong style="color:#dc3545;">'
-                "EXPIRED"
-                "</strong>"
+                '<strong style="color: {};">{}</strong>',
+                "#dc3545",
+                "EXPIRED",
             )
 
         return format_html(
-            '<span style="color:#6c757d;">'
-            "PAYMENT REQUIRED"
-            "</span>"
+            '<span style="color: {};">{}</span>',
+            "#6c757d",
+            "PAYMENT REQUIRED",
         )
 
-    # =========================================================
-    # MEMBERSHIP SUMMARY
-    # =========================================================
-
-    @admin.display(
-        description="Membership Information",
-    )
+    @admin.display(description="Membership Information")
     def membership_summary(self, obj):
-
         if obj.is_kucsa_admin:
             return "Administrator — membership payment is not required."
 
@@ -292,17 +215,8 @@ class CustomUserAdmin(UserAdmin):
         if member is None:
             return "No KUCSA Member profile is associated with this account."
 
-        status = getattr(
-            member,
-            "membership_status",
-            "Unknown",
-        )
-
-        membership_number = getattr(
-            member,
-            "membership_number",
-            None,
-        )
+        status = getattr(member, "membership_status", "Unknown")
+        membership_number = getattr(member, "membership_number", None)
 
         if membership_number:
             return (
@@ -312,69 +226,28 @@ class CustomUserAdmin(UserAdmin):
 
         return f"Status: {status}"
 
-    # =========================================================
-    # SAVE MODEL
-    # =========================================================
-
-    def save_model(
-        self,
-        request,
-        obj,
-        form,
-        change,
-    ):
+    def save_model(self, request, obj, form, change):
         """
-        Protect executive role assignment.
-
-        An executive role can only be assigned to an existing
-        member with active KUCSA membership.
+        Only allow executive roles for members with active membership.
         """
-
         executive_roles = User.EXECUTIVE_ROLES
 
         if obj.role in executive_roles:
-
             member = obj.member
 
             if member is None:
                 raise ValidationError(
-                    "This user cannot be assigned an executive "
-                    "role because they do not have a KUCSA "
-                    "Member profile."
+                    "This user cannot be assigned an executive role "
+                    "because they do not have a KUCSA Member profile."
                 )
 
             if not member.can_access_platform:
                 raise ValidationError(
-                    "This user cannot be assigned an executive "
-                    "role because their KUCSA membership is "
-                    "not active."
+                    "This user cannot be assigned an executive role "
+                    "because their KUCSA membership is not active."
                 )
 
-        super().save_model(
-            request,
-            obj,
-            form,
-            change,
-        )
+        super().save_model(request, obj, form, change)
 
-    # =========================================================
-    # SAVE FORMSET
-    # =========================================================
-
-    def save_formset(
-        self,
-        request,
-        form,
-        formset,
-        change,
-    ):
-        """
-        Preserve Django's standard UserAdmin formset behavior.
-        """
-
-        super().save_formset(
-            request,
-            form,
-            formset,
-            change,
-        )
+    def save_formset(self, request, form, formset, change):
+        super().save_formset(request, form, formset, change)

@@ -590,7 +590,7 @@ MPESA_STK_PUSH_URL = (
 
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://kisiiuniversitycomputingstudents.vercel.app//",
+    "https://ksu-kucsa.vercel.app//",
 ]
 
 # ── Auto logout after 5 minutes of inactivity ──

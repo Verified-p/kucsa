@@ -107,11 +107,6 @@ class AnnouncementAdmin(admin.ModelAdmin):
     # =====================================================
 
     fieldsets = (
-
-        # -------------------------------------------------
-        # BASIC INFORMATION
-        # -------------------------------------------------
-
         (
             "Announcement Information",
             {
@@ -123,11 +118,6 @@ class AnnouncementAdmin(admin.ModelAdmin):
                 ),
             },
         ),
-
-        # -------------------------------------------------
-        # CLASSIFICATION
-        # -------------------------------------------------
-
         (
             "Classification",
             {
@@ -139,11 +129,6 @@ class AnnouncementAdmin(admin.ModelAdmin):
                 ),
             },
         ),
-
-        # -------------------------------------------------
-        # AUTHORSHIP
-        # -------------------------------------------------
-
         (
             "Authorship",
             {
@@ -154,11 +139,6 @@ class AnnouncementAdmin(admin.ModelAdmin):
                 ),
             },
         ),
-
-        # -------------------------------------------------
-        # MEDIA
-        # -------------------------------------------------
-
         (
             "Media & Attachments",
             {
@@ -171,11 +151,6 @@ class AnnouncementAdmin(admin.ModelAdmin):
                 ),
             },
         ),
-
-        # -------------------------------------------------
-        # PUBLICATION
-        # -------------------------------------------------
-
         (
             "Publication",
             {
@@ -185,11 +160,6 @@ class AnnouncementAdmin(admin.ModelAdmin):
                 ),
             },
         ),
-
-        # -------------------------------------------------
-        # DISPLAY OPTIONS
-        # -------------------------------------------------
-
         (
             "Display Options",
             {
@@ -199,11 +169,6 @@ class AnnouncementAdmin(admin.ModelAdmin):
                 ),
             },
         ),
-
-        # -------------------------------------------------
-        # STATISTICS
-        # -------------------------------------------------
-
         (
             "Statistics",
             {
@@ -213,11 +178,6 @@ class AnnouncementAdmin(admin.ModelAdmin):
                 ),
             },
         ),
-
-        # -------------------------------------------------
-        # SYSTEM INFORMATION
-        # -------------------------------------------------
-
         (
             "System Information",
             {
@@ -251,30 +211,28 @@ class AnnouncementAdmin(admin.ModelAdmin):
             if obj.is_expired:
                 return format_html(
                     '<span style="color:#dc3545; font-weight:600;">'
-                    '● Expired'
-                    '</span>'
+                    '{}</span>',
+                    "● Expired",
                 )
 
             return format_html(
                 '<span style="color:#198754; font-weight:600;">'
-                '● Published'
-                '</span>'
+                '{}</span>',
+                "● Published",
             )
 
         if obj.status == Announcement.Status.DRAFT:
-
             return format_html(
                 '<span style="color:#6c757d; font-weight:600;">'
-                '● Draft'
-                '</span>'
+                '{}</span>',
+                "● Draft",
             )
 
         if obj.status == Announcement.Status.ARCHIVED:
-
             return format_html(
                 '<span style="color:#6f42c1; font-weight:600;">'
-                '● Archived'
-                '</span>'
+                '{}</span>',
+                "● Archived",
             )
 
         return obj.get_status_display()

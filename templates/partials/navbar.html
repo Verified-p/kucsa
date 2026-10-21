@@ -2944,25 +2944,19 @@
      ================================================================= -->
 
 <script>
-
 document.addEventListener("DOMContentLoaded", function () {
 
     const navbar =
-
         document.getElementById("kucsaMainNavbar");
 
     const navbarCollapse =
-
         document.getElementById("kucsaNavbarContent");
 
     const sidebarOffcanvas =
-
         document.getElementById("kucsaSidebarOffcanvas");
 
     const installButton =
-
         document.getElementById("kucsaInstallButton");
-
 
 
     /* =========================================================
@@ -2970,263 +2964,219 @@ document.addEventListener("DOMContentLoaded", function () {
        ========================================================= */
 
     function updateNavbarState() {
-
         if (!navbar) {
-
             return;
-
         }
 
         if (window.scrollY > 8) {
-
             navbar.classList.add("is-scrolled");
-
         } else {
-
             navbar.classList.remove("is-scrolled");
-
         }
-
     }
-
-
 
     updateNavbarState();
 
-
-
     window.addEventListener(
-
         "scroll",
-
         updateNavbarState,
-
-        {
-
-            passive: true
-
-        }
-
+        { passive: true }
     );
-
 
 
     /* =========================================================
-       PWA INSTALL BUTTON
+       PWA INSTALL BUTTON — DESKTOP AND MOBILE
        ========================================================= */
 
-    function showInstallButton() {
+    const isIOSDevice =
+        /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+        (
+            navigator.platform === "MacIntel" &&
+            navigator.maxTouchPoints > 1
+        );
 
-        if (!installButton) {
-
-            return;
-
-        }
-
-        /*
-
-         * Do not show the installation button when KUCSA is
-
-         * already running as an installed application.
-
-         */
-
-        if (
-
-            window.matchMedia &&
-
-            window.matchMedia(
-
-                "(display-mode: standalone)"
-
-            ).matches
-
-        ) {
-
-            installButton.classList.remove("is-visible");
-
-            return;
-
-        }
-
-
-
-        /*
-
-         * iOS Safari uses a different installation process.
-
-         * The native beforeinstallprompt event is not available
-
-         * there, so this button remains hidden rather than
-
-         * presenting a button that cannot work.
-
-         */
-
-        installButton.classList.add("is-visible");
-
+    function isAppInstalled() {
+        return (
+            (
+                window.matchMedia &&
+                window.matchMedia(
+                    "(display-mode: standalone)"
+                ).matches
+            ) ||
+            navigator.standalone === true
+        );
     }
 
+    function isMobileOrTablet() {
+        return window.matchMedia
+            ? window.matchMedia("(max-width: 991.98px)").matches
+            : window.innerWidth <= 991;
+    }
 
+    function showInstallButton() {
+        if (!installButton) {
+            return;
+        }
+
+        if (isAppInstalled()) {
+            installButton.classList.remove("is-visible");
+            return;
+        }
+
+        /*
+         * On mobile/tablet, show the button even if the
+         * installation-ready event was not dispatched.
+         *
+         * On desktop, preserve the existing event-driven
+         * visibility behaviour.
+         */
+        if (isMobileOrTablet()) {
+            installButton.classList.add("is-visible");
+        }
+    }
 
     function hideInstallButton() {
-
         if (!installButton) {
-
             return;
-
         }
 
         installButton.classList.remove("is-visible");
-
     }
 
-
-
     /*
-
-     * The base template captures beforeinstallprompt and
-
-     * dispatches this event when installation becomes available.
-
+     * The base template may dispatch this event when the
+     * native installation prompt becomes available.
      */
-
     document.addEventListener(
-
         "kucsa:install-ready",
-
-        function () {
-
-            showInstallButton();
-
-        }
-
+        showInstallButton
     );
 
-
-
     /*
-
-     * Installation completed or the prompt was consumed.
-
+     * Installation flow finished or prompt was consumed.
      */
-
     document.addEventListener(
-
         "kucsa:install-finished",
-
-        function () {
-
-            hideInstallButton();
-
-        }
-
+        hideInstallButton
     );
 
-
-
     /*
-
-     * App has been installed.
-
+     * App successfully installed.
      */
-
     document.addEventListener(
-
         "kucsa:app-installed",
-
-        function () {
-
-            hideInstallButton();
-
-        }
-
+        hideInstallButton
     );
 
-
+    /*
+     * Initial visibility check.
+     * This fixes mobile visibility when the custom event
+     * is missing or was dispatched before this listener.
+     */
+    if (isMobileOrTablet()) {
+        showInstallButton();
+    }
 
     /*
-
-     * Install button action.
-
+     * Re-check visibility when switching between mobile
+     * and desktop layouts.
      */
+    window.addEventListener("resize", function () {
+        if (isAppInstalled()) {
+            hideInstallButton();
+            return;
+        }
 
+        if (isMobileOrTablet()) {
+            showInstallButton();
+        }
+    });
+
+    /*
+     * Install button action.
+     */
     if (installButton) {
-
         installButton.addEventListener(
-
             "click",
-
             async function () {
 
-                if (
-
-                    typeof window.installKUCSAApp !==
-
-                    "function"
-
-                ) {
-
-                    console.warn(
-
-                        "[KUCSA PWA] Installation function is unavailable."
-
-                    );
-
+                if (isAppInstalled()) {
+                    hideInstallButton();
                     return;
-
                 }
-
-
 
                 /*
-
-                 * Temporarily disable the button so that
-
-                 * repeated taps cannot trigger multiple prompts.
-
+                 * iOS does not support the usual
+                 * beforeinstallprompt installation flow.
                  */
-
-                installButton.disabled = true;
-
-
-
-                try {
-
-                    const installed =
-
-                        await window.installKUCSAApp();
-
-
-
-                    if (installed) {
-
-                        hideInstallButton();
-
-                    }
-
-                } catch (error) {
-
-                    console.error(
-
-                        "[KUCSA PWA] Installation failed:",
-
-                        error
-
+                if (isIOSDevice) {
+                    alert(
+                        "To install KUCSA on your iPhone or iPad:\n\n" +
+                        "1. Open this website in Safari.\n" +
+                        "2. Tap the Share button.\n" +
+                        "3. Select 'Add to Home Screen'.\n" +
+                        "4. Tap 'Add'."
                     );
-
-                } finally {
-
-                    installButton.disabled = false;
-
+                    return;
                 }
 
+                /*
+                 * Use the installation function provided
+                 * by the existing base-template PWA script.
+                 */
+                if (
+                    typeof window.installKUCSAApp !== "function"
+                ) {
+                    console.warn(
+                        "[KUCSA PWA] Installation function is unavailable."
+                    );
+
+                    alert(
+                        "The installation prompt is not currently available. " +
+                        "Open your browser menu and look for 'Install app' " +
+                        "or 'Add to Home screen', if offered."
+                    );
+                    return;
+                }
+
+                /*
+                 * Prevent repeated taps while the prompt
+                 * is being processed.
+                 */
+                installButton.disabled = true;
+
+                try {
+                    const installed =
+                        await window.installKUCSAApp();
+
+                    if (installed) {
+                        hideInstallButton();
+                    } else if (isMobileOrTablet()) {
+                        alert(
+                            "If no installation prompt appeared, open your " +
+                            "browser menu and look for 'Install app' or " +
+                            "'Add to Home screen'."
+                        );
+                    }
+                } catch (error) {
+                    console.error(
+                        "[KUCSA PWA] Installation failed:",
+                        error
+                    );
+
+                    if (isMobileOrTablet()) {
+                        alert(
+                            "KUCSA could not open the installation prompt. " +
+                            "Try your browser menu and select 'Install app' " +
+                            "or 'Add to Home screen', if available."
+                        );
+                    }
+                } finally {
+                    installButton.disabled = false;
+                }
             }
-
         );
-
     }
-
 
 
     /* =========================================================
@@ -3234,111 +3184,56 @@ document.addEventListener("DOMContentLoaded", function () {
        ========================================================= */
 
     if (navbarCollapse) {
-
         const navigationLinks =
-
             navbarCollapse.querySelectorAll("a[href]");
 
-
-
         navigationLinks.forEach(function (link) {
+            link.addEventListener("click", function () {
+                if (
+                    window.innerWidth <= 991 &&
+                    window.bootstrap
+                ) {
+                    const collapse =
+                        window.bootstrap.Collapse.getInstance(
+                            navbarCollapse
+                        );
 
-            link.addEventListener(
-
-                "click",
-
-                function () {
-
-                    if (
-
-                        window.innerWidth <= 991 &&
-
-                        window.bootstrap
-
-                    ) {
-
-                        const collapse =
-
-                            bootstrap.Collapse.getInstance(
-
-                                navbarCollapse
-
-                            );
-
-
-
-                        if (collapse) {
-
-                            collapse.hide();
-
-                        }
-
+                    if (collapse) {
+                        collapse.hide();
                     }
-
                 }
-
-            );
-
+            });
         });
-
     }
-
 
 
     /* =========================================================
        SIDEBAR OFFCANVAS
-       Bootstrap handles:
-
-       - opening
-       - closing
-       - backdrop
-       - body scroll lock
-       - Escape key
-       - focus handling
+       Bootstrap handles opening, closing, backdrop,
+       body scroll lock, Escape key, and focus handling.
        ========================================================= */
 
     if (sidebarOffcanvas) {
-
         sidebarOffcanvas.addEventListener(
-
             "show.bs.offcanvas",
-
             function () {
-
                 if (
-
                     navbarCollapse &&
-
                     navbarCollapse.classList.contains("show") &&
-
                     window.bootstrap
-
                 ) {
-
                     const collapse =
-
-                        bootstrap.Collapse.getInstance(
-
+                        window.bootstrap.Collapse.getInstance(
                             navbarCollapse
-
                         );
 
-
-
                     if (collapse) {
-
                         collapse.hide();
-
                     }
-
                 }
-
             }
-
         );
-
     }
-
 
 
     /* =========================================================
@@ -3346,65 +3241,33 @@ document.addEventListener("DOMContentLoaded", function () {
        ========================================================= */
 
     const profileImages =
-
         document.querySelectorAll(
-
             ".kucsa-navbar-wrapper .navbar-avatar"
-
         );
-
-
 
     profileImages.forEach(function (image) {
-
         image.addEventListener(
-
             "error",
-
             function () {
-
                 const fallback =
-
                     document.createElement("span");
 
-
-
                 fallback.className =
-
                     "navbar-default-avatar";
 
-
-
                 fallback.setAttribute(
-
                     "aria-hidden",
-
                     "true"
-
                 );
 
-
-
                 fallback.innerHTML =
-
                     '<i class="bi bi-person-circle"></i>';
 
-
-
                 image.replaceWith(fallback);
-
             },
-
-            {
-
-                once: true
-
-            }
-
+            { once: true }
         );
-
     });
-
 
 
     /* =========================================================
@@ -3412,93 +3275,44 @@ document.addEventListener("DOMContentLoaded", function () {
        ========================================================= */
 
     const brandLogo =
-
         document.querySelector(
-
             ".kucsa-navbar-wrapper .navbar-brand-logo"
-
         );
-
-
 
     if (brandLogo) {
-
         brandLogo.addEventListener(
-
             "error",
-
             function () {
-
                 this.style.display = "none";
-
             },
-
-            {
-
-                once: true
-
-            }
-
+            { once: true }
         );
-
     }
-
 
 
     /* =========================================================
        RESET MOBILE NAVIGATION AFTER BFCACHE RETURN
        ========================================================= */
 
-    window.addEventListener(
+    window.addEventListener("pageshow", function () {
 
-        "pageshow",
-
-        function () {
-
-            if (
-
-                navbarCollapse &&
-
-                window.innerWidth > 991
-
-            ) {
-
-                navbarCollapse.classList.remove("show");
-
-            }
-
-
-
-            /*
-
-             * Re-check the installed state when the page
-
-             * returns from browser/app navigation.
-
-             */
-
-            if (
-
-                installButton &&
-
-                window.matchMedia &&
-
-                window.matchMedia(
-
-                    "(display-mode: standalone)"
-
-                ).matches
-
-            ) {
-
-                hideInstallButton();
-
-            }
-
+        if (
+            navbarCollapse &&
+            window.innerWidth > 991
+        ) {
+            navbarCollapse.classList.remove("show");
         }
 
-    );
+        /*
+         * Re-check installation state when returning
+         * from browser or app navigation.
+         */
+        if (isAppInstalled()) {
+            hideInstallButton();
+        } else if (isMobileOrTablet()) {
+            showInstallButton();
+        }
+    });
 
 });
-
 </script>

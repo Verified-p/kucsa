@@ -2055,25 +2055,21 @@ def get_category_totals():
     }
 
 
-def get_audit_log_totals():
+def get_audit_log_totals(queryset=None):
     """
-    Return authoritative financial audit-log statistics.
+    Return financial audit-log statistics.
 
-    CREATED and UPDATED are general record-management
-    actions.
+    If a queryset is supplied, statistics are calculated
+    from those records.
 
-    Workflow actions are:
+    Otherwise, statistics cover all financial audit logs.
 
-        SUBMITTED
-        APPROVED
-        REJECTED
-        PAID
-        POSTED
-        VOIDED
-        RECONCILED
+    This allows both the Finance dashboard and Audit Logs
+    page to use the same service.
     """
 
-    queryset = FinancialAuditLog.objects.all()
+    if queryset is None:
+        queryset = FinancialAuditLog.objects.all()
 
     total_logs = queryset.count()
 
@@ -2211,4 +2207,4 @@ def get_audit_logs(
             action=action
         )
 
-    return queryset.order_by("-timestamp")
+    return queryset.order_by("-created_at", "-id")
